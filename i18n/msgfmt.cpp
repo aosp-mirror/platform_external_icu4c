@@ -35,7 +35,7 @@
 #include "unicode/rbnf.h"
 #include "ustrfmt.h"
 #include "cmemory.h"
-#include "util.h"
+#include "../common/util.h"
 #include "uassert.h"
 
 // *****************************************************************************

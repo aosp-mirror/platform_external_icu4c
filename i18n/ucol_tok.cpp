@@ -28,7 +28,7 @@
 
 #include "ucol_tok.h"
 #include "cmemory.h"
-#include "util.h"
+#include "../common/util.h"
 
 U_CDECL_BEGIN
 static int32_t U_CALLCONV
@@ -1817,7 +1817,7 @@ void ucol_tok_initTokenList(UColTokenParser *src, const UChar *rules, const uint
     src->parsedToken.prefixOffset = 0;
     src->parsedToken.flags = 0;
     src->parsedToken.strength = UCOL_TOK_UNSET;
-
+    src->buildCCTabFlag = FALSE;
 
     if(U_FAILURE(*status)) {
         return;

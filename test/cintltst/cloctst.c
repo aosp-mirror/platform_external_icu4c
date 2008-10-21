@@ -867,9 +867,11 @@ static void TestISOFunctions()
     const char* const* str=uloc_getISOLanguages();
     const char* const* str1=uloc_getISOCountries();
     const char* test;
+    const char *key = NULL;
     int32_t count = 0, skipped = 0;
     int32_t expect;
     UResourceBundle *res;
+    UResourceBundle *subRes;
     UErrorCode status = U_ZERO_ERROR;
 
     /*  test getISOLanguages*/
@@ -878,38 +880,38 @@ static void TestISOFunctions()
 
     /* use structLocale - this data is no longer in root */
     res = ures_openDirect(loadTestData(&status), "structLocale", &status);
-    ures_getByKey(res, "Languages", res, &status);
+    subRes = ures_getByKey(res, "Languages", NULL, &status);
     if (U_FAILURE(status)) {
         log_err("There is an error in structLocale's ures_getByKey(\"Languages\"), status=%s\n", u_errorName(status));
         return;
     }
 
+    expect = ures_getSize(subRes);
     for(count = 0; *(str+count) != 0; count++)
     {
-        const char *key = NULL;
+        key = NULL;
         test = *(str+count);
         status = U_ZERO_ERROR;
 
         do {
             /* Skip over language tags. This API only returns language codes. */
             skipped += (key != NULL);
-            ures_getNextString(res, NULL, &key, &status);
+            ures_getNextString(subRes, NULL, &key, &status);
         }
         while (key != NULL && strchr(key, '_'));
 
         if(key == NULL)
             break;
-        if(!strcmp(key,"root"))
-            ures_getNextString(res, NULL, &key, &status);
-        if(!strcmp(key,"Fallback"))
-            ures_getNextString(res, NULL, &key, &status);
-        if(!strcmp(key,"sh")) /* Remove this once sh is removed. */
-            ures_getNextString(res, NULL, &key, &status);
+        /* TODO: Consider removing sh, which is deprecated */
+        if(strcmp(key,"root") == 0 || strcmp(key,"Fallback") == 0 || strcmp(key,"sh") == 0) {
+            ures_getNextString(subRes, NULL, &key, &status);
+            skipped++;
+        }
 #if U_CHARSET_FAMILY==U_ASCII_FAMILY
         /* This code only works on ASCII machines where the keys are stored in ASCII order */
         if(strcmp(test,key)) {
             /* The first difference usually implies the place where things get out of sync */
-            log_err("FAIL diff at offset %d, \"%s\" != \"%s\"\n", count, test, key);
+            log_err("FAIL Language diff at offset %d, \"%s\" != \"%s\"\n", count, test, key);
         }
 #endif
 
@@ -925,30 +927,70 @@ static void TestISOFunctions()
             log_err("FAIL getISOLanguages() has obsolete language code %s\n", test);
     }
 
-    /* We check root, just in case the en locale is removed. The en locale should have the same number of resources. */
-    expect = ures_getSize(res) - 1; /* Ignore root */
-    expect -= 1; /* TODO: Remove this line once sh goes away. */
-    expect -= skipped;
-    ures_close(res);
+    expect -= skipped; /* Ignore the skipped resources from structLocale */
 
     if(count!=expect) {
         log_err("There is an error in getISOLanguages, got %d, expected %d (as per structLocale)\n", count, expect);
     }
 
+    subRes = ures_getByKey(res, "Countries", subRes, &status);
     log_verbose("Testing ISO Countries");
+    skipped = 0;
+    expect = ures_getSize(subRes) - 1; /* Skip ZZ */
     for(count = 0; *(str1+count) != 0; count++)
     {
+        key = NULL;
         test = *(str1+count);
+        do {
+            /* Skip over numeric UN tags. This API only returns ISO-3166 codes. */
+            skipped += (key != NULL);
+            ures_getNextString(subRes, NULL, &key, &status);
+        }
+        while (key != NULL && strlen(key) != 2);
+
+        if(key == NULL)
+            break;
+        /* TODO: Consider removing CS, which is deprecated */
+        while(strcmp(key,"QO") == 0 || strcmp(key,"QU") == 0 || strcmp(key,"CS") == 0) {
+            ures_getNextString(subRes, NULL, &key, &status);
+            skipped++;
+        }
+#if U_CHARSET_FAMILY==U_ASCII_FAMILY
+        /* This code only works on ASCII machines where the keys are stored in ASCII order */
+        if(strcmp(test,key)) {
+            /* The first difference usually implies the place where things get out of sync */
+            log_err("FAIL Country diff at offset %d, \"%s\" != \"%s\"\n", count, test, key);
+        }
+#endif
         if(!strcmp(test,"FX"))
+            log_err("FAIL getISOCountries() has obsolete country code %s\n", test);
+        if(!strcmp(test,"YU"))
             log_err("FAIL getISOCountries() has obsolete country code %s\n", test);
         if(!strcmp(test,"ZR"))
             log_err("FAIL getISOCountries() has obsolete country code %s\n", test);
     }
-    expect=244;
+
+    ures_getNextString(subRes, NULL, &key, &status);
+    if (strcmp(key, "ZZ") != 0) {
+        log_err("ZZ was expected to be the last entry in structLocale, but got %s\n", key);
+    }
+#if U_CHARSET_FAMILY==U_EBCDIC_FAMILY
+    /* On EBCDIC machines, the numbers are sorted last. Account for those in the skipped value too. */
+    key = NULL;
+    do {
+        /* Skip over numeric UN tags. uloc_getISOCountries only returns ISO-3166 codes. */
+        skipped += (key != NULL);
+        ures_getNextString(subRes, NULL, &key, &status);
+    }
+    while (U_SUCCESS(status) && key != NULL && strlen(key) != 2);
+#endif
+    expect -= skipped; /* Ignore the skipped resources from structLocale */
     if(count!=expect)
     {
         log_err("There is an error in getISOCountries, got %d, expected %d \n", count, expect);
     }
+    ures_close(subRes);
+    ures_close(res);
 }
 
 static void setUpDataTable()
@@ -1199,6 +1241,7 @@ static void TestObsoleteNames(void)
         { "in",  "ind", "in", "", "" },
         { "id",  "ind", "id", "", "" }, /* NO aliasing */
         { "sh",  "srp", "sh", "", "" },
+        { "zz_CS",  "", "zz", "SCG", "CS" },
         { "zz_FX",  "", "zz", "FXX", "FX" },
         { "zz_RO",  "", "zz", "ROU", "RO" },
         { "zz_TP",  "", "zz", "TMP", "TP" },
@@ -1210,6 +1253,7 @@ static void TestObsoleteNames(void)
         { "zz_ZAR",  "", "zz", "ZAR", "ZR" },
         { "zz_TMP",  "", "zz", "TMP", "TP" },
         { "zz_TLS",  "", "zz", "TLS", "TL" },
+        { "zz_YUG",  "", "zz", "YUG", "YU" },
         { "mlt_PSE", "mlt", "mt", "PSE", "PS" },
         { "iw", "heb", "iw", "", "" },
         { "ji", "yid", "ji", "", "" },

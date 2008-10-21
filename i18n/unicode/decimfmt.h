@@ -631,6 +631,11 @@ public:
         kPadAfterSuffix
     };
 
+    typedef struct attributeBuffer {
+        char * buffer;
+        size_t bufferSize;
+    } AttributeBuffer, *AttrBuffer;
+
     /**
      * Create a DecimalFormat using the default pattern and symbols
      * for the default locale. This is a convenient way to obtain a
@@ -784,6 +789,12 @@ public:
     virtual UnicodeString& format(double number,
                                   UnicodeString& appendTo,
                                   FieldPosition& pos) const;
+
+    virtual UnicodeString& format(double number,
+                                  UnicodeString& appendTo,
+                                  FieldPosition& pos,
+                                  AttrBuffer attrBuffer) const;
+
     /**
      * Format a long number using base-10 representation.
      *
@@ -798,6 +809,12 @@ public:
     virtual UnicodeString& format(int32_t number,
                                   UnicodeString& appendTo,
                                   FieldPosition& pos) const;
+
+    virtual UnicodeString& format(int32_t number,
+                                  UnicodeString& appendTo,
+                                  FieldPosition& pos,
+                                  AttrBuffer attrBuffer) const;
+
     /**
      * Format an int64 number using base-10 representation.
      *
@@ -812,6 +829,11 @@ public:
     virtual UnicodeString& format(int64_t number,
                                   UnicodeString& appendTo,
                                   FieldPosition& pos) const;
+
+    virtual UnicodeString& format(int64_t number,
+                                  UnicodeString& appendTo,
+                                  FieldPosition& pos,
+                                  AttrBuffer attrBuffer) const;
 
     /**
      * Format a Formattable using base-10 representation.
@@ -885,6 +907,15 @@ public:
      */
     UnicodeString& format(int64_t number,
                           UnicodeString& appendTo) const;
+
+    // BEGIN android-added
+    UnicodeString& subformat(UnicodeString& appendTo,
+                             FieldPosition& fieldPosition,
+                             AttrBuffer attrBuffer,
+                             DigitList& digits,
+                             UBool         isInteger) const;
+    // END android-changed
+
    /**
     * Parse the given string using this object's choices. The method
     * does string comparisons to try to find an optimal match.
@@ -920,6 +951,35 @@ public:
     virtual void parse(const UnicodeString& text, 
                        Formattable& result, 
                        UErrorCode& status) const;
+
+    // BEGIN android-added
+    // A way to access parsing directly as workaround for missing
+    // BigNum parsing
+    /**
+     * Parses the given text as either a number or a currency amount.
+     * @param text the string to parse
+     * @param resultAssigned indicates whether or not the param result is assigned
+     * @param result output parameter for the result
+     *    ATTENTION: result is assigned ONLY for types long and int64
+     * @param parsePosition input-output position; on input, the
+     * position within text to match; must have 0 <= pos.getIndex() <
+     * text.length(); on output, the position after the last matched
+     * character. If the parse fails, the position in unchanged upon
+     * output.
+     * @param parseCurrency if true, a currency amount is parsed;
+     * otherwise a Number is parsed
+     * @param digits The DigitList that represents the result will be returned
+     * @param scale the scale with which the number in the DigitList 
+     * has to be scaled
+    *    ATTENTION: list and scale are only returned when result was not assigned
+     */
+    virtual void parse(const UnicodeString& text,
+                       bool& resultAssigned,
+                       Formattable& result,
+                       ParsePosition& parsePosition,
+                       UBool parseCurrency,
+                       DigitList& digits) const;
+    // END android-added
 
     /**
      * Parses text from the given string as a currency amount.  Unlike
@@ -1704,6 +1764,14 @@ private:
                              DigitList& digits,
                              UBool         isInteger) const;
 
+    // BEGIN android-removed
+    // UnicodeString& subformat(UnicodeString& appendTo,
+    //                          FieldPosition& fieldPosition,
+    //                          AttrBuffer attrBuffer,
+    //                          DigitList& digits,
+    //                          UBool         isInteger) const;
+    // END android-removed
+
     void parse(const UnicodeString& text,
                Formattable& result,
                ParsePosition& pos,
@@ -1753,6 +1821,9 @@ private:
     int32_t appendAffix(UnicodeString& buf, double number,
                         UBool isNegative, UBool isPrefix) const;
 
+    int32_t appendAffix(UnicodeString& buf, double number, AttrBuffer attrBuffer,
+                        UBool isNegative, UBool isPrefix) const;
+
     /**
      * Append an affix to the given UnicodeString, using quotes if
      * there are special characters.  Single quotes themselves must be
@@ -1768,6 +1839,12 @@ private:
     void expandAffix(const UnicodeString& pattern,
                      UnicodeString& affix,
                      double number,
+                     UBool doFormat) const;
+
+    void expandAffix(const UnicodeString& pattern,
+                     UnicodeString& affix,
+                     double number,
+                     AttrBuffer attrBuffer,
                      UBool doFormat) const;
 
     void expandAffixes();
@@ -1832,6 +1909,8 @@ private:
     int32_t                 fFormatWidth;
     EPadPosition            fPadPosition;
 
+    void addAttribute(AttrBuffer attrBuffer, char *fieldname, int begin, int end) const;
+
 protected:
 
     /**
@@ -1879,14 +1958,14 @@ inline UnicodeString&
 DecimalFormat::format(double number,
                       UnicodeString& appendTo) const {
     FieldPosition pos(0);
-    return format(number, appendTo, pos);
+    return format(number, appendTo, pos, NULL);
 }
 
 inline UnicodeString&
 DecimalFormat::format(int32_t number,
                       UnicodeString& appendTo) const {
     FieldPosition pos(0);
-    return format((int64_t)number, appendTo, pos);
+    return format((int64_t)number, appendTo, pos, NULL);
 }
 
 inline const UnicodeString &

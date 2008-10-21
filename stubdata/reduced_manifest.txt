@@ -1,0 +1,94 @@
+Choices made to generate the ICU data, using the "Data Library Customizer"
+at <http://apps.icu-project.org/datacustom/>.
+
+Encodings -- 469k
+
+* gsm-03.38-2000 (GSM encodings)
+* ibm-1089_P100-1995 (iso-8859-6)
+* ibm-1383_P110-1999 (euc-cn)
+* ibm-5012_P100-1999 (iso-8859-8)
+* ibm-5346_P100-1998 (windows-1250)
+* ibm-5347_P100-1998 (windows-1251)
+* ibm-5348_P100-1997 (windows-1252)
+* ibm-5349_P100-1998 (windows-1253)
+* ibm-5350_P100-1998 (windows-1254)
+* ibm-5354_P100-1998 (windows-1258)
+* ibm-864_X110-1999 (cp864)
+* ibm-874_P100-1995 (cp874)
+* ibm-878_P100-1996 (koi8-r)
+* ibm-897_P100-1995 (for iso-2022-jp)
+* ibm-9005_X110-2007 (iso-8859-7)
+* ibm-912_P100-1995 (iso-8859-2)
+* ibm-913_P100-2000 (iso-8859-3)
+* ibm-914_P100-1995 (iso-8859-4)
+* ibm-915_P100-1995 (iso-8859-5)
+* ibm-920_P100-1995 (iso-8859-9)
+* ibm-921_P100-1995 (iso-8859-13)
+* ibm-923_P100-1998 (iso-8859-15)
+* ibm-9447_P100-2002 (windows-1255)
+* ibm-9448_X100-2005 (windows-1256)
+* ibm-9449_P100-2002 (windows-1257)
+* ibm-954_P101-2007 (euc-jp)
+* iso-8859_10-1998 (iso-8859-10)
+* iso-8859_11-2001 (iso-8859-11)
+* iso-8859_14-1998 (iso-8859-14)
+* iso-8859_16-2001 (iso-8859-16)
+* macos-0_2-10.2 (macintosh)
+* windows-950-2000 (big5)
+* jisx-208 (for iso-2022-jp)
+
+Break Iterator -- 190k
+* all but "thai word break rules" and the two "japanese" files
+
+Collators -- 916k or 147k with modifications
+* root
+* ucadata.icu (bottom of the list; appears to be required)
+* all English variants
+* modifications: follow the directions in the reduced_coll directory to
+  replace some of these files
+
+Number Format -- 6k
+* root
+* all English variants
+
+Transliterators -- 0k
+* none
+
+Formatting, display names etc -- 208k
+* root
+* all English variants
+
+Miscellaneous -- 158k
+* pnames.icu (required for regex support)
+* supplementalData.res (required for calendar support)
+
+Base data; automatically generated for ICU4C -- 54k
+* charset alias table
+
+NOTE: Browser requires these encodings
+Big5
+cp864
+cp874
+EUC-CN
+EUC-JP
+ISO-2022-JP
+ISO-8859-8-I
+ISO-8859-8
+KOI8-R
+macintosh
+windows-1250
+windows-1251
+windows-1253
+windows-1254
+windows-1255
+windows-1256
+windows-1257
+windows-1258
+
+NOTE: Standard commands to deal with a new data file (saved on desktop)
+$ cd device/tools
+$ gcc -o ~/data-to-dot-s data-to-dot-s.c
+$ cd ../extlibs/icu4c-3.8/stubdata
+$ unzip ~/Desktop/icudt38l.zip
+$ mv icudt38l.dat icudt38_reduced.dat
+$ ~/data-to-dot-s icudt38_dat < icudt38_reduced.dat > icudt38_dat_reduced.S
