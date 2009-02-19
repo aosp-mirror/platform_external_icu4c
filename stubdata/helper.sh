@@ -1,24 +1,25 @@
 #!/bin/bash
+export TOOLS=$ANDROID_EABI_TOOLCHAIN/../../../icu-3.8
 
 echo "Compiling (possibly modified) source files into binaries..."
 cd icudt38l
-../../../../prebuilt/Linux/icu-3.8/gencnval convrtrs.txt
-../../../../prebuilt/Linux/icu-3.8/genrb res_index.txt
+$TOOLS/gencnval convrtrs.txt
+$TOOLS/genrb res_index.txt
 cd ..
 
 cd icudt38l/brkitr
-../../../../../prebuilt/Linux/icu-3.8/genrb res_index.txt
+$TOOLS/genrb res_index.txt
 cd ../..
 
 cd icudt38l/coll
-../../../../../prebuilt/Linux/icu-3.8/genrb res_index.txt
+$TOOLS/genrb res_index.txt
 cd ../..
 
 cd icudt38l/rbnf
-../../../../../prebuilt/Linux/icu-3.8/genrb res_index.txt
+$TOOLS/genrb res_index.txt
 cd ../..
 
 echo "Creating ICU data file..."
-../../../prebuilt/Linux/icu-3.8/icupkg -tl -s icudt38l -a icudt38l.txt new icudt38l.dat
+$TOOLS/icupkg -tl -s icudt38l -a icudt38l.txt new icudt38l.dat
 
 echo "Finished."
