@@ -90,7 +90,7 @@ DigitList::~DigitList()
 DigitList::DigitList(int capacity)
 {
     fBufferSize = capacity;
-    fDecimalDigits = (char *) malloc(capacity);
+    fDecimalDigits = (char *) calloc(capacity, 1);
     fDigits = fDecimalDigits + 1;   // skip the decimal
     clear();
 }
@@ -239,9 +239,11 @@ DigitList::getDouble() /*const*/
 
         *fDecimalDigits = gDecimal;
         *(fDigits+fCount) = 'e';    // add an e after the digits.
+        // BEGIN android-changed
         formatBase10(fDecimalAt,
                      fDigits + fCount + 1,  // skip the 'e'
-                     MAX_DEC_DIGITS - fCount - 3);  // skip the 'e' and '.'
+                     fBufferSize - fCount - 3);  // skip the 'e' and '.'
+        // END android-changed
         value = uprv_strtod(fDecimalDigits, &end);
     }
 
