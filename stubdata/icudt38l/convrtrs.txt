@@ -1161,6 +1161,9 @@ ibm-953_P100-2000 { UTR22* }    ibm-953 { IBM* } # Pure DBCS, Japanese EUC, G3 -
 ibm-955_P110-1997 { UTR22* }    ibm-955 { IBM* } # Pure DBCS, Japanese EUC, G0 - JIS X208-1978
 ibm-9577_P100-2001 { UTR22* }   ibm-9577 { IBM* } ibm-1385 { IBM } # ibm-9577 and ibm-1385 are identical DBCS tables.
 iso-8859_16-2001 { UTR22* }     ISO-8859-16 { IANA* } iso-ir-226 { IANA } ISO_8859-16:2001 { IANA } latin10 { IANA } l10 { IANA }
+# BEGIN android-added
+docomo-shift_jis-2007 { UTR22* } docomo-emoji # Based on Shift-JIS
+# END android-added
 
 # To be considered for listing at a later date for the data library customization tool
 #ibm-1159_P100-1999 { UTR22* }   ibm-1159 { IBM* } # SBCS T-Ch Host. Euro update of ibm-28709. This is used in combination with another CCSID mapping.

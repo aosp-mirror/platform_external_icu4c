@@ -30,7 +30,7 @@ LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
 ##
-icu_data_file := $(LOCAL_PATH)/icudt38l.dat
+icu_data_file := $(LOCAL_PATH)/icudt38l-default.dat
 icu_var_name := icudt38_dat
 ##
 
