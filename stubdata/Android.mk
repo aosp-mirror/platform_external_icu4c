@@ -30,7 +30,18 @@ LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
 ##
-icu_data_file := $(LOCAL_PATH)/$(if $(findstring ja_JP,$(PRODUCT_LOCALES)),icudt38l-us-japan.dat,icudt38l-us-euro.dat)
+
+# Japanese wins if required.
+# US-Euro is needed for IT or PL builds
+# Default is suitable for CS, DE, EN, ES, FR, NL
+
+config := \
+	$(if $(findstring ja_JP,$(PRODUCT_LOCALES)),us-japan,\
+		$(if $(findstring it,$(PRODUCT_LOCALES)),us-euro,\
+			$(if $(findstring pl,$(PRODUCT_LOCALES)),us-euro,\
+				default)))
+
+icu_data_file = $(addprefix $(LOCAL_PATH)/icudt38l-,$(addsuffix .dat,$(config)))
 icu_var_name := icudt38_dat
 ##
 
