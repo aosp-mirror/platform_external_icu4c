@@ -30,7 +30,7 @@ LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
 ##
-icu_data_file := $(LOCAL_PATH)/icudt38l-docomo.dat
+icu_data_file := $(LOCAL_PATH)/$(if $(findstring ja_JP,$(PRODUCT_LOCALES)),icudt38l-us-japan.dat,icudt38l-us-euro.dat)
 icu_var_name := icudt38_dat
 ##
 

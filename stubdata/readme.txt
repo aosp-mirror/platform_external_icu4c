@@ -74,29 +74,21 @@ Quick tour:
   before you run it.
 
 - Currently we have these data files and
-  configurations (each including the
-  previous one):
+  configurations:
   
-  - default ... what we had in Android 1.0
-  - euro ...... adds some Euro locales
-  - docomo .... adds Japanese locale and
-                Docomo Emoji, but leaves
-		out break iterators and
-		collators as well as
-		KDDI and Softbank Emoji.
-  - jp ........ adds full Japanese support
-                including KDDI and Softbank
-		Emoji
-  - cjk ....... adds CJK support
+  - default .... what we had in Android 1.0
+  - us-euro .... adds some Euro locales
+  - us-japan ... adds full Japanese locale
+                 and Docomo/KDDI/Softbank
+		 support
 
   Note that very large data files are likely
   to break the prelink map. So this needs to
   be modified as well.
   
-- The Android.mk makefile should pick up the
-  new data file during the next build. You
-  can select a different data file using a
-  variable in the Android.mk file. Note that
-  is it possible you have to touch something
-  in this directory for the build process to
-  notice the changed selection.
+- The correct data file is chosen by the
+  build depending on the PRODUCT_LOCALES
+  variable. Note that is it possible you have
+  to touch something in this directory for
+  the build process to notice the changed
+  selection.

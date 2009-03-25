@@ -52,9 +52,5 @@ res_index:table(nofallback) {
         
         pl {""}
         pl_PL {""}
-        
-        ru {""}
-        ru_RU {""}
-        ru_AU {""}
     }
 }
