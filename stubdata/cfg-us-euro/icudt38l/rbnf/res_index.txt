@@ -14,12 +14,8 @@ res_index:table(nofallback) {
 
         it {""}
         
-        ja {""}
-        
         nl {""}
         
         pl {""}
-        
-        ru {""}
     }
 }
