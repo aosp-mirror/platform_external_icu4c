@@ -27,10 +27,21 @@ of Shift_JIS used by KDDI, DoCoMo and SoftBank.
 
 == How the tables were created
 
-So far, we haven't obtained "official" conversion tables from the cell
-phone carriers.  However, we empirically know their clients support
-VDCs in MS932, like U2460 (CIRCLED DIGIT ONE), etc.  Hence we use
-MS932 as the base table for them.
+The most authoritative sources we have seen are:
+
+* NTT docomo:
+    <http://www.nttdocomo.co.jp/service/imode/make/content/pictograph/basic/index.html> (Basic)
+    <http://www.nttdocomo.co.jp/service/imode/make/content/pictograph/extention/index.html> (Extended)
+
+* KDDI/AU:
+    <http://www.au.kddi.com/ezfactory/tec/spec/pdf/typeD.pdf>
+
+* SoftBank: 
+    <http://creation.mb.softbank.jp/download.php?docid=103>
+    (requires free registration)
+
+We also have seen this informative, but unofficial, source:
+    <http://trialgoods.com/emoji/>
 
 kddi-jisx-208-2007.ucm is based on jisx-208.ucm in this directory.
 The original table's mappings to codes 0x75xx to 0x7Bxx are excluded
