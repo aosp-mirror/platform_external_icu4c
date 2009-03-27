@@ -749,18 +749,30 @@ windows-949-2000 { UTR22* }
                         ms949 { JAVA }
 
 windows-874-2000 { UTR22* }   # Thai (w/ euro update)
-                        TIS-620 { WINDOWS }
-                        windows-874 { JAVA* WINDOWS* }
+                        # BEGIN android-changed
+                        TIS-620 { IANA* WINDOWS JAVA }
+                        windows-874 { JAVA WINDOWS* }
+                        # END android-changed
                         MS874 { JAVA }
                         # iso-8859-11 { WINDOWS } # iso-8859-11 is similar to TIS-620. ibm-13162 is a closer match.
-
-ibm-874_P100-1995 { UTR22* }    # Thai PC (w/o euro update).
+                        # BEGIN android-added
                         ibm-874 { IBM* JAVA }
                         ibm-9066 { IBM }    # Yes ibm-874 == ibm-9066. ibm-1161 has the euro update.
                         cp874 { JAVA* }
-                        TIS-620 { IANA* JAVA }  # This is actually separate from ibm-874, which is similar to this table
                         tis620.2533 { JAVA }    # This is actually separate from ibm-874, which is similar to this table
                         eucTH               # eucTH is an unusual alias from Solaris.  eucTH has fewer mappings than TIS620
+                        # END android-added
+
+ibm-874_P100-1995 { UTR22* }    # Thai PC (w/o euro update).
+                        # BEGIN android-removed
+                        # This converter was merged with windows-874-2000
+                        # ibm-874 { IBM* JAVA }
+                        # ibm-9066 { IBM }    # Yes ibm-874 == ibm-9066. ibm-1161 has the euro update.
+                        # cp874 { JAVA* }
+                        # TIS-620 { IANA* JAVA }  # This is actually separate from ibm-874, which is similar to this table
+                        # tis620.2533 { JAVA }    # This is actually separate from ibm-874, which is similar to this table
+                        # eucTH               # eucTH is an unusual alias from Solaris.  eucTH has fewer mappings than TIS620
+                        # END android-removed
 
 ibm-1162_P100-1999 { UTR22* }   # Thai (w/ euro update)
                         ibm-1162 { IBM* }
@@ -1149,6 +1161,9 @@ ibm-953_P100-2000 { UTR22* }    ibm-953 { IBM* } # Pure DBCS, Japanese EUC, G3 -
 ibm-955_P110-1997 { UTR22* }    ibm-955 { IBM* } # Pure DBCS, Japanese EUC, G0 - JIS X208-1978
 ibm-9577_P100-2001 { UTR22* }   ibm-9577 { IBM* } ibm-1385 { IBM } # ibm-9577 and ibm-1385 are identical DBCS tables.
 iso-8859_16-2001 { UTR22* }     ISO-8859-16 { IANA* } iso-ir-226 { IANA } ISO_8859-16:2001 { IANA } latin10 { IANA } l10 { IANA }
+# BEGIN android-added
+docomo-shift_jis-2007 { UTR22* } docomo-emoji # Based on Shift-JIS
+# END android-added
 
 # To be considered for listing at a later date for the data library customization tool
 #ibm-1159_P100-1999 { UTR22* }   ibm-1159 { IBM* } # SBCS T-Ch Host. Euro update of ibm-28709. This is used in combination with another CCSID mapping.

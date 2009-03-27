@@ -464,15 +464,29 @@ _ISO2022Open(UConverter *cnv, const char *name, const char *locale,uint32_t opti
         }
         version = options & UCNV_OPTIONS_VERSION_MASK;
         myConverterData->version = version;
-        if(myLocale[0]=='j' && (myLocale[1]=='a'|| myLocale[1]=='p') &&
-            (myLocale[2]=='_' || myLocale[2]=='\0'))
+        
+        // BEGIN android-changed
+        /* The "jk" locale ID was made up for KDDI ISO-2022-JP. */
+        /* The "js" locale ID was made up for SoftBank ISO-2022-JP. */
+        if((myLocale[0]=='j' &&
+            (myLocale[1]=='a'|| myLocale[1]=='p' || myLocale[1]=='k' ||
+             myLocale[1]=='s') &&
+            (myLocale[2]=='_' || myLocale[2]=='\0')))
         {
             size_t len=0;
             /* open the required converters and cache them */
             if(jpCharsetMasks[version]&CSM(ISO8859_7)) {
                 myConverterData->myConverterArray[ISO8859_7]= ucnv_loadSharedData("ISO8859_7", NULL, errorCode);
             }
-            myConverterData->myConverterArray[JISX208]      = ucnv_loadSharedData("Shift-JIS", NULL, errorCode);
+            if (myLocale[1]=='k') {  /* Use KDDI's version. */
+                myConverterData->myConverterArray[JISX208]  = ucnv_loadSharedData("kddi-jisx-208-2007", NULL, errorCode);
+            } else if (myLocale[1]=='s') {  /* Use SoftBank's version. */
+                myConverterData->myConverterArray[JISX208]  = ucnv_loadSharedData("softbank-jisx-208-2007", NULL, errorCode);
+            } else {
+                myConverterData->myConverterArray[JISX208]  = ucnv_loadSharedData("Shift-JIS", NULL, errorCode);
+            }
+            // END android-changed
+            
             if(jpCharsetMasks[version]&CSM(JISX212)) {
                 myConverterData->myConverterArray[JISX212]  = ucnv_loadSharedData("jisx-212", NULL, errorCode);
             }

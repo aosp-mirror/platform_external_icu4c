@@ -27,18 +27,55 @@
 #
 # ######################################################################
 LOCAL_PATH:= $(call my-dir)
-include $(CLEAR_VARS)
+
+
+# This sets LOCAL_PRELINK_MODULE := false because the prelink map requires
+# a unique address for each shared library, but I think all the variants
+# of libicudata.so actually need to be mapped at the same address so they
+# can be interchangable.
 
 ##
-icu_data_file := $(LOCAL_PATH)/icudt38l.dat
+
+# Build configuration:
+#
+# Japanese wins if required.
+# US-Euro is needed for IT or PL builds
+# Default is suitable for CS, DE, EN, ES, FR, NL
+# US has only EN and ES
+
+
+config := $(word 1, \
+            $(if $(findstring ja,$(PRODUCT_LOCALES)),us-japan) \
+            $(if $(findstring it,$(PRODUCT_LOCALES)),us-euro) \
+            $(if $(findstring pl,$(PRODUCT_LOCALES)),us-euro) \
+            $(if $(findstring cs,$(PRODUCT_LOCALES)),default) \
+            $(if $(findstring de,$(PRODUCT_LOCALES)),default) \
+            $(if $(findstring fr,$(PRODUCT_LOCALES)),default) \
+            $(if $(findstring nl,$(PRODUCT_LOCALES)),default) \
+            us)
+
 icu_var_name := icudt38_dat
 ##
 
-LOCAL_MODULE := libicudata
-LOCAL_MODULE_CLASS := SHARED_LIBRARIES
-intermediates := $(call local-intermediates-dir)
 
-asm_file := $(intermediates)/icu_data.S
+###### Japanese
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := libicudata-jp
+LOCAL_MODULE_CLASS := SHARED_LIBRARIES
+LOCAL_PRELINK_MODULE := false
+
+ifeq ($(config),us-japan)
+	LOCAL_MODULE_STEM := libicudata
+	LOCAL_MODULE_TAGS := user
+else
+	LOCAL_MODULE_TAGS := optional
+endif
+
+intermediates := $(call local-intermediates-dir)
+icu_data_file := $(LOCAL_PATH)/icudt38l-us-japan.dat
+
+asm_file := $(intermediates)/icu_data_jp.S
 LOCAL_GENERATED_SOURCES += $(asm_file)
 $(asm_file): PRIVATE_VAR_NAME := $(icu_var_name)
 $(asm_file): $(icu_data_file) $(ICUDATA)
@@ -50,3 +87,94 @@ LOCAL_CFLAGS  += -D_REENTRANT -DPIC -fPIC
 LOCAL_CFLAGS  += -O3 -nodefaultlibs -nostdlib 
 
 include $(BUILD_SHARED_LIBRARY)
+
+###### Euro
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := libicudata-eu
+LOCAL_MODULE_CLASS := SHARED_LIBRARIES
+LOCAL_PRELINK_MODULE := false
+
+ifeq ($(config),us-euro)
+	LOCAL_MODULE_STEM := libicudata
+	LOCAL_MODULE_TAGS := user
+else
+	LOCAL_MODULE_TAGS := optional
+endif
+
+intermediates := $(call local-intermediates-dir)
+icu_data_file := $(LOCAL_PATH)/icudt38l-us-euro.dat
+
+asm_file := $(intermediates)/icu_data_eu.S
+LOCAL_GENERATED_SOURCES += $(asm_file)
+$(asm_file): PRIVATE_VAR_NAME := $(icu_var_name)
+$(asm_file): $(icu_data_file) $(ICUDATA)
+	@echo icudata: $@
+	$(hide) mkdir -p $(dir $@)
+	$(hide) $(ICUDATA) $(PRIVATE_VAR_NAME) < $< > $@
+
+LOCAL_CFLAGS  += -D_REENTRANT -DPIC -fPIC 
+LOCAL_CFLAGS  += -O3 -nodefaultlibs -nostdlib 
+
+include $(BUILD_SHARED_LIBRARY)
+
+###### Default
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := libicudata-default
+LOCAL_MODULE_CLASS := SHARED_LIBRARIES
+LOCAL_PRELINK_MODULE := false
+
+ifeq ($(config),default)
+	LOCAL_MODULE_STEM := libicudata
+	LOCAL_MODULE_TAGS := user
+else
+	LOCAL_MODULE_TAGS := optional
+endif
+
+intermediates := $(call local-intermediates-dir)
+icu_data_file := $(LOCAL_PATH)/icudt38l-default.dat
+
+asm_file := $(intermediates)/icu_data_default.S
+LOCAL_GENERATED_SOURCES += $(asm_file)
+$(asm_file): PRIVATE_VAR_NAME := $(icu_var_name)
+$(asm_file): $(icu_data_file) $(ICUDATA)
+	@echo icudata: $@
+	$(hide) mkdir -p $(dir $@)
+	$(hide) $(ICUDATA) $(PRIVATE_VAR_NAME) < $< > $@
+
+LOCAL_CFLAGS  += -D_REENTRANT -DPIC -fPIC 
+LOCAL_CFLAGS  += -O3 -nodefaultlibs -nostdlib 
+
+include $(BUILD_SHARED_LIBRARY)
+
+###### US
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := libicudata-us
+LOCAL_MODULE_CLASS := SHARED_LIBRARIES
+LOCAL_PRELINK_MODULE := false
+
+ifeq ($(config),us)
+	LOCAL_MODULE_STEM := libicudata
+	LOCAL_MODULE_TAGS := user
+else
+	LOCAL_MODULE_TAGS := optional
+endif
+
+intermediates := $(call local-intermediates-dir)
+icu_data_file := $(LOCAL_PATH)/icudt38l-us.dat
+
+asm_file := $(intermediates)/icu_data_us.S
+LOCAL_GENERATED_SOURCES += $(asm_file)
+$(asm_file): PRIVATE_VAR_NAME := $(icu_var_name)
+$(asm_file): $(icu_data_file) $(ICUDATA)
+	@echo icudata: $@
+	$(hide) mkdir -p $(dir $@)
+	$(hide) $(ICUDATA) $(PRIVATE_VAR_NAME) < $< > $@
+
+LOCAL_CFLAGS  += -D_REENTRANT -DPIC -fPIC 
+LOCAL_CFLAGS  += -O3 -nodefaultlibs -nostdlib 
+
+include $(BUILD_SHARED_LIBRARY)
+######
