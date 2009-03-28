@@ -41,8 +41,18 @@ LOCAL_PATH:= $(call my-dir)
 # Japanese wins if required.
 # US-Euro is needed for IT or PL builds
 # Default is suitable for CS, DE, EN, ES, FR, NL
+# US has only EN and ES
 
-config :=$(if $(findstring ja_JP,$(PRODUCT_LOCALES)),us-japan,$(if $(findstring it,$(PRODUCT_LOCALES)),us-euro,$(if $(findstring pl,$(PRODUCT_LOCALES)),us-euro,default)))
+
+config := $(or \
+            $(if $(findstring ja,$(PRODUCT_LOCALES)),us-japan), \
+            $(if $(findstring it,$(PRODUCT_LOCALES)),us-euro), \
+            $(if $(findstring pl,$(PRODUCT_LOCALES)),us-euro), \
+            $(if $(findstring cs,$(PRODUCT_LOCALES)),default), \
+            $(if $(findstring de,$(PRODUCT_LOCALES)),default), \
+            $(if $(findstring fr,$(PRODUCT_LOCALES)),default), \
+            $(if $(findstring nl,$(PRODUCT_LOCALES)),default), \
+            us)
 
 icu_var_name := icudt38_dat
 ##
@@ -138,4 +148,33 @@ LOCAL_CFLAGS  += -O3 -nodefaultlibs -nostdlib
 
 include $(BUILD_SHARED_LIBRARY)
 
+###### US
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := libicudata-us
+LOCAL_MODULE_CLASS := SHARED_LIBRARIES
+LOCAL_PRELINK_MODULE := false
+
+ifeq ($(config),us)
+	LOCAL_MODULE_STEM := libicudata
+	LOCAL_MODULE_TAGS := user
+else
+	LOCAL_MODULE_TAGS := optional
+endif
+
+intermediates := $(call local-intermediates-dir)
+icu_data_file := $(LOCAL_PATH)/icudt38l-us.dat
+
+asm_file := $(intermediates)/icu_data_us.S
+LOCAL_GENERATED_SOURCES += $(asm_file)
+$(asm_file): PRIVATE_VAR_NAME := $(icu_var_name)
+$(asm_file): $(icu_data_file) $(ICUDATA)
+	@echo icudata: $@
+	$(hide) mkdir -p $(dir $@)
+	$(hide) $(ICUDATA) $(PRIVATE_VAR_NAME) < $< > $@
+
+LOCAL_CFLAGS  += -D_REENTRANT -DPIC -fPIC 
+LOCAL_CFLAGS  += -O3 -nodefaultlibs -nostdlib 
+
+include $(BUILD_SHARED_LIBRARY)
 ######
