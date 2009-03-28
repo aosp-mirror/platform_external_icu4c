@@ -44,14 +44,14 @@ LOCAL_PATH:= $(call my-dir)
 # US has only EN and ES
 
 
-config := $(or \
-            $(if $(findstring ja,$(PRODUCT_LOCALES)),us-japan), \
-            $(if $(findstring it,$(PRODUCT_LOCALES)),us-euro), \
-            $(if $(findstring pl,$(PRODUCT_LOCALES)),us-euro), \
-            $(if $(findstring cs,$(PRODUCT_LOCALES)),default), \
-            $(if $(findstring de,$(PRODUCT_LOCALES)),default), \
-            $(if $(findstring fr,$(PRODUCT_LOCALES)),default), \
-            $(if $(findstring nl,$(PRODUCT_LOCALES)),default), \
+config := $(word 1, \
+            $(if $(findstring ja,$(PRODUCT_LOCALES)),us-japan) \
+            $(if $(findstring it,$(PRODUCT_LOCALES)),us-euro) \
+            $(if $(findstring pl,$(PRODUCT_LOCALES)),us-euro) \
+            $(if $(findstring cs,$(PRODUCT_LOCALES)),default) \
+            $(if $(findstring de,$(PRODUCT_LOCALES)),default) \
+            $(if $(findstring fr,$(PRODUCT_LOCALES)),default) \
+            $(if $(findstring nl,$(PRODUCT_LOCALES)),default) \
             us)
 
 icu_var_name := icudt38_dat
