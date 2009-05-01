@@ -2249,6 +2249,15 @@ en{
         "Antarctica:DumontDUrville"{
             ec{"Dumont-d'Urville"}
         }
+        "Asia:Taipei"{
+            ec{"Taipei"}
+            ld{"Taipei Daylight Time"}
+            lg{"Taipei Time"}
+            ls{"Taipei Standard Time"}
+            sd{"Taipei"}
+            sg{"Taipei"}
+            ss{"Taipei"}
+        }
         "Etc:Unknown"{
             ec{"Unknown"}
         }
