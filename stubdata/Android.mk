@@ -39,12 +39,33 @@ LOCAL_PATH:= $(call my-dir)
 # Build configuration:
 #
 # Japanese wins if required.
+# "Large" includes most other languages.
 # US-Euro is needed for IT or PL builds
 # Default is suitable for CS, DE, EN, ES, FR, NL
 # US has only EN and ES
 
 
 config := $(word 1, \
+            $(if $(findstring ar,$(PRODUCT_LOCALES)),large) \
+            $(if $(findstring da,$(PRODUCT_LOCALES)),large) \
+            $(if $(findstring el,$(PRODUCT_LOCALES)),large) \
+            $(if $(findstring fi,$(PRODUCT_LOCALES)),large) \
+            $(if $(findstring he,$(PRODUCT_LOCALES)),large) \
+            $(if $(findstring hr,$(PRODUCT_LOCALES)),large) \
+            $(if $(findstring hu,$(PRODUCT_LOCALES)),large) \
+            $(if $(findstring id,$(PRODUCT_LOCALES)),large) \
+            $(if $(findstring ko,$(PRODUCT_LOCALES)),large) \
+            $(if $(findstring nb,$(PRODUCT_LOCALES)),large) \
+            $(if $(findstring pt,$(PRODUCT_LOCALES)),large) \
+            $(if $(findstring ro,$(PRODUCT_LOCALES)),large) \
+            $(if $(findstring ru,$(PRODUCT_LOCALES)),large) \
+            $(if $(findstring sk,$(PRODUCT_LOCALES)),large) \
+            $(if $(findstring sr,$(PRODUCT_LOCALES)),large) \
+            $(if $(findstring sv,$(PRODUCT_LOCALES)),large) \
+            $(if $(findstring th,$(PRODUCT_LOCALES)),large) \
+            $(if $(findstring tr,$(PRODUCT_LOCALES)),large) \
+            $(if $(findstring uk,$(PRODUCT_LOCALES)),large) \
+            $(if $(findstring zh,$(PRODUCT_LOCALES)),large) \
             $(if $(findstring ja,$(PRODUCT_LOCALES)),us-japan) \
             $(if $(findstring it,$(PRODUCT_LOCALES)),us-euro) \
             $(if $(findstring pl,$(PRODUCT_LOCALES)),us-euro) \
@@ -76,6 +97,36 @@ intermediates := $(call local-intermediates-dir)
 icu_data_file := $(LOCAL_PATH)/icudt38l-us-japan.dat
 
 asm_file := $(intermediates)/icu_data_jp.S
+LOCAL_GENERATED_SOURCES += $(asm_file)
+$(asm_file): PRIVATE_VAR_NAME := $(icu_var_name)
+$(asm_file): $(icu_data_file) $(ICUDATA)
+	@echo icudata: $@
+	$(hide) mkdir -p $(dir $@)
+	$(hide) $(ICUDATA) $(PRIVATE_VAR_NAME) < $< > $@
+
+LOCAL_CFLAGS  += -D_REENTRANT -DPIC -fPIC 
+LOCAL_CFLAGS  += -O3 -nodefaultlibs -nostdlib 
+
+include $(BUILD_SHARED_LIBRARY)
+
+###### Large
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := libicudata-large
+LOCAL_MODULE_CLASS := SHARED_LIBRARIES
+LOCAL_PRELINK_MODULE := false
+
+ifeq ($(config),large)
+	LOCAL_MODULE_STEM := libicudata
+	LOCAL_MODULE_TAGS := user
+else
+	LOCAL_MODULE_TAGS := optional
+endif
+
+intermediates := $(call local-intermediates-dir)
+icu_data_file := $(LOCAL_PATH)/icudt38l-large.dat
+
+asm_file := $(intermediates)/icu_data_large.S
 LOCAL_GENERATED_SOURCES += $(asm_file)
 $(asm_file): PRIVATE_VAR_NAME := $(icu_var_name)
 $(asm_file): $(icu_data_file) $(ICUDATA)
