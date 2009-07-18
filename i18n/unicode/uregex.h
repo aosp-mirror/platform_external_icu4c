@@ -73,7 +73,17 @@ typedef enum URegexpFlag{
       *     http://unicode.org/reports/tr29/#Word_Boundaries
       *     @stable ICU 2.8
       */
-    UREGEX_UWORD            = 256
+    UREGEX_UWORD            = 256,
+
+     /**  Error on Unrecognized backslash escapes.
+       *     If set, fail with an error on patterns that contain
+       *     backslash-escaped ASCII letters without a known specail
+       *     meaning.  If this flag is not set, these
+       *     escaped letters represent themselves.
+       *     @draft ICU 4.0
+       */
+     UREGEX_ERROR_ON_UNKNOWN_ESCAPES = 512
+
 }  URegexpFlag;
 
 /**

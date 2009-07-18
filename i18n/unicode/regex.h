@@ -16,7 +16,7 @@
 #ifndef REGEX_H
 #define REGEX_H
 
-//#define REGEX_DEBUG
+// #define REGEX_DEBUG
 
 /**
  * \file
@@ -36,7 +36,7 @@
  *  operations, for search and replace operations, and for obtaining detailed
  *  information about bounds of a match. </p>
  *
- * <p>Note that by constructing <code>RegexMatcher</code> objects directly from regular 
+ * <p>Note that by constructing <code>RegexMatcher</code> objects directly from regular
  * expression pattern strings application code can be simplified and the explicit
  * need for <code>RegexPattern</code> objects can usually be eliminated.
  * </p>
@@ -480,7 +480,7 @@ public:
       * critical that the string not be altered or deleted before use by the regular
       * expression operations is complete.
       *
-      *  @param regexp The Regular Expression to be compiled.  
+      *  @param regexp The Regular Expression to be compiled.
       *  @param input  The string to match.  The matcher retains a reference to the
       *                caller's string; mo copy is made.
       *  @param flags  Regular expression options, such as case insensitive matching.
@@ -709,13 +709,13 @@ public:
    /**
     *   Resets this matcher with a new input string.  This allows instances of RegexMatcher
     *     to be reused, which is more efficient than creating a new RegexMatcher for
-    *     each input string to be processed.  
+    *     each input string to be processed.
     *   @param input The new string on which subsequent pattern matches will operate.
     *                The matcher retains a reference to the callers string, and operates
     *                directly on that.  Ownership of the string remains with the caller.
     *                Because no copy of the string is made, it is essential that the
     *                caller not delete the string until after regexp operations on it
-    *                are done.  
+    *                are done.
     *   @return this RegexMatcher.
     *   @stable ICU 2.4
     */

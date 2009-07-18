@@ -2,7 +2,7 @@ LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := \
-	icudt38_dat_reduced.S
+	icudt38_dat_smaller.S
 #	icudt38_dat_full.S
 
 LOCAL_C_INCLUDES += \

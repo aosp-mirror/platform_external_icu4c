@@ -177,9 +177,9 @@ UBool RegexTest::doRegexLMTest(const char *pat, const char *text, UBool looking,
 
 //---------------------------------------------------------------------------
 //
-//    regex_find(pattern, inputString, lineNumber)
+//    regex_find(pattern, flags, inputString, lineNumber)
 //
-//         function to simplify writing tests regex tests.
+//         function to simplify writing regex tests.
 //
 //          The input text is unescaped.  The pattern is not.
 //          The input text is marked with the expected match positions
@@ -242,6 +242,10 @@ void RegexTest::regex_find(const UnicodeString &pattern,
     if (flags.indexOf((UChar)0x6d) >= 0)  { // 'm' flag
         bflags |= UREGEX_MULTILINE;
     }
+    
+    if (flags.indexOf((UChar)0x65) >= 0) { // 'e' flag
+        bflags |= UREGEX_ERROR_ON_UNKNOWN_ESCAPES;
+    }
 
 
     callerPattern = RegexPattern::compile(pattern, bflags, pe, status);
@@ -253,13 +257,28 @@ void RegexTest::regex_find(const UnicodeString &pattern,
             goto cleanupAndReturn;
         }
         #endif
-        errln("Line %d: error %s compiling pattern.", line, u_errorName(status));
+        if (flags.indexOf((UChar)0x45) >= 0) {  //  flags contain 'E'
+            // Expected pattern compilation error.
+            if (flags.indexOf((UChar)0x64) >= 0) {   // flags contain 'd'
+                logln("Pattern Compile returns \"%s\"", u_errorName(status));
+            }
+            goto cleanupAndReturn;
+        } else {
+            // Unexpected pattern compilation error.
+            errln("Line %d: error %s compiling pattern.", line, u_errorName(status));
+            goto cleanupAndReturn;
+        }
+    }
+
+    if (flags.indexOf((UChar)0x64) >= 0) {  // 'd' flag
+        RegexPatternDump(callerPattern);
+    }
+
+    if (flags.indexOf((UChar)0x45) >= 0) {  // 'E' flag
+        errln("Expected, but did not get, a pattern compilation error.");
         goto cleanupAndReturn;
     }
 
-    if (flags.indexOf((UChar)'d') >= 0) {
-        RegexPatternDump(callerPattern);
-    }
 
     //
     // Number of times find() should be called on the test string, default to 1
@@ -1470,7 +1489,7 @@ void RegexTest::Extended() {
     }
 
     int32_t    len;
-    UChar *testData = ReadAndConvertFile(srcPath, len, status);
+    UChar *testData = ReadAndConvertFile(srcPath, len, "utf-8", status);
     if (U_FAILURE(status)) {
         return; /* something went wrong, error already output */
     }
@@ -1482,7 +1501,7 @@ void RegexTest::Extended() {
 
     RegexMatcher    quotedStuffMat("\\s*([\\'\\\"/])(.*?)\\1", 0, status);
     RegexMatcher    commentMat    ("\\s*(#.*)?$", 0, status);
-    RegexMatcher    flagsMat      ("\\s*([ixsmdtGv2-9]*)([:letter:]*)", 0, status);
+    RegexMatcher    flagsMat      ("\\s*([ixsmdteEGv2-9]*)([:letter:]*)", 0, status);
 
     RegexMatcher    lineMat("(.*?)\\r?\\n", testString, 0, status);
     UnicodeString   testPattern;   // The pattern for test from the test file.
@@ -1633,10 +1652,6 @@ void RegexTest::Errors() {
     REGEX_ERR("abc{5,687865858}", 1, 16, U_REGEX_NUMBER_TOO_BIG);          // Overflows regex binary format
     REGEX_ERR("abc{687865858,687865859}", 1, 24, U_REGEX_NUMBER_TOO_BIG);
 
-
-    // UnicodeSet containing a string
-    REGEX_ERR("abc[{def}]xyz", 1, 10, U_REGEX_SET_CONTAINS_STRING);
-
     // Ticket 5389
     REGEX_ERR("*c", 1, 1, U_REGEX_RULE_SYNTAX);
 
@@ -1649,7 +1664,8 @@ void RegexTest::Errors() {
 //    in one big UChar * buffer, which the caller must delete.
 //
 //--------------------------------------------------------------------------------
-UChar *RegexTest::ReadAndConvertFile(const char *fileName, int32_t &ulen, UErrorCode &status) {
+UChar *RegexTest::ReadAndConvertFile(const char *fileName, int32_t &ulen,
+                                     const char *defEncoding, UErrorCode &status) {
     UChar       *retPtr  = NULL;
     char        *fileBuf = NULL;
     UConverter* conv     = NULL;
@@ -1698,6 +1714,11 @@ UChar *RegexTest::ReadAndConvertFile(const char *fileName, int32_t &ulen, UError
     if(encoding!=NULL ){
         fileBufC  += signatureLength;
         fileSize  -= signatureLength;
+    } else {
+        encoding = defEncoding;
+        if (strcmp(encoding, "utf-8") == 0) {
+            errln("file %s is missing its BOM", fileName);
+        }
     }
 
     //
@@ -1804,7 +1825,7 @@ void RegexTest::PerlTests() {
     }
 
     int32_t    len;
-    UChar *testData = ReadAndConvertFile(srcPath, len, status);
+    UChar *testData = ReadAndConvertFile(srcPath, len, "iso-8859-1", status);
     if (U_FAILURE(status)) {
         return; /* something went wrong, error already output */
     }
@@ -1979,6 +2000,14 @@ void RegexTest::PerlTests() {
         if (expected != found) {
             errln("line %d: Expected %smatch, got %smatch",
                 lineNum, expected?"":"no ", found?"":"no " );
+            continue;
+        }
+        
+        // Don't try to check expected results if there is no match.
+        //   (Some have stuff in the expected fields)
+        if (!found) {
+            delete testMat;
+            delete testPat;
             continue;
         }
 

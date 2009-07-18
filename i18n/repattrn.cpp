@@ -1,5 +1,5 @@
 //
-//  file:  repattrn.cpp    
+//  file:  repattrn.cpp
 //
 /*
 ***************************************************************************
@@ -46,7 +46,7 @@ RegexPattern::RegexPattern() {
 //
 //--------------------------------------------------------------------------
 RegexPattern::RegexPattern(const RegexPattern &other) :  UObject(other) {
-    init(); 
+    init();
     *this = other;
 }
 
@@ -78,9 +78,9 @@ RegexPattern &RegexPattern::operator = (const RegexPattern &other) {
     fFrameSize        = other.fFrameSize;
     fDataSize         = other.fDataSize;
     fMaxCaptureDigits = other.fMaxCaptureDigits;
-    fStaticSets       = other.fStaticSets; 
+    fStaticSets       = other.fStaticSets;
     fStaticSets8      = other.fStaticSets8;
-    
+
     fStartType        = other.fStartType;
     fInitialStringIdx = other.fInitialStringIdx;
     fInitialStringLen = other.fInitialStringLen;
@@ -92,9 +92,9 @@ RegexPattern &RegexPattern::operator = (const RegexPattern &other) {
     fCompiledPat->assign(*other.fCompiledPat, fDeferredStatus);
     fGroupMap->assign(*other.fGroupMap, fDeferredStatus);
 
-    //  Copy the Unicode Sets.  
+    //  Copy the Unicode Sets.
     //    Could be made more efficient if the sets were reference counted and shared,
-    //    but I doubt that pattern copying will be particularly common. 
+    //    but I doubt that pattern copying will be particularly common.
     //    Note:  init() already added an empty element zero to fSets
     int32_t i;
     int32_t  numSets = other.fSets->size();
@@ -135,7 +135,7 @@ void RegexPattern::init() {
     fFrameSize        = 0;
     fDataSize         = 0;
     fGroupMap         = NULL;
-    fMaxCaptureDigits = 1;  
+    fMaxCaptureDigits = 1;
     fStaticSets       = NULL;
     fStaticSets8      = NULL;
     fStartType        = START_NO_INFO;
@@ -144,7 +144,7 @@ void RegexPattern::init() {
     fInitialChars     = NULL;
     fInitialChar      = 0;
     fInitialChars8    = NULL;
-    
+
     fCompiledPat      = new UVector32(fDeferredStatus);
     fGroupMap         = new UVector32(fDeferredStatus);
     fSets             = new UVector(fDeferredStatus);
@@ -166,7 +166,7 @@ void RegexPattern::init() {
 
 //--------------------------------------------------------------------------
 //
-//   zap            Delete everything owned by this RegexPattern. 
+//   zap            Delete everything owned by this RegexPattern.
 //
 //--------------------------------------------------------------------------
 void RegexPattern::zap() {
@@ -208,7 +208,7 @@ RegexPattern::~RegexPattern() {
 //   Clone
 //
 //--------------------------------------------------------------------------
-RegexPattern  *RegexPattern::clone() const { 
+RegexPattern  *RegexPattern::clone() const {
     RegexPattern  *copy = new RegexPattern(*this);
     return copy;
 }
@@ -229,7 +229,7 @@ UBool   RegexPattern::operator ==(const RegexPattern &other) const {
 
 //---------------------------------------------------------------------
 //
-//   compile        
+//   compile
 //
 //---------------------------------------------------------------------
 RegexPattern * U_EXPORT2
@@ -244,7 +244,7 @@ RegexPattern::compile(const UnicodeString &regex,
     }
 
     const uint32_t allFlags = UREGEX_CANON_EQ | UREGEX_CASE_INSENSITIVE | UREGEX_COMMENTS |
-                              UREGEX_DOTALL   | UREGEX_MULTILINE | UREGEX_UWORD;
+            UREGEX_DOTALL   | UREGEX_MULTILINE | UREGEX_UWORD | UREGEX_ERROR_ON_UNKNOWN_ESCAPES;
 
     if ((flags & ~allFlags) != 0) {
         status = U_REGEX_INVALID_FLAG;
@@ -269,19 +269,24 @@ RegexPattern::compile(const UnicodeString &regex,
 
     RegexCompile     compiler(This, status);
     compiler.compile(regex, pe, status);
+    
+    if (U_FAILURE(status)) {
+        delete This;
+        This = NULL;
+    }
 
     return This;
 }
-    
+
 //
 //   compile with default flags.
 //
 RegexPattern * U_EXPORT2
 RegexPattern::compile(const UnicodeString &regex,
                       UParseError         &pe,
-                      UErrorCode          &err) 
+                      UErrorCode          &err)
 {
-    return compile(regex, 0, pe, err); 
+    return compile(regex, 0, pe, err);
 }
 
 
@@ -292,10 +297,10 @@ RegexPattern::compile(const UnicodeString &regex,
 RegexPattern * U_EXPORT2
 RegexPattern::compile( const UnicodeString &regex,
         uint32_t             flags,
-        UErrorCode           &err) 
+        UErrorCode           &err)
 {
     UParseError pe;
-    return compile(regex, flags, pe, err); 
+    return compile(regex, flags, pe, err);
 }
 
 
@@ -326,7 +331,7 @@ RegexMatcher *RegexPattern::matcher(const UnicodeString &input,
 
 #if 0
 RegexMatcher *RegexPattern::matcher(const UChar * /*input*/,
-                                    UErrorCode          &status)  const 
+                                    UErrorCode          &status)  const
 {
     /* This should never get called. The API with UnicodeString should be called instead. */
     if (U_SUCCESS(status)) {
@@ -352,7 +357,7 @@ RegexMatcher *RegexPattern::matcher(UErrorCode &status)  const {
         return NULL;
     }
 
-    retMatcher = new RegexMatcher(this); 
+    retMatcher = new RegexMatcher(this);
     if (retMatcher == NULL) {
         status = U_MEMORY_ALLOCATION_ERROR;
         return NULL;
@@ -440,7 +445,7 @@ void   RegexPattern::dumpOp(int32_t index) const {
     if (pinnedType >= sizeof(opNames)/sizeof(char *)) {
         pinnedType = 0;
     }
-    
+
     REGEX_DUMP_DEBUG_PRINTF(("%4d   %08x    %-15s  ", index, op, opNames[pinnedType]));
     switch (type) {
     case URX_NOP:
@@ -458,7 +463,7 @@ void   RegexPattern::dumpOp(int32_t index) const {
     case URX_CARET_M:
         // Types with no operand field of interest.
         break;
-        
+
     case URX_RESERVED_OP:
     case URX_START_CAPTURE:
     case URX_END_CAPTURE:
@@ -494,12 +499,12 @@ void   RegexPattern::dumpOp(int32_t index) const {
         // types with an integer operand field.
         REGEX_DUMP_DEBUG_PRINTF(("%d", val));
         break;
-        
+
     case URX_ONECHAR:
     case URX_ONECHAR_I:
         REGEX_DUMP_DEBUG_PRINTF(("%c", val<256?val:'?'));
         break;
-        
+
     case URX_STRING:
     case URX_STRING_I:
         {
@@ -543,7 +548,7 @@ void   RegexPattern::dumpOp(int32_t index) const {
         }
         break;
 
-        
+
     default:
         REGEX_DUMP_DEBUG_PRINTF(("??????"));
         break;
@@ -554,7 +559,7 @@ void   RegexPattern::dumpOp(int32_t index) const {
 
 
 #if defined(REGEX_DEBUG)
-U_CAPI void  U_EXPORT2 
+U_CAPI void  U_EXPORT2
 RegexPatternDump(const RegexPattern *This) {
     int      index;
     int      i;
@@ -565,7 +570,7 @@ RegexPatternDump(const RegexPattern *This) {
     }
     REGEX_DUMP_DEBUG_PRINTF(("\n"));
     REGEX_DUMP_DEBUG_PRINTF(("   Min Match Length:  %d\n", This->fMinMatchLen));
-    REGEX_DUMP_DEBUG_PRINTF(("   Match Start Type:  %s\n", START_OF_MATCH_STR(This->fStartType)));   
+    REGEX_DUMP_DEBUG_PRINTF(("   Match Start Type:  %s\n", START_OF_MATCH_STR(This->fStartType)));
     if (This->fStartType == START_STRING) {
         REGEX_DUMP_DEBUG_PRINTF(("    Initial match sting: \""));
         for (i=This->fInitialStringIdx; i<This->fInitialStringIdx+This->fInitialStringLen; i++) {
@@ -580,7 +585,7 @@ RegexPatternDump(const RegexPattern *This) {
         REGEX_DUMP_DEBUG_PRINTF(("     Match First Chars : "));
         for (i=0; i<numSetChars; i++) {
             UChar32 c = This->fInitialChars->charAt(i);
-            if (0x20<c && c <0x7e) { 
+            if (0x20<c && c <0x7e) {
                 REGEX_DUMP_DEBUG_PRINTF(("%c ", c));
             } else {
                 REGEX_DUMP_DEBUG_PRINTF(("%#x ", c));

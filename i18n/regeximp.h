@@ -1,6 +1,6 @@
-// 
-//   Copyright (C) 2002-2005 International Business Machines Corporation 
-//   and others. All rights reserved.  
+//
+//   Copyright (C) 2002-2005 International Business Machines Corporation
+//   and others. All rights reserved.
 //
 //   file:  regeximp.h
 //
@@ -66,16 +66,16 @@ enum {
      URX_NOP           = 7,
      URX_START_CAPTURE = 8,    // Value field is capture group number.
      URX_END_CAPTURE   = 9,    // Value field is capture group number
-     URX_STATIC_SETREF = 10,   // Value field is index of set in array of sets.   
+     URX_STATIC_SETREF = 10,   // Value field is index of set in array of sets.
      URX_SETREF        = 11,   // Value field is index of set in array of sets.
-     URX_DOTANY        = 12, 
+     URX_DOTANY        = 12,
      URX_JMP           = 13,   // Value field is destination position in
                                                     //   the pattern.
      URX_FAIL          = 14,   // Stop match operation,  No match.
 
      URX_JMP_SAV       = 15,   // Operand:  JMP destination location
      URX_BACKSLASH_B   = 16,   // Value field:  0:  \b    1:  \B
-     URX_BACKSLASH_G   = 17, 
+     URX_BACKSLASH_G   = 17,
      URX_JMP_SAV_X     = 18,   // Conditional JMP_SAV,
                                //    Used in (x)+, breaks loop on zero length match.
                                //    Operand:  Jmp destination.
@@ -91,7 +91,7 @@ enum {
      URX_CTR_INIT_NG   = 26,   //   3 kinds, normal, non-greedy, and possessive.
                                //   These are 4 word opcodes.  See description.
                                //    First Operand:  Data loc of counter variable
-                               //    2nd   Operand:  Pat loc of the URX_CTR_LOOPx 
+                               //    2nd   Operand:  Pat loc of the URX_CTR_LOOPx
                                //                    at the end of the loop.
                                //    3rd   Operand:  Minimum count.
                                //    4th   Operand:  Max count, -1 for unbounded.
@@ -118,7 +118,7 @@ enum {
                                //   within the matcher stack frame.
      URX_JMPX          = 36,  // Conditional JMP.
                                //   First Operand:  JMP target location.
-                               //   Second Operand:  Data location containing an 
+                               //   Second Operand:  Data location containing an
                                //     input position.  If current input position ==
                                //     saved input position, FAIL rather than taking
                                //     the JMP
@@ -157,7 +157,7 @@ enum {
      URX_LBN_END       = 48,   // Negative LookBehind end
                                //   Parameter is the data location.
                                //   Check that the match ended at the right spot.
-     URX_STAT_SETREF_N = 49,   // Reference to a prebuilt set (e.g. \w), negated  
+     URX_STAT_SETREF_N = 49,   // Reference to a prebuilt set (e.g. \w), negated
                                //   Operand is index of set in array of sets.
      URX_LOOP_SR_I     = 50,   // Init a [set]* loop.
                                //   Operand is the sets index in array of user sets.
@@ -171,7 +171,7 @@ enum {
      URX_BACKSLASH_BU  = 53    // \b or \B in UREGEX_UWORD mode, using Unicode style
                                //   word boundaries.
 
-};           
+};
 
 // Keep this list of opcode names in sync with the above enum
 //   Used for debug printing only.
@@ -236,14 +236,14 @@ enum {
 //  Convenience macros for assembling and disassembling a compiled operation.
 //
 #define URX_BUILD(type, val) (int32_t)((type << 24) | (val))
-#define URX_TYPE(x)          ((uint32_t)(x) >> 24) 
+#define URX_TYPE(x)          ((uint32_t)(x) >> 24)
 #define URX_VAL(x)           ((x) & 0xffffff)
 
-                
+
 //
 //  Access to Unicode Sets composite character properties
 //     The sets are accessed by the match engine for things like \w (word boundary)
-//     
+//
 enum {
      URX_ISWORD_SET  = 1,
      URX_ISALNUM_SET = 2,
@@ -297,7 +297,7 @@ enum StartOfMatch {
                                (v)==START_LINE?    "START_LINE"    : \
                                (v)==START_STRING?  "START_STRING"  : \
                                                    "ILLEGAL")
-    
+
 
 //
 //  8 bit set, to fast-path latin-1 set membership tests.
