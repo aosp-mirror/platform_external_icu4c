@@ -17,6 +17,6 @@ LOCAL_C_INCLUDES += \
 	$(LOCAL_PATH)/../toolutil \
 	$(LOCAL_PATH)/../../common
 
-LOCAL_TARGET := genctd
+LOCAL_MODULE := genctd
 
 include $(BUILD_HOST_EXECUTABLE)

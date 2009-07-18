@@ -60,6 +60,6 @@ endif
 LOCAL_SHARED_LIBRARIES +=  libicuuc libicudata
 LOCAL_LDLIBS           += -lpthread -lm
 
-LOCAL_TARGET := libicui18n
+LOCAL_MODULE := libicui18n
 
 include $(BUILD_SHARED_LIBRARY)

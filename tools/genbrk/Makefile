@@ -17,7 +17,7 @@ endif
 
 LOCAL_CFLAGS :=
 
-LOCAL_TARGET := genbrk
+LOCAL_MODULE := genbrk
 
 include $(BUILD_HOST_EXECUTABLE)
 

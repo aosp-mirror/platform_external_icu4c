@@ -17,7 +17,7 @@ endif
 
 LOCAL_CFLAGS :=
 
-LOCAL_TARGET := icupkg
+LOCAL_MODULE := icupkg
 
 # the host command line tool
 

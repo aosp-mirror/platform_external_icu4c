@@ -18,7 +18,7 @@ endif
 
 LOCAL_CFLAGS :=
 
-LOCAL_TARGET := makeconv
+LOCAL_MODULE := makeconv
 
 
 # the host command line tool

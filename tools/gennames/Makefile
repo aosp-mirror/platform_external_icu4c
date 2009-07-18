@@ -17,7 +17,7 @@ endif
 
 LOCAL_CFLAGS :=
 
-LOCAL_TARGET := gennames
+LOCAL_MODULE := gennames
 
 include $(BUILD_HOST_EXECUTABLE)
 

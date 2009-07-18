@@ -31,7 +31,7 @@ endif
 
 ifneq ($(ENABLE_SHARED),)
 SO_TARGET = $(LIBDIR)/$(LIBICU)$(TARGET_STUBNAME)$(ICULIBSUFFIX).$(SO)
-ALL_SO_TARGETS = $(SO_TARGET) $(MIDDLE_SO_TARGET) $(FINAL_SO_TARGET) $(SHARED_OBJECT)
+ALL_SO_MODULES = $(SO_TARGET) $(MIDDLE_SO_TARGET) $(FINAL_SO_TARGET) $(SHARED_OBJECT)
 
 ifeq ($(ENABLE_SO_VERSION_DATA),1)
 SO_VERSION_DATA = layout.res
@@ -44,7 +44,7 @@ endif   # OS390BATCH
 
 endif   # ENABLE_SHARED
 
-ALL_TARGETS = $(TARGET) $(ALL_SO_TARGETS) $(BATCH_TARGET)
+ALL_MODULES = $(TARGET) $(ALL_SO_MODULES) $(BATCH_TARGET)
 
 DYNAMICCPPFLAGS = $(SHAREDLIBCPPFLAGS)
 DYNAMICCFLAGS = $(SHAREDLIBCFLAGS)
@@ -160,7 +160,7 @@ distclean : distclean-local
 dist: dist-local
 check: all check-local
 
-all-local: $(ALL_TARGETS)
+all-local: $(ALL_MODULES)
 
 install-local: install-headers install-library
 
@@ -199,7 +199,7 @@ dist-local:
 
 clean-local:
 	test -z "$(CLEANFILES)" || $(RMV) $(CLEANFILES)
-	$(RMV) $(OBJECTS) $(STATIC_OBJECTS) $(ALL_TARGETS) $(SO_VERSION_DATA)
+	$(RMV) $(OBJECTS) $(STATIC_OBJECTS) $(ALL_MODULES) $(SO_VERSION_DATA)
 
 distclean-local: clean-local
 	$(RMV) Makefile

@@ -18,7 +18,7 @@ endif
 
 LOCAL_CFLAGS :=
 
-LOCAL_TARGET := genbidi
+LOCAL_MODULE := genbidi
 
 # the host command line tool
 

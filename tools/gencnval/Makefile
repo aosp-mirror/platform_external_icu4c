@@ -17,7 +17,7 @@ endif
 
 LOCAL_CFLAGS :=
 
-LOCAL_TARGET := gencnval
+LOCAL_MODULE := gencnval
 
 include $(BUILD_HOST_EXECUTABLE)
 

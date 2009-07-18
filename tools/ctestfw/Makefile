@@ -25,6 +25,6 @@ LOCAL_C_INCLUDES +=       \
 	$(LOCAL_PATH)/../toolutil \
 	$(LOCAL_PATH)/../../common
 
-LOCAL_TARGET := libicutest
+LOCAL_MODULE := libicutest
 
 include $(BUILD_HOST_LIBRARY)

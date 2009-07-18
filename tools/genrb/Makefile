@@ -30,7 +30,7 @@ LOCAL_C_INCLUDES +=       \
 	$(LOCAL_PATH)/../../common \
 	$(LOCAL_PATH)/../../i18n
 
-LOCAL_TARGET := genrb
+LOCAL_MODULE := genrb
 
 include $(BUILD_HOST_EXECUTABLE)
 
@@ -55,6 +55,6 @@ LOCAL_C_INCLUDES +=       \
 	$(LOCAL_PATH)/../../common \
 	$(LOCAL_PATH)/../../i18n
 
-LOCAL_TARGET := derb
+LOCAL_MODULE := derb
 
 include $(BUILD_HOST_EXECUTABLE)

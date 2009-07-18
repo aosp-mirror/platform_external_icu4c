@@ -11,6 +11,6 @@ LOCAL_C_INCLUDES += \
 LOCAL_CFLAGS  += -D_REENTRANT -DPIC -fPIC 
 LOCAL_CFLAGS  += -O3 -nodefaultlibs -nostdlib 
 
-LOCAL_TARGET := libicudata
+LOCAL_MODULE := libicudata
 
 include $(BUILD_SHARED_LIBRARY)

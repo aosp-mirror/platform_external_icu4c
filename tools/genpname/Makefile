@@ -17,6 +17,6 @@ LOCAL_CFLAGS +=
 
 LOCAL_STATIC_LIBRARIES := libicuuc libicudata libicui18n libicutu
 
-LOCAL_TARGET := genpname
+LOCAL_MODULE := genpname
 
 include $(BUILD_HOST_EXECUTABLE)

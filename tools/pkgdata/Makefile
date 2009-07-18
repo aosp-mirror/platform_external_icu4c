@@ -29,7 +29,7 @@ LOCAL_LDLIBS += -lpthread -ldl
 endif
 
 LOCAL_CFLAGS := -DUDATA_SO_SUFFIX=\".$(SO)\" -DSTATIC_O=\"$(STATIC_O)\"
-LOCAL_TARGET := pkgdata
+LOCAL_MODULE := pkgdata
 
 
 # the host command line tool

@@ -17,7 +17,7 @@ endif
 
 LOCAL_CFLAGS :=
 
-LOCAL_TARGET := icuswap
+LOCAL_MODULE := icuswap
 
 # the host command line tool
 

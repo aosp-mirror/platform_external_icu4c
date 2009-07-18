@@ -17,7 +17,7 @@ endif
 
 LOCAL_CFLAGS :=
 
-LOCAL_TARGET := genccode
+LOCAL_MODULE := genccode
 
 # the host command line tool
 

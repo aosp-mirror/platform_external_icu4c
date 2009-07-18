@@ -18,6 +18,6 @@ LOCAL_C_INCLUDES += \
 	$(LOCAL_PATH)/../../common \
 	$(LOCAL_PATH)/../../i18n
 
-LOCAL_TARGET := genuca
+LOCAL_MODULE := genuca
 
 include $(BUILD_HOST_EXECUTABLE)

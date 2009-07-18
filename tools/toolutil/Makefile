@@ -26,6 +26,6 @@ LOCAL_CFLAGS += -O3 -nodefaultlibs -nostdlib
 
 LOCAL_STATIC_LIBRARIES += libicuuc libicui18n
 
-LOCAL_TARGET := libicutu
+LOCAL_MODULE := libicutu
 
 include $(BUILD_HOST_STATIC_LIBRARY)
