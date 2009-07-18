@@ -1712,8 +1712,10 @@ GC_Done:
 
         case URX_BACKSLASH_Z:          // Test for end of Input
             if (fp->fInputIdx < fAnchorLimit) {
-                fHitEnd = TRUE;
                 fp = (REStackFrame *)fStack->popFrame(frameSize);
+            } else {
+                fHitEnd = TRUE;
+                fRequireEnd = TRUE;
             }
             break;
 

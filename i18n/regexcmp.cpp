@@ -1400,6 +1400,7 @@ UBool RegexCompile::doParseActions(int32_t action)
             case 0x64: /* 'd' */   bit = UREGEX_UNIX_LINES;       break;
             case 0x6d: /* 'm' */   bit = UREGEX_MULTILINE;        break;
             case 0x73: /* 's' */   bit = UREGEX_DOTALL;           break;
+            case 0x75: /* 'u' */   bit = 0; /* Unicode casing */  break;
             case 0x77: /* 'w' */   bit = UREGEX_UWORD;            break;
             case 0x78: /* 'x' */   bit = UREGEX_COMMENTS;         break;
             case 0x2d: /* '-' */   fSetModeFlag = FALSE;          break;

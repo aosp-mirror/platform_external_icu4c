@@ -136,6 +136,7 @@ open-paren-extended:
     'd'                     paren-flag                              doBeginMatchMode
     'm'                     paren-flag                              doBeginMatchMode
     's'                     paren-flag                              doBeginMatchMode
+    'u'                     paren-flag                              doBeginMatchMode
     'w'                     paren-flag                              doBeginMatchMode
     'x'                     paren-flag                              doBeginMatchMode
     '-'                     paren-flag                              doBeginMatchMode
@@ -165,6 +166,7 @@ paren-flag:
     'd'                  n  paren-flag                              doMatchMode
     'm'                  n  paren-flag                              doMatchMode
     's'                  n  paren-flag                              doMatchMode
+    'u'                  n  paren-flag                              doMatchMode
     'w'                  n  paren-flag                              doMatchMode
     'x'                  n  paren-flag                              doMatchMode
     '-'                  n  paren-flag                              doMatchMode
