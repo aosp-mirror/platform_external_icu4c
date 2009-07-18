@@ -88,6 +88,7 @@ gsm-03.38-2000.cnv
 ibm-1089_P100-1995.cnv
 ibm-1373_P100-2002.cnv
 ibm-1383_P110-1999.cnv
+ibm-1386_P100-2001.cnv
 ibm-5012_P100-1999.cnv
 ibm-5346_P100-1998.cnv
 ibm-5347_P100-1998.cnv
@@ -133,5 +134,6 @@ res_index.res
 root.res
 supplementalData.res
 ucadata.icu
+windows-936-2000.cnv
 windows-950-2000.cnv
 zoneinfo.res
