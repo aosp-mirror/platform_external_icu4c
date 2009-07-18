@@ -1,8 +1,9 @@
 Choices made to generate the ICU data, using the "Data Library Customizer"
 at <http://apps.icu-project.org/datacustom/>.
 
-Encodings -- 466k
+Encodings -- 469k
 
+* gsm-03.38-2000 (GSM encodings)
 * ibm-1089_P100-1995 (iso-8859-6)
 * ibm-1383_P110-1999 (euc-cn)
 * ibm-5012_P100-1999 (iso-8859-8)
