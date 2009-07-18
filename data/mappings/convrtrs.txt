@@ -372,6 +372,7 @@ ibm-9005_X110-2007 { UTR22* }
                         iso-ir-126 { IANA WINDOWS }
                         ISO_8859-7:1987 { IANA* WINDOWS }
                         windows-28597 { WINDOWS* }
+                        sun_eu_greek # For Solaris
 
 # ISO Greek (w/o euro update)
 # JDK 1.5 has these aliases.
@@ -519,11 +520,16 @@ ibm-943_P130-1999 { UTR22* }
 ibm-33722_P12A_P12A-2004_U2 { UTR22* }
                         ibm-33722   # Leave untagged because this isn't the default
                         ibm-5050    # Leave untagged because this isn't the default, and yes this alias is correct
-                        # BEGIN android-changed
+                        # BEGIN android-removed
+                        # EUC-JP { IANA MIME* WINDOWS }
+                        # Extended_UNIX_Code_Packed_Format_for_Japanese { IANA* WINDOWS }
+                        # csEUCPkdFmtJapanese { IANA WINDOWS }
+                        # END android-removed
+                        # BEGIN android-added
                         EUC-JP { WINDOWS }
                         Extended_UNIX_Code_Packed_Format_for_Japanese { WINDOWS }
                         csEUCPkdFmtJapanese { WINDOWS }
-                        # END android-changed
+                        # END android-added
                         X-EUC-JP { WINDOWS }   # Japan EUC. x-euc-jp is a MIME name
                         windows-51932 { WINDOWS* }
                         ibm-33722_VPUA
@@ -539,11 +545,16 @@ ibm-33722_P120-1999 { UTR22* }  # Japan EUC with \ <-> Yen mapping
 # ibm-954 contains more PUA characters than the others.
 ibm-954_P101-2007 { UTR22* }
                         ibm-954 { IBM* }
-                        # BEGIN android-changed
+                        # BEGIN android-removed
+                        # EUC-JP { JAVA* } # Matches more closely with ibm-1350
+                        # Extended_UNIX_Code_Packed_Format_for_Japanese { JAVA }
+                        # csEUCPkdFmtJapanese { JAVA }
+                        # END android-removed
+                        # BEGIN android-added
                         EUC-JP { IANA MIME* JAVA* } # Matches more closely with ibm-1350
                         Extended_UNIX_Code_Packed_Format_for_Japanese { IANA* JAVA }
                         csEUCPkdFmtJapanese { IANA JAVA }
-                        # BEGIN android-changed
+                        # END android-removed
                         X-EUC-JP { JAVA }   # Japan EUC. x-euc-jp is a MIME name
                         eucjis { JAVA }
                         ujis # Linux sometimes uses this name. This is an unfortunate generic and rarely used name. Its use is discouraged.
@@ -813,6 +824,11 @@ ISO_2022,locale=zh,version=0    ISO-2022-CN { IANA* JAVA* } csISO2022CN { JAVA }
 ISO_2022,locale=zh,version=1    ISO-2022-CN-EXT { IANA* }
 HZ                              HZ-GB-2312 { IANA* }
 
+# BEGIN android-removed
+# # Part of iso-2022
+# ibm-897_P100-1995 { UTR22* }    ibm-897 { IBM* } JIS_X0201 { IANA* } X0201 { IANA } csHalfWidthKatakana { IANA }
+# END android-removed
+
 ISCII,version=0         x-iscii-de { WINDOWS } windows-57002 { WINDOWS* } iscii-dev ibm-4902 { IBM* } # ibm-806 contains non-standard box drawing symbols.
 ISCII,version=1         x-iscii-be { WINDOWS } windows-57003 { WINDOWS* } iscii-bng windows-57006 { WINDOWS } x-iscii-as { WINDOWS } # be is different from as on Windows.
 ISCII,version=2         x-iscii-pa { WINDOWS } windows-57011 { WINDOWS* } iscii-gur
@@ -1072,7 +1088,9 @@ ibm-8612_P100-1995 { UTR22* }   ibm-8612 { IBM* } # Arabic (EBCDIC update of ibm
 ibm-872_P100-1999 { UTR22* }    ibm-872 { IBM* } # Cyrillic (Euro update of ibm-855)
 ibm-880_P100-1995 { UTR22* }    ibm-880 { IBM* } IBM880 { IANA* } cp880 { IANA } EBCDIC-Cyrillic { IANA } csIBM880 { IANA } windows-20880 { WINDOWS* }
 ibm-896_P100-1995 { UTR22* }    ibm-896 { IBM* } # SBCS Katakana
+# BEGIN android-added
 ibm-897_P100-1995 { UTR22* }    ibm-897 { IBM* } JIS_X0201 { IANA* } X0201 { IANA } csHalfWidthKatakana { IANA }
+# END android-added
 ibm-9027_P100-1999 { UTR22* }   ibm-9027 { IBM* } # DBCS T-Ch Host. Euro update of ibm-835. DBCS portion of ibm-1371.
 ibm-9048_P100-1998 { UTR22* }   ibm-9048 { IBM* } # Hebrew (Euro and Sequel update of ibm-856)
 ibm-905_P100-1995 { UTR22* }    ibm-905 { IBM* } IBM905 { IANA* } CP905 { IANA } ebcdic-cp-tr { IANA } csIBM905 { IANA } windows-20905 { WINDOWS* }

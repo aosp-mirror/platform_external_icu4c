@@ -44,7 +44,7 @@ LOCAL_SRC_FILES += \
 	umsg.cpp        unesctrn.cpp uni2name.cpp \
 	unum.cpp        uregexc.cpp  uregex.cpp   \
 	usearch.cpp     utrans.cpp   windtfmt.cpp \
-	winnmfmt.cpp
+	winnmfmt.cpp    zonemeta.cpp zstrfmt.cpp
 
 LOCAL_C_INCLUDES =       \
 	$(LOCAL_PATH)         \
