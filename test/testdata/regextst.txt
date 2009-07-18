@@ -13,11 +13,15 @@
 #               <tagged string> = text, with the start and end of each
 #                                 capture group tagged with <n>...</n>.  The overall match,
 #                                 if any, is group 0, as in <0>matched text</0>
+#
+#                                  A region can be specified with <r>...</r> tags.
+#
 #               <flags>         = any combination of
 #                                   i      case insensitive match
 #                                   x      free spacing and comments
 #                                   s      dot-matches-all mode
-#                                   m      multi-line mode.  $ and ^ match at embedded new-lines
+#                                   m      multi-line mode.  
+#                                            ($ and ^ match at embedded new-lines)
 #                                   v      If icu configured without break iteration, this
 #                                          regex test pattern should not compile.
 #                                   e      set the UREGEX_ERROR_ON_UNKNOWN_ESCAPES flag
@@ -28,6 +32,16 @@
 #                                          for the last find() in the sequence.
 #                                   G      Only check match / no match.  Do not check capture groups.
 #                                   E      Pattern compilation error expected
+#                                   M      Use matches() rather than find().
+#
+#                                   a      Use non-Anchoring Bounds.
+#                                   b      Use Transparent Bounds.
+#                                          The a and t options only make a difference if
+#                                          a <r>region</r> has been specified in the string.
+#                                   z|Z    hitEnd was expected(z) or not expected (Z).
+#                                          With neither, hitEnd is not checked.
+#                                   y|Y    Require End expeted(y) or not expected (Y).
+#
 #                                 White space must be present between the flags and the match string.
 #
 
@@ -429,6 +443,8 @@
 #
 #  Octal Escaping.   This conforms to Java conventions, not Perl.
 "\0101\0\03\073\0154\01442"      "<0>A\u0000\u0003\u003b\u006c\u0064\u0032</0>"
+"\0776"                          "<0>\u003f\u0036</0>"  # overflow, the 6 is literal.
+"\0376xyz"                       "<0>\u00fexyz</0>"
 
 #
 #  \u Surrogate Pairs
@@ -541,6 +557,15 @@
 ".{6}"                         s  "<0>123\u000a\u000dX</0>Y"
 
 
+#
+# Ranges
+#
+".*"                              "abc<r><0>def</0></r>ghi"
+"a"                               "aaa<r><0>a</0>aa</r>aaa"
+"a"                           2   "aaa<r>a<0>a</0>a</r>aaa"
+"a"                           3   "aaa<r>aa<0>a</0></r>aaa"
+"a"                           4   "aaa<r>aaa</r>aaa"
+"a"                               "aaa<r><0>a</0>aa</r>aaa"
 
 #
 # [set] parsing, systematically run through all of the parser states.
@@ -656,6 +681,8 @@
 "[:^InBasic Latin:]+"              "<0>ΓΔΕΖΗΘ</0>hello, world.ニヌネノハバパ"
 "\p{InBasicLatin}+"                "ΓΔΕΖΗΘ<0>hello, world.</0>ニヌネノハバパ"
 "\P{InBasicLatin}+"                "<0>ΓΔΕΖΗΘ</0>hello, world.ニヌネノハバパ"
+"\p{InGreek}+"                     "<0>ΓΔΕΖΗΘ</0>hello, world.ニヌネノハバパ"
+
 
 "\p{javaDefined}+"                 "\uffff<0>abcd</0>\U00045678"
 "\p{javaDigit}+"                   "abc<0>1234</0>xyz"
@@ -675,6 +702,8 @@
 "\p{javaUpperCase}+"               "abc<0>ABC</0>123"
 "\p{javaValidCodePoint}+"          "<0>\u0000abc\ud800 unpaired \udfff |\U0010ffff</0>"
 "\p{javaWhitespace}+"              "abc\u00a0\u2007\u202f<0> \u0009\u001c\u001f\u2028</0>42"
+"\p{all}+"                         "<0>123\u0000\U0010ffff</0>"
+"\P{all}+"                         "123\u0000\U0010ffff"
 
 #
 #  Errors on unrecognized ASCII letter escape sequences.
@@ -797,6 +826,17 @@
 # bug 5386  Java compatibility for set expressions
 #
 "[a-z&&[cde]]+"                   "ab<0>cde</0>fg"
+
+#
+# bug 6019  matches() needs to backtrack and check for a longer match if the
+#                     first match(es) found don't match the entire input.
+#
+"a?|b"                            "<0></0>b"
+"a?|b"                         M  "<0>b</0>"
+"a?|.*?u|stuff|d"              M  "<0>stuff</0>"
+"a?|.*?(u)|stuff|d"            M  "<0>stuff<1>u</1></0>"
+"a+?"                             "<0>a</0>aaaaaaaaaaaa"
+"a+?"                          M  "<0>aaaaaaaaaaaaa</0>"
 
 #
 #  Random debugging, Temporary
