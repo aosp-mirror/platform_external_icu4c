@@ -133,6 +133,7 @@ open-paren-extended:
     '<'                  n  open-paren-lookbehind
     '#'                  n  paren-comment   ^term
     'i'                     paren-flag                              doBeginMatchMode
+    'd'                     paren-flag                              doBeginMatchMode
     'm'                     paren-flag                              doBeginMatchMode
     's'                     paren-flag                              doBeginMatchMode
     'w'                     paren-flag                              doBeginMatchMode
@@ -161,6 +162,7 @@ paren-comment:
 #
 paren-flag:
     'i'                  n  paren-flag                              doMatchMode
+    'd'                  n  paren-flag                              doMatchMode
     'm'                  n  paren-flag                              doMatchMode
     's'                  n  paren-flag                              doMatchMode
     'w'                  n  paren-flag                              doMatchMode
@@ -398,7 +400,7 @@ set-range-amp:
 #  set-lit-dash
 #     Have scanned "[literals-" Could be a range or a -- operator or a literal
 #     In [abc-[def]], the '-' is a literal (confirmed with a Java test)
-#        [abc-\p{xx}  the '-' is a literal
+#        [abc-\p{xx}  the '-' is an error
 #        [abc-]       the '-' is a literal
 #        [ab-xy]      the '-' is a range
 #
@@ -416,12 +418,12 @@ set-lit-dash:
 #    Could be a literal '-', if the '\' introduces a set-like construct e.g. \s aut \p{...}
 #
 set-lit-dash-escape:
-   's'                      set-escape                             doSetAddDash
-   'S'                      set-escape                             doSetAddDash
-   'w'                      set-escape                             doSetAddDash
-   'W'                      set-escape                             doSetAddDash
-   'd'                      set-escape                             doSetAddDash
-   'D'                      set-escape                             doSetAddDash
+   's'                      errorDeath                             doSetOpError
+   'S'                      errorDeath                             doSetOpError
+   'w'                      errorDeath                             doSetOpError
+   'W'                      errorDeath                             doSetOpError
+   'd'                      errorDeath                             doSetOpError
+   'D'                      errorDeath                             doSetOpError
    'N'                      set-after-range                        doSetNamedRange
    default               n  set-after-range                        doSetRange
 

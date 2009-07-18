@@ -71,7 +71,7 @@ typedef enum URegexpFlag{
       *         early (\u) we should still do.
       * @draft ICU 4.0
       */
-    UREGEG_LITERAL = 16,
+    UREGEX_LITERAL = 16,
 
     /**   Control behavior of "$" and "^"
       *    If set, recognize line terminators within string,
@@ -84,7 +84,7 @@ typedef enum URegexpFlag{
       *    in the behavior of ., ^, and $.
       *   @draft ICU 4.0
       */
-    URGEGX_UNIX_LINES = 1,
+    UREGEX_UNIX_LINES = 1,
 
     /**  Unicode word boundaries.
       *     If set, \b uses the Unicode TR 29 definition of word boundaries.
@@ -455,6 +455,7 @@ uregex_end(URegularExpression   *regexp,
   *  uregex_start(), uregex_end() and uregex_group() to return an error 
   *  indicating that there is no match information available.  Clears any
   *  match region that may have been set.
+  *    TODO:  reset(-1) to preserve regions?
   *
   *    @param   regexp      The compiled regular expression.
   *    @param   index       The position in the text at which a

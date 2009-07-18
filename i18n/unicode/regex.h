@@ -16,7 +16,7 @@
 #ifndef REGEX_H
 #define REGEX_H
 
-// #define REGEX_DEBUG
+#define REGEX_DEBUG
 
 /**
  * \file
@@ -1067,6 +1067,12 @@ private:
     int32_t              fLookStart;       // Region bounds for look-ahead/behind and
     int32_t              fLookLimit;       //   and other boundary tests.  See
                                            //   useTransparentBounds
+
+    int32_t              fActiveStart;     // Currently active bouonds for matching.
+    int32_t              fActiveLimit;     //   Usually is the same as region, but
+                                           //   is changed to fLookStart/Limit when
+                                           //   entering look around regions.
+
     UBool                fTransparentBounds;  // True if using transparent bounds.
     UBool                fAnchoringBounds; // True if using anchoring bounds.
 

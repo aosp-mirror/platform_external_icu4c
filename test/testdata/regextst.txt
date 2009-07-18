@@ -22,6 +22,7 @@
 #                                   s      dot-matches-all mode
 #                                   m      multi-line mode.  
 #                                            ($ and ^ match at embedded new-lines)
+#                                   D      Unix Lines mode (only recognize 0x0a as new-line)
 #                                   v      If icu configured without break iteration, this
 #                                          regex test pattern should not compile.
 #                                   e      set the UREGEX_ERROR_ON_UNKNOWN_ESCAPES flag
@@ -32,6 +33,7 @@
 #                                          for the last find() in the sequence.
 #                                   G      Only check match / no match.  Do not check capture groups.
 #                                   E      Pattern compilation error expected
+#                                   L      Use LookingAt() rather than find()
 #                                   M      Use matches() rather than find().
 #
 #                                   a      Use non-Anchoring Bounds.
@@ -44,6 +46,114 @@
 #
 #                                 White space must be present between the flags and the match string.
 #
+
+# Look-ahead expressions
+#
+"abc(?=def)"                   "<0>abc</0>def"
+"(.*)(?=c)"                    "<0><1>ab</1></0>cdef"
+
+"(?:.*)(?=c)"                  "<r>ab</r>cdef"
+"(?:.*)(?=c)"             b    "<r><0>ab</0></r>cdef"      # transparent bounds
+"(?:.*)(?=c)"             bM   "<r><0>ab</0></r>cdef"      # transparent bounds
+
+"(?:.*)(?=(c))"           b    "<0>ab</0><1>c</1>def"      # Capture in look-ahead
+"(?=(.)\1\1)\1"                "abcc<0><1>d</1></0>ddefg"  # Backrefs to look-ahead capture
+
+".(?!\p{L})"                   "abc<0>d</0> "              # Negated look-ahead
+".(?!(\p{L}))"                 "abc<0>d</0> "              # Negated look-ahead, no capture
+                                                           #   visible outside of look-ahead
+
+#
+# Negated Lookahead, various regions and region transparency
+#
+"abc(?!def)"                   "<0>abc</0>xyz"
+"abc(?!def)"                   "abcdef"
+"abc(?!def)"                   "<r><0>abc</0></r>def"
+"abc(?!def)"              b    "<r>abc</r>def"
+"abc(?!def)"              b    "<r><0>abc</0></r>xyz"
+
+#
+#  Anchoring Bounds
+#
+"^def$"                        "abc<r><0>def</0></r>ghi"           # anchoring (default) bounds
+"^def$"                  a     "abc<r>def</r>ghi"                  # non-anchoring bounds
+"^def"                   a     "<r><0>def</0></r>ghi"              # non-anchoring bounds
+"def$"                   a     "abc<r><0>def</0></r>"              # non-anchoring bounds
+
+"^.*$"                   m     "<0>line 1</0>\n line 2"
+"^.*$"                   m2    "line 1\n<0> line 2</0>"
+"^.*$"                   m3    "line 1\n line 2"
+"^.*$"                   m     "li<r><0>ne </0></r>1\n line 2"     # anchoring bounds
+"^.*$"                   m2    "li<r>ne </r>1\n line 2"            # anchoring bounds
+"^.*$"                  am     "li<r>ne </r>1\n line 2"            # non-anchoring bounds
+"^.*$"                  am     "li\n<r><0>ne </0></r>\n1\n line 2" # non-anchoring bounds
+
+#
+#  HitEnd and RequireEnd for new-lines just before end-of-input
+#
+"xyz$"                  yz     "<0>xyz</0>\n"
+"xyz$"                  yz     "<0>xyz</0>\x{d}\x{a}"
+
+"xyz$"                 myz     "<0>xyz</0>"                        # multi-line mode
+"xyz$"                 mYZ     "<0>xyz</0>\n" 
+"xyz$"                 mYZ     "<0>xyz</0>\r\n"
+"xyz$"                 mYZ     "<0>xyz</0>\x{85}abcd"
+
+"xyz$"                  Yz     "xyz\nx"
+"xyz$"                  Yz     "xyza"
+"xyz$"                  yz     "<0>xyz</0>"
+
+#
+#  All Unicode line endings recognized.
+#     0a, 0b, 0c, 0d, 0x85, 0x2028, 0x2029
+#     Multi-line and non-multiline mode take different paths, so repeated tests.
+#
+"^def$"                 mYZ    "abc\x{a}<0>def</0>\x{a}ghi"
+"^def$"                 mYZ    "abc\x{b}<0>def</0>\x{b}ghi"
+"^def$"                 mYZ    "abc\x{c}<0>def</0>\x{c}ghi"
+"^def$"                 mYZ    "abc\x{d}<0>def</0>\x{d}ghi"
+"^def$"                 mYZ    "abc\x{85}<0>def</0>\x{85}ghi"
+"^def$"                 mYZ    "abc\x{2028}<0>def</0>\x{2028}ghi"
+"^def$"                 mYZ    "abc\x{2029}<0>def</0>\x{2029}ghi"
+"^def$"                 mYZ    "abc\r\n<0>def</0>\r\nghi"
+
+"^def$"                 yz     "<0>def</0>\x{a}"
+"^def$"                 yz     "<0>def</0>\x{b}"
+"^def$"                 yz     "<0>def</0>\x{c}"
+"^def$"                 yz     "<0>def</0>\x{d}"
+"^def$"                 yz     "<0>def</0>\x{85}"
+"^def$"                 yz     "<0>def</0>\x{2028}"
+"^def$"                 yz     "<0>def</0>\x{2029}"
+"^def$"                 yz     "<0>def</0>\r\n"
+"^def$"                 yz     "<0>def</0>"
+
+
+"^def$"                       "<0>def</0>\x{2028"    #TODO: should be an error of some sort.
+
+#
+#  UNIX_LINES mode
+#
+"abc$"                 D      "<0>abc</0>\n"
+"abc$"                 D      "abc\r"
+"abc$"                 D      "abc\u0085"
+"a.b"                  D      "<0>a\rb</0>"
+"a.b"                  D      "a\nb"
+"(?d)abc$"                    "<0>abc</0>\n"
+"(?d)abc$"                    "abc\r"
+"abc$"                 mD     "<0>abc</0>\ndef"
+"abc$"                 mD     "abc\rdef"
+
+".*def"                L      "abc\r def xyz"          # Normal mode, LookingAt() stops at \r
+".*def"                DL     "<0>abc\r def</0> xyz"   # Unix Lines mode, \r not line end.
+".*def"                DL     "abc\n def xyz"   
+
+"(?d)a.b"                     "a\nb"
+"(?d)a.b"                     "<0>a\rb</0>"
+
+"^abc"                 m      "xyz\r<0>abc</0>"
+"^abc"                 Dm     "xyz\rabc"
+"^abc"                 Dm     "xyz\n<0>abc</0>"
+
 
 
 # Capturing parens
@@ -442,9 +552,10 @@
 
 #
 #  Octal Escaping.   This conforms to Java conventions, not Perl.
-"\0101\0\03\073\0154\01442"      "<0>A\u0000\u0003\u003b\u006c\u0064\u0032</0>"
+"\0101\00\03\073\0154\01442"      "<0>A\u0000\u0003\u003b\u006c\u0064\u0032</0>"
 "\0776"                          "<0>\u003f\u0036</0>"  # overflow, the 6 is literal.
 "\0376xyz"                       "<0>\u00fexyz</0>"
+"\08"                        E   "<0>\u00008</0>"
 
 #
 #  \u Surrogate Pairs
@@ -454,6 +565,12 @@
 "\ud800\ud800\udc00"              "<0>\ud800\U00010000</0>\U00010000\U00010000\U00010001"
 "(\ud800)(\udc00)"                "\U00010000"
 
+#
+# hitEnd with find()
+#
+"abc"                        Z    "aa<0>abc</0>  abcab"
+"abc"                       2Z    "aaabc  <0>abc</0>ab"
+"abc"                       3z    "aa>abc  abcab"
 
 #
 # Bug 3225
@@ -652,7 +769,7 @@
 "[abcd-[bc]]+"                    "<0>bad--dac</0>xyz"
 "[abcd-]+"                        "<0>bad--dac</0>xyz"
 
-"[abcd-\s]+"                      "xyz<0>abcd  --</0>xyz"      # set-lit-dash-esc
+"[abcd-\s]+"                 E    "xyz<0>abcd  --</0>xyz"      # set-lit-dash-esc
 "[abcd-\N{LATIN SMALL LETTER G}]+"  "xyz-<0>abcdefg</0>hij-"
 "[bcd-\{]+"                       "a<0>bcdefyz{</0>|}"
 
@@ -682,6 +799,8 @@
 "\p{InBasicLatin}+"                "ΓΔΕΖΗΘ<0>hello, world.</0>ニヌネノハバパ"
 "\P{InBasicLatin}+"                "<0>ΓΔΕΖΗΘ</0>hello, world.ニヌネノハバパ"
 "\p{InGreek}+"                     "<0>ΓΔΕΖΗΘ</0>hello, world.ニヌネノハバパ"
+"\p{InCombining Marks for Symbols}" "<0>\u20d0</0>"
+"\p{Incombiningmarksforsymbols}"    "<0>\u20d0</0>"
 
 
 "\p{javaDefined}+"                 "\uffff<0>abcd</0>\U00045678"
@@ -715,6 +834,11 @@
 "(?:a|b|c|\Y)+"                eE  "<0>abcY</0>"
 
 "\Q\Y\E"                       e   "<0>\\Y</0>"
+
+#
+# Reported problem
+#
+"[a-\w]"                       E  "x"
 
 #
 # Bug 4045
@@ -785,6 +909,7 @@
 # bug 5386  "^.*$" should match empty input
 #
 "^.*$"                            "<0></0>"
+"^.*$"                     m      "<0></0>"
 "^.*$"                            "<0></0>\n"
 "(?s)^.*$"                        "<0>\n</0>"
 

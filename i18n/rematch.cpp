@@ -324,7 +324,7 @@ UBool RegexMatcher::find() {
     //          Watch for interactions with replace operations when fixing.
     int32_t startPos = fMatchEnd;
     if (startPos==0) {
-        startPos = fRegionStart;
+        startPos = fActiveStart;
     }
 
     if (fMatch) {
@@ -334,8 +334,9 @@ UBool RegexMatcher::find() {
         if (fMatchStart == fMatchEnd) {
             // Previous match had zero length.  Move start position up one position
             //  to avoid sending find() into a loop on zero-length matches.
-            if (startPos >= fRegionLimit) {
+            if (startPos >= fActiveLimit) {
                 fMatch = FALSE;
+                fHitEnd = TRUE;
                 return FALSE;
             }
             startPos = fInput->moveIndex32(startPos, 1);
@@ -345,6 +346,7 @@ UBool RegexMatcher::find() {
             // A previous find() failed to match.  Don't try again.
             //   (without this test, a pattern with a zero-length match
             //    could match again at the end of an input string.)
+            fHitEnd = TRUE;
             return FALSE;
         }
     }
@@ -352,9 +354,12 @@ UBool RegexMatcher::find() {
 
     // Compute the position in the input string beyond which a match can not begin, because
     //   the minimum length match would extend past the end of the input.
-    int32_t testLen  = fRegionLimit - fPattern->fMinMatchLen;
+    //   Note:  some patterns that cannot match anything will have fMinMatchLength==Max Int.
+    //          Be aware of possible overflows if making changes here.
+    int32_t testLen  = fActiveLimit - fPattern->fMinMatchLen;
     if (startPos > testLen) {
         fMatch = FALSE;
+        fHitEnd = TRUE;
         return FALSE;
     }
 
@@ -378,7 +383,7 @@ UBool RegexMatcher::find() {
                 fHitEnd = TRUE;
                 return FALSE;
             }
-            U16_FWD_1(inputBuf, startPos, fRegionLimit);
+            U16_FWD_1(inputBuf, startPos, fActiveLimit);
             // Note that it's perfectly OK for a pattern to have a zero-length
             //   match at the end of a string, so we must make sure that the loop
             //   runs with startPos == testLen the last time through.
@@ -388,7 +393,7 @@ UBool RegexMatcher::find() {
     case START_START:
         // Matches are only possible at the start of the input string
         //   (pattern begins with ^ or \A)
-        if (startPos > fRegionStart) {
+        if (startPos > fActiveStart) {
             fMatch = FALSE;
             return FALSE;
         }
@@ -406,7 +411,7 @@ UBool RegexMatcher::find() {
             U_ASSERT(fPattern->fMinMatchLen > 0);
             for (;;) {
                 int32_t pos = startPos;
-                U16_NEXT(inputBuf, startPos, fRegionLimit, c);  // like c = inputBuf[startPos++];
+                U16_NEXT(inputBuf, startPos, fActiveLimit, c);  // like c = inputBuf[startPos++];
                 if (c<256 && fPattern->fInitialChars8->contains(c) ||
                     c>=256 && fPattern->fInitialChars->contains(c)) {
                     MatchAt(pos, FALSE, fDeferredStatus);
@@ -419,6 +424,7 @@ UBool RegexMatcher::find() {
                 }
                 if (pos >= testLen) {
                     fMatch = FALSE;
+                    fHitEnd = TRUE;
                     return FALSE;
                 }
             }
@@ -433,7 +439,7 @@ UBool RegexMatcher::find() {
             UChar32 theChar = fPattern->fInitialChar;
             for (;;) {
                 int32_t pos = startPos;
-                U16_NEXT(inputBuf, startPos, fRegionLimit, c);  // like c = inputBuf[startPos++];
+                U16_NEXT(inputBuf, startPos, fActiveLimit, c);  // like c = inputBuf[startPos++];
                 if (c == theChar) {
                     MatchAt(pos, FALSE, fDeferredStatus);
                     if (U_FAILURE(fDeferredStatus)) {
@@ -445,6 +451,7 @@ UBool RegexMatcher::find() {
                 }
                 if (pos >= testLen) {
                     fMatch = FALSE;
+                    fHitEnd = TRUE;
                     return FALSE;
                 }
             }
@@ -454,7 +461,7 @@ UBool RegexMatcher::find() {
     case START_LINE:
         {
             UChar32  c;
-            if (startPos == 0) {
+            if (startPos == fAnchorStart) {
                 MatchAt(startPos, FALSE, fDeferredStatus);
                 if (U_FAILURE(fDeferredStatus)) {
                     return FALSE;
@@ -462,32 +469,57 @@ UBool RegexMatcher::find() {
                 if (fMatch) {
                     return TRUE;
                 }
-                U16_NEXT(inputBuf, startPos, fRegionLimit, c);  // like c = inputBuf[startPos++];
+                U16_NEXT(inputBuf, startPos, fActiveLimit, c);  // like c = inputBuf[startPos++];
             }
 
-            for (;;) {
-                c = inputBuf[startPos-1];
-                if (((c & 0x7f) <= 0x29) &&     // First quickly bypass as many chars as possible
-                    ((c<=0x0d && c>=0x0a) || c==0x85 ||c==0x2028 || c==0x2029 )) {
-                        if (c == 0x0d && startPos < fRegionLimit && inputBuf[startPos] == 0x0a) {
-                            startPos++;
-                        }
-                        MatchAt(startPos, FALSE, fDeferredStatus);
-                        if (U_FAILURE(fDeferredStatus)) {
-                            return FALSE;
-                        }
-                        if (fMatch) {
-                            return TRUE;
-                        }
+            if (fPattern->fFlags & UREGEX_UNIX_LINES) {
+               for (;;) {
+                    c = inputBuf[startPos-1];
+                    if (c == 0x0a) {
+                            MatchAt(startPos, FALSE, fDeferredStatus);
+                            if (U_FAILURE(fDeferredStatus)) {
+                                return FALSE;
+                            }
+                            if (fMatch) {
+                                return TRUE;
+                            }
+                    }
+                    if (startPos >= testLen) {
+                        fMatch = FALSE;
+                        fHitEnd = TRUE;
+                        return FALSE;
+                    }
+                    U16_NEXT(inputBuf, startPos, fActiveLimit, c);  // like c = inputBuf[startPos++];
+                    // Note that it's perfectly OK for a pattern to have a zero-length
+                    //   match at the end of a string, so we must make sure that the loop
+                    //   runs with startPos == testLen the last time through.
                 }
-                if (startPos >= testLen) {
-                    fMatch = FALSE;
-                    return FALSE;
+            } else {
+                for (;;) {
+                    c = inputBuf[startPos-1];
+                    if (((c & 0x7f) <= 0x29) &&     // First quickly bypass as many chars as possible
+                        ((c<=0x0d && c>=0x0a) || c==0x85 ||c==0x2028 || c==0x2029 )) {
+                            if (c == 0x0d && startPos < fActiveLimit && inputBuf[startPos] == 0x0a) {
+                                startPos++;
+                            }
+                            MatchAt(startPos, FALSE, fDeferredStatus);
+                            if (U_FAILURE(fDeferredStatus)) {
+                                return FALSE;
+                            }
+                            if (fMatch) {
+                                return TRUE;
+                            }
+                    }
+                    if (startPos >= testLen) {
+                        fMatch = FALSE;
+                        fHitEnd = TRUE;
+                        return FALSE;
+                    }
+                    U16_NEXT(inputBuf, startPos, fActiveLimit, c);  // like c = inputBuf[startPos++];
+                    // Note that it's perfectly OK for a pattern to have a zero-length
+                    //   match at the end of a string, so we must make sure that the loop
+                    //   runs with startPos == testLen the last time through.
                 }
-                U16_NEXT(inputBuf, startPos, fRegionLimit, c);  // like c = inputBuf[startPos++];
-                // Note that it's perfectly OK for a pattern to have a zero-length
-                //   match at the end of a string, so we must make sure that the loop
-                //   runs with startPos == testLen the last time through.
             }
         }
 
@@ -511,7 +543,7 @@ UBool RegexMatcher::find(int32_t start, UErrorCode &status) {
     }
     this->reset();                        // Note:  Reset() is specified by Java Matcher documentation.
                                           //        This will reset the region to be the full input length.
-    if (start < fRegionStart || start > fRegionLimit) {
+    if (start < fActiveStart || start > fActiveLimit) {
         status = U_INDEX_OUTOFBOUNDS_ERROR;
         return FALSE;
     }
@@ -613,7 +645,7 @@ UBool RegexMatcher::lookingAt(UErrorCode &status) {
         return FALSE;
     }
     resetPreserveRegion();
-    MatchAt(fRegionStart, FALSE, status);
+    MatchAt(fActiveStart, FALSE, status);
     return fMatch;
 }
 
@@ -627,7 +659,7 @@ UBool RegexMatcher::lookingAt(int32_t start, UErrorCode &status) {
         return FALSE;
     }
     reset();
-    if (start < fRegionStart || start > fRegionLimit) {
+    if (start < fActiveStart || start > fActiveLimit) {
         status = U_INDEX_OUTOFBOUNDS_ERROR;
         return FALSE;
     }
@@ -651,7 +683,7 @@ UBool RegexMatcher::matches(UErrorCode &status) {
         return FALSE;
     }
     resetPreserveRegion();
-    MatchAt(fRegionStart, TRUE, status);
+    MatchAt(fActiveStart, TRUE, status);
     return fMatch;
 }
 
@@ -665,7 +697,7 @@ UBool RegexMatcher::matches(int32_t start, UErrorCode &status) {
         return FALSE;
     }
     reset();
-    if (start < fRegionStart || start > fRegionLimit) {
+    if (start < fActiveStart || start > fActiveLimit) {
         status = U_INDEX_OUTOFBOUNDS_ERROR;
         return FALSE;
     }
@@ -701,6 +733,8 @@ RegexMatcher &RegexMatcher::region(int32_t start, int32_t limit, UErrorCode &sta
     this->reset();
     fRegionStart = start;
     fRegionLimit = limit;
+    fActiveStart = start;
+    fActiveLimit = limit;
     if (!fTransparentBounds) {
         fLookStart = start;
         fLookLimit = limit;
@@ -805,6 +839,8 @@ UBool RegexMatcher::requireEnd() const {
 RegexMatcher &RegexMatcher::reset() {
     fRegionStart    = 0;
     fRegionLimit    = fInput->length();
+    fActiveStart    = 0;
+    fActiveLimit    = fRegionLimit;
     fAnchorStart    = 0;
     fAnchorLimit    = fRegionLimit;
     fLookStart      = 0;
@@ -849,7 +885,7 @@ RegexMatcher &RegexMatcher::reset(int32_t position, UErrorCode &status) {
         return *this;
     }
     reset();       // Reset also resets the region to be the entire string.
-    if (position < 0 || position >= fRegionLimit) {
+    if (position < 0 || position >= fActiveLimit) {
         status = U_INDEX_OUTOFBOUNDS_ERROR;
         return *this;
     }
@@ -899,7 +935,7 @@ int32_t  RegexMatcher::split(const UnicodeString &input,
     //
     reset(input);
     int32_t   nextOutputStringStart = 0;
-    if (fRegionLimit == 0) {
+    if (fActiveLimit == 0) {
         return 0;
     }
 
@@ -917,7 +953,7 @@ int32_t  RegexMatcher::split(const UnicodeString &input,
             //    last capture group saved in favor of the unprocessed remainder of the
             //    input string.)
             i = destCapacity-1;
-            int32_t remainingLength = fRegionLimit-nextOutputStringStart;
+            int32_t remainingLength = fActiveLimit-nextOutputStringStart;
             if (remainingLength > 0) {
                 dest[i].setTo(input, nextOutputStringStart, remainingLength);
             }
@@ -941,7 +977,7 @@ int32_t  RegexMatcher::split(const UnicodeString &input,
                 dest[i] = group(groupNum, status);
             }
 
-            if (nextOutputStringStart == fRegionLimit) {
+            if (nextOutputStringStart == fActiveLimit) {
                 // The delimiter was at the end of the string.  We're done.
                 break;
             }
@@ -951,7 +987,7 @@ int32_t  RegexMatcher::split(const UnicodeString &input,
         {
             // We ran off the end of the input while looking for the next delimiter.
             // All the remaining text goes into the current output string.
-            dest[i].setTo(input, nextOutputStringStart, fRegionLimit-nextOutputStringStart);
+            dest[i].setTo(input, nextOutputStringStart, fActiveLimit-nextOutputStringStart);
             break;
         }
     }
@@ -1290,9 +1326,9 @@ void RegexMatcher::MatchAt(int32_t startIdx, UBool toEnd, UErrorCode &status) {
 
 
         case URX_ONECHAR:
-            if (fp->fInputIdx < fRegionLimit) {
+            if (fp->fInputIdx < fActiveLimit) {
                 UChar32   c;
-                U16_NEXT(inputBuf, fp->fInputIdx, fRegionLimit, c);
+                U16_NEXT(inputBuf, fp->fInputIdx, fActiveLimit, c);
                 if (c == opValue) {
                     break;
                 }
@@ -1318,7 +1354,7 @@ void RegexMatcher::MatchAt(int32_t startIdx, UBool toEnd, UErrorCode &status) {
                 U_ASSERT(opType == URX_STRING_LEN);
                 U_ASSERT(stringLen >= 2);
 
-                if (fp->fInputIdx + stringLen > fRegionLimit) {
+                if (fp->fInputIdx + stringLen > fActiveLimit) {
                     // No match.  String is longer than the remaining input text.
                     //   TODO:  Should fHitEnd only be set if the string matches for whatever amount
                     //          of input is actually available?  Probably, although one could argue
@@ -1360,7 +1396,7 @@ void RegexMatcher::MatchAt(int32_t startIdx, UBool toEnd, UErrorCode &status) {
         case URX_END:
             // The match loop will exit via this path on a successful match,
             //   when we reach the end of the pattern.
-            if (toEnd && fp->fInputIdx != fRegionLimit) {
+            if (toEnd && fp->fInputIdx != fActiveLimit) {
                 // The pattern matched, but not to the end of input.  Try some more.
                 fp = (REStackFrame *)fStack->popFrame(frameSize);
                 break;
@@ -1392,6 +1428,7 @@ void RegexMatcher::MatchAt(int32_t startIdx, UBool toEnd, UErrorCode &status) {
                                            //     or for position before new line at end of input
             if (fp->fInputIdx < fAnchorLimit-2) {
                 // We are no where near the end of input.  Fail.
+                //   This is the common case.  Keep it first.
                 fp = (REStackFrame *)fStack->popFrame(frameSize);
                 break;
             }
@@ -1405,27 +1442,49 @@ void RegexMatcher::MatchAt(int32_t startIdx, UBool toEnd, UErrorCode &status) {
             //   end of input, succeed.
             if (fp->fInputIdx == fAnchorLimit-1) {
                 UChar32 c = fInput->char32At(fp->fInputIdx);
-                if ((c<=0x0d && c>=0x0a) || c==0x85 ||c==0x2028 || c==0x2029) {
+                if ((c>=0x0a && c<=0x0d) || c==0x85 || c==0x2028 || c==0x2029) {
                     // If not in the middle of a CR/LF sequence
                     if ( !(c==0x0a && fp->fInputIdx>fAnchorStart && inputBuf[fp->fInputIdx-1]==0x0d)) {
-                        break;
+                        // At new-line at end of input. Success
                         fHitEnd = TRUE;
                         fRequireEnd = TRUE;
-                        // At new-line at end of input. Success
+                        break;
                     }
                 }
             }
 
-            if (fp->fInputIdx == fAnchorLimit-2) {
-                if (fInput->char32At(fp->fInputIdx) == 0x0d && fInput->char32At(fp->fInputIdx+1) == 0x0a) {
+            if (fp->fInputIdx == fAnchorLimit-2 &&
+                 fInput->char32At(fp->fInputIdx) == 0x0d && fInput->char32At(fp->fInputIdx+1) == 0x0a) {
                     fHitEnd = TRUE;
                     fRequireEnd = TRUE;
                     break;                         // At CR/LF at end of input.  Success
-                }
             }
 
             fp = (REStackFrame *)fStack->popFrame(frameSize);
 
+            break;
+
+
+         case URX_DOLLAR_D:                   //  $, test for End of Line, in UNIX_LINES mode.
+            if (fp->fInputIdx >= fAnchorLimit-1) {
+                // Either at the last character of input, or off the end.
+                if (fp->fInputIdx == fAnchorLimit-1) {
+                    // At last char of input.  Success if it's a new line.
+                    if (fInput->char32At(fp->fInputIdx) == 0x0a) {
+                        fHitEnd = TRUE;
+                        fRequireEnd = TRUE;
+                        break;
+                    }
+                } else {
+                    // Off the end of input.  Success.
+                    fHitEnd = TRUE;
+                    fRequireEnd = TRUE;
+                    break;
+                }
+            }
+
+            // Not at end of input.  Back-track out.
+            fp = (REStackFrame *)fStack->popFrame(frameSize);
             break;
 
 
@@ -1440,7 +1499,7 @@ void RegexMatcher::MatchAt(int32_t startIdx, UBool toEnd, UErrorCode &status) {
                  // If we are positioned just before a new-line, succeed.
                  // It makes no difference where the new-line is within the input.
                  UChar32 c = inputBuf[fp->fInputIdx];
-                 if ((c<=0x0d && c>=0x0a) || c==0x85 ||c==0x2028 || c==0x2029) {
+                 if ((c>=0x0a && c<=0x0d) || c==0x85 ||c==0x2028 || c==0x2029) {
                      // At a line end, except for the odd chance of  being in the middle of a CR/LF sequence
                      //  In multi-line mode, hitting a new-line just before the end of input does not
                      //   set the hitEnd or requireEnd flags
@@ -1450,6 +1509,23 @@ void RegexMatcher::MatchAt(int32_t startIdx, UBool toEnd, UErrorCode &status) {
                  }
                  // not at a new line.  Fail.
                  fp = (REStackFrame *)fStack->popFrame(frameSize);
+             }
+             break;
+
+
+         case URX_DOLLAR_MD:                //  $, test for End of line in multi-line and UNIX_LINES mode
+             {
+                 if (fp->fInputIdx >= fAnchorLimit) {
+                     // We really are at the end of input.  Success.
+                     fHitEnd = TRUE;
+                     fRequireEnd = TRUE;  // TODO:  should require end be set in multi-line mode?
+                     break;
+                 }
+                 // If we are not positioned just before a new-line, the test fails; backtrack out.
+                 // It makes no difference where the new-line is within the input.
+                 if (inputBuf[fp->fInputIdx] != 0x0a) {
+                     fp = (REStackFrame *)fStack->popFrame(frameSize);
+                 }
              }
              break;
 
@@ -1473,6 +1549,7 @@ void RegexMatcher::MatchAt(int32_t startIdx, UBool toEnd, UErrorCode &status) {
                if ((fp->fInputIdx < fAnchorLimit) && 
                    ((c<=0x0d && c>=0x0a) || c==0x85 ||c==0x2028 || c==0x2029)) {
                    //  It's a new-line.  ^ is true.  Success.
+                   //  TODO:  what should be done with positions between a CR and LF?
                    break;
                }
                // Not at the start of a line.  Fail.
@@ -1480,6 +1557,23 @@ void RegexMatcher::MatchAt(int32_t startIdx, UBool toEnd, UErrorCode &status) {
            }
            break;
 
+
+       case URX_CARET_M_UNIX:       //  ^, test for start of line in mulit-line + Unix-line mode
+           {
+               U_ASSERT(fp->fInputIdx >= fAnchorStart);
+               if (fp->fInputIdx <= fAnchorStart) {
+                   // We are at the start input.  Success.
+                   break;
+               }
+               // Check whether character just before the current pos is a new-line
+               U_ASSERT(fp->fInputIdx <= fAnchorLimit);
+               UChar  c = inputBuf[fp->fInputIdx - 1]; 
+               if (c != 0x0a) {
+                   // Not at the start of a line.  Back-track out.
+                   fp = (REStackFrame *)fStack->popFrame(frameSize);
+               }
+           }
+           break;
 
         case URX_BACKSLASH_B:          // Test for word boundaries
             {
@@ -1505,7 +1599,7 @@ void RegexMatcher::MatchAt(int32_t startIdx, UBool toEnd, UErrorCode &status) {
 
         case URX_BACKSLASH_D:            // Test for decimal digit
             {
-                if (fp->fInputIdx >= fRegionLimit) {
+                if (fp->fInputIdx >= fActiveLimit) {
                     fHitEnd = TRUE;
                     fp = (REStackFrame *)fStack->popFrame(frameSize);
                     break;
@@ -1525,7 +1619,7 @@ void RegexMatcher::MatchAt(int32_t startIdx, UBool toEnd, UErrorCode &status) {
 
 
         case URX_BACKSLASH_G:          // Test for position at end of previous match
-            if (!((fMatch && fp->fInputIdx==fMatchEnd) || fMatch==FALSE && fp->fInputIdx==fRegionStart)) {
+            if (!((fMatch && fp->fInputIdx==fMatchEnd) || fMatch==FALSE && fp->fInputIdx==fActiveStart)) {
                 fp = (REStackFrame *)fStack->popFrame(frameSize);
             }
             break;
@@ -1538,7 +1632,7 @@ void RegexMatcher::MatchAt(int32_t startIdx, UBool toEnd, UErrorCode &status) {
             {
 
                 // Fail if at end of input
-                if (fp->fInputIdx >= fRegionLimit) {
+                if (fp->fInputIdx >= fActiveLimit) {
                     fHitEnd = TRUE;
                     fp = (REStackFrame *)fStack->popFrame(frameSize);
                     break;
@@ -1547,7 +1641,7 @@ void RegexMatcher::MatchAt(int32_t startIdx, UBool toEnd, UErrorCode &status) {
                 // Examine (and consume) the current char.
                 //   Dispatch into a little state machine, based on the char.
                 UChar32  c;
-                U16_NEXT(inputBuf, fp->fInputIdx, fRegionLimit, c);
+                U16_NEXT(inputBuf, fp->fInputIdx, fActiveLimit, c);
                 UnicodeSet **sets = fPattern->fStaticSets;
                 if (sets[URX_GC_NORMAL]->contains(c))  goto GC_Extend;
                 if (sets[URX_GC_CONTROL]->contains(c)) goto GC_Control;
@@ -1561,8 +1655,8 @@ void RegexMatcher::MatchAt(int32_t startIdx, UBool toEnd, UErrorCode &status) {
 
 
 GC_L:
-                if (fp->fInputIdx >= fRegionLimit)         goto GC_Done;
-                U16_NEXT(inputBuf, fp->fInputIdx, fRegionLimit, c);
+                if (fp->fInputIdx >= fActiveLimit)         goto GC_Done;
+                U16_NEXT(inputBuf, fp->fInputIdx, fActiveLimit, c);
                 if (sets[URX_GC_L]->contains(c))       goto GC_L;
                 if (sets[URX_GC_LV]->contains(c))      goto GC_V;
                 if (sets[URX_GC_LVT]->contains(c))     goto GC_T;
@@ -1571,16 +1665,16 @@ GC_L:
                 goto GC_Extend;
 
 GC_V:
-                if (fp->fInputIdx >= fRegionLimit)         goto GC_Done;
-                U16_NEXT(inputBuf, fp->fInputIdx, fRegionLimit, c);
+                if (fp->fInputIdx >= fActiveLimit)         goto GC_Done;
+                U16_NEXT(inputBuf, fp->fInputIdx, fActiveLimit, c);
                 if (sets[URX_GC_V]->contains(c))       goto GC_V;
                 if (sets[URX_GC_T]->contains(c))       goto GC_T;
                 U16_PREV(inputBuf, 0, fp->fInputIdx, c);
                 goto GC_Extend;
 
 GC_T:
-                if (fp->fInputIdx >= fRegionLimit)         goto GC_Done;
-                U16_NEXT(inputBuf, fp->fInputIdx, fRegionLimit, c);
+                if (fp->fInputIdx >= fActiveLimit)         goto GC_Done;
+                U16_NEXT(inputBuf, fp->fInputIdx, fActiveLimit, c);
                 if (sets[URX_GC_T]->contains(c))       goto GC_T;
                 U16_PREV(inputBuf, 0, fp->fInputIdx, c);
                 goto GC_Extend;
@@ -1588,26 +1682,26 @@ GC_T:
 GC_Extend:
                 // Combining characters are consumed here
                 for (;;) {
-                    if (fp->fInputIdx >= fRegionLimit) {
+                    if (fp->fInputIdx >= fActiveLimit) {
                         break;
                     }
-                    U16_GET(inputBuf, 0, fp->fInputIdx, fRegionLimit, c);
+                    U16_GET(inputBuf, 0, fp->fInputIdx, fActiveLimit, c);
                     if (sets[URX_GC_EXTEND]->contains(c) == FALSE) {
                         break;
                     }
-                    U16_FWD_1(inputBuf, fp->fInputIdx, fRegionLimit);
+                    U16_FWD_1(inputBuf, fp->fInputIdx, fActiveLimit);
                 }
                 goto GC_Done;
 
 GC_Control:
                 // Most control chars stand alone (don't combine with combining chars),  
                 //   except for that CR/LF sequence is a single grapheme cluster.
-                if (c == 0x0d && fp->fInputIdx < fRegionLimit && inputBuf[fp->fInputIdx] == 0x0a) {
+                if (c == 0x0d && fp->fInputIdx < fActiveLimit && inputBuf[fp->fInputIdx] == 0x0a) {
                     fp->fInputIdx++;
                 }
 
 GC_Done:
-                if (fp->fInputIdx >= fRegionLimit) {
+                if (fp->fInputIdx >= fActiveLimit) {
                     fHitEnd = TRUE;
                 }
                 break;
@@ -1632,7 +1726,7 @@ GC_Done:
                 // The high bit of the op value is a flag for the match polarity.
                 //    0:   success if input char is in set.
                 //    1:   success if input char is not in set.
-                if (fp->fInputIdx >= fRegionLimit) {
+                if (fp->fInputIdx >= fActiveLimit) {
                     fHitEnd = TRUE;
                     fp = (REStackFrame *)fStack->popFrame(frameSize);
                     break;
@@ -1642,7 +1736,7 @@ GC_Done:
                 opValue &= ~URX_NEG_SET;
                 U_ASSERT(opValue > 0 && opValue < URX_LAST_SET);
                 UChar32  c;
-                U16_NEXT(inputBuf, fp->fInputIdx, fRegionLimit, c);
+                U16_NEXT(inputBuf, fp->fInputIdx, fActiveLimit, c);
                 if (c < 256) {
                     Regex8BitSet *s8 = &fPattern->fStaticSets8[opValue];
                     if (s8->contains(c)) {
@@ -1665,7 +1759,7 @@ GC_Done:
             {
                 // Test input character for NOT being a member of  one of 
                 //    the predefined sets (Word Characters, for example)
-                if (fp->fInputIdx >= fRegionLimit) {
+                if (fp->fInputIdx >= fActiveLimit) {
                     fHitEnd = TRUE;
                     fp = (REStackFrame *)fStack->popFrame(frameSize);
                     break;
@@ -1673,7 +1767,7 @@ GC_Done:
 
                 U_ASSERT(opValue > 0 && opValue < URX_LAST_SET);
                 UChar32  c;
-                U16_NEXT(inputBuf, fp->fInputIdx, fRegionLimit, c);
+                U16_NEXT(inputBuf, fp->fInputIdx, fActiveLimit, c);
                 if (c < 256) {
                     Regex8BitSet *s8 = &fPattern->fStaticSets8[opValue];
                     if (s8->contains(c) == FALSE) {
@@ -1692,14 +1786,14 @@ GC_Done:
             
 
         case URX_SETREF:
-            if (fp->fInputIdx >= fRegionLimit) {
+            if (fp->fInputIdx >= fActiveLimit) {
                 fHitEnd = TRUE;
                 fp = (REStackFrame *)fStack->popFrame(frameSize);
                 break;
             }
             // There is input left.  Pick up one char and test it for set membership.
             UChar32   c;
-            U16_NEXT(inputBuf, fp->fInputIdx, fRegionLimit, c);
+            U16_NEXT(inputBuf, fp->fInputIdx, fActiveLimit, c);
             U_ASSERT(opValue > 0 && opValue < sets->size());
             if (c<256) {
                 Regex8BitSet *s8 = &fPattern->fSets8[opValue];
@@ -1721,7 +1815,7 @@ GC_Done:
         case URX_DOTANY:
             {
                 // . matches anything, but stops at end-of-line.
-                if (fp->fInputIdx >= fRegionLimit) {
+                if (fp->fInputIdx >= fActiveLimit) {
                     // At end of input.  Match failed.  Backtrack out.
                     fHitEnd = TRUE;
                     fp = (REStackFrame *)fStack->popFrame(frameSize);
@@ -1729,7 +1823,7 @@ GC_Done:
                 }
                 // There is input left.  Advance over one char, unless we've hit end-of-line
                 UChar32 c;
-                U16_NEXT(inputBuf, fp->fInputIdx, fRegionLimit, c);
+                U16_NEXT(inputBuf, fp->fInputIdx, fActiveLimit, c);
                 if (((c & 0x7f) <= 0x29) &&     // First quickly bypass as many chars as possible
                     ((c<=0x0d && c>=0x0a) || c==0x85 ||c==0x2028 || c==0x2029)) {
                     // End of line in normal mode.   . does not match.
@@ -1738,12 +1832,12 @@ GC_Done:
                 }
             }
             break;
-            
-            
+
+
         case URX_DOTANY_ALL:
             {
                 // ., in dot-matches-all (including new lines) mode
-                if (fp->fInputIdx >= fRegionLimit) {
+                if (fp->fInputIdx >= fActiveLimit) {
                     // At end of input.  Match failed.  Backtrack out.
                     fHitEnd = TRUE;
                     fp = (REStackFrame *)fStack->popFrame(frameSize);
@@ -1752,8 +1846,8 @@ GC_Done:
                 // There is input left.  Advance over one char, except if we are
                 //   at a cr/lf, advance over both of them.
                 UChar32 c; 
-                U16_NEXT(inputBuf, fp->fInputIdx, fRegionLimit, c);
-                if (c==0x0d && fp->fInputIdx < fRegionLimit) {
+                U16_NEXT(inputBuf, fp->fInputIdx, fActiveLimit, c);
+                if (c==0x0d && fp->fInputIdx < fActiveLimit) {
                     // In the case of a CR/LF, we need to advance over both.
                     UChar nextc = inputBuf[fp->fInputIdx];
                     if (nextc == 0x0a) {
@@ -1763,51 +1857,24 @@ GC_Done:
             }
             break;
 
-        case URX_DOTANY_PL:
-            // Match all up to and end-of-line or end-of-input.
+
+        case URX_DOTANY_UNIX:
             {
-                //  Fail if input already exhausted.
-                if (fp->fInputIdx >= fRegionLimit) {
+                // '.' operator, matches all, but stops at end-of-line.
+                //   UNIX_LINES mode, so 0x0a is the only recognized line ending.
+                if (fp->fInputIdx >= fActiveLimit) {
+                    // At end of input.  Match failed.  Backtrack out.
                     fHitEnd = TRUE;
                     fp = (REStackFrame *)fStack->popFrame(frameSize);
                     break;
                 }
-
-                // There is input left. Fail if we are  at the end of a line.
+                // There is input left.  Advance over one char, unless we've hit end-of-line
                 UChar32 c;
-                U16_NEXT(inputBuf, fp->fInputIdx, fRegionLimit, c);
-                if (((c & 0x7f) <= 0x29) &&     // First quickly bypass as many chars as possible
-                    ((c<=0x0d && c>=0x0a) || c==0x85 ||c==0x2028 || c==0x2029)) {
-                    // End of line in normal mode.   . does not match.
+                U16_NEXT(inputBuf, fp->fInputIdx, fActiveLimit, c);
+                if (c == 0x0a) {
+                    // End of line in normal mode.   '.' does not match the \n
                     fp = (REStackFrame *)fStack->popFrame(frameSize);
-                    break;
                 }
-                
-                // There was input left.  Consume it until we hit the end of a line,
-                //   or until it's exhausted.
-                for (;;) {
-                    if (fp->fInputIdx >=  fRegionLimit) {
-                        fHitEnd = TRUE;
-                        break;
-                    }
-                    U16_NEXT(inputBuf, fp->fInputIdx, fRegionLimit, c);
-                    if (((c & 0x7f) <= 0x29) &&     // First quickly bypass as many chars as possible
-                        ((c<=0x0d && c>=0x0a) || c==0x85 ||c==0x2028 || c==0x2029)) {
-                        U16_BACK_1(inputBuf, 0, fp->fInputIdx)
-                            // Scan has reached a line-end.  We are done.
-                            break;
-                    }
-                }
-            }
-            break;
-
-        case URX_DOTANY_ALL_PL:
-            // Match up to end of input.  Fail if already at end of input.
-            fHitEnd = TRUE;
-            if (fp->fInputIdx >= fRegionLimit) {
-                fp = (REStackFrame *)fStack->popFrame(frameSize);
-            } else {
-                fp->fInputIdx = fRegionLimit;
             }
             break;
 
@@ -2006,7 +2073,7 @@ GC_Done:
                     }
 
                 UBool  haveMatch = FALSE;
-                if (fp->fInputIdx + len <= fRegionLimit) {
+                if (fp->fInputIdx + len <= fActiveLimit) {
                     if (opType == URX_BACKREF) {
                         if (u_strncmp(inputBuf+groupStartIdx, inputBuf+fp->fInputIdx, len) == 0) {
                             haveMatch = TRUE;
@@ -2054,13 +2121,14 @@ GC_Done:
             break;
 
         case URX_LA_START:
-            //  TODO:  setup for trnsaparent bounds, 
             {
                 // Entering a lookahead block.
                 // Save Stack Ptr, Input Pos.
                 U_ASSERT(opValue>=0 && opValue+1<fPattern->fDataSize);
                 fData[opValue]   = fStack->size();
                 fData[opValue+1] = fp->fInputIdx;
+                fActiveStart     = fLookStart;          // Set the match region change for
+                fActiveLimit     = fLookLimit;          //   transparent bounds.
             }
             break;
 
@@ -2068,12 +2136,14 @@ GC_Done:
             {
                 // Leaving a look-ahead block.
                 //  restore Stack Ptr, Input Pos to positions they had on entry to block.
-                //  TODO:  will need to restore Region bounds as well, for Transparent Bounds.
                 U_ASSERT(opValue>=0 && opValue+1<fPattern->fDataSize);
                 int32_t stackSize = fStack->size();
                 int32_t newStackSize = fData[opValue];
                 U_ASSERT(stackSize >= newStackSize);
                 if (stackSize > newStackSize) {
+                    // Copy the current top frame back to the new (cut back) top frame.
+                    //   This makes the capture groups from within the look-ahead
+                    //   expression available.
                     int32_t *newFP = fStack->getBuffer() + newStackSize - frameSize;
                     int32_t i;
                     for (i=0; i<frameSize; i++) {
@@ -2083,13 +2153,18 @@ GC_Done:
                     fStack->setSize(newStackSize);
                 }
                 fp->fInputIdx = fData[opValue+1];
+
+                // Restore the active region bounds in the input string; they may have
+                //    been changed because of transparent bounds on a Region.
+                fActiveStart = fRegionStart;        // TODO:  handle nested look-around blocks.
+                fActiveLimit = fRegionLimit;
             }
             break;
 
         case URX_ONECHAR_I:
-            if (fp->fInputIdx < fRegionLimit) {
+            if (fp->fInputIdx < fActiveLimit) {
                 UChar32   c;
-                U16_NEXT(inputBuf, fp->fInputIdx, fRegionLimit, c);
+                U16_NEXT(inputBuf, fp->fInputIdx, fActiveLimit, c);
                 if (u_foldCase(c, U_FOLD_CASE_DEFAULT) == opValue) {
                     break;
                 }
@@ -2115,7 +2190,7 @@ GC_Done:
                 stringLen = opValue;
                 
                 int32_t stringEndIndex = fp->fInputIdx + stringLen;
-                if (stringEndIndex <= fRegionLimit) {
+                if (stringEndIndex <= fActiveLimit) {
                     if (u_strncasecmp(inputBuf+fp->fInputIdx, litText+stringStartIdx,
                         stringLen, U_FOLD_CASE_DEFAULT) == 0) {
                         // Success.  Advance the current input position.
@@ -2144,8 +2219,8 @@ GC_Done:
                 fData[opValue+2] = -1;
                 // Save input string length, then reset to pin any matches to end at
                 //   the current position.
-                fData[opValue+3] = fRegionLimit;
-                fRegionLimit     = fp->fInputIdx;
+                fData[opValue+3] = fActiveLimit;
+                fActiveLimit     = fp->fInputIdx;
             }
             break;
 
@@ -2184,9 +2259,9 @@ GC_Done:
                     //   Look Behind altogether.
                     fp = (REStackFrame *)fStack->popFrame(frameSize);
                     int32_t restoreInputLen = fData[opValue+3];
-                    U_ASSERT(restoreInputLen >= fRegionLimit);
+                    U_ASSERT(restoreInputLen >= fActiveLimit);
                     U_ASSERT(restoreInputLen <= fInput->length());
-                    fRegionLimit = restoreInputLen;
+                    fActiveLimit = restoreInputLen;
                     break;
                 }
 
@@ -2201,7 +2276,7 @@ GC_Done:
             // End of a look-behind block, after a successful match.
             {
                 U_ASSERT(opValue>=0 && opValue+1<fPattern->fDataSize);
-                if (fp->fInputIdx != fRegionLimit) {
+                if (fp->fInputIdx != fActiveLimit) {
                     //  The look-behind expression matched, but the match did not
                     //    extend all the way to the point that we are looking behind from.
                     //  FAIL out of here, which will take us back to the LB_CONT, which
@@ -2215,9 +2290,9 @@ GC_Done:
                 //   which had been truncated to pin the end of the lookbehind match to the 
                 //   position being looked-behind.
                 int32_t originalInputLen = fData[opValue+3];
-                U_ASSERT(originalInputLen >= fRegionLimit);
+                U_ASSERT(originalInputLen >= fActiveLimit);
                 U_ASSERT(originalInputLen <= fInput->length());
-                fRegionLimit = originalInputLen;
+                fActiveLimit = originalInputLen;
             }
             break;
 
@@ -2257,9 +2332,9 @@ GC_Done:
                     //  getting a match, which means that the negative lookbehind as
                     //  a whole has succeeded.  Jump forward to the continue location
                     int32_t restoreInputLen = fData[opValue+3];
-                    U_ASSERT(restoreInputLen >= fRegionLimit);
+                    U_ASSERT(restoreInputLen >= fActiveLimit);
                     U_ASSERT(restoreInputLen <= fInput->length());
-                    fRegionLimit = restoreInputLen;
+                    fActiveLimit = restoreInputLen;
                     fp->fPatIdx = continueLoc;
                     break;
                 }
@@ -2275,7 +2350,7 @@ GC_Done:
             // End of a negative look-behind block, after a successful match.
             {
                 U_ASSERT(opValue>=0 && opValue+1<fPattern->fDataSize);
-                if (fp->fInputIdx != fRegionLimit) {
+                if (fp->fInputIdx != fActiveLimit) {
                     //  The look-behind expression matched, but the match did not
                     //    extend all the way to the point that we are looking behind from.
                     //  FAIL out of here, which will take us back to the LB_CONT, which
@@ -2292,9 +2367,9 @@ GC_Done:
                 //   inorder to pin the end of the lookbehind match  
                 //   to the position being looked-behind.
                 int32_t originalInputLen = fData[opValue+3];
-                U_ASSERT(originalInputLen >= fRegionLimit);
+                U_ASSERT(originalInputLen >= fActiveLimit);
                 U_ASSERT(originalInputLen <= fInput->length());
-                fRegionLimit = originalInputLen;
+                fActiveLimit = originalInputLen;
 
                 // Restore original stack position, discarding any state saved
                 //   by the successful pattern match.
@@ -2324,12 +2399,12 @@ GC_Done:
                 //   we reach a character that is not a member of the set.
                 int32_t ix = fp->fInputIdx;
                 for (;;) {
-                    if (ix >= fRegionLimit) {
+                    if (ix >= fActiveLimit) {
                         fHitEnd = TRUE;
                         break;
                     }
                     UChar32   c;
-                    U16_NEXT(inputBuf, ix, fRegionLimit, c);
+                    U16_NEXT(inputBuf, ix, fActiveLimit, c);
                     if (c<256) {
                         if (s8->contains(c) == FALSE) {
                             U16_BACK_1(inputBuf, 0, ix);
@@ -2377,32 +2452,35 @@ GC_Done:
                 // Loop through input until the input is exhausted (we reach an end-of-line)
                 // In multi-line mode, we can just go straight to the end of the input.
                 int32_t ix;
-                if (opValue == 1) {
+                if ((opValue & 1) == 1) {
                     // Multi-line mode.
-                    ix = fRegionLimit;
+                    ix = fActiveLimit;
                     fHitEnd = TRUE;
                 } else {
                     // NOT multi-line mode.  Line endings do not match '.'
                     // Scan forward until a line ending or end of input.
                     ix = fp->fInputIdx;
                     for (;;) {
-                        if (ix >= fRegionLimit) {
+                        if (ix >= fActiveLimit) {
                             fHitEnd = TRUE;
-                            ix = fRegionLimit;
+                            ix = fActiveLimit;
                             break;
                         }
                         UChar32   c;
-                        U16_NEXT(inputBuf, ix, fRegionLimit, c);   // c = inputBuf[ix++]
-                        if (((c & 0x7f) <= 0x29) &&     
-                            ((c<=0x0d && c>=0x0a) || c==0x85 ||c==0x2028 || c==0x2029)) {
-                            //  char is a line ending.  Put the input pos back to the
-                            //    line ending char, and exit the scanning loop.
-                            U16_BACK_1(inputBuf, 0, ix);
-                            break;
+                        U16_NEXT(inputBuf, ix, fActiveLimit, c);   // c = inputBuf[ix++]
+                        if ((c & 0x7f) <= 0x29) {        // Fast filter of non-new-line-s
+                            if ((c == 0x0a) ||            //  0x0a is newline in both modes.
+                               ((opValue & 2) == 0) &&    // IF not UNIX_LINES mode
+                                    (c<=0x0d && c>=0x0a) || c==0x85 ||c==0x2028 || c==0x2029) {
+                                //  char is a line ending.  Put the input pos back to the
+                                //    line ending char, and exit the scanning loop.
+                                U16_BACK_1(inputBuf, 0, ix);
+                                break;
+                            }
                         }
                     }
                 }
-                
+
                 // If there were no matching characters, skip over the loop altogether.
                 //   The loop doesn't run at all, a * op always succeeds.
                 if (ix == fp->fInputIdx) {
@@ -2412,7 +2490,7 @@ GC_Done:
 
                 // Peek ahead in the compiled pattern, to the URX_LOOP_C that
                 //   must follow.  It's operand is the stack location
-                //   that holds the starting input index for the match of this [set]*
+                //   that holds the starting input index for the match of this .*
                 int32_t loopcOp = pat[fp->fPatIdx];
                 U_ASSERT(URX_TYPE(loopcOp) == URX_LOOP_C);
                 int32_t stackLoc = URX_VAL(loopcOp);

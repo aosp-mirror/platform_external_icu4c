@@ -34,6 +34,22 @@ log_err("Failure at file %s, line %d, error = %s\n", __FILE__, __LINE__, u_error
 #define TEST_ASSERT(expr) {if ((expr)==FALSE) { \
 log_err("Test Failure at file %s, line %d\n", __FILE__, __LINE__);}}
 
+#define TEST_SETUP(pattern, testString, flags) {  \
+    status = U_ZERO_ERROR; \
+    re = uregex_openC(pattern, flags, NULL, &status);  \
+    TEST_ASSERT_SUCCESS(status);   \
+    UChar   *srcString = (UChar *)malloc((strlen(testString)+2)*sizeof(UChar)); \
+    u_uastrncpy(srcString, testString,  strlen(testString)+1); \
+    uregex_setText(re, srcString, -1, &status); \
+    TEST_ASSERT_SUCCESS(status);
+    
+#define TEST_TEARDOWN  \
+    TEST_ASSERT_SUCCESS(status);  \
+    uregex_close(re);  \
+    free(srcString);   \
+    }
+
+
 static void test_assert_string(const char *expected, const UChar *actual, UBool nulTerm, const char *file, int line) {
      char     buf_inside_macro[120];
      int32_t  len = (int32_t)strlen(expected);
@@ -548,22 +564,6 @@ static void TestRegexCAPI(void) {
     /*
      *  Regions
      */
-     #define TEST_SETUP(pattern, testString, flags) {  \
-         status = U_ZERO_ERROR; \
-         re = uregex_openC(pattern, flags, NULL, &status);  \
-         TEST_ASSERT_SUCCESS(status);   \
-         UChar   *srcString = (UChar *)malloc((strlen(testString)+2)*sizeof(UChar)); \
-         u_uastrncpy(srcString, testString,  strlen(testString)+1); \
-         uregex_setText(re, srcString, -1, &status); \
-         TEST_ASSERT_SUCCESS(status);
-         
-     #define TEST_TEARDOWN  \
-         TEST_ASSERT_SUCCESS(status);  \
-         uregex_close(re);  \
-         free(srcString);   \
-         }
-         
-         
         
         
         // SetRegion(), getRegion() do something
@@ -656,14 +656,41 @@ static void TestRegexCAPI(void) {
         TEST_ASSERT(uregex_requireEnd(re, &status) == FALSE);
         TEST_TEARDOWN;
 
-        // requireEnd
         TEST_SETUP("abcd$", "abcd", 0);
         TEST_ASSERT(uregex_find(re, 0, &status) == TRUE);
         TEST_ASSERT(uregex_requireEnd(re, &status) == TRUE);
         TEST_TEARDOWN;
-
-         
         
+        // anchoringBounds
+        TEST_SETUP("abc$", "abcdef", 0);
+        TEST_ASSERT(uregex_hasAnchoringBounds(re, &status) == TRUE);
+        uregex_useAnchoringBounds(re, FALSE, &status);
+        TEST_ASSERT(uregex_hasAnchoringBounds(re, &status) == FALSE);
+        
+        TEST_ASSERT(uregex_find(re, -1, &status) == FALSE);
+        uregex_useAnchoringBounds(re, TRUE, &status);
+        uregex_setRegion(re, 0, 3, &status);
+        TEST_ASSERT(uregex_find(re, -1, &status) == TRUE);
+        TEST_ASSERT(uregex_end(re, 0, &status) == 3);
+        TEST_TEARDOWN;
+        
+        // Transparent Bounds
+        TEST_SETUP("abc(?=def)", "abcdef", 0);
+        TEST_ASSERT(uregex_hasTransparentBounds(re, &status) == FALSE);
+        uregex_useTransparentBounds(re, TRUE, &status);
+        TEST_ASSERT(uregex_hasTransparentBounds(re, &status) == TRUE);
+        
+        uregex_useTransparentBounds(re, FALSE, &status);
+        TEST_ASSERT(uregex_find(re, -1, &status) == TRUE);    // No Region
+        uregex_setRegion(re, 0, 3, &status);
+        TEST_ASSERT(uregex_find(re, -1, &status) == FALSE);   // with region, opaque bounds
+        uregex_useTransparentBounds(re, TRUE, &status);
+        TEST_ASSERT(uregex_find(re, -1, &status) == TRUE);    // with region, transparent bounds
+        TEST_ASSERT(uregex_end(re, 0, &status) == 3);
+        TEST_TEARDOWN;
+        
+        
+
 #if 0
         status = U_ZERO_ERROR;
         uregex_reset(re, 0, &status);

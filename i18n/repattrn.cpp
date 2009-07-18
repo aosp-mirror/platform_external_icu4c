@@ -244,7 +244,8 @@ RegexPattern::compile(const UnicodeString &regex,
     }
 
     const uint32_t allFlags = UREGEX_CANON_EQ | UREGEX_CASE_INSENSITIVE | UREGEX_COMMENTS |
-            UREGEX_DOTALL   | UREGEX_MULTILINE | UREGEX_UWORD | UREGEX_ERROR_ON_UNKNOWN_ESCAPES;
+                              UREGEX_DOTALL   | UREGEX_MULTILINE        | UREGEX_UWORD |
+                              UREGEX_ERROR_ON_UNKNOWN_ESCAPES           | UREGEX_UNIX_LINES;
 
     if ((flags & ~allFlags) != 0) {
         status = U_REGEX_INVALID_FLAG;
@@ -451,8 +452,6 @@ void   RegexPattern::dumpOp(int32_t index) const {
     case URX_NOP:
     case URX_DOTANY:
     case URX_DOTANY_ALL:
-    case URX_DOTANY_PL:
-    case URX_DOTANY_ALL_PL:
     case URX_FAIL:
     case URX_CARET:
     case URX_DOLLAR:

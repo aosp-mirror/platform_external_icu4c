@@ -1360,7 +1360,7 @@ void RegexTest::Extended() {
 
     RegexMatcher    quotedStuffMat("\\s*([\\'\\\"/])(.*?)\\1", 0, status);
     RegexMatcher    commentMat    ("\\s*(#.*)?$", 0, status);
-    RegexMatcher    flagsMat      ("\\s*([ixsmdteEGMvatyYzZ2-9]*)([:letter:]*)", 0, status);
+    RegexMatcher    flagsMat      ("\\s*([ixsmdteDEGLMvabtyYzZ2-9]*)([:letter:]*)", 0, status);
 
     RegexMatcher    lineMat("(.*?)\\r?\\n", testString, 0, status);
     UnicodeString   testPattern;   // The pattern for test from the test file.
@@ -1506,8 +1506,9 @@ void RegexTest::regex_find(const UnicodeString &pattern,
     int32_t             numFinds;
     int32_t             i;
     UBool               useMatchesFunc   = FALSE;
-    int32_t             regionStart    = -1;
-    int32_t             regionEnd      = -1;
+    UBool               useLookingAtFunc = FALSE;
+    int32_t             regionStart      = -1;
+    int32_t             regionEnd        = -1;
 
     //
     //  Compile the caller's pattern
@@ -1528,6 +1529,9 @@ void RegexTest::regex_find(const UnicodeString &pattern,
     
     if (flags.indexOf((UChar)0x65) >= 0) { // 'e' flag
         bflags |= UREGEX_ERROR_ON_UNKNOWN_ESCAPES;
+    }
+    if (flags.indexOf((UChar)0x44) >= 0) { // 'D' flag
+        bflags |= UREGEX_UNIX_LINES;
     }
 
 
@@ -1580,6 +1584,9 @@ void RegexTest::regex_find(const UnicodeString &pattern,
     // 'M' flag.  Use matches() instead of find()
     if (flags.indexOf((UChar)0x4d) >= 0) {
         useMatchesFunc = TRUE;
+    }
+    if (flags.indexOf((UChar)0x4c) >= 0) {
+        useLookingAtFunc = TRUE;
     }
 
     //
@@ -1644,10 +1651,14 @@ void RegexTest::regex_find(const UnicodeString &pattern,
 
     //
     // Do a find on the de-tagged input using the caller's pattern
+    //     TODO: error on count>1 and not find().
+    //           error on both matches() and lookingAt().
     //
     for (i=0; i<numFinds; i++) {
         if (useMatchesFunc) {
             isMatch = matcher->matches(status);
+        } else  if (useLookingAtFunc) {
+            isMatch = matcher->lookingAt(status);
         } else {
             isMatch = matcher->find();
         }
@@ -1702,22 +1713,22 @@ void RegexTest::regex_find(const UnicodeString &pattern,
 
     if ((flags.indexOf((UChar)0x59) >= 0) &&   //  'Y' flag:  RequireEnd() == false
         matcher->requireEnd() == TRUE) {
-        errln("requireEnd() returned TRUE.  Expected FALSE");
+        errln("Error at line %d: requireEnd() returned TRUE.  Expected FALSE", line);
         failed = TRUE;
     }
     if ((flags.indexOf((UChar)0x79) >= 0) &&   //  'y' flag:  RequireEnd() == true
         matcher->requireEnd() == FALSE) {
-        errln("requireEnd() returned FALSE.  Expected TRUE");
+        errln("Error at line %d: requireEnd() returned FALSE.  Expected TRUE", line);
         failed = TRUE;
     }
     if ((flags.indexOf((UChar)0x5A) >= 0) &&   //  'Z' flag:  hitEnd() == false
         matcher->hitEnd() == TRUE) {
-        errln("hitEnd() returned TRUE.  Expected FALSE");
+        errln("Error at line %d: hitEnd() returned TRUE.  Expected FALSE", line);
         failed = TRUE;
     }
     if ((flags.indexOf((UChar)0x7A) >= 0) &&   //  'z' flag:  hitEnd() == true
         matcher->hitEnd() == FALSE) {
-        errln("hitEnd() returned FALSE.  Expected TRUE");
+        errln("Error at line %d: hitEnd() returned FALSE.  Expected TRUE", line);
         failed = TRUE;
     }
 

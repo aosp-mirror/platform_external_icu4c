@@ -109,7 +109,6 @@ private:
                                int32_t end);
     void        matchStartType();
     void        stripNOPs();
-    void        OptDotStar();
 
     void        setEval(int32_t op);
     void        setPushOp(int32_t op);

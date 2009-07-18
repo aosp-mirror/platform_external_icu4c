@@ -1,5 +1,5 @@
 //
-//   Copyright (C) 2002-2005 International Business Machines Corporation
+//   Copyright (C) 2002-2007 International Business Machines Corporation
 //   and others. All rights reserved.
 //
 //   file:  regeximp.h
@@ -57,7 +57,7 @@ U_NAMESPACE_BEGIN
 enum {
      URX_RESERVED_OP   = 0,    // For multi-operand ops, most non-first words.
      URX_RESERVED_OP_N = 255,  // For multi-operand ops, negative operand values.
-     URX_BACKTRACK     = 1,
+     URX_BACKTRACK     = 1,    // Force a backtrack, as if a match test had failed.
      URX_END           = 2,
      URX_ONECHAR       = 3,    // Value field is the 21 bit unicode char to match
      URX_STRING        = 4,    // Value field is index of string start
@@ -96,13 +96,14 @@ enum {
                                //    3rd   Operand:  Minimum count.
                                //    4th   Operand:  Max count, -1 for unbounded.
 
-     URX_DOTANY_PL     = 27,   // .+, match rest of the line.  Fail already at end.
+     URX_DOTANY_UNIX   = 27,   // '.' operator in UNIX_LINES mode, only \n marks end of line.
 
      URX_CTR_LOOP      = 28,   // Loop Ops for {interval} loops.
      URX_CTR_LOOP_NG   = 29,   //   Also in three flavors.
                                //   Operand is loc of corresponding CTR_INIT.
 
-     URX_DOTANY_ALL_PL = 30,   // .+, match rest of the Input.  Fail if already at end
+     URX_CARET_M_UNIX  = 30,   // '^' operator, test for start of line in multi-line
+                               //      plus UNIX_LINES mode.
 
      URX_RELOC_OPRND   = 31,   // Operand value in multi-operand ops that refers
                                //   back into compiled pattern code, and thus must
@@ -166,10 +167,16 @@ enum {
                                //   Must always immediately follow  LOOP_x_I instruction.
      URX_LOOP_DOT_I    = 52,   // .*, initialization of the optimized loop.
                                //   Operand value:
-                               //      0:  Normal (. doesn't match new-line) mode.
-                               //      1:  . matches new-line mode.
-     URX_BACKSLASH_BU  = 53    // \b or \B in UREGEX_UWORD mode, using Unicode style
+                               //      bit 0:
+                               //         0:  Normal (. doesn't match new-line) mode.
+                               //         1:  . matches new-line mode.
+                               //      bit 1:  controls what new-lines are recognized by this operation.
+                               //         0:  All Unicode New-lines
+                               //         1:  UNIX_LINES, \u000a only.
+     URX_BACKSLASH_BU  = 53,   // \b or \B in UREGEX_UWORD mode, using Unicode style
                                //   word boundaries.
+     URX_DOLLAR_D      = 54,   // $ end of input test, in UNIX_LINES mode.
+     URX_DOLLAR_MD     = 55    // $ end of input test, in MULTI_LINE and UNIX_LINES mode.
 
 };
 
@@ -203,10 +210,10 @@ enum {
         "DOLLAR",              \
         "CTR_INIT",            \
         "CTR_INIT_NG",         \
-        "DOTANY_PL",           \
+        "DOTANY_UNIX",         \
         "CTR_LOOP",            \
         "CTR_LOOP_NG",         \
-        "DOTANY_ALL_PL",       \
+        "URX_CARET_M_UNIX",    \
         "RELOC_OPRND",         \
         "STO_SP",              \
         "LD_SP",               \
@@ -229,7 +236,9 @@ enum {
         "LOOP_SR_I",           \
         "LOOP_C",              \
         "LOOP_DOT_I",          \
-        "BACKSLASH_BU"
+        "BACKSLASH_BU",        \
+        "DOLLAR_D",            \
+        "DOLLAR_MD"
 
 
 //
