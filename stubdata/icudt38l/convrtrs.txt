@@ -525,11 +525,6 @@ ibm-33722_P12A_P12A-2004_U2 { UTR22* }
                         # Extended_UNIX_Code_Packed_Format_for_Japanese { IANA* WINDOWS }
                         # csEUCPkdFmtJapanese { IANA WINDOWS }
                         # END android-removed
-                        # BEGIN android-added
-                        EUC-JP { WINDOWS }
-                        Extended_UNIX_Code_Packed_Format_for_Japanese { WINDOWS }
-                        csEUCPkdFmtJapanese { WINDOWS }
-                        # END android-added
                         X-EUC-JP { WINDOWS }   # Japan EUC. x-euc-jp is a MIME name
                         windows-51932 { WINDOWS* }
                         ibm-33722_VPUA
@@ -554,7 +549,7 @@ ibm-954_P101-2007 { UTR22* }
                         EUC-JP { IANA MIME* JAVA* } # Matches more closely with ibm-1350
                         Extended_UNIX_Code_Packed_Format_for_Japanese { IANA* JAVA }
                         csEUCPkdFmtJapanese { IANA JAVA }
-                        # END android-removed
+                        # END android-added
                         X-EUC-JP { JAVA }   # Japan EUC. x-euc-jp is a MIME name
                         eucjis { JAVA }
                         ujis # Linux sometimes uses this name. This is an unfortunate generic and rarely used name. Its use is discouraged.
