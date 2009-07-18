@@ -37,7 +37,9 @@
 
 # build an extension-only (delta) .cnv file
 # requires the base .cnv file at runtime
-<icu:base>                    "ibm-1363_P11B-1998"
+# BEGIN android-removed
+# <icu:base>                    "ibm-1363_P11B-1998"
+# END android-removed
 
 # The following was the generated state table.
 # This does not account for unassigned characters
