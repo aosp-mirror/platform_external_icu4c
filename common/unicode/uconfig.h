@@ -115,7 +115,7 @@
  * @stable ICU 2.4
  */
 #ifndef UCONFIG_NO_LEGACY_CONVERSION
-#   define UCONFIG_NO_LEGACY_CONVERSION 1
+#   define UCONFIG_NO_LEGACY_CONVERSION 0
 #endif
 
 /**
