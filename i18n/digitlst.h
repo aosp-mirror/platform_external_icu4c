@@ -71,6 +71,14 @@ public:
     DigitList();
     ~DigitList();
 
+    // BEGIN android-added
+    /* capacity constructor
+     * @param capacity The size of the digit list buffer
+     * @return the newly created object. 
+     */
+    DigitList(int capacity);
+    // END android-added
+
     /* copy constructor
      * @param DigitList The object to be copied.
      * @return the newly created object. 
@@ -227,8 +235,14 @@ public:
 
 private:
 
+    // BEGIN android-changed
     /* One character before fDigits for the decimal*/
-    char        fDecimalDigits[MAX_DEC_DIGITS + 1];
+    char        *fDecimalDigits;
+
+    char        fDecimalDigitsBuffer[MAX_DEC_DIGITS + 1];
+
+    int fBufferSize;
+    // END android-changed
 
     /**
      * Round the representation to the given number of digits.

@@ -61,12 +61,19 @@ enum {
 
 U_NAMESPACE_BEGIN
 
+// BEGIN android-added
+// capacity of a dynamically allocated fDecimalDigits buffer
+int fBufferSize = 0;
+// END android-added
 
 // -------------------------------------
 // default constructor
 
 DigitList::DigitList()
 {
+    // BEGIN android-added
+    fDecimalDigits = fDecimalDigitsBuffer;
+    // END android-added
     fDigits = fDecimalDigits + 1;   // skip the decimal
     clear();
 }
@@ -75,13 +82,32 @@ DigitList::DigitList()
 
 DigitList::~DigitList()
 {
+    // BEGIN android-added
+    if (fDecimalDigits != fDecimalDigitsBuffer) free(fDecimalDigits);
+    // END android-added
 }
+
+// BEGIN android-added
+// -------------------------------------
+// capacity constructor
+
+DigitList::DigitList(int capacity)
+{
+    fBufferSize = capacity;
+    fDecimalDigits = (char *) malloc(capacity);
+    fDigits = fDecimalDigits + 1;   // skip the decimal
+    clear();
+}
+// END android-added
 
 // -------------------------------------
 // copy constructor
 
 DigitList::DigitList(const DigitList &other)
 {
+    // BEGIN android-added
+    fDecimalDigits = fDecimalDigitsBuffer;
+    // END android-added
     fDigits = fDecimalDigits + 1;   // skip the decimal
     *this = other;
 }
@@ -98,6 +124,14 @@ DigitList::operator=(const DigitList& other)
         fCount = other.fCount;
         fIsPositive = other.fIsPositive;
         fRoundingMode = other.fRoundingMode;
+        // BEGIN android-added
+        if (other.fDecimalDigits != other.fDecimalDigitsBuffer)
+        {
+            fBufferSize = other.fBufferSize;
+            fDecimalDigits = (char *) malloc(fBufferSize);
+            fDigits = fDecimalDigits + 1;   // skip the decimal
+        }
+        // END android-added
         uprv_strncpy(fDigits, other.fDigits, fCount);
     }
     return *this;

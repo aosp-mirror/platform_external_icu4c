@@ -60,6 +60,9 @@
 #include <stdio.h>
 
 
+#define LOGI(...) printf("<I>"); printf(__VA_ARGS__); printf("</I>");
+
+
 U_NAMESPACE_BEGIN
 
 //#define FMT_DEBUG
@@ -1299,6 +1302,7 @@ Formattable& DecimalFormat::parseCurrency(const UnicodeString& text,
     return result;
 }
 
+// BEGIN android-changed
 /**
  * Parses the given text as either a number or a currency amount.
  * @param text the string to parse
@@ -1315,8 +1319,46 @@ void DecimalFormat::parse(const UnicodeString& text,
                           Formattable& result,
                           ParsePosition& parsePosition,
                           UBool parseCurrency) const {
+    bool resultAssigned;
+    int scale;
+    DigitList digits;
+    parse(text, resultAssigned, result, parsePosition, parseCurrency, digits, scale);
+
+    if(!resultAssigned) {
+        result.setDouble(digits.getDouble() / scale);
+    }
+
+}
+
+/**
+ * Parses the given text as either a number or a currency amount.
+ * @param text the string to parse
+ * @param resultAssigned indicates whether or not the param result is assigned
+ * @param result output parameter for the parsing result
+ *    ATTENTION: result is assigned ONLY for types long and int64
+ * @param parsePosition input-output position; on input, the
+ * position within text to match; must have 0 <= pos.getIndex() <
+ * text.length(); on output, the position after the last matched
+ * character. If the parse fails, the position in unchanged upon
+ * output.
+ * @param parseCurrency if true, a currency amount is parsed;
+ * otherwise a Number is parsed
+ * @param digits The DigitList that represents the result will be returned
+ * @param scale the scale with which the number in the DigitList
+ * has to be scaled
+ *    ATTENTION: list and scale are only returned when result was not assigned
+ */
+void DecimalFormat::parse(const UnicodeString& text,
+                          bool& resultAssigned,
+                          Formattable& result,
+                          ParsePosition& parsePosition,
+                          UBool parseCurrency,
+                          DigitList& digits,
+                          int& scale) const {
     int32_t backup;
     int32_t i = backup = parsePosition.getIndex();
+
+    resultAssigned = true;
 
     // Handle NaN as a special case:
     
@@ -1347,7 +1389,6 @@ void DecimalFormat::parse(const UnicodeString& text,
     UBool status[fgStatusLength];
     UChar curbuf[4];
     UChar* currency = parseCurrency ? curbuf : NULL;
-    DigitList digits;
 
     if (!subparse(text, parsePosition, digits, status, currency)) {
         parsePosition.setIndex(backup);
@@ -1359,7 +1400,6 @@ void DecimalFormat::parse(const UnicodeString& text,
         double inf = uprv_getInfinity();
         result.setDouble(digits.fIsPositive ? inf : -inf);
     }
-
     else {
         // Do as much of the multiplier conversion as possible without
         // losing accuracy.
@@ -1393,11 +1433,13 @@ void DecimalFormat::parse(const UnicodeString& text,
             else {  // else handle the remainder
                 result.setDouble(((double)n) / mult);
             }
-        }
+        }/*
+        else if (digits.fitsIntoDouble()) {
+            result.setDouble(digits.getDouble() / mult);LOGI("fits into neither\n");
+        }*/
         else {
-            // Handle non-integral or very large values
-            // Dividing by one is okay and not that costly.
-            result.setDouble(digits.getDouble() / mult);
+            scale = mult;
+            resultAssigned = false;
         }
     }
 
@@ -1408,7 +1450,7 @@ void DecimalFormat::parse(const UnicodeString& text,
         U_ASSERT(U_SUCCESS(ec)); // should always succeed
     }
 }
-
+// END android-changed
 
 /*
 This is an old implimentation that was preparing for 64-bit numbers in ICU.
