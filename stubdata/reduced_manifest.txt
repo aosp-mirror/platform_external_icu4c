@@ -40,10 +40,12 @@ Encodings -- 469k
 Break Iterator -- 190k
 * all but "thai word break rules" and the two "japanese" files
 
-Collators -- 916k
+Collators -- 916k or 147k with modifications
 * root
 * ucadata.icu (bottom of the list; appears to be required)
 * all English variants
+* modifications: follow the directions in the reduced_coll directory to
+  replace some of these files
 
 Number Format -- 6k
 * root
