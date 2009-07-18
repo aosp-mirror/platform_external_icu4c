@@ -88,7 +88,7 @@ enum {
      URX_DOLLAR        = 24,  // Also for \Z
 
      URX_CTR_INIT      = 25,   // Counter Inits for {Interval} loops.
-     URX_CTR_INIT_NG   = 26,   //   3 kinds, normal, non-greedy, and possessive.
+     URX_CTR_INIT_NG   = 26,   //   2 kinds, normal and non-greedy.
                                //   These are 4 word opcodes.  See description.
                                //    First Operand:  Data loc of counter variable
                                //    2nd   Operand:  Pat loc of the URX_CTR_LOOPx

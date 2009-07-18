@@ -3,7 +3,7 @@
 //
 /*
 ***************************************************************************
-*   Copyright (C) 2002-2006 International Business Machines Corporation   *
+*   Copyright (C) 2002-2007 International Business Machines Corporation   *
 *   and others. All rights reserved.                                      *
 ***************************************************************************
 */
@@ -443,7 +443,7 @@ void   RegexPattern::dumpOp(int32_t index) const {
     int32_t val         = URX_VAL(op);
     int32_t type        = URX_TYPE(op);
     int32_t pinnedType  = type;
-    if (pinnedType >= sizeof(opNames)/sizeof(char *)) {
+    if ((uint32_t)pinnedType >= sizeof(opNames)/sizeof(char *)) {
         pinnedType = 0;
     }
 
@@ -610,7 +610,7 @@ RegexPatternDump(const RegexPattern *This) {
         This->dumpOp(index);
     }
     REGEX_DUMP_DEBUG_PRINTF(("\n\n"));
-};
+}
 #endif
 
 

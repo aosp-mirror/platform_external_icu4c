@@ -320,8 +320,6 @@ UBool RegexMatcher::find() {
         return FALSE;
     }
 
-    // TODO:  FAILURE HERE WITH REGIONS, fMatchEnd resets to 0, not regionStart.
-    //          Watch for interactions with replace operations when fixing.
     int32_t startPos = fMatchEnd;
     if (startPos==0) {
         startPos = fActiveStart;
@@ -407,7 +405,6 @@ UBool RegexMatcher::find() {
     case START_SET:
         {
             // Match may start on any char from a pre-computed set.
-            //  TODO:  left off on region changes at this point
             U_ASSERT(fPattern->fMinMatchLen > 0);
             for (;;) {
                 int32_t pos = startPos;
@@ -547,8 +544,7 @@ UBool RegexMatcher::find(int32_t start, UErrorCode &status) {
         status = U_INDEX_OUTOFBOUNDS_ERROR;
         return FALSE;
     }
-    fMatchEnd = start;    // TODO:  restructure so start position goes as a parameter to an internal find()
-                          //        that is used both here and by the public API find()?
+    fMatchEnd = start;  
     return find();
 }
 
@@ -743,6 +739,7 @@ RegexMatcher &RegexMatcher::region(int32_t start, int32_t limit, UErrorCode &sta
         fAnchorStart = start;
         fAnchorLimit = limit;
     }
+    return *this;
 }
 
 
@@ -1115,6 +1112,8 @@ REStackFrame *RegexMatcher::resetStack() {
 //
 //          parameters:   pos   - the current position in the input buffer
 //
+//              TODO:  double-check edge cases at region boundaries.
+//
 //--------------------------------------------------------------------------------
 UBool RegexMatcher::isWordBoundary(int32_t pos) {
     UBool isBoundary = FALSE;
@@ -1160,21 +1159,17 @@ UBool RegexMatcher::isWordBoundary(int32_t pos) {
 //         Test for a word boundary using RBBI word break.
 //
 //          parameters:   pos   - the current position in the input buffer
-//          TODO:  RBBI won't honor non-transparent region bounds.
-//                 Perhaps best to just document it.
 //
 //--------------------------------------------------------------------------------
 UBool RegexMatcher::isUWordBoundary(int32_t pos) {
     UBool       returnVal = FALSE;
 #if UCONFIG_NO_BREAK_ITERATION==0
-    UErrorCode  status    = U_ZERO_ERROR;  
     
     // If we haven't yet created a break iterator for this matcher, do it now.
     if (fWordBreakItr == NULL) {
         fWordBreakItr = 
-            (RuleBasedBreakIterator *)BreakIterator::createWordInstance(Locale::getEnglish(), status);
-        if (U_FAILURE(status)) {
-            // TODO:  reliable error reporting for BI failures.
+            (RuleBasedBreakIterator *)BreakIterator::createWordInstance(Locale::getEnglish(), fDeferredStatus);
+        if (U_FAILURE(fDeferredStatus)) {
             return FALSE;
         }
         fWordBreakItr->setText(*fInput);
@@ -1356,11 +1351,7 @@ void RegexMatcher::MatchAt(int32_t startIdx, UBool toEnd, UErrorCode &status) {
 
                 if (fp->fInputIdx + stringLen > fActiveLimit) {
                     // No match.  String is longer than the remaining input text.
-                    //   TODO:  Should fHitEnd only be set if the string matches for whatever amount
-                    //          of input is actually available?  Probably, although one could argue
-                    //          that it would be equally valid to begin the comparison at the end of
-                    //          the string.
-                    fHitEnd = TRUE;
+                    fHitEnd = TRUE;          //   TODO:  See ticket 6074
                     fp = (REStackFrame *)fStack->popFrame(frameSize);
                     break;
                 }
@@ -1518,8 +1509,8 @@ void RegexMatcher::MatchAt(int32_t startIdx, UBool toEnd, UErrorCode &status) {
                  if (fp->fInputIdx >= fAnchorLimit) {
                      // We really are at the end of input.  Success.
                      fHitEnd = TRUE;
-                     fRequireEnd = TRUE;  // TODO:  should require end be set in multi-line mode?
-                     break;
+                     fRequireEnd = TRUE;  // Java set requireEnd in this case, even though
+                     break;               //   adding a new-line would not lose the match.
                  }
                  // If we are not positioned just before a new-line, the test fails; backtrack out.
                  // It makes no difference where the new-line is within the input.
@@ -1970,6 +1961,7 @@ GC_Done:
 
         case URX_CTR_INIT_NG:
             {
+                // Initialize a non-greedy loop
                 U_ASSERT(opValue >= 0 && opValue < frameSize-2);
                 fp->fExtra[opValue] = 0;       //  Set the loop counter variable to zero
 
@@ -1995,6 +1987,7 @@ GC_Done:
 
         case URX_CTR_LOOP_NG:
             {
+                // Non-greedy {min, max} loops
                 U_ASSERT(opValue>0 && opValue < fp->fPatIdx-2);
                 int32_t initOp = pat[opValue];
                 U_ASSERT(URX_TYPE(initOp) == URX_CTR_INIT_NG);
@@ -2028,8 +2021,6 @@ GC_Done:
                 }
             }
             break;
-
-            // TODO:  Possessive flavor of loop ops, or take them out if no longer needed.
 
         case URX_STO_SP:
             U_ASSERT(opValue >= 0 && opValue < fPattern->fDataSize);
@@ -2088,7 +2079,7 @@ GC_Done:
                     }
                 } else {
                     // TODO: probably need to do a partial string comparison, and only
-                    //       set HitEnd if the available input matched.
+                    //       set HitEnd if the available input matched.  Ticket #6074
                     fHitEnd = TRUE;
                 }
                 if (haveMatch) {
@@ -2158,7 +2149,7 @@ GC_Done:
 
                 // Restore the active region bounds in the input string; they may have
                 //    been changed because of transparent bounds on a Region.
-                fActiveStart = fRegionStart;        // TODO:  handle nested look-around blocks.
+                fActiveStart = fRegionStart;
                 fActiveLimit = fRegionLimit;
             }
             break;
@@ -2200,9 +2191,8 @@ GC_Done:
                         break;
                     }
                 } else {
-                    // TODO:  for HitEnd, probably need to check for match of
-                    //        however much input was available.
-                    fHitEnd = TRUE;
+                    // Insufficent input left for a match.
+                    fHitEnd = TRUE;    // See ticket 6074
                 }
                 // No match.  Back up matching to a saved state
                 fp = (REStackFrame *)fStack->popFrame(frameSize);
@@ -2213,7 +2203,7 @@ GC_Done:
             {
                 // Entering a look-behind block.
                 // Save Stack Ptr, Input Pos.
-                //   TODO:  implement transparent bounds.
+                //   TODO:  implement transparent bounds.  Ticket #6067
                 U_ASSERT(opValue>=0 && opValue+1<fPattern->fDataSize);
                 fData[opValue]   = fStack->size();
                 fData[opValue+1] = fp->fInputIdx;
@@ -2452,14 +2442,14 @@ GC_Done:
             //   The following LOOP_C op emulates stack unwinding if the following pattern fails.
             {
                 // Loop through input until the input is exhausted (we reach an end-of-line)
-                // In multi-line mode, we can just go straight to the end of the input.
+                // In DOTALL mode, we can just go straight to the end of the input.
                 int32_t ix;
                 if ((opValue & 1) == 1) {
-                    // Multi-line mode.
+                    // Dot-matches-All mode.  Jump straight to the end of the string.
                     ix = fActiveLimit;
                     fHitEnd = TRUE;
                 } else {
-                    // NOT multi-line mode.  Line endings do not match '.'
+                    // NOT DOT ALL mode.  Line endings do not match '.'
                     // Scan forward until a line ending or end of input.
                     ix = fp->fInputIdx;
                     for (;;) {

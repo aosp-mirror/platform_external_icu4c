@@ -341,9 +341,6 @@ uregex_lookingAt(URegularExpression *regexp,
   *
   *   If startIndex == -1 the search begins at the start of the input region,
   *           or at the start of the full string if no region has been specified.
-  *           TODO:  Or, should this be the same as findNext()?
-  *                  Consistency between the C functions (as it is), or
-  *                  consistency with -1 meaning match Java?
   *
   *   If a match is found, <code>uregex_start(), uregex_end()</code>, and
   *   <code>uregex_group()</code> will provide more information regarding the match.
@@ -455,7 +452,6 @@ uregex_end(URegularExpression   *regexp,
   *  uregex_start(), uregex_end() and uregex_group() to return an error 
   *  indicating that there is no match information available.  Clears any
   *  match region that may have been set.
-  *    TODO:  reset(-1) to preserve regions?
   *
   *    @param   regexp      The compiled regular expression.
   *    @param   index       The position in the text at which a
@@ -485,7 +481,7 @@ uregex_reset(URegularExpression    *regexp,
   * @param regexp The compiled regular expression.
   * @param start  The index to begin searches at.
   * @param limit  The index to end searches at (exclusive).
-  * @param status A reference to a UErrorCode to receive any errors.
+  * @param status A pointer to a UErrorCode to receive any errors.
   * @draft ICU 4.0
   */
 U_DRAFT void U_EXPORT2
@@ -493,11 +489,13 @@ uregex_setRegion(URegularExpression   *regexp,
                  int32_t               regionStart,
                  int32_t               regionLimit,
                  UErrorCode           *status);
-                 
+
 /**
   * Reports the start index of the matching region. Any matches found are limited to
   * to the region bounded by regionStart (inclusive) and regionEnd (exclusive).
   *
+  * @param regexp The compiled regular expression.
+  * @param status A pointer to a UErrorCode to receive any errors.
   * @return The starting index of this matcher's region.
   * @draft ICU 4.0
   */
@@ -512,6 +510,8 @@ uregex_regionStart(const  URegularExpression   *regexp,
   * Any matches found are limited to to the region bounded by regionStart (inclusive)
   * and regionEnd (exclusive).
   *
+  * @param regexp The compiled regular expression.
+  * @param status A pointer to a UErrorCode to receive any errors.
   * @return The ending point of this matcher's region.
   * @draft ICU 4.0
   */
@@ -524,6 +524,8 @@ uregex_regionEnd(const  URegularExpression   *regexp,
   * See useTransparentBounds for a description of transparent and opaque bounds.
   * By default, matching boundaries are opaque.
   *
+  * @param regexp The compiled regular expression.
+  * @param status A pointer to a UErrorCode to receive any errors.
   * @return TRUE if this matcher is using opaque bounds, false if it is not.
   * @draft ICU 4.0
   */
@@ -544,10 +546,11 @@ uregex_hasTransparentBounds(const  URegularExpression   *regexp,
   * With opaque bounds, no text outside of the matching region is visible to lookahead,
   * lookbehind, and boundary matching constructs.
   *
-  * By default, a matcher uses opaque bounds.
+  * By default, opaque bounds are used.
   *
-  * @param   b TRUE for transparent bounds; FALSE for opaque bounds
-  * @return  This Matcher;
+  * @param   regexp The compiled regular expression.
+  * @param   b      TRUE for transparent bounds; FALSE for opaque bounds
+  * @param   status A pointer to a UErrorCode to receive any errors.
   * @draft   ICU 4.0
   **/
 U_DRAFT void U_EXPORT2  
@@ -555,14 +558,16 @@ uregex_useTransparentBounds(URegularExpression   *regexp,
                             UBool                b,
                             UErrorCode           *status);
 
-  
+
 /**
-  * Return true if this matcher is using anchoring bounds.
-  * By default, matchers use anchoring region boounds.
+  * Return true if this URegularExpression is using anchoring bounds.
+  * By default, anchoring region bounds are used.
   *
+  * @param  regexp The compiled regular expression.
+  * @param  status A pointer to a UErrorCode to receive any errors.
   * @return TRUE if this matcher is using anchoring bounds.
   * @draft  ICU 4.0
-  */    
+  */
 U_DRAFT UBool U_EXPORT2
 uregex_hasAnchoringBounds(const  URegularExpression   *regexp,
                                  UErrorCode           *status);
@@ -576,8 +581,9 @@ uregex_hasAnchoringBounds(const  URegularExpression   *regexp,
   *
   * Anchoring Bounds are the default for regions.
   *
-  * @param b TRUE if to enable anchoring bounds; FALSE to disable them.
-  * @return  This Matcher
+  * @param regexp The compiled regular expression.
+  * @param b      TRUE if to enable anchoring bounds; FALSE to disable them.
+  * @param status A pointer to a UErrorCode to receive any errors.
   * @draft   ICU 4.0
   */
 U_DRAFT void U_EXPORT2
@@ -590,6 +596,8 @@ uregex_useAnchoringBounds(URegularExpression   *regexp,
   *  end of the text being processed.  In this case, additional input text could
   *  change the results of that match.
   *
+  *  @param regexp The compiled regular expression.
+  *  @param status A pointer to a UErrorCode to receive any errors.
   *  @return  TRUE if the most recent match hit the end of input
   *  @draft   ICU 4.0
   */
@@ -603,7 +611,9 @@ uregex_hitEnd(const  URegularExpression   *regexp,
   * might change the match but the match won't be lost. If a match was not found,
   * then requireEnd has no meaning.
   *
-  * @return TRUE if more input could cause the most recent match to no longer match.
+  * @param regexp The compiled regular expression.
+  * @param status A pointer to a UErrorCode to receive any errors.
+  * @return TRUE  if more input could cause the most recent match to no longer match.
   * @draft  ICU 4.0
   */
 U_DRAFT UBool U_EXPORT2   

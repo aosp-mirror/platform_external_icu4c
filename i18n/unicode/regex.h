@@ -856,7 +856,9 @@ public:
       *  end of the text being processed.  In this case, additional input text could
       *  change the results of that match.
       *
-      *   (TODO:  how does this interact with transparent bounds and look-ahead?)
+      *  hitEnd() is defined for both successful and unsuccessful matches.
+      *  In either case hitEnd() will return TRUE if if the end of the text was
+      *  reached at any point during the matching process.
       *
       *  @return  TRUE if the most recent match hit the end of input
       *  @draft   ICU 4.0
@@ -1068,7 +1070,7 @@ private:
     int32_t              fLookLimit;       //   and other boundary tests.  See
                                            //   useTransparentBounds
 
-    int32_t              fActiveStart;     // Currently active bouonds for matching.
+    int32_t              fActiveStart;     // Currently active bounds for matching.
     int32_t              fActiveLimit;     //   Usually is the same as region, but
                                            //   is changed to fLookStart/Limit when
                                            //   entering look around regions.
@@ -1084,8 +1086,9 @@ private:
     int32_t              fLastMatchEnd;    // First position after the end of the previous match,
                                            //   or -1 if there was no previous match.
     int32_t              fAppendPosition;  // First position after the end of the previous
-                                           //   appendReplacement().  As described JavaDoc for  
-                                           //   Java Matcher, where it is called "append position"
+                                           //   appendReplacement().  As described by the
+                                           //   JavaDoc for Java Matcher, where it is called 
+                                           //   "append position"
     UBool                fHitEnd;          // True if the last match touched the end of input.
     UBool                fRequireEnd;      // True if the last match required end-of-input
                                            //    (matched $ or Z)

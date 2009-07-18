@@ -39,18 +39,6 @@
 
 U_NAMESPACE_BEGIN
 
-// TODO: remove
-#if 0
-#include <stdio.h>
-static void printstring(const UnicodeString &s) {
-   for (int i=0; i<s.length(); i++) {
-      printf("%c", s[i]);
-   }
-      printf("\n");
-}
-#endif
-
-
 
 //------------------------------------------------------------------------------
 //
@@ -120,7 +108,6 @@ void    RegexCompile::compile(
     U_ASSERT(fRXPat->fPattern.length() == 0);
 
     // Prepare the RegexPattern object to receive the compiled pattern.
-    //   TODO:  remove per-instance field, and just use globals directly.  (But check perf)
     fRXPat->fPattern        = pat;
     fRXPat->fStaticSets     = RegexStaticSets::gStaticSets->fPropSets;
     fRXPat->fStaticSets8    = RegexStaticSets::gStaticSets->fPropSets8;
@@ -579,7 +566,7 @@ UBool RegexCompile::doParseActions(int32_t action)
         //    3.    NOP                   // Std. Open Paren sequence, for possible '|'
         //    4.       code for parenthesized stuff.
         //    5.    END_LA                // Cut back stack, remove saved state from step 2.
-        //    6.    FAIL                  // code in block succeeded, so neg. lookahead fails.
+        //    6.    BACKTRACK             // code in block succeeded, so neg. lookahead fails.
         //    7.    END_LA                // Restore match region, in case look-ahead was using
         //                                        an alternate (transparent) region.
         {
@@ -1114,7 +1101,7 @@ UBool RegexCompile::doParseActions(int32_t action)
 
     case doCaret:
         {
-            int32_t op;
+            int32_t op = 0;
             if (       (fModeFlags & UREGEX_MULTILINE) == 0 && (fModeFlags & UREGEX_UNIX_LINES) == 0) {
                 op = URX_CARET;
             } else if ((fModeFlags & UREGEX_MULTILINE) != 0 && (fModeFlags & UREGEX_UNIX_LINES) == 0) {
@@ -1124,16 +1111,13 @@ UBool RegexCompile::doParseActions(int32_t action)
             } else if ((fModeFlags & UREGEX_MULTILINE) != 0 && (fModeFlags & UREGEX_UNIX_LINES) != 0) {
                 op = URX_CARET_M_UNIX;
             }
-            if (fModeFlags & UREGEX_MULTILINE) {
-                op = (fModeFlags & UREGEX_UNIX_LINES)? URX_CARET_M_UNIX : URX_CARET_M;
-            }
             fRXPat->fCompiledPat->addElement(URX_BUILD(op, 0), *fStatus);
         }
         break;
 
     case doDollar:
         {
-            int32_t op;
+            int32_t op = 0;
             if (       (fModeFlags & UREGEX_MULTILINE) == 0 && (fModeFlags & UREGEX_UNIX_LINES) == 0) {
                 op = URX_DOLLAR;
             } else if ((fModeFlags & UREGEX_MULTILINE) != 0 && (fModeFlags & UREGEX_UNIX_LINES) == 0) {
@@ -1295,7 +1279,7 @@ UBool RegexCompile::doParseActions(int32_t action)
         //       6.   ...
         //
         //  Note:  TODO:  This is pretty inefficient.  A mass of saved state is built up
-        //                then unconditionally discarded.  Perhaps introduce a new opcode
+        //                then unconditionally discarded.  Perhaps introduce a new opcode.  Ticket 6056
         //
         {
             // Emit the STO_SP
@@ -1501,7 +1485,7 @@ UBool RegexCompile::doParseActions(int32_t action)
         {
             UnicodeSet *set = (UnicodeSet *)fSetStack.peek();
             UnicodeSet digits(UnicodeString("\\p{Nd}"), *fStatus);    // TODO - make a static set,
-            set->addAll(digits);
+            set->addAll(digits);                                      //        ticket 6058.
             break;
         }
 
@@ -1691,7 +1675,7 @@ UBool RegexCompile::doParseActions(int32_t action)
         break;
 
     case doSetOpError:
-        error(U_REGEX_RULE_SYNTAX);   // TODO:  -- or && at the end of a set.  Illegal.
+        error(U_REGEX_RULE_SYNTAX);   //  -- or && at the end of a set.  Illegal.
         break;
 
     case doSetPosixProp:
@@ -3082,7 +3066,7 @@ int32_t   RegexCompile::minMatchLength(int32_t start, int32_t end) {
                 //   without processing the look-around block.  This is overly pessimistic for look-ahead,
                 //   it assumes that the look-ahead match might be zero-length.
                 //   TODO:  Positive lookahead could recursively do the block, then continue
-                //          with the longer of the block or the value coming in.
+                //          with the longer of the block or the value coming in.  Ticket 6060
                 int32_t  depth = (opType == URX_LA_START? 2: 1);;
                 for (;;) {
                     loc++;
@@ -3116,9 +3100,6 @@ int32_t   RegexCompile::minMatchLength(int32_t start, int32_t end) {
                                 forwardedLength.setElementAt(currentLen, jmpDest);
                             }
                         }
-                    }
-                    if (loc > end) {
-                        RegexPatternDump(fRXPat);
                     }
                     U_ASSERT(loc <= end);
                 }
@@ -3669,7 +3650,7 @@ void RegexCompile::nextChar(RegexPatternChar &c) {
                         }
                     }
                 }
-                // TODO:  check what Java & Perl do with non-ASCII white spaces.
+                // TODO:  check what Java & Perl do with non-ASCII white spaces.  Ticket 6061.
                 if (uprv_isRuleWhiteSpace(c.fChar) == FALSE) {
                     break;
                 }
@@ -3767,8 +3748,6 @@ void RegexCompile::nextChar(RegexPatternChar &c) {
 //
 //------------------------------------------------------------------------------
 UChar32  RegexCompile::scanNamedChar() {
-    UnicodeSet    *uset = NULL;
-
     if (U_FAILURE(*fStatus)) {
         return 0;
     }
@@ -3794,7 +3773,7 @@ UChar32  RegexCompile::scanNamedChar() {
     
     char name[100];
     if (!uprv_isInvariantUString(charName.getBuffer(), charName.length()) ||
-         charName.length()>=sizeof(name)) {
+         (uint32_t)charName.length()>=sizeof(name)) {
         // All Unicode character names have only invariant characters.
         // The API to get a character, given a name, accepts only char *, forcing us to convert,
         //   which requires this error check
@@ -3885,7 +3864,7 @@ UnicodeSet *RegexCompile::scanPosixProp() {
     U_ASSERT(fC.fChar == chColon);
 
     // Save the scanner state.
-    // TODO:  move this into the scanner, with the state encapsulated in some way
+    // TODO:  move this into the scanner, with the state encapsulated in some way.  Ticket 6062
     int32_t     savedScanIndex        = fScanIndex;
     int32_t     savedNextIndex        = fNextIndex;
     UBool       savedQuoteMode        = fQuoteMode;
@@ -3898,8 +3877,8 @@ UnicodeSet *RegexCompile::scanPosixProp() {
     RegexPatternChar savedfC          = fC;
 
     // Scan for a closing ].   A little tricky because there are some perverse
-    //   edge cases possible.  "[:abc\Qdef;] \E]"  is a valid non-property expression,
-    //   ending on the second closing ].
+    //   edge cases possible.  "[:abc\Qdef:] \E]"  is a valid non-property expression,
+    //   ending on the second closing ]. 
 
     UnicodeString propName;
     UBool         negated  = FALSE;
@@ -3959,7 +3938,7 @@ UnicodeSet *RegexCompile::scanPosixProp() {
 //     normal ICU UnicodeSet properties 
 //
 static const UChar posSetPrefix[] = {0x5b, 0x5c, 0x70, 0x7b, 00}; // "[\p{"
-static const UChar negSetPrefix[] = {0x5b, 0x5c, 0x50, 0x7b, 00}; // "[\p{"
+static const UChar negSetPrefix[] = {0x5b, 0x5c, 0x50, 0x7b, 00}; // "[\P{"
 UnicodeSet *RegexCompile::createSetForProperty(const UnicodeString &propName, UBool negated) {
     UnicodeString   setExpr;
     UnicodeSet      *set;
@@ -3987,6 +3966,8 @@ UnicodeSet *RegexCompile::createSetForProperty(const UnicodeString &propName, UB
     if (U_SUCCESS(*fStatus)) {
        return set;
     }
+    delete set;
+    set = NULL;
     
     //
     //  The property as it was didn't work.
@@ -4000,7 +3981,7 @@ UnicodeSet *RegexCompile::createSetForProperty(const UnicodeString &propName, UB
     //                        all there, or all omitted, with exactly one at each position
     //                        if they are present.  From checking against JDK 1.6
     //
-    //       This code should be removed ICU properties support the Java  compatibility names
+    //       This code should be removed when ICU properties support the Java  compatibility names
     //          (ICU 4.0?)
     //
     UnicodeString mPropName = propName;
@@ -4031,11 +4012,14 @@ UnicodeSet *RegexCompile::createSetForProperty(const UnicodeString &propName, UB
         if (U_SUCCESS(*fStatus)) {
             return set;
         }
+        delete set;
+        set = NULL;
     }
     
     //
     //  Try the various Java specific properties.
     //   These all begin with "java"
+    //   TODO:  Redo to remove dependency on code page conversion of (char *) strings.
     //
     #define IDENTIFIER_IGNORABLE "[\\u0000-\\u0008\\u000e-\\u001b\\u007f-\\u009f\\p{Cf}]"
     static const char *javaProps[][2] = {
@@ -4082,6 +4066,8 @@ UnicodeSet *RegexCompile::createSetForProperty(const UnicodeString &propName, UB
                 }
                 return set;
             }
+            delete set;
+            set = NULL;
         }
     }
     error(*fStatus);
@@ -4113,7 +4099,7 @@ void RegexCompile::setEval(int32_t nextOp) {
                 rightOperand->complement();
                 break;
             case setCaseClose:
-                // TODO: need a simple close function.
+                // TODO: need a simple close function.  Ticket 6065
                 rightOperand->closeOver(USET_CASE_INSENSITIVE);
                 rightOperand->removeAllStrings();
                 break;

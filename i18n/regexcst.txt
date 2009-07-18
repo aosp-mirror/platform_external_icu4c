@@ -417,7 +417,7 @@ set-lit-dash:
 #
 #    scanned "[literal-\"
 #    Could be a range, if the \ introduces an escaped literal char or a named char.
-#    Could be a literal '-', if the '\' introduces a set-like construct e.g. \s aut \p{...}
+#    Otherwise it is an error.
 #
 set-lit-dash-escape:
    's'                      errorDeath                             doSetOpError
@@ -432,7 +432,7 @@ set-lit-dash-escape:
    
 #
 #  set-escape
-#       Common \ escape processing
+#       Common back-slash escape processing within set expressions
 #
 set-escape:
    'p'                      set-after-set                           doSetProp
