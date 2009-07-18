@@ -978,8 +978,7 @@ public:
                        Formattable& result,
                        ParsePosition& parsePosition,
                        UBool parseCurrency,
-                       DigitList& digits,
-                       int& scale) const;
+                       DigitList& digits) const;
     // END android-added
 
     /**

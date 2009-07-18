@@ -261,9 +261,11 @@ private:
 inline void
 DigitList::append(char digit)
 {
+    // BEGIN android-changed
     // Ignore digits which exceed the precision we can represent
-    if (fCount < MAX_DIGITS)
+    if (fCount < fBufferSize)
         fDigits[fCount++] = digit;
+    // END android-changed
 }
 
 #if 0

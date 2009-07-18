@@ -1320,12 +1320,11 @@ void DecimalFormat::parse(const UnicodeString& text,
                           ParsePosition& parsePosition,
                           UBool parseCurrency) const {
     bool resultAssigned;
-    int scale;
     DigitList digits;
-    parse(text, resultAssigned, result, parsePosition, parseCurrency, digits, scale);
+    parse(text, resultAssigned, result, parsePosition, parseCurrency, digits);
 
     if(!resultAssigned) {
-        result.setDouble(digits.getDouble() / scale);
+        result.setDouble(digits.getDouble());
     }
 
 }
@@ -1344,17 +1343,14 @@ void DecimalFormat::parse(const UnicodeString& text,
  * @param parseCurrency if true, a currency amount is parsed;
  * otherwise a Number is parsed
  * @param digits The DigitList that represents the result will be returned
- * @param scale the scale with which the number in the DigitList
- * has to be scaled
- *    ATTENTION: list and scale are only returned when result was not assigned
+ *    ATTENTION: digits are only returned when result was not assigned
  */
 void DecimalFormat::parse(const UnicodeString& text,
                           bool& resultAssigned,
                           Formattable& result,
                           ParsePosition& parsePosition,
                           UBool parseCurrency,
-                          DigitList& digits,
-                          int& scale) const {
+                          DigitList& digits) const {
     int32_t backup;
     int32_t i = backup = parsePosition.getIndex();
 
@@ -1433,12 +1429,8 @@ void DecimalFormat::parse(const UnicodeString& text,
             else {  // else handle the remainder
                 result.setDouble(((double)n) / mult);
             }
-        }/*
-        else if (digits.fitsIntoDouble()) {
-            result.setDouble(digits.getDouble() / mult);LOGI("fits into neither\n");
-        }*/
+        }
         else {
-            scale = mult;
             resultAssigned = false;
         }
     }

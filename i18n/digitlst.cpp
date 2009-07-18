@@ -61,11 +61,6 @@ enum {
 
 U_NAMESPACE_BEGIN
 
-// BEGIN android-added
-// capacity of a dynamically allocated fDecimalDigits buffer
-int fBufferSize = 0;
-// END android-added
-
 // -------------------------------------
 // default constructor
 
@@ -73,6 +68,7 @@ DigitList::DigitList()
 {
     // BEGIN android-added
     fDecimalDigits = fDecimalDigitsBuffer;
+    fBufferSize = MAX_DEC_DIGITS;
     // END android-added
     fDigits = fDecimalDigits + 1;   // skip the decimal
     clear();
@@ -107,6 +103,7 @@ DigitList::DigitList(const DigitList &other)
 {
     // BEGIN android-added
     fDecimalDigits = fDecimalDigitsBuffer;
+    fBufferSize = MAX_DEC_DIGITS;
     // END android-added
     fDigits = fDecimalDigits + 1;   // skip the decimal
     *this = other;
