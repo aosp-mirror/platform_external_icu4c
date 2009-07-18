@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2007 International Business Machines
+// * Copyright (C) 2008 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/be.xml
@@ -278,6 +278,10 @@ be{
         ZZ{"Невядомы рэгіён"}
     }
     Currencies{
+        AUD{
+            "$A",
+            "аўстралійскі даляр",
+        }
         BRL{
             "R$",
             "бразільскі рэал",
@@ -294,28 +298,36 @@ be{
             "CNY",
             "кітайскі юань Renminbi",
         }
+        ERN{
+            "ERN",
+            "эрытрэйская накфа",
+        }
         EUR{
             "€",
             "еўра",
         }
         GBP{
-            "UK£",
+            "£",
             "англійскі фунт",
         }
         INR{
-            "=0#Rs.|1#Re.|1<Rs." /** (choice)  */,
+            "Rs.",
             "індыйская рупія",
         }
         JPY{
-            "JP¥",
+            "¥",
             "японская іена",
         }
+        NOK{
+            "NOK",
+            "нарвэская крона",
+        }
         RUB{
-            "RUB",
+            "рас. руб.",
             "рускі рубель",
         }
         USD{
-            "US$",
+            "$",
             "долар ЗША",
         }
         XXX{
@@ -323,7 +335,7 @@ be{
             "невядомая або недапушчальная валюта",
         }
     }
-    ExemplarCharacters{"[’ а-д {дж} {дз} е ё ж з й і к-у ў ф-ш ы-я]"}
+    ExemplarCharacters{"[а-д {дж} {дз} е ё ж з й і к-у ў ф-ш ы-я]"}
     Keys{
         calendar{"каляндар"}
         collation{"параўнаньне тэксту"}
@@ -331,11 +343,22 @@ be{
     }
     Languages{
         ab{"абхазская"}
+        ady{"адыгейская"}
         af{"афрыкаанс"}
+        afa{"афра-азіяцкая мова"}
+        akk{"акадзкая"}
+        ale{"алеуцкая"}
         am{"амхарская"}
+        an{"арагонская"}
         ang{"стараанглійская"}
         ar{"арабская"}
+        arc{"арамейская"}
+        art{"штучная мова"}
         as{"асамская"}
+        ast{"астурыйская"}
+        aus{"аўстралійская"}
+        av{"аварская"}
+        ay{"аймара"}
         az{"азербайджанская"}
         ba{"башкірская"}
         be{"беларуская"}
@@ -344,15 +367,21 @@ be{
         bn{"бенгальская"}
         br{"брэтонская"}
         bs{"баснійская"}
+        bua{"бурацкая"}
         ca{"каталонская"}
+        cai{"мова індзейцаў Цэнтральнай Амерыкі"}
+        cau{"каўказская мова"}
         ce{"чачэнская"}
+        cel{"кельцкая мова"}
         cop{"копцкая"}
         cs{"чэшская"}
+        cv{"чувашская"}
         cy{"валійская"}
         da{"дацкая"}
         de{"нямецкая"}
         de_AT{"нямецкая (аўстр.)"}
         de_CH{"нямецкая (швейц.)"}
+        egy{"стараэгіпецкая"}
         el{"грэцкая"}
         en{"англійская"}
         en_AU{"англійская (аўстрал.)"}
@@ -377,6 +406,7 @@ be{
         gd{"шатландская гэльская"}
         gl{"галісійская"}
         gn{"гуарані"}
+        grc{"старагрэцкая"}
         gu{"гуяраці"}
         he{"іўрыт"}
         hi{"хіндзі"}
@@ -400,6 +430,7 @@ be{
         lo{"лаоская"}
         lt{"літоўская"}
         lv{"латышская"}
+        map{"аўстранезійская"}
         mk{"македонская"}
         ml{"малаяламская"}
         mn{"мангольская"}
@@ -407,6 +438,7 @@ be{
         mr{"маратхі"}
         ms{"малайская"}
         mt{"мальтыйская"}
+        nb{"нарвэская букмал"}
         ne{"непальская"}
         nl{"галандская"}
         nl_BE{"фламандская"}
@@ -423,10 +455,12 @@ be{
         sa{"санскрыт"}
         sah{"якуцкая"}
         sd{"сіндхі"}
+        sgn{"знакавая мова"}
         sh{"сербска-харвацкая"}
         si{"сінгальская"}
         sk{"славацкая"}
         sl{"славенская"}
+        sla{"славянская мова"}
         so{"самалійская"}
         sq{"албанская"}
         sr{"сербская"}
@@ -441,6 +475,7 @@ be{
         tlh{"клінгон"}
         tr{"турэцкая"}
         tt{"татарская"}
+        tut{"алтайская мова"}
         ug{"уйгурская"}
         uk{"украінская"}
         und{"невядомая мова"}
@@ -448,6 +483,7 @@ be{
         uz{"узбекская"}
         vi{"в'етнамская"}
         xh{"хоса"}
+        yi{"ідыш"}
         zh{"кітайская"}
         zh_Hans{"спрошчаная кітайская"}
         zh_Hant{"традыцыйная кітайская"}
@@ -477,7 +513,14 @@ be{
         "#E0",
     }
     Scripts{
+        Arab{"арабскае"}
+        Armn{"армянскае"}
         Cyrl{"кірылічны"}
+        Geor{"грузінскае"}
+        Hans{"спрошчанае кітайскае"}
+        Hant{"традыцыйнае кітайскае"}
+        Hebr{"габрэйскае"}
+        Jpan{"японскае"}
         Latn{"лацінскі"}
         Zxxx{"чысты"}
         Zzzz{"невядомы або недапушчальны пераклад"}
@@ -493,7 +536,7 @@ be{
             japanese{"японскі каляндар"}
         }
     }
-    Version{"1.64"}
+    Version{"1.76"}
     calendar{
         gregorian{
             AmPmMarkers{
@@ -509,11 +552,31 @@ be{
                 "d MMMM yyyy",
                 "d.M.yyyy",
                 "d.M.yy",
-                "{1} {0}",
+                "{0} {1}",
             }
             availableFormats{
                 HHmm{"HH:mm"}
                 HHmmss{"HH:mm:ss"}
+                Hm{"H:mm"}
+                M{"L"}
+                MEd{"E, d MMM"}
+                MMM{"LLL"}
+                MMMEd{"E, d MMM"}
+                MMMMEd{"MMMM d, EEEE"}
+                MMMMd{"MMMM d"}
+                MMMd{"d MMM"}
+                d{"d"}
+                mmss{"mm:ss"}
+                ms{"mm:ss"}
+                y{"yyyy"}
+                yM{"MM/yyyy"}
+                yMEd{"EEE, dd/MM/yyyy"}
+                yMMM{"MMM yyyy"}
+                yMMMEd{"EEE, d MMM yyyy"}
+                yMMMM{"MMMM yyyy"}
+                yQ{"Q 'кв'. yyyy"}
+                yQQQ{"QQQ yyyy"}
+                yyyyM{"MM/yyyy"}
             }
             dayNames{
                 format{
@@ -573,6 +636,9 @@ be{
                         "2"{"паслязаўтра"}
                     }
                 }
+                dayperiod{
+                    dn{"Dayperiod"}
+                }
                 era{
                     dn{"эра"}
                 }
@@ -596,6 +662,9 @@ be{
                 }
                 year{
                     dn{"год"}
+                }
+                zone{
+                    dn{"Zone"}
                 }
             }
             monthNames{
@@ -704,35 +773,219 @@ be{
                     }
                 }
                 stand-alone{
-                    abbreviated{
-                        "1-шы кв.",
-                        "2-гі кв.",
-                        "3-ці кв.",
-                        "4-ты кв.",
-                    }
                     narrow{
                         "1",
                         "2",
                         "3",
                         "4",
                     }
-                    wide{
-                        "1-шы квартал",
-                        "2-гі квартал",
-                        "3-ці квартал",
-                        "4-ты квартал",
-                    }
                 }
             }
         }
+    }
+    codePatterns{
+        language{"Мова: {0}"}
+        script{"Пісьмо: {0}"}
+        territory{"Рэгіён: {0}"}
+    }
+    delimiters{
+        alternateQuotationEnd{"»"}
+        alternateQuotationStart{"«"}
+        quotationEnd{"”"}
+        quotationStart{"„"}
+    }
+    localeDisplayPattern{
+        pattern{"{0} ({1})"}
+        separator{", "}
     }
     measurementSystemNames{
         US{"ЗША"}
         metric{"метрычная"}
     }
+    units{
+        day{
+            few{"{0} дні"}
+            many{"{0} дзён"}
+            one{"{0} дзень"}
+            other{"{0} дня"}
+        }
+        hour{
+            few{"{0} гадзіны"}
+            many{"{0} гадзін"}
+            one{"{0} гадзіна"}
+            other{"{0} гадзіны"}
+        }
+        minute{
+            few{"{0} хвіліны"}
+            many{"{0} хвілін"}
+            one{"{0} хвіліна"}
+            other{"{0} хвіліны"}
+        }
+        month{
+            few{"{0} месяца"}
+            many{"{0} месяцаў"}
+            one{"{0} месяц"}
+            other{"{0} месяца"}
+        }
+        second{
+            few{"{0} сэкунды"}
+            many{"{0} сэкунд"}
+            one{"{0} сэкунда"}
+            other{"{0} сэкунды"}
+        }
+        week{
+            few{"{0} тыдні"}
+            many{"{0} тыдняў"}
+            one{"{0} тыдзень"}
+            other{"{0} тыдня"}
+        }
+        year{
+            few{"{0} гады"}
+            many{"{0} гадоў"}
+            one{"{0} год"}
+            other{"{0} году"}
+        }
+    }
     zoneStrings{
+        "America:Anchorage"{
+            ec{"Анкорыдж"}
+        }
+        "America:Campo_Grande"{
+            ec{"Кампа Грандэ"}
+        }
+        "America:Chicago"{
+            ec{"Чыкага"}
+        }
+        "America:Denver"{
+            ec{"Дэнвэр"}
+        }
+        "America:Indianapolis"{
+            ec{"Індыянапаліс"}
+        }
+        "America:Los_Angeles"{
+            ec{"Лос-Анджэлас"}
+        }
+        "America:New_York"{
+            ec{"Нью-Ёрк"}
+        }
+        "America:Phoenix"{
+            ec{"Фэнікс"}
+        }
+        "America:Rio_Branco"{
+            ec{"Рыё Бранка"}
+        }
+        "America:Sao_Paulo"{
+            ec{"Сан-Паўлу"}
+        }
         "Etc:Unknown"{
             ec{"Невядомы"}
         }
+        "Pacific:Honolulu"{
+            ec{"Ганалулу"}
+        }
+        "meta:Acre"{
+            cu:int{0}
+        }
+        "meta:Alaska"{
+            cu:int{0}
+        }
+        "meta:Alaska_Hawaii"{
+            cu:int{0}
+        }
+        "meta:Amazon"{
+            cu:int{0}
+        }
+        "meta:America_Central"{
+            cu:int{0}
+            ld{"Паўночнаамэрыканскі цэнтральны летні час"}
+            lg{"Паўночнаамэрыканскі цэнтральны час"}
+            ls{"Паўночнаамэрыканскі цэнтральны стандартны час"}
+        }
+        "meta:America_Eastern"{
+            cu:int{0}
+            ld{"Паўночнаамэрыканскі усходні летні час"}
+            lg{"Паўночнаамэрыканскі усходні час"}
+            ls{"Паўночнаамэрыканскі усходні стандартны час"}
+        }
+        "meta:America_Mountain"{
+            cu:int{0}
+            ld{"Паўночнаамэрыканскі горны летні час"}
+            lg{"Паўночнаамэрыканскі горны час"}
+            ls{"Паўночнаамэрыканскі горны стандартны час"}
+        }
+        "meta:America_Pacific"{
+            cu:int{0}
+            ld{"Ціхаакіянскі летні час"}
+            lg{"Ціхаакіянскі час"}
+            ls{"Ціхаакіянскі стандартны час"}
+        }
+        "meta:Argentina"{
+            cu:int{0}
+        }
+        "meta:Argentina_Western"{
+            cu:int{0}
+        }
+        "meta:Atlantic"{
+            cu:int{0}
+            ld{"Атлянтычны летні час"}
+            lg{"Атлянтычны час"}
+            ls{"Атлянтычны стандартны час"}
+        }
+        "meta:Azores"{
+            cu:int{0}
+        }
+        "meta:Bering"{
+            cu:int{0}
+        }
+        "meta:British"{
+            cu:int{0}
+        }
+        "meta:Cape_Verde"{
+            cu:int{0}
+        }
+        "meta:Europe_Central"{
+            cu:int{0}
+            ld{"Цэнтральнаэўрапейскі летні час"}
+            ls{"Цэнтральнаэўрапейскі час"}
+        }
+        "meta:Europe_Eastern"{
+            cu:int{0}
+            ld{"Усходнеэўрапейскі летні час"}
+            ls{"Усходнеэўрапейскі час"}
+        }
+        "meta:Europe_Western"{
+            cu:int{0}
+            ld{"Заходнеэўрапейскі летні час"}
+            ls{"Заходнеэўрапейскі час"}
+        }
+        "meta:Falkland"{
+            cu:int{0}
+        }
+        "meta:GMT"{
+            cu:int{1}
+            ls{"Грынвічскі час"}
+        }
+        "meta:Kuybyshev"{
+            cu:int{0}
+        }
+        "meta:Moscow"{
+            cu:int{0}
+        }
+        "meta:Samara"{
+            cu:int{0}
+        }
+        "meta:South_Georgia"{
+            cu:int{0}
+        }
+        "meta:Turkey"{
+            cu:int{0}
+        }
+        "meta:Volgograd"{
+            cu:int{0}
+        }
+        fallbackFormat{"{1} ({0})"}
+        gmtFormat{"GMT{0}"}
+        hourFormat{"+HH:mm;-HH:mm"}
+        regionFormat{"Час: {0}"}
     }
 }

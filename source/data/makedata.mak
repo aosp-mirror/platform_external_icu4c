@@ -1,5 +1,5 @@
 #**********************************************************************
-#* Copyright (C) 1999-2007, International Business Machines Corporation
+#* Copyright (C) 1999-2008, International Business Machines Corporation
 #* and others.  All Rights Reserved.
 #**********************************************************************
 # nmake file for creating data files on win32
@@ -10,10 +10,10 @@
 
 ##############################################################################
 # Keep the following in sync with the version - see common/unicode/uversion.h
-U_ICUDATA_NAME=icudt38
+U_ICUDATA_NAME=icudt40
 ##############################################################################
 U_ICUDATA_ENDIAN_SUFFIX=l
-UNICODE_VERSION=5.0
+UNICODE_VERSION=5.1
 ICU_LIB_TARGET=$(DLL_OUTPUT)\$(U_ICUDATA_NAME).dll
 
 #  ICUMAKE

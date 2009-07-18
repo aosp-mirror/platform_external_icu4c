@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 2007, International Business Machines Corporation and         *
+* Copyright (C) 2007-2008, International Business Machines Corporation and    *
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 */
@@ -145,9 +145,11 @@ getTimeZoneTranslationType(TimeZoneTranslationTypeIndex typeIdx) {
         case ZSIDX_LONG_DAYLIGHT:
             type = DAYLIGHT_LONG;
             break;
+        case ZSIDX_COUNT:
         case ZSIDX_SHORT_DAYLIGHT:
             type = DAYLIGHT_SHORT;
             break;
+       
     }
     return type;
 }
@@ -155,11 +157,9 @@ getTimeZoneTranslationType(TimeZoneTranslationTypeIndex typeIdx) {
 #define DEFAULT_CHARACTERNODE_CAPACITY 1
 
 // ----------------------------------------------------------------------------
-CharacterNode::CharacterNode(UChar32 c, UObjectDeleter *valueDeleterFunc, UErrorCode &status)
-: UMemory(),
-  fChildren(valueDeleterFunc, NULL, DEFAULT_CHARACTERNODE_CAPACITY, status),
-  fValues(valueDeleterFunc, NULL, DEFAULT_CHARACTERNODE_CAPACITY, status),
-  fValueDeleter(valueDeleterFunc),
+CharacterNode::CharacterNode(UChar32 c, UErrorCode &status)
+: fChildren(deleteZoneStringInfo, NULL, DEFAULT_CHARACTERNODE_CAPACITY, status),
+  fValues(deleteZoneStringInfo, NULL, DEFAULT_CHARACTERNODE_CAPACITY, status),
   fCharacter(c)
 {
 }
@@ -185,7 +185,8 @@ CharacterNode::addChildNode(UChar32 c, UErrorCode &status) {
         return NULL;
     }
     CharacterNode *result = NULL;
-    for (int32_t i = 0; i < fChildren.size(); i++) {
+    int32_t childrenNum = fChildren.size();
+    for (int32_t i = 0; i < childrenNum; i++) {
         CharacterNode *node = (CharacterNode*)fChildren.elementAt(i);
         if (node->getCharacter() == c) {
             result = node;
@@ -193,7 +194,7 @@ CharacterNode::addChildNode(UChar32 c, UErrorCode &status) {
         }
     }
     if (result == NULL) {
-        result = new CharacterNode(c, fValueDeleter, status);
+        result = new CharacterNode(c, status);
         fChildren.addElement(result, status);
     }
 
@@ -203,7 +204,8 @@ CharacterNode::addChildNode(UChar32 c, UErrorCode &status) {
 CharacterNode*
 CharacterNode::getChildNode(UChar32 c) const {
     CharacterNode *result = NULL;
-    for (int32_t i = 0; i < fChildren.size(); i++) {
+    int32_t childrenNum = fChildren.size();
+    for (int32_t i = 0; i < childrenNum; i++) {
         CharacterNode *node = (CharacterNode*)fChildren.elementAt(i);
         if (node->getCharacter() == c) {
             result = node;
@@ -213,9 +215,14 @@ CharacterNode::getChildNode(UChar32 c) const {
     return result;
 }
 
+//----------------------------------------------------------------------------
+// Virtual destructor to avoid warning
+TextTrieMapSearchResultHandler::~TextTrieMapSearchResultHandler(){
+}
+
 // ----------------------------------------------------------------------------
-TextTrieMap::TextTrieMap(UBool ignoreCase, UObjectDeleter *valueDeleterFunc)
-: UMemory(), fIgnoreCase(ignoreCase), fValueDeleter(valueDeleterFunc), fRoot(NULL) {
+TextTrieMap::TextTrieMap(UBool ignoreCase)
+: fIgnoreCase(ignoreCase), fRoot(NULL) {
 }
 
 TextTrieMap::~TextTrieMap() {
@@ -227,7 +234,7 @@ TextTrieMap::~TextTrieMap() {
 void
 TextTrieMap::put(const UnicodeString &key, void *value, UErrorCode &status) {
     if (fRoot == NULL) {
-        fRoot = new CharacterNode(0, fValueDeleter, status);
+        fRoot = new CharacterNode(0, status);
     }
 
     UnicodeString keyString(key);
@@ -297,14 +304,14 @@ TextTrieMap::search(CharacterNode *node, const UnicodeString &text, int32_t star
 // ----------------------------------------------------------------------------
 ZoneStringInfo::ZoneStringInfo(const UnicodeString &id, const UnicodeString &str,
                                TimeZoneTranslationType type)
-: UMemory(), fId(id), fStr(str), fType(type) {
+: fId(id), fStr(str), fType(type) {
 }
 
 ZoneStringInfo::~ZoneStringInfo() {
 }
 // ----------------------------------------------------------------------------
 ZoneStringSearchResultHandler::ZoneStringSearchResultHandler(UErrorCode &status)
-: UMemory(), fResults(status)
+: fResults(status)
 {
     clear();
 }
@@ -374,11 +381,10 @@ ZoneStringSearchResultHandler::clear(void) {
 // ----------------------------------------------------------------------------
 ZoneStringFormat::ZoneStringFormat(const UnicodeString* const* strings,
                                    int32_t rowCount, int32_t columnCount, UErrorCode &status)
-: UMemory(),
-  fLocale(""),
+: fLocale(""),
   fTzidToStrings(uhash_compareUnicodeString, NULL, status),
   fMzidToStrings(uhash_compareUnicodeString, NULL, status),
-  fZoneStringsTrie(TRUE, deleteZoneStringInfo)
+  fZoneStringsTrie(TRUE)
 {
     if (U_FAILURE(status)) {
         return;
@@ -450,11 +456,10 @@ error_cleanup:
 }
 
 ZoneStringFormat::ZoneStringFormat(const Locale &locale, UErrorCode &status)
-: UMemory(),
-  fLocale(locale),
+: fLocale(locale),
   fTzidToStrings(uhash_compareUnicodeString, NULL, status),
   fMzidToStrings(uhash_compareUnicodeString, NULL, status),
-  fZoneStringsTrie(TRUE, deleteZoneStringInfo)
+  fZoneStringsTrie(TRUE)
 {
     if (U_FAILURE(status)) {
         return;
@@ -507,7 +512,12 @@ ZoneStringFormat::ZoneStringFormat(const Locale &locale, UErrorCode &status)
         // Skip non-canonical IDs
         UnicodeString utzid(tzid, -1, US_INV);
         UnicodeString canonicalID;
-        ZoneMeta::getCanonicalID(utzid, canonicalID);
+        TimeZone::getCanonicalID(utzid, canonicalID, status);
+        if (U_FAILURE(status)) {
+            // Ignore unknown ID - we should not get here, but just in case.
+            status = U_ZERO_ERROR;
+            continue;
+        }
         if (utzid != canonicalID) {
             continue;
         }
@@ -647,8 +657,7 @@ ZoneStringFormat::ZoneStringFormat(const Locale &locale, UErrorCode &status)
                                 ZoneStringInfo *zsinfo = new ZoneStringInfo(preferredIdForLocale, strings_mz[typeidx], (TimeZoneTranslationType)type);
                                 fZoneStringsTrie.put(strings_mz[typeidx], zsinfo, status);
                                 if (U_FAILURE(status)) {
-                                    delete zsinfo;
-                                    delete strings_mz;
+                                    delete []strings_mz;
                                     goto error_cleanup;
                                 }
                             }
@@ -661,7 +670,6 @@ ZoneStringFormat::ZoneStringFormat(const Locale &locale, UErrorCode &status)
 
                     fMzidToStrings.put(mzid, tmp_mzStrings, status);
                     if (U_FAILURE(status)) {
-                        delete tmp_mzStrings;
                         goto error_cleanup;
                     }
 
@@ -860,7 +868,12 @@ ZoneStringFormat::createZoneStringsArray(UDate date, int32_t &rowCount, int32_t 
         }
         UnicodeString utzid(tzid);
         UnicodeString canonicalID;
-        ZoneMeta::getCanonicalID(UnicodeString(tzid), canonicalID);
+        TimeZone::getCanonicalID(UnicodeString(tzid), canonicalID, status);
+        if (U_FAILURE(status)) {
+            // Ignore unknown ID - we should not get here, but just in case.
+            status = U_ZERO_ERROR;
+            continue;
+        }
         if (utzid == canonicalID) {
             canonicalIDs.addElement(new UnicodeString(utzid), status);
             if (U_FAILURE(status)) {
@@ -987,7 +1000,12 @@ ZoneStringFormat::getString(const UnicodeString &tzid, TimeZoneTranslationTypeIn
 
     // ICU's own array does not have entries for aliases
     UnicodeString canonicalID;
-    ZoneMeta::getCanonicalID(tzid, canonicalID);
+    UErrorCode status = U_ZERO_ERROR;
+    TimeZone::getCanonicalID(tzid, canonicalID, status);
+    if (U_FAILURE(status)) {
+        // Unknown ID, but users might have their own data.
+        canonicalID.setTo(tzid);
+    }
 
     if (fTzidToStrings.count() > 0) {
         ZoneStrings *zstrings = (ZoneStrings*)fTzidToStrings.get(canonicalID);
@@ -1001,6 +1019,7 @@ ZoneStringFormat::getString(const UnicodeString &tzid, TimeZoneTranslationTypeIn
                     break;
                 case ZSIDX_SHORT_STANDARD:
                 case ZSIDX_SHORT_DAYLIGHT:
+                case ZSIDX_COUNT: //added to avoid warning
                 case ZSIDX_SHORT_GENERIC:
                     if (!commonlyUsedOnly || zstrings->isShortFormatCommonlyUsed()) {
                         zstrings->getString(typeIdx, result);
@@ -1025,6 +1044,7 @@ ZoneStringFormat::getString(const UnicodeString &tzid, TimeZoneTranslationTypeIn
                         break;
                     case ZSIDX_SHORT_STANDARD:
                     case ZSIDX_SHORT_DAYLIGHT:
+                    case ZSIDX_COUNT: //added to avoid warning
                     case ZSIDX_SHORT_GENERIC:
                         if (!commonlyUsedOnly || mzstrings->isShortFormatCommonlyUsed()) {
                             mzstrings->getString(typeIdx, result);
@@ -1051,9 +1071,14 @@ ZoneStringFormat::getGenericString(const Calendar &cal, UBool isShort, UBool com
 
     // ICU's own array does not have entries for aliases
     UnicodeString canonicalID;
-    ZoneMeta::getCanonicalID(tzid, canonicalID);
+    TimeZone::getCanonicalID(tzid, canonicalID, status);
+    if (U_FAILURE(status)) {
+        // Unknown ID, but users might have their own data.
+        status = U_ZERO_ERROR;
+        canonicalID.setTo(tzid);
+    }
 
-    ZoneStrings *zstrings;
+    ZoneStrings *zstrings = NULL;
     if (fTzidToStrings.count() > 0) {
         zstrings = (ZoneStrings*)fTzidToStrings.get(canonicalID);
         if (zstrings != NULL) {
@@ -1205,7 +1230,12 @@ ZoneStringFormat::getGenericPartialLocationString(const UnicodeString &tzid, UBo
     }
 
     UnicodeString canonicalID;
-    ZoneMeta::getCanonicalID(tzid, canonicalID);
+    UErrorCode status = U_ZERO_ERROR;
+    TimeZone::getCanonicalID(tzid, canonicalID, status);
+    if (U_FAILURE(status)) {
+        // Unknown ID, so no corresponding meta data.
+        return result;
+    }
 
     UnicodeString mzid;
     ZoneMeta::getMetazoneID(canonicalID, date, mzid);
@@ -1397,7 +1427,7 @@ ZoneStringFormat::getLocalizedCountry(const UnicodeString &countryCode, const Lo
  */
 ZoneStrings::ZoneStrings(UnicodeString *strings, int32_t stringsCount, UBool commonlyUsed,
        UnicodeString **genericPartialLocationStrings, int32_t genericRowCount, int32_t genericColCount)
-: UMemory(), fStrings(strings), fStringsCount(stringsCount), fIsCommonlyUsed(commonlyUsed),
+: fStrings(strings), fStringsCount(stringsCount), fIsCommonlyUsed(commonlyUsed),
   fGenericPartialLocationStrings(genericPartialLocationStrings), 
   fGenericPartialLocationRowCount(genericRowCount), fGenericPartialLocationColCount(genericColCount) {
 }
@@ -1456,7 +1486,7 @@ ZoneStrings::getGenericPartialLocationString(const UnicodeString &mzid, UBool is
 
 // --------------------------------------------------------------
 SafeZoneStringFormatPtr::SafeZoneStringFormatPtr(ZSFCacheEntry *cacheEntry)
-: UMemory(), fCacheEntry(cacheEntry) {
+: fCacheEntry(cacheEntry) {
 }
 
 SafeZoneStringFormatPtr::~SafeZoneStringFormatPtr() {
@@ -1469,7 +1499,7 @@ SafeZoneStringFormatPtr::get() const {
 }
 
 ZSFCacheEntry::ZSFCacheEntry(const Locale &locale, ZoneStringFormat *zsf, ZSFCacheEntry *next)
-: UMemory(), fLocale(locale), fZoneStringFormat(zsf),
+: fLocale(locale), fZoneStringFormat(zsf),
  fNext(next), fRefCount(1)
 {
 }
@@ -1491,7 +1521,7 @@ ZSFCacheEntry::delRef(void) {
 }
 
 ZSFCache::ZSFCache(int32_t capacity)
-: UMemory(), fCapacity(capacity), fFirst(NULL) {
+: fCapacity(capacity), fFirst(NULL) {
 }
 
 ZSFCache::~ZSFCache() {
@@ -1537,6 +1567,11 @@ ZSFCache::get(const Locale &locale, UErrorCode &status) {
     if (entry == NULL) {
         ZoneStringFormat *zsf = new ZoneStringFormat(locale, status);
         if (U_FAILURE(status)) {
+            delete zsf;
+            return NULL;
+        }
+        if (zsf == NULL) {
+            status = U_MEMORY_ALLOCATION_ERROR;
             return NULL;
         }
         // Now add the new entry

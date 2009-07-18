@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 1997-2007, International Business Machines Corporation and    *
+* Copyright (C) 1997-2008, International Business Machines Corporation and    *
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 *
@@ -67,9 +67,9 @@ U_NAMESPACE_BEGIN
 static void debugout(UnicodeString s) {
     char buf[2000];
     s.extract((int32_t) 0, s.length(), buf);
-    printf("%s", buf);
+    printf("%s\n", buf);
 }
-#define debug(x) printf("%s", x);
+#define debug(x) printf("%s\n", x);
 #else
 #define debugout(x)
 #define debug(x)
@@ -640,10 +640,11 @@ DecimalFormat::format(int64_t number,
     // check for this before multiplying, and if it happens we use doubles
     // instead, trading off accuracy for range.
     if (fRoundingIncrement != NULL
-        || (fMultiplier != 0 && (number > (U_INT64_MAX / fMultiplier)
-                              || number < (U_INT64_MIN / fMultiplier))))
+        || (fMultiplier > 0 && (number > U_INT64_MAX / fMultiplier || number < U_INT64_MIN / fMultiplier))
+        || (fMultiplier < 0 && (number == U_INT64_MIN || -number > U_INT64_MAX / -fMultiplier || -number < U_INT64_MIN / -fMultiplier))
+        )
     {
-        digits.set(((double)number) * fMultiplier,
+        digits.set(((double) number) * fMultiplier,
                    precision(FALSE),
                    !fUseExponentialNotation && !areSignificantDigitsUsed());
     }
@@ -682,6 +683,13 @@ DecimalFormat::format(  double number,
         return appendTo;
     }
 
+    // Do this BEFORE checking to see if value is infinite or negative! Sets the
+    // begin and end index to be length of the string composed of
+    // localized name of Infinite and the positive/negative localized
+    // signs.
+
+    number *= fMultiplier;
+
     /* Detecting whether a double is negative is easy with the exception of
      * the value -0.0.  This is a double which has a zero mantissa (and
      * exponent), but a negative sign bit.  It is semantically distinct from
@@ -693,13 +701,6 @@ DecimalFormat::format(  double number,
      * issues raised by bugs 4106658, 4106667, and 4147706.  Liu 7/6/98.
      */
     UBool isNegative = uprv_isNegative(number);
-
-    // Do this BEFORE checking to see if value is infinite! Sets the
-    // begin and end index to be length of the string composed of
-    // localized name of Infinite and the positive/negative localized
-    // signs.
-
-    number *= fMultiplier;
 
     // Apply rounding after multiplier
     if (fRoundingIncrement != NULL) {
@@ -1729,6 +1730,11 @@ int32_t DecimalFormat::compareSimpleAffix(const UnicodeString& affix,
             if (pos == s && !literalMatch) {
                 return -1;
             }
+
+            // If we skip UWhiteSpace in the input text, we need to skip it in the pattern.
+            // Otherwise, the previous lines may have skipped over text (such as U+00A0) that
+            // is also in the affix.
+            i = skipUWhiteSpace(affix, i);
         } else {
             if (pos < input.length() &&
                 input.char32At(pos) == c) {
@@ -1818,6 +1824,10 @@ int32_t DecimalFormat::compareComplexAffix(const UnicodeString& affixPat,
                     const char* loc = getLocaleID(ULOC_VALID_LOCALE, ec);
                     if (U_FAILURE(ec) || loc == NULL || *loc == 0) {
                         // applyPattern has been called; use the symbols
+                        if (fSymbols == NULL) {
+                            ec = U_MEMORY_ALLOCATION_ERROR;
+                            return 0;
+                        }
                         loc = fSymbols->getLocale().getName();
                         ec = U_ZERO_ERROR;
                     }
@@ -2096,10 +2106,10 @@ int32_t DecimalFormat::getMultiplier() const
 void
 DecimalFormat::setMultiplier(int32_t newValue)
 {
-//    if (newValue <= 0) {
-//        throw new IllegalArgumentException("Bad multiplier: " + newValue);
-//    }
-    if (newValue > 0) {
+//  if (newValue == 0) {
+//      throw new IllegalArgumentException("Bad multiplier: " + newValue);
+//  }
+    if (newValue != 0) {
         fMultiplier = newValue;
     }
     // else No way to return an error.
@@ -2131,13 +2141,17 @@ void DecimalFormat::setRoundingIncrement(double newValue) {
         if (fRoundingIncrement == NULL) {
             fRoundingIncrement = new DigitList();
         }
-        fRoundingIncrement->set((int32_t)newValue);
-        fRoundingDouble = newValue;
-    } else {
-        delete fRoundingIncrement;
-        fRoundingIncrement = NULL;
-        fRoundingDouble = 0.0;
-    }
+        if (fRoundingIncrement != NULL) {
+            fRoundingIncrement->set((int32_t)newValue);
+            fRoundingDouble = newValue;
+            return;
+        }
+    } 
+    // These statements are executed if newValue is less than 0.0
+    // or fRoundingIncrement could not be created.
+    delete fRoundingIncrement;
+    fRoundingIncrement = NULL;
+    fRoundingDouble = 0.0;
 }
 
 /**
@@ -2501,7 +2515,8 @@ void DecimalFormat::expandAffix(const UnicodeString& pattern,
                     } else {
                         int32_t len;
                         UBool isChoiceFormat;
-                        const UChar* s = ucurr_getName(currencyUChars, fSymbols->getLocale().getName(),
+                        // If fSymbols is NULL, use default locale
+                        const UChar* s = ucurr_getName(currencyUChars, fSymbols != NULL ? fSymbols->getLocale().getName() : Locale::getDefault().getName(),
                                                        UCURR_SYMBOL_NAME, &isChoiceFormat, &len, &ec);
                         if (isChoiceFormat) {
                             // Two modes here: If doFormat is false, we set up
@@ -3714,7 +3729,12 @@ void DecimalFormat::setCurrency(const UChar* theCurrency) {
     setCurrency(theCurrency, ec);
 }
 
-void DecimalFormat::getEffectiveCurrency(UChar* result, UErrorCode& /*ec*/) const {
+void DecimalFormat::getEffectiveCurrency(UChar* result, UErrorCode& ec) const {
+    if (fSymbols == NULL) {
+        ec = U_MEMORY_ALLOCATION_ERROR;
+        return;
+    }
+    ec = U_ZERO_ERROR;
     const UChar* c = getCurrency();
     if (*c == 0) {
         const UnicodeString &intl =

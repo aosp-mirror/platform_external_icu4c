@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 2000-2007, International Business Machines
+*   Copyright (C) 2000-2008, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *   file name:  ucnv2022.c
@@ -201,6 +201,7 @@ typedef struct{
 #ifdef U_ENABLE_GENERIC_ISO_2022
     UBool isFirstBuffer;
 #endif
+    UBool isEmptySegment;
     char name[30];
     char locale[3];
 }UConverterDataISO2022;
@@ -344,7 +345,7 @@ static const char* const escSeqStateTable_Result_2022[MAX_STATES_2022] = {
 
 #endif
 
-static const UCNV_TableStates_2022 escSeqStateTable_Value_2022[MAX_STATES_2022] = {
+static const int8_t escSeqStateTable_Value_2022[MAX_STATES_2022] = {
 /*          0                           1                         2                             3                           4                           5                               6                        7                          8                           9       */
      VALID_NON_TERMINAL_2022    ,VALID_NON_TERMINAL_2022    ,VALID_NON_TERMINAL_2022    ,VALID_NON_TERMINAL_2022     ,VALID_NON_TERMINAL_2022   ,VALID_TERMINAL_2022        ,VALID_TERMINAL_2022        ,VALID_NON_TERMINAL_2022    ,VALID_TERMINAL_2022        ,VALID_TERMINAL_2022
     ,VALID_MAYBE_TERMINAL_2022  ,VALID_TERMINAL_2022        ,VALID_TERMINAL_2022        ,VALID_TERMINAL_2022        ,VALID_TERMINAL_2022        ,VALID_TERMINAL_2022        ,VALID_TERMINAL_2022        ,VALID_TERMINAL_2022        ,VALID_TERMINAL_2022        ,VALID_TERMINAL_2022
@@ -472,8 +473,7 @@ _ISO2022Open(UConverter *cnv, const char *name, const char *locale,uint32_t opti
             if(jpCharsetMasks[version]&CSM(ISO8859_7)) {
                 myConverterData->myConverterArray[ISO8859_7]= ucnv_loadSharedData("ISO8859_7", NULL, errorCode);
             }
-            myConverterData->myConverterArray[JISX201]      = ucnv_loadSharedData("JISX0201", NULL, errorCode);
-            myConverterData->myConverterArray[JISX208]      = ucnv_loadSharedData("jisx-208", NULL, errorCode);
+            myConverterData->myConverterArray[JISX208]      = ucnv_loadSharedData("Shift-JIS", NULL, errorCode);
             if(jpCharsetMasks[version]&CSM(JISX212)) {
                 myConverterData->myConverterArray[JISX212]  = ucnv_loadSharedData("jisx-212", NULL, errorCode);
             }
@@ -610,6 +610,7 @@ _ISO2022Reset(UConverter *converter, UConverterResetChoice choice) {
     if(choice<=UCNV_RESET_TO_UNICODE) {
         uprv_memset(&myConverterData->toU2022State, 0, sizeof(ISO2022State));
         myConverterData->key = 0;
+        myConverterData->isEmptySegment = FALSE;
     }
     if(choice!=UCNV_RESET_TO_UNICODE) {
         uprv_memset(&myConverterData->fromU2022State, 0, sizeof(ISO2022State));
@@ -672,7 +673,7 @@ _ISO2022getName(const UConverter* cnv){
  * <ESC>$A  GB2312
  * <ESC>$(C KSC5601
  */
-static const StateEnum nextStateToUnicodeJP[MAX_STATES_2022]= {
+static const int8_t nextStateToUnicodeJP[MAX_STATES_2022]= {
 /*      0                1               2               3               4               5               6               7               8               9    */
     INVALID_STATE   ,INVALID_STATE  ,INVALID_STATE  ,INVALID_STATE  ,INVALID_STATE  ,SS2_STATE      ,INVALID_STATE  ,INVALID_STATE  ,INVALID_STATE  ,INVALID_STATE
     ,ASCII          ,INVALID_STATE  ,INVALID_STATE  ,INVALID_STATE  ,INVALID_STATE  ,INVALID_STATE  ,JISX201        ,HWKANA_7BIT    ,JISX201        ,INVALID_STATE
@@ -685,7 +686,7 @@ static const StateEnum nextStateToUnicodeJP[MAX_STATES_2022]= {
 };
 
 /*************** to unicode *******************/
-static const StateEnum nextStateToUnicodeCN[MAX_STATES_2022]= {
+static const int8_t nextStateToUnicodeCN[MAX_STATES_2022]= {
 /*      0                1               2               3               4               5               6               7               8               9    */
      INVALID_STATE  ,INVALID_STATE  ,INVALID_STATE  ,INVALID_STATE  ,INVALID_STATE  ,SS2_STATE      ,SS3_STATE      ,INVALID_STATE  ,INVALID_STATE  ,INVALID_STATE
     ,INVALID_STATE  ,INVALID_STATE  ,INVALID_STATE  ,INVALID_STATE  ,INVALID_STATE  ,INVALID_STATE  ,INVALID_STATE  ,INVALID_STATE  ,INVALID_STATE  ,INVALID_STATE
@@ -730,7 +731,7 @@ getKey_2022(char c,int32_t* key,int32_t* offset){
         else /*we found it*/{
             *key = togo;
             *offset = mid;
-            return escSeqStateTable_Value_2022[mid];
+            return (UCNV_TableStates_2022)escSeqStateTable_Value_2022[mid];
         }
         oldmid = mid;
 
@@ -815,6 +816,7 @@ DONE:
             if(chosenConverterName == NULL) {
                 /* SS2 or SS3 */
                 *err = U_UNSUPPORTED_ESCAPE_SEQUENCE;
+                _this->toUCallbackReason = UCNV_UNASSIGNED;
                 return;
             }
 
@@ -830,7 +832,7 @@ DONE:
 #endif
         case ISO_2022_JP:
             {
-                StateEnum tempState=nextStateToUnicodeJP[offset];
+                StateEnum tempState=(StateEnum)nextStateToUnicodeJP[offset];
                 switch(tempState) {
                 case INVALID_STATE:
                     *err = U_UNSUPPORTED_ESCAPE_SEQUENCE;
@@ -869,7 +871,7 @@ DONE:
             break;
         case ISO_2022_CN:
             {
-                StateEnum tempState=nextStateToUnicodeCN[offset];
+                StateEnum tempState=(StateEnum)nextStateToUnicodeCN[offset];
                 switch(tempState) {
                 case INVALID_STATE:
                     *err = U_UNSUPPORTED_ESCAPE_SEQUENCE;
@@ -936,6 +938,8 @@ DONE:
     }
     if(U_SUCCESS(*err)) {
         _this->toULength = 0;
+    } else if(*err==U_UNSUPPORTED_ESCAPE_SEQUENCE) {
+        _this->toUCallbackReason = UCNV_UNASSIGNED;
     }
 }
 
@@ -1040,14 +1044,6 @@ MBCS_FROM_UCHAR32_ISO2022(UConverterSharedData* sharedData,
                 length=3;
             }
         }
-        /*
-         * TODO(markus): Use Shift-JIS table for JIS X 0208, to save mapping table space.
-         * Pass in parameter for type of output bytes, for validation and shifting:
-         * - Direct: Pass bytes through, but forbid control codes 00-1F (except SI/SO/ESC) and space 20?
-         *   (Need to allow some (TAB/LF/CR) or most of them for ASCII and maybe JIS X 0201.)
-         * - A1-FE: Subtract 80 after range check.
-         * - SJIS: Shift DBCS result to 21-7E x 21-7E.
-         */
         /* is this code point assigned, or do we use fallbacks? */
         if((stage2Entry&(1<<(16+(c&0xf))))!=0) {
             /* assigned */
@@ -1102,6 +1098,39 @@ MBCS_SINGLE_FROM_UCHAR32(UConverterSharedData* sharedData,
         return -1;  /* fallback taken */
     } else {
         return 0;  /* no mapping */
+    }
+}
+
+/*
+ * Check that the result is a 2-byte value with each byte in the range A1..FE
+ * (strict EUC DBCS) before accepting it and subtracting 0x80 from each byte
+ * to move it to the ISO 2022 range 21..7E.
+ * Return 0 if out of range.
+ */
+static U_INLINE uint32_t
+_2022FromGR94DBCS(uint32_t value) {
+    if( (uint16_t)(value - 0xa1a1) <= (0xfefe - 0xa1a1) &&
+        (uint8_t)(value - 0xa1) <= (0xfe - 0xa1)
+    ) {
+        return value - 0x8080;  /* shift down to 21..7e byte range */
+    } else {
+        return 0;  /* not valid for ISO 2022 */
+    }
+}
+
+/*
+ * This method does the reverse of _2022FromGR94DBCS(). Given the 2022 code point, it returns the
+ * 2 byte value that is in the range A1..FE for each byte. Otherwise it returns the 2022 code point
+ * unchanged. 
+ */
+static U_INLINE uint32_t
+_2022ToGR94DBCS(uint32_t value) {
+    uint32_t returnValue = value + 0x8080;
+    if( (uint16_t)(returnValue - 0xa1a1) <= (0xfefe - 0xa1a1) &&
+        (uint8_t)(returnValue - 0xa1) <= (0xfe - 0xa1)) {
+        return returnValue;
+    } else {
+        return value;
     }
 }
 
@@ -1233,7 +1262,7 @@ toUnicodeCallback(UConverter *cnv,
     }
     else{
         cnv->toUBytes[0] =(char) sourceChar;
-        cnv->toULength = 2;
+        cnv->toULength = 1;
     }
 
     if(targetUniChar == (missingCharMarker-1/*0xfffe*/)){
@@ -1315,7 +1344,7 @@ static const char escSeqChars[][6] ={
     "\x1B\x28\x49"          /* <ESC>(I  HWKANA_7BIT */
 
 };
-static  const int32_t escSeqCharsLen[] ={
+static  const int8_t escSeqCharsLen[] ={
     3, /* length of <ESC>(B  ASCII       */
     3, /* length of <ESC>.A  ISO-8859-1  */
     3, /* length of <ESC>.F  ISO-8859-7  */
@@ -1343,6 +1372,181 @@ static  const int32_t escSeqCharsLen[] ={
 *
 * TODO: Implement a priority technique where the users are allowed to set the priority of code pages
 */
+
+/* Map 00..7F to Unicode according to JIS X 0201. */
+static U_INLINE uint32_t
+jisx201ToU(uint32_t value) {
+    if(value < 0x5c) {
+        return value;
+    } else if(value == 0x5c) {
+        return 0xa5;
+    } else if(value == 0x7e) {
+        return 0x203e;
+    } else /* value <= 0x7f */ {
+        return value;
+    }
+}
+
+/* Map Unicode to 00..7F according to JIS X 0201. Return U+FFFE if unmappable. */
+static U_INLINE uint32_t
+jisx201FromU(uint32_t value) {
+    if(value<=0x7f) {
+        if(value!=0x5c && value!=0x7e) {
+            return value;
+        }
+    } else if(value==0xa5) {
+        return 0x5c;
+    } else if(value==0x203e) {
+        return 0x7e;
+    }
+    return 0xfffe;
+}
+
+/*
+ * Take a valid Shift-JIS byte pair, check that it is in the range corresponding
+ * to JIS X 0208, and convert it to a pair of 21..7E bytes.
+ * Return 0 if the byte pair is out of range.
+ */
+static U_INLINE uint32_t
+_2022FromSJIS(uint32_t value) {
+    uint8_t trail;
+
+    if(value > 0xEFFC) {
+        return 0;  /* beyond JIS X 0208 */
+    }
+
+    trail = (uint8_t)value;
+
+    value &= 0xff00;  /* lead byte */
+    if(value <= 0x9f00) {
+        value -= 0x7000;
+    } else /* 0xe000 <= value <= 0xef00 */ {
+        value -= 0xb000;
+    }
+    value <<= 1;
+
+    if(trail <= 0x9e) {
+        value -= 0x100;
+        if(trail <= 0x7e) {
+            value |= trail - 0x1f;
+        } else {
+            value |= trail - 0x20;
+        }
+    } else /* trail <= 0xfc */ {
+        value |= trail - 0x7e;
+    }
+    return value;
+}
+
+/*
+ * Convert a pair of JIS X 0208 21..7E bytes to Shift-JIS.
+ * If either byte is outside 21..7E make sure that the result is not valid
+ * for Shift-JIS so that the converter catches it.
+ * Some invalid byte values already turn into equally invalid Shift-JIS
+ * byte values and need not be tested explicitly.
+ */
+static U_INLINE void
+_2022ToSJIS(uint8_t c1, uint8_t c2, char bytes[2]) {
+    if(c1&1) {
+        ++c1;
+        if(c2 <= 0x5f) {
+            c2 += 0x1f;
+        } else if(c2 <= 0x7e) {
+            c2 += 0x20;
+        } else {
+            c2 = 0;  /* invalid */
+        }
+    } else {
+        if((uint8_t)(c2-0x21) <= ((0x7e)-0x21)) {
+            c2 += 0x7e;
+        } else {
+            c2 = 0;  /* invalid */
+        }
+    }
+    c1 >>= 1;
+    if(c1 <= 0x2f) {
+        c1 += 0x70;
+    } else if(c1 <= 0x3f) {
+        c1 += 0xb0;
+    } else {
+        c1 = 0;  /* invalid */
+    }
+    bytes[0] = (char)c1;
+    bytes[1] = (char)c2;
+}
+
+/*
+ * JIS X 0208 has fallbacks from Unicode half-width Katakana to full-width (DBCS)
+ * Katakana.
+ * Now that we use a Shift-JIS table for JIS X 0208 we need to hardcode these fallbacks
+ * because Shift-JIS roundtrips half-width Katakana to single bytes.
+ * These were the only fallbacks in ICU's jisx-208.ucm file.
+ */
+static const uint16_t hwkana_fb[HWKANA_END - HWKANA_START + 1] = {
+    0x2123,  /* U+FF61 */
+    0x2156,
+    0x2157,
+    0x2122,
+    0x2126,
+    0x2572,
+    0x2521,
+    0x2523,
+    0x2525,
+    0x2527,
+    0x2529,
+    0x2563,
+    0x2565,
+    0x2567,
+    0x2543,
+    0x213C,  /* U+FF70 */
+    0x2522,
+    0x2524,
+    0x2526,
+    0x2528,
+    0x252A,
+    0x252B,
+    0x252D,
+    0x252F,
+    0x2531,
+    0x2533,
+    0x2535,
+    0x2537,
+    0x2539,
+    0x253B,
+    0x253D,
+    0x253F,  /* U+FF80 */
+    0x2541,
+    0x2544,
+    0x2546,
+    0x2548,
+    0x254A,
+    0x254B,
+    0x254C,
+    0x254D,
+    0x254E,
+    0x254F,
+    0x2552,
+    0x2555,
+    0x2558,
+    0x255B,
+    0x255E,
+    0x255F,  /* U+FF90 */
+    0x2560,
+    0x2561,
+    0x2562,
+    0x2564,
+    0x2566,
+    0x2568,
+    0x2569,
+    0x256A,
+    0x256B,
+    0x256C,
+    0x256D,
+    0x256F,
+    0x2573,
+    0x212B,
+    0x212C   /* U+FF9F */
+};
 
 static void
 UConverter_fromUnicode_ISO_2022_JP_OFFSETS_LOGIC(UConverterFromUnicodeArgs* args, UErrorCode* err) {
@@ -1499,7 +1703,7 @@ getTrail:
                     }
                     break;
                 case HWKANA_7BIT:
-                    if((uint32_t)(HWKANA_END-sourceChar)<=(HWKANA_END-HWKANA_START)) {
+                    if((uint32_t)(sourceChar - HWKANA_START) <= (HWKANA_END - HWKANA_START)) {
                         if(converterData->version==3) {
                             /* JIS7: use G1 (SO) */
                             /* Shift U+FF61..U+FF9F to bytes 21..5F. */
@@ -1526,13 +1730,34 @@ getTrail:
                     break;
                 case JISX201:
                     /* G0 SBCS */
-                    len2 = MBCS_SINGLE_FROM_UCHAR32(
+                    value = jisx201FromU(sourceChar);
+                    if(value <= 0x7f) {
+                        targetValue = value;
+                        len = 1;
+                        cs = cs0;
+                        g = 0;
+                        useFallback = FALSE;
+                    }
+                    break;
+                case JISX208:
+                    /* G0 DBCS from Shift-JIS table */
+                    len2 = MBCS_FROM_UCHAR32_ISO2022(
                                 converterData->myConverterArray[cs0],
                                 sourceChar, &value,
-                                useFallback);
-                    if(len2 != 0 && !(len2 < 0 && len != 0) && value <= 0x7f) {
-                        targetValue = value;
-                        len = len2;
+                                useFallback, MBCS_OUTPUT_2);
+                    if(len2 == 2 || (len2 == -2 && len == 0)) {  /* only accept DBCS: abs(len)==2 */
+                        value = _2022FromSJIS(value);
+                        if(value != 0) {
+                            targetValue = value;
+                            len = len2;
+                            cs = cs0;
+                            g = 0;
+                            useFallback = FALSE;
+                        }
+                    } else if(len == 0 && useFallback &&
+                              (uint32_t)(sourceChar - HWKANA_START) <= (HWKANA_END - HWKANA_START)) {
+                        targetValue = hwkana_fb[sourceChar - HWKANA_START];
+                        len = -2;
                         cs = cs0;
                         g = 0;
                         useFallback = FALSE;
@@ -1564,17 +1789,10 @@ getTrail:
                              * Check for valid bytes for the encoding scheme.
                              * This is necessary because the sub-converter (windows-949)
                              * has a broader encoding scheme than is valid for 2022.
-                             *
-                             * Check that the result is a 2-byte value with each byte in the range A1..FE
-                             * (strict EUC-KR DBCS) before accepting it and subtracting 0x80 from each byte
-                             * to move it to the ISO 2022 range 21..7E.
                              */
-                            if( (uint16_t)(value - 0xa1a1) <= (0xfefe - 0xa1a1) &&
-                                (uint8_t)(value - 0xa1) <= (0xfe - 0xa1)
-                            ) {
-                                value -= 0x8080;  /* shift down to 21..7e byte range */
-                            } else {
-                                break;  /* not valid for ISO 2022 */
+                            value = _2022FromGR94DBCS(value);
+                            if(value == 0) {
+                                break;
                             }
                         }
                         targetValue = value;
@@ -1750,12 +1968,13 @@ getTrail:
 static void
 UConverter_toUnicode_ISO_2022_JP_OFFSETS_LOGIC(UConverterToUnicodeArgs *args,
                                                UErrorCode* err){
-    char tempBuf[3];
+    char tempBuf[2];
     const char *mySource = (char *) args->source;
     UChar *myTarget = args->target;
     const char *mySourceLimit = args->sourceLimit;
     uint32_t targetUniChar = 0x0000;
     uint32_t mySourceChar = 0x0000;
+    uint32_t tmpSourceChar = 0x0000;
     UConverterDataISO2022* myData;
     ISO2022State *pToU2022State;
     StateEnum cs;
@@ -1789,6 +2008,7 @@ UConverter_toUnicode_ISO_2022_JP_OFFSETS_LOGIC(UConverterToUnicodeArgs *args,
                     continue;
                 } else {
                     /* only JIS7 uses SI/SO, not ISO-2022-JP-x */
+                    myData->isEmptySegment = FALSE;	/* reset this, we have a different error */
                     break;
                 }
 
@@ -1800,20 +2020,38 @@ UConverter_toUnicode_ISO_2022_JP_OFFSETS_LOGIC(UConverterToUnicodeArgs *args,
                     continue;
                 } else {
                     /* only JIS7 uses SI/SO, not ISO-2022-JP-x */
+                    myData->isEmptySegment = FALSE;	/* reset this, we have a different error */
                     break;
                 }
 
             case ESC_2022:
                 mySource--;
 escape:
-                changeState_2022(args->converter,&(mySource),
-                    mySourceLimit, ISO_2022_JP,err);
+                {
+                    const char * mySourceBefore = mySource;
+                    int8_t toULengthBefore = args->converter->toULength;
+
+                    changeState_2022(args->converter,&(mySource),
+                        mySourceLimit, ISO_2022_JP,err);
+
+                    /* If in ISO-2022-JP only and we successully completed an escape sequence, but previous segment was empty, create an error */
+                    if(myData->version==0 && myData->key==0 && U_SUCCESS(*err) && myData->isEmptySegment) {
+                        *err = U_ILLEGAL_ESCAPE_SEQUENCE;
+                        args->converter->toUCallbackReason = UCNV_IRREGULAR;
+                        args->converter->toULength = toULengthBefore + (mySource - mySourceBefore);
+                    }
+                }
 
                 /* invalid or illegal escape sequence */
                 if(U_FAILURE(*err)){
                     args->target = myTarget;
                     args->source = mySource;
+                    myData->isEmptySegment = FALSE;	/* Reset to avoid future spurious errors */
                     return;
+                }
+                /* If we successfully completed an escape sequence, we begin a new segment, empty so far */
+                if(myData->key==0) {
+                    myData->isEmptySegment = TRUE;
                 }
                 continue;
 
@@ -1831,6 +2069,7 @@ escape:
                 /* falls through */
             default:
                 /* convert one or two bytes */
+                myData->isEmptySegment = FALSE;
                 cs = (StateEnum)pToU2022State->cs[pToU2022State->g];
                 if( (uint8_t)(mySourceChar - 0xa1) <= (0xdf - 0xa1) && myData->version==4 &&
                     !IS_JP_DBCS(cs)
@@ -1868,10 +2107,7 @@ escape:
                     break;
                 case JISX201:
                     if(mySourceChar <= 0x7f) {
-                        targetUniChar =
-                            _MBCS_SINGLE_SIMPLE_GET_NEXT_BMP(
-                                myData->myConverterArray[cs],
-                                mySourceChar);
+                        targetUniChar = jisx201ToU(mySourceChar);
                     }
                     break;
                 case HWKANA_7BIT:
@@ -1885,10 +2121,19 @@ escape:
                     if(mySource < mySourceLimit) {
                         char trailByte;
 getTrailByte:
-                        tempBuf[0] = (char) (mySourceChar);
-                        tempBuf[1] = trailByte = *mySource++;
-                        mySourceChar = (mySourceChar << 8) | (uint8_t)(trailByte);
+                        trailByte = *mySource++;
+                        tmpSourceChar = (mySourceChar << 8) | (uint8_t)(trailByte);
+                        if(cs == JISX208) {
+                            _2022ToSJIS((uint8_t)mySourceChar, (uint8_t)trailByte, tempBuf);
+                        } else {
+                            if (cs == KSC5601) {
+                                tmpSourceChar = _2022ToGR94DBCS(tmpSourceChar);
+                            }
+                            tempBuf[0] = (char)(tmpSourceChar >> 8);
+                            tempBuf[1] = (char)(tmpSourceChar);
+                        }
                         targetUniChar = ucnv_MBCSSimpleGetNextUChar(myData->myConverterArray[cs], tempBuf, 2, FALSE);
+                        mySourceChar = tmpSourceChar;
                     } else {
                         args->converter->toUBytes[0] = (uint8_t)mySourceChar;
                         args->converter->toULength = 1;
@@ -2325,15 +2570,27 @@ UConverter_toUnicode_ISO_2022_KR_OFFSETS_LOGIC(UConverterToUnicodeArgs *args,
 
             if(mySourceChar==UCNV_SI){
                 myData->toU2022State.g = 0;
+                if (myData->isEmptySegment) {
+                    myData->isEmptySegment = FALSE;	/* we are handling it, reset to avoid future spurious errors */
+                    *err = U_ILLEGAL_ESCAPE_SEQUENCE;
+                    args->converter->toUCallbackReason = UCNV_IRREGULAR;
+                    args->converter->toUBytes[0] = mySourceChar;
+                    args->converter->toULength = 1;
+                    args->target = myTarget;
+                    args->source = mySource;
+                    return;
+                }
                 /*consume the source */
                 continue;
             }else if(mySourceChar==UCNV_SO){
                 myData->toU2022State.g = 1;
+                myData->isEmptySegment = TRUE;	/* Begin a new segment, empty so far */
                 /*consume the source */
                 continue;
             }else if(mySourceChar==ESC_2022){
                 mySource--;
 escape:
+                myData->isEmptySegment = FALSE;	/* Any invalid ESC sequences will be detected separately, so just reset this */
                 changeState_2022(args->converter,&(mySource),
                                 mySourceLimit, ISO_2022_KR, err);
                 if(U_FAILURE(*err)){
@@ -2344,6 +2601,7 @@ escape:
                 continue;
             }
 
+            myData->isEmptySegment = FALSE;	/* Any invalid char errors will be detected separately, so just reset this */
             if(myData->toU2022State.g == 1) {
                 if(mySource < mySourceLimit) {
                     char trailByte;
@@ -2657,7 +2915,7 @@ getTrail:
                     if(cs0 > 0) {
                         uint32_t value;
                         int32_t len2;
-                        if(cs0 > CNS_11643_0) {
+                        if(cs0 >= CNS_11643_0) {
                             len2 = MBCS_FROM_UCHAR32_ISO2022(
                                         converterData->myConverterArray[CNS_11643],
                                         sourceChar,
@@ -2876,27 +3134,52 @@ UConverter_toUnicode_ISO_2022_CN_OFFSETS_LOGIC(UConverterToUnicodeArgs *args,
             switch(mySourceChar){
             case UCNV_SI:
                 pToU2022State->g=0;
+                if (myData->isEmptySegment) {
+                    myData->isEmptySegment = FALSE;	/* we are handling it, reset to avoid future spurious errors */
+                    *err = U_ILLEGAL_ESCAPE_SEQUENCE;
+                    args->converter->toUCallbackReason = UCNV_IRREGULAR;
+                    args->converter->toUBytes[0] = mySourceChar;
+                    args->converter->toULength = 1;
+                    args->target = myTarget;
+                    args->source = mySource;
+                    return;
+                }
                 continue;
 
             case UCNV_SO:
                 if(pToU2022State->cs[1] != 0) {
                     pToU2022State->g=1;
+                    myData->isEmptySegment = TRUE;	/* Begin a new segment, empty so far */
                     continue;
                 } else {
                     /* illegal to have SO before a matching designator */
+                    myData->isEmptySegment = FALSE;	/* Handling a different error, reset this to avoid future spurious errs */
                     break;
                 }
 
             case ESC_2022:
                 mySource--;
 escape:
-                changeState_2022(args->converter,&(mySource),
-                    mySourceLimit, ISO_2022_CN,err);
+                {
+                    const char * mySourceBefore = mySource;
+                    int8_t toULengthBefore = args->converter->toULength;
+
+                    changeState_2022(args->converter,&(mySource),
+                        mySourceLimit, ISO_2022_CN,err);
+
+                    /* After SO there must be at least one character before a designator (designator error handled separately) */
+                    if(myData->key==0 && U_SUCCESS(*err) && myData->isEmptySegment) {
+                        *err = U_ILLEGAL_ESCAPE_SEQUENCE;
+                        args->converter->toUCallbackReason = UCNV_IRREGULAR;
+                        args->converter->toULength = toULengthBefore + (mySource - mySourceBefore);
+                    }
+                }
 
                 /* invalid or illegal escape sequence */
                 if(U_FAILURE(*err)){
                     args->target = myTarget;
                     args->source = mySource;
+                    myData->isEmptySegment = FALSE;	/* Reset to avoid future spurious errors */
                     return;
                 }
                 continue;
@@ -2910,6 +3193,7 @@ escape:
                 /* falls through */
             default:
                 /* convert one or two bytes */
+                myData->isEmptySegment = FALSE;
                 if(pToU2022State->g != 0) {
                     if(mySource < mySourceLimit) {
                         UConverterSharedData *cnv;
@@ -2919,7 +3203,7 @@ escape:
 getTrailByte:
                         trailByte = *mySource++;
                         tempState = (StateEnum)pToU2022State->cs[pToU2022State->g];
-                        if(tempState > CNS_11643_0) {
+                        if(tempState >= CNS_11643_0) {
                             cnv = myData->myConverterArray[CNS_11643];
                             tempBuf[0] = (char) (0x80+(tempState-CNS_11643_0));
                             tempBuf[1] = (char) (mySourceChar);
@@ -3190,6 +3474,9 @@ _ISO_2022_GetUnicodeSet(const UConverter *cnv,
     /* open a set and initialize it with code points that are algorithmically round-tripped */
     switch(cnvData->locale[0]){
     case 'j':
+        /* include JIS X 0201 which is hardcoded */
+        sa->add(sa->set, 0xa5);
+        sa->add(sa->set, 0x203e);
         if(jpCharsetMasks[cnvData->version]&CSM(ISO8859_1)) {
             /* include Latin-1 for some variants of JP */
             sa->addRange(sa->set, 0, 0xff);
@@ -3197,7 +3484,20 @@ _ISO_2022_GetUnicodeSet(const UConverter *cnv,
             /* include ASCII for JP */
             sa->addRange(sa->set, 0, 0x7f);
         }
-        if(jpCharsetMasks[cnvData->version]&CSM(HWKANA_7BIT)) {
+        if(cnvData->version==3 || cnvData->version==4 || which==UCNV_ROUNDTRIP_AND_FALLBACK_SET) {
+            /*
+             * Do not test (jpCharsetMasks[cnvData->version]&CSM(HWKANA_7BIT))!=0
+             * because the bit is on for all JP versions although only versions 3 & 4 (JIS7 & JIS8)
+             * use half-width Katakana.
+             * This is because all ISO-2022-JP variants are lenient in that they accept (in toUnicode)
+             * half-width Katakana via the ESC ( I sequence.
+             * However, we only emit (fromUnicode) half-width Katakana according to the
+             * definition of each variant.
+             *
+             * When including fallbacks,
+             * we need to include half-width Katakana Unicode code points for all JP variants because
+             * JIS X 0208 has hardcoded fallbacks for them (which map to full-width Katakana).
+             */
             /* include half-width Katakana for JP */
             sa->addRange(sa->set, HWKANA_START, HWKANA_END);
         }
@@ -3217,15 +3517,7 @@ _ISO_2022_GetUnicodeSet(const UConverter *cnv,
         break;
     }
 
-    /*
-     * Version-specific for CN:
-     * CN version 0 does not map CNS planes 3..7 although
-     * they are all available in the CNS conversion table;
-     * CN version 1 does map them all.
-     * The two versions create different Unicode sets.
-     */
-    for (i=0; i<UCNV_2022_MAX_CONVERTERS; i++) {
-        if(cnvData->myConverterArray[i]!=NULL) {
+#if 0  /* Replaced by ucnv_MBCSGetFilteredUnicodeSetForUnicode() until we implement ucnv_getUnicodeSet() with reverse fallbacks. */
             if( (cnvData->locale[0]=='c' || cnvData->locale[0]=='z') &&
                 cnvData->version==0 && i==CNS_11643
             ) {
@@ -3235,9 +3527,39 @@ _ISO_2022_GetUnicodeSet(const UConverter *cnv,
                         sa, UCNV_ROUNDTRIP_SET,
                         0, 0x81, 0x82,
                         pErrorCode);
-            } else {
-                ucnv_MBCSGetUnicodeSetForUnicode(cnvData->myConverterArray[i], sa, which, pErrorCode);
             }
+#endif
+
+    for (i=0; i<UCNV_2022_MAX_CONVERTERS; i++) {
+        UConverterSetFilter filter;
+        if(cnvData->myConverterArray[i]!=NULL) {
+            if( (cnvData->locale[0]=='c' || cnvData->locale[0]=='z') &&
+                cnvData->version==0 && i==CNS_11643
+            ) {
+                /*
+                 * Version-specific for CN:
+                 * CN version 0 does not map CNS planes 3..7 although
+                 * they are all available in the CNS conversion table;
+                 * CN version 1 (-EXT) does map them all.
+                 * The two versions create different Unicode sets.
+                 */
+                filter=UCNV_SET_FILTER_2022_CN;
+            } else if(cnvData->locale[0]=='j' && i==JISX208) {
+                /*
+                 * Only add code points that map to Shift-JIS codes
+                 * corresponding to JIS X 0208.
+                 */
+                filter=UCNV_SET_FILTER_SJIS;
+            } else if(i==KSC5601) {
+                /*
+                 * Some of the KSC 5601 tables (convrtrs.txt has this aliases on multiple tables)
+                 * are broader than GR94.
+                 */
+                filter=UCNV_SET_FILTER_GR94DBCS;
+            } else {
+                filter=UCNV_SET_FILTER_NONE;
+            }
+            ucnv_MBCSGetFilteredUnicodeSetForUnicode(cnvData->myConverterArray[i], sa, which, filter, pErrorCode);
         }
     }
 
@@ -3249,6 +3571,9 @@ _ISO_2022_GetUnicodeSet(const UConverter *cnv,
     sa->remove(sa->set, 0x0e);
     sa->remove(sa->set, 0x0f);
     sa->remove(sa->set, 0x1b);
+
+    /* ISO 2022 converters do not convert C1 controls either */
+    sa->removeRange(sa->set, 0x80, 0x9f);
 }
 
 static const UConverterImpl _ISO2022Impl={

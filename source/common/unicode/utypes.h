@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 1996-2007, International Business Machines
+*   Copyright (C) 1996-2008, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *
@@ -503,6 +503,10 @@ operator new(size_t /*size*/) {
     return q;
 }
 
+#ifdef _Ret_bytecap_
+/* This is only needed to suppress a Visual C++ 2008 warning for operator new[]. */
+_Ret_bytecap_(_Size)
+#endif
 /**
  * Global operator new[], defined only inside ICU4C, must not be used.
  * Crashes intentionally.
@@ -678,6 +682,10 @@ typedef enum UErrorCode {
     U_UNMATCHED_BRACES,               /**< Braces do not match in message pattern */
     U_UNSUPPORTED_PROPERTY,           /**< UNUSED as of ICU 2.4 */
     U_UNSUPPORTED_ATTRIBUTE,          /**< UNUSED as of ICU 2.4 */
+    U_ARGUMENT_TYPE_MISMATCH,         /**< Argument name and argument index mismatch in MessageFormat functions */
+    U_DUPLICATE_KEYWORD,              /**< Duplicate keyword in PluralFormat */
+    U_UNDEFINED_KEYWORD,              /**< Undefined Pluarl keyword */
+    U_DEFAULT_KEYWORD_MISSING,        /**< Missing DEFAULT rule in plural rules */
     U_FMT_PARSE_ERROR_LIMIT,          /**< The limit for format library errors */
 
     /*
@@ -718,6 +726,12 @@ typedef enum UErrorCode {
     U_REGEX_INVALID_FLAG,                 /**< Invalid value for match mode flags.                */
     U_REGEX_LOOK_BEHIND_LIMIT,            /**< Look-Behind pattern matches must have a bounded maximum length.    */
     U_REGEX_SET_CONTAINS_STRING,          /**< Regexps cannot have UnicodeSets containing strings.*/
+    U_REGEX_OCTAL_TOO_BIG,                /**< Octal character constants must be <= 0377.         */
+    U_REGEX_MISSING_CLOSE_BRACKET,        /**< Missing closing bracket on a bracket expression.   */
+    U_REGEX_INVALID_RANGE,                /**< In a character range [x-y], x is greater than y.   */
+    U_REGEX_STACK_OVERFLOW,               /**< Regular expression backtrack stack overflow.       */
+    U_REGEX_TIME_OUT,                     /**< Maximum allowed match time exceeded                */
+    U_REGEX_STOPPED_BY_CALLER,            /**< Matching operation aborted by user callback fn.    */
     U_REGEX_ERROR_LIMIT,                  /**< This must always be the last value to indicate the limit for regexp errors */
 
     /*

@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1997-2007, International Business Machines Corporation and
+ * Copyright (c) 1997-2008, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -13,6 +13,8 @@
 #include "unicode/coll.h"
 #include "cstring.h"
 #include <stdio.h>
+#include "putilimp.h"
+#include "unicode/ustring.h"
 
 static const char* const rawData[33][8] = {
 
@@ -49,26 +51,26 @@ static const char* const rawData[33][8] = {
         // display langage (French)
         {   "anglais",  "fran\\u00E7ais",   "catalan", "grec",    "norv\\u00E9gien",    "italien", "xx", "chinois" },
         // display script (French)
-        {   "",     "",     "",     "",     "",     "",     "",   "id\\u00E9ogrammes han (variante simplifi\\u00E9e)" },
+        {   "",     "",     "",     "",     "",     "",     "",   "id\\u00E9ogrammes han simplifi\\u00E9s" },
         // display country (French)
         {   "\\u00C9tats-Unis",    "France",   "Espagne",  "Gr\\u00E8ce",   "Norv\\u00E8ge", "", "YY", "Chine" },
         // display variant (French)
         {   "",     "",     "",     "",     "NY",     "",     "",   "" },
         // display name (French)
         //{   "anglais (Etats-Unis)", "francais (France)", "catalan (Espagne)", "grec (Grece)", "norvegien (Norvege,Nynorsk)", "italien", "xx (YY)" },
-        {   "anglais (\\u00C9tats-Unis)", "fran\\u00E7ais (France)", "catalan (Espagne)", "grec (Gr\\u00E8ce)", "norv\\u00E9gien (Norv\\u00E8ge, NY)", "italien", "xx (YY)", "chinois (id\\u00E9ogrammes han (variante simplifi\\u00E9e), Chine)" }, // STILL not right
+        {   "anglais (\\u00C9tats-Unis)", "fran\\u00E7ais (France)", "catalan (Espagne)", "grec (Gr\\u00E8ce)", "norv\\u00E9gien (Norv\\u00E8ge, NY)", "italien", "xx (YY)", "chinois (id\\u00E9ogrammes han simplifi\\u00E9s, Chine)" }, // STILL not right
 
 
         /* display language (Catalan) */
-        {   "angl\\u00E8s", "franc\\u00E8s", "catal\\u00E0", "grec",  "noruec", "itali\\u00E0", "", "xin\\u00E9s" },
+        {   "angl\\u00E8s", "franc\\u00E8s", "catal\\u00E0", "grec",  "noruec", "itali\\u00E0", "", "xin\\u00E8s" },
         /* display script (Catalan) */
-        {   "", "", "",                    "", "", "", "", "Hans" },
+        {   "", "", "",                    "", "", "", "", "Xin\\u00E8s Simplificat (Han)" },
         /* display country (Catalan) */
         {   "Estats Units", "Fran\\u00E7a", "Espanya",  "Gr\\u00E8cia", "Noruega", "", "", "Xina" },
         /* display variant (Catalan) */
         {   "", "", "",                    "", "NY", "", "" },
         /* display name (Catalan) */
-        {   "angl\\u00E8s (Estats Units)", "franc\\u00E8s (Fran\\u00E7a)", "catal\\u00E0 (Espanya)", "grec (Gr\\u00E8cia)", "noruec (Noruega, NY)", "itali\\u00E0", "", "xin\\u00E9s (Hans, Xina)" },
+        {   "angl\\u00E8s (Estats Units)", "franc\\u00E8s (Fran\\u00E7a)", "catal\\u00E0 (Espanya)", "grec (Gr\\u00E8cia)", "noruec (Noruega, NY)", "itali\\u00E0", "", "xin\\u00E8s (Xin\\u00E8s Simplificat (Han), Xina)" },
 
         // display langage (Greek)[actual values listed below]
         {   "\\u0391\\u03b3\\u03b3\\u03bb\\u03b9\\u03ba\\u03ac",
@@ -214,6 +216,7 @@ void LocaleTest::runIndexedTest( int32_t index, UBool exec, const char* &name, c
         TESTCASE(27, TestGetLocale);
         TESTCASE(28, TestVariantWithOutCountry);
         TESTCASE(29, TestCanonicalization);
+        TESTCASE(30, TestCurrencyByDate);
 
         // keep the last index in sync with the condition in default:
 
@@ -2063,7 +2066,7 @@ void LocaleTest::TestCanonicalization(void)
         { "hi__DIRECT", "hi__DIRECT", "hi@collation=direct" },
         { "ja_JP_TRADITIONAL", "ja_JP_TRADITIONAL", "ja_JP@calendar=japanese" },
         { "th_TH_TRADITIONAL", "th_TH_TRADITIONAL", "th_TH@calendar=buddhist" },
-        { "zh_TW_STROKE", "zh_TW_STROKE", "zh_Hant_TW@collation=stroke" },
+        { "zh_TW_STROKE", "zh_TW_STROKE", "zh_TW@collation=stroke" },
         { "zh__PINYIN", "zh__PINYIN", "zh@collation=pinyin" },
         { "zh@collation=pinyin", "zh@collation=pinyin", "zh@collation=pinyin" },
         { "zh_CN@collation=pinyin", "zh_CN@collation=pinyin", "zh_CN@collation=pinyin" },
@@ -2079,9 +2082,9 @@ void LocaleTest::TestCanonicalization(void)
         { "en-BOONT", "BOGUS", "en__BOONT" }, /* registered name */
         { "de-1901", "de_1901", "de__1901" }, /* registered name */
         { "de-1906", "de_1906", "de__1906" }, /* registered name */
-        { "sr-SP-Cyrl", "sr_SP_CYRL", "sr_Cyrl_CS" }, /* .NET name */
-        { "sr-SP-Latn", "sr_SP_LATN", "sr_Latn_CS" }, /* .NET name */
-        { "sr_YU_CYRILLIC", "sr_YU_CYRILLIC", "sr_Cyrl_CS" }, /* Linux name */
+        { "sr-SP-Cyrl", "sr_SP_CYRL", "sr_Cyrl_RS" }, /* .NET name */
+        { "sr-SP-Latn", "sr_SP_LATN", "sr_Latn_RS" }, /* .NET name */
+        { "sr_YU_CYRILLIC", "sr_YU_CYRILLIC", "sr_Cyrl_RS" }, /* Linux name */
         { "uz-UZ-Cyrl", "uz_UZ_CYRL", "uz_Cyrl_UZ" }, /* .NET name */
         { "uz-UZ-Latn", "uz_UZ_LATN", "uz_Latn_UZ" }, /* .NET name */
         { "zh-CHS", "zh_CHS", "zh_Hans" }, /* .NET name */
@@ -2133,4 +2136,322 @@ void LocaleTest::TestCanonicalization(void)
             }
         }
     }
+}
+
+void LocaleTest::TestCurrencyByDate(void)
+{
+#if !UCONFIG_NO_FORMATTING
+    UErrorCode status = U_ZERO_ERROR;
+    UDate date = uprv_getUTCtime();
+	UChar TMP[4];
+	int32_t index = 0;
+	int32_t resLen = 0;
+    UnicodeString tempStr, resultStr;
+
+	// Cycle through historical currencies
+    date = (UDate)-630720000000.0; // pre 1961 - no currency defined
+	index = ucurr_countCurrencies("eo_AM", date, &status);
+    if (index != 0)
+	{
+		errln("FAIL: didn't return 0 for eo_AM");
+	}
+    resLen = ucurr_forLocaleAndDate("eo_AM", date, index, TMP, 4, &status);
+    if (resLen != 0) {
+		errln("FAIL: eo_AM didn't return NULL");
+    }
+    status = U_ZERO_ERROR;
+
+    date = (UDate)0.0; // 1970 - one currency defined
+	index = ucurr_countCurrencies("eo_AM", date, &status);
+    if (index != 1)
+	{
+		errln("FAIL: didn't return 1 for eo_AM");
+	}
+    resLen = ucurr_forLocaleAndDate("eo_AM", date, index, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("SUR");
+    if (resultStr != tempStr) {
+        errln("FAIL: didn't return SUR for eo_AM");
+    }
+
+    date = (UDate)693792000000.0; // 1992 - one currency defined
+	index = ucurr_countCurrencies("eo_AM", date, &status);
+    if (index != 1)
+	{
+		errln("FAIL: didn't return 1 for eo_AM");
+	}
+    resLen = ucurr_forLocaleAndDate("eo_AM", date, index, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("RUR");
+    if (resultStr != tempStr) {
+        errln("FAIL: didn't return RUR for eo_AM");
+    }
+
+	date = (UDate)977616000000.0; // post 1993 - one currency defined
+	index = ucurr_countCurrencies("eo_AM", date, &status);
+    if (index != 1)
+	{
+		errln("FAIL: didn't return 1 for eo_AM");
+	}
+    resLen = ucurr_forLocaleAndDate("eo_AM", date, index, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("AMD");
+    if (resultStr != tempStr) {
+        errln("FAIL: didn't return AMD for eo_AM");
+    }
+
+    // Locale AD has multiple currencies at once
+	date = (UDate)977616000000.0; // year 2001
+	index = ucurr_countCurrencies("eo_AD", date, &status);
+    if (index != 4)
+	{
+		errln("FAIL: didn't return 4 for eo_AD");
+	}
+    resLen = ucurr_forLocaleAndDate("eo_AD", date, 1, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("EUR");
+    if (resultStr != tempStr) {
+        errln("FAIL: didn't return EUR for eo_AD");
+    }
+    resLen = ucurr_forLocaleAndDate("eo_AD", date, 2, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("ESP");
+    if (resultStr != tempStr) {
+        errln("FAIL: didn't return ESP for eo_AD");
+    }
+    resLen = ucurr_forLocaleAndDate("eo_AD", date, 3, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("FRF");
+    if (resultStr != tempStr) {
+        errln("FAIL: didn't return FRF for eo_AD");
+    }
+    resLen = ucurr_forLocaleAndDate("eo_AD", date, 4, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("ADP");
+    if (resultStr != tempStr) {
+        errln("FAIL: didn't return ADP for eo_AD");
+    }
+
+	date = (UDate)0.0; // year 1970
+	index = ucurr_countCurrencies("eo_AD", date, &status);
+    if (index != 3)
+	{
+		errln("FAIL: didn't return 3 for eo_AD");
+	}
+    resLen = ucurr_forLocaleAndDate("eo_AD", date, 1, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("ESP");
+    if (resultStr != tempStr) {
+        errln("FAIL: didn't return ESP for eo_AD");
+    }
+    resLen = ucurr_forLocaleAndDate("eo_AD", date, 2, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("FRF");
+    if (resultStr != tempStr) {
+        errln("FAIL: didn't return FRF for eo_AD");
+    }
+    resLen = ucurr_forLocaleAndDate("eo_AD", date, 3, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("ADP");
+    if (resultStr != tempStr) {
+        errln("FAIL: didn't return ADP for eo_AD");
+    }
+
+	date = (UDate)-630720000000.0; // year 1950
+	index = ucurr_countCurrencies("eo_AD", date, &status);
+    if (index != 2)
+	{
+		errln("FAIL: didn't return 2 for eo_AD");
+	}
+    resLen = ucurr_forLocaleAndDate("eo_AD", date, 1, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("ESP");
+    if (resultStr != tempStr) {
+        errln("FAIL: didn't return ESP for eo_AD");
+    }
+    resLen = ucurr_forLocaleAndDate("eo_AD", date, 2, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("ADP");
+    if (resultStr != tempStr) {
+        errln("FAIL: didn't return ADP for eo_AD");
+    }
+
+	date = (UDate)-2207520000000.0; // year 1900
+	index = ucurr_countCurrencies("eo_AD", date, &status);
+    if (index != 1)
+	{
+		errln("FAIL: didn't return 1 for eo_AD");
+	}
+    resLen = ucurr_forLocaleAndDate("eo_AD", date, 1, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("ESP");
+    if (resultStr != tempStr) {
+        errln("FAIL: didn't return ESP for eo_AD");
+    }
+
+	// Locale UA has gap between years 1994 - 1996
+	date = (UDate)788400000000.0;
+	index = ucurr_countCurrencies("eo_UA", date, &status);
+    if (index != 0)
+	{
+		errln("FAIL: didn't return 0 for eo_UA");
+	}
+    resLen = ucurr_forLocaleAndDate("eo_UA", date, index, TMP, 4, &status);
+    if (resLen != 0) {
+		errln("FAIL: eo_UA didn't return NULL");
+    }
+    status = U_ZERO_ERROR;
+
+	// Test index bounds
+    resLen = ucurr_forLocaleAndDate("eo_UA", date, 100, TMP, 4, &status);
+    if (resLen != 0) {
+		errln("FAIL: eo_UA didn't return NULL");
+    }
+    status = U_ZERO_ERROR;
+
+    resLen = ucurr_forLocaleAndDate("eo_UA", date, 0, TMP, 4, &status);
+    if (resLen != 0) {
+		errln("FAIL: eo_UA didn't return NULL");
+    }
+    status = U_ZERO_ERROR;
+
+	// Test for bogus locale
+	index = ucurr_countCurrencies("eo_QQ", date, &status);
+    if (index != 0)
+	{
+		errln("FAIL: didn't return 0 for eo_QQ");
+	}
+    status = U_ZERO_ERROR;
+    resLen = ucurr_forLocaleAndDate("eo_QQ", date, 1, TMP, 4, &status);
+    if (resLen != 0) {
+		errln("FAIL: eo_QQ didn't return NULL");
+    }
+    status = U_ZERO_ERROR;
+    resLen = ucurr_forLocaleAndDate("eo_QQ", date, 0, TMP, 4, &status);
+    if (resLen != 0) {
+		errln("FAIL: eo_QQ didn't return NULL");
+    }
+    status = U_ZERO_ERROR;
+
+    // Cycle through histrocial currencies
+	date = (UDate)977616000000.0; // 2001 - one currency
+	index = ucurr_countCurrencies("eo_AO", date, &status);
+    if (index != 1)
+	{
+		errln("FAIL: didn't return 1 for eo_AO");
+	}
+    resLen = ucurr_forLocaleAndDate("eo_AO", date, 1, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("AOA");
+    if (resultStr != tempStr) {
+        errln("FAIL: didn't return AOA for eo_AO");
+    }
+
+	date = (UDate)819936000000.0; // 1996 - 2 currencies
+	index = ucurr_countCurrencies("eo_AO", date, &status);
+    if (index != 2)
+	{
+		errln("FAIL: didn't return 1 for eo_AO");
+	}
+    resLen = ucurr_forLocaleAndDate("eo_AO", date, 1, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("AOR");
+    if (resultStr != tempStr) {
+        errln("FAIL: didn't return AOR for eo_AO");
+    }
+    resLen = ucurr_forLocaleAndDate("eo_AO", date, 2, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("AON");
+    if (resultStr != tempStr) {
+        errln("FAIL: didn't return AON for eo_AO");
+    }
+
+	date = (UDate)662256000000.0; // 1991 - 2 currencies
+	index = ucurr_countCurrencies("eo_AO", date, &status);
+    if (index != 2)
+	{
+		errln("FAIL: didn't return 1 for eo_AO");
+	}
+    resLen = ucurr_forLocaleAndDate("eo_AO", date, 1, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("AON");
+    if (resultStr != tempStr) {
+        errln("FAIL: didn't return AON for eo_AO");
+    }
+    resLen = ucurr_forLocaleAndDate("eo_AO", date, 2, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("AOK");
+    if (resultStr != tempStr) {
+        errln("FAIL: didn't return AOK for eo_AO");
+    }
+
+	date = (UDate)315360000000.0; // 1980 - one currency
+	index = ucurr_countCurrencies("eo_AO", date, &status);
+    if (index != 1)
+	{
+		errln("FAIL: didn't return 1 for eo_AO");
+	}
+    resLen = ucurr_forLocaleAndDate("eo_AO", date, 1, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("AOK");
+    if (resultStr != tempStr) {
+        errln("FAIL: didn't return AOK for eo_AO");
+    }
+
+	date = (UDate)0.0; // 1970 - no currencies
+	index = ucurr_countCurrencies("eo_AO", date, &status);
+    if (index != 0)
+	{
+		errln("FAIL: didn't return 1 for eo_AO");
+	}
+    resLen = ucurr_forLocaleAndDate("eo_AO", date, 1, TMP, 4, &status);
+    if (resLen != 0) {
+		errln("FAIL: eo_AO didn't return NULL");
+    }
+    status = U_ZERO_ERROR;
+
+    // Test with currency keyword override
+	date = (UDate)977616000000.0; // 2001 - two currencies
+	index = ucurr_countCurrencies("eo_DE@currency=DEM", date, &status);
+    if (index != 2)
+	{
+		errln("FAIL: didn't return 2 for eo_DE@currency=DEM");
+	}
+    resLen = ucurr_forLocaleAndDate("eo_DE@currency=DEM", date, 1, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("EUR");
+    if (resultStr != tempStr) {
+        errln("FAIL: didn't return EUR for eo_DE@currency=DEM");
+    }
+    resLen = ucurr_forLocaleAndDate("eo_DE@currency=DEM", date, 2, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("DEM");
+    if (resultStr != tempStr) {
+        errln("FAIL: didn't return DEM for eo_DE@currency=DEM");
+    }
+
+    // Test Euro Support
+	status = U_ZERO_ERROR; // reset
+    date = uprv_getUTCtime();
+
+    UChar USD[4];
+    ucurr_forLocaleAndDate("en_US", date, 1, USD, 4, &status);
+    
+	UChar YEN[4];
+    ucurr_forLocaleAndDate("ja_JP", date, 1, YEN, 4, &status);
+
+    ucurr_forLocaleAndDate("en_US", date, 1, TMP, 4, &status);
+    if (u_strcmp(USD, TMP) != 0) {
+        errln("Fail: en_US didn't return USD");
+    }
+    ucurr_forLocaleAndDate("en_US_PREEURO", date, 1, TMP, 4, &status);
+    if (u_strcmp(USD, TMP) != 0) {
+        errln("Fail: en_US_PREEURO didn't fallback to en_US");
+    }
+    ucurr_forLocaleAndDate("en_US_Q", date, 1, TMP, 4, &status);
+    if (u_strcmp(USD, TMP) != 0) {
+        errln("Fail: en_US_Q didn't fallback to en_US");
+    }
+    status = U_ZERO_ERROR; // reset
+#endif
 }

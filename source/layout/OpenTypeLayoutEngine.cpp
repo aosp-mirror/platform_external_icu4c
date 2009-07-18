@@ -1,7 +1,7 @@
 
 /*
  *
- * (C) Copyright IBM Corp. 1998-2007 - All Rights Reserved
+ * (C) Copyright IBM Corp. 1998-2008 - All Rights Reserved
  *
  */
 
@@ -10,6 +10,7 @@
 #include "LELanguages.h"
 
 #include "LayoutEngine.h"
+#include "CanonShaping.h"
 #include "OpenTypeLayoutEngine.h"
 #include "ScriptAndLanguageTags.h"
 #include "CharSubstitutionFilter.h"
@@ -33,6 +34,7 @@ UOBJECT_DEFINE_RTTI_IMPLEMENTATION(OpenTypeLayoutEngine)
 #define kernFeatureTag LE_KERN_FEATURE_TAG
 #define markFeatureTag LE_MARK_FEATURE_TAG
 #define mkmkFeatureTag LE_MKMK_FEATURE_TAG
+#define loclFeatureTag LE_LOCL_FEATURE_TAG
 
 // 'dlig' not used at the moment
 #define dligFeatureTag 0x646C6967
@@ -47,8 +49,9 @@ UOBJECT_DEFINE_RTTI_IMPLEMENTATION(OpenTypeLayoutEngine)
 #define paltFeatureMask 0x08000000UL
 #define markFeatureMask 0x04000000UL
 #define mkmkFeatureMask 0x02000000UL
+#define loclFeatureMask 0x01000000UL
 
-#define minimalFeatures     (ccmpFeatureMask | markFeatureMask | mkmkFeatureMask)
+#define minimalFeatures     (ccmpFeatureMask | markFeatureMask | mkmkFeatureMask | loclFeatureMask)
 #define ligaFeatures        (ligaFeatureMask | cligFeatureMask | minimalFeatures)
 #define kernFeatures        (kernFeatureMask | paltFeatureMask | minimalFeatures)
 #define kernAndLigaFeatures (ligaFeatures    | kernFeatures)
@@ -58,10 +61,11 @@ static const FeatureMap featureMap[] =
     {ccmpFeatureTag, ccmpFeatureMask},
     {ligaFeatureTag, ligaFeatureMask},
     {cligFeatureTag, cligFeatureMask}, 
-	{kernFeatureTag, kernFeatureMask},
+    {kernFeatureTag, kernFeatureMask},
     {paltFeatureTag, paltFeatureMask},
     {markFeatureTag, markFeatureMask},
-    {mkmkFeatureTag, mkmkFeatureMask}
+    {mkmkFeatureTag, mkmkFeatureMask},
+    {loclFeatureTag, loclFeatureMask}
 };
 
 static const le_int32 featureMapCount = LE_ARRAY_SIZE(featureMap);
@@ -108,7 +112,7 @@ void OpenTypeLayoutEngine::reset()
 }
 
 OpenTypeLayoutEngine::OpenTypeLayoutEngine(const LEFontInstance *fontInstance, le_int32 scriptCode, le_int32 languageCode,
-					   le_int32 typoFlags)
+                       le_int32 typoFlags)
     : LayoutEngine(fontInstance, scriptCode, languageCode, typoFlags), fFeatureOrder(FALSE),
       fGSUBTable(NULL), fGDEFTable(NULL), fGPOSTable(NULL), fSubstitutionFilter(NULL)
 {
@@ -160,20 +164,30 @@ le_int32 OpenTypeLayoutEngine::characterProcessing(const LEUnicode chars[], le_i
         return 0;
     }
 
-    le_int32 outCharCount = LayoutEngine::characterProcessing(chars, offset, count, max, rightToLeft, outChars, glyphStorage, success);
+    // This is the cheapest way to get mark reordering only for Hebrew.
+    // We could just do the mark reordering for all scripts, but most
+    // of them probably don't need it... Another option would be to
+    // add a HebrewOpenTypeLayoutEngine subclass, but the only thing it
+    // would need to do is mark reordering, so that seems like overkill.
+    if (fScriptCode == hebrScriptCode) {
+        outChars = LE_NEW_ARRAY(LEUnicode, count);
 
-    if (LE_FAILURE(success)) {
-        return 0;
+        if (outChars == NULL) {
+            success = LE_MEMORY_ALLOCATION_ERROR;
+            return 0;
+        }
+
+        CanonShaping::reorderMarks(&chars[offset], count, rightToLeft, outChars, glyphStorage);
     }
 
-    glyphStorage.allocateGlyphArray(outCharCount, rightToLeft, success);
+    glyphStorage.allocateGlyphArray(count, rightToLeft, success);
     glyphStorage.allocateAuxData(success);
 
-    for (le_int32 i = 0; i < outCharCount; i += 1) {
+    for (le_int32 i = 0; i < count; i += 1) {
         glyphStorage.setAuxData(i, fFeatureMask, success);
     }
 
-    return outCharCount;
+    return count;
 }
 
 // Input: characters, tags
@@ -333,12 +347,6 @@ void OpenTypeLayoutEngine::adjustGlyphPositions(const LEUnicode chars[], le_int3
     }
 
     LEGlyphID zwnj  = fFontInstance->mapCharToGlyph(0x200C);
-#if 0
-    // The nbsp translation was only here to make one
-    // broken font work. Not a good idea in general... 
-    LEGlyphID nbsp  = fFontInstance->mapCharToGlyph(0x00A0);
-    LEGlyphID space = fFontInstance->mapCharToGlyph(0x0020);
-#endif
 
     if (zwnj != 0x0000) {
         for (le_int32 g = 0; g < glyphCount; g += 1) {
@@ -346,10 +354,6 @@ void OpenTypeLayoutEngine::adjustGlyphPositions(const LEUnicode chars[], le_int3
 
             if (glyph == zwnj) {
                 glyphStorage[g] = LE_SET_GLYPH(glyph, 0xFFFF);
-    #if 0
-            } else if (glyph == nbsp) {
-                glyphStorage[g] = LE_SET_GLYPH(glyph, space);
-    #endif
             }
         }
     }

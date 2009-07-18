@@ -1,16 +1,16 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2007, International Business Machines Corporation and
+ * Copyright (c) 1997-2008, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
-/********************************************************************************
+/*****************************************************************************
 *
 * File CAPITEST.C
 *
 * Modification History:
 *        Name                     Description            
 *     Madhu Katragadda             Ported for C API
-*********************************************************************************
+******************************************************************************
 *//* C API TEST For COLLATOR */
 
 #include "unicode/utypes.h"
@@ -288,7 +288,7 @@ void TestProperty()
     UVersionInfo currVersionArray = {0x31, 0xC0, 0x00, 0x05};
     /* ICU 3.4 had UCA 4.1 */
     /*UVersionInfo currUCAVersionArray = {4, 1, 0, 0};*/
-    UVersionInfo currUCAVersionArray = {5, 0, 0, 0};
+    UVersionInfo currUCAVersionArray = {5, 1, 0, 0};
     UVersionInfo versionArray = {0, 0, 0, 0};
     UVersionInfo versionUCAArray = {0, 0, 0, 0};
     
@@ -645,28 +645,25 @@ void TestDecomposition() {
 #define CLONETEST_COLLATOR_COUNT 4
 
 void TestSafeClone() {
-    UChar* test1;
-    UChar* test2;
+    UChar test1[6];
+    UChar test2[6];
     static const UChar umlautUStr[] = {0x00DC, 0};
     static const UChar oeStr[] = {0x0055, 0x0045, 0};
     UCollator * someCollators [CLONETEST_COLLATOR_COUNT];
     UCollator * someClonedCollators [CLONETEST_COLLATOR_COUNT];
     UCollator * col;
     UErrorCode err = U_ZERO_ERROR;
-    int8_t testSize = 6;    /* Leave this here to test buffer alingment in memory*/
+    int8_t index = 6;    /* Leave this here to test buffer alingment in memory*/
     uint8_t buffer [CLONETEST_COLLATOR_COUNT] [U_COL_SAFECLONE_BUFFERSIZE];
     int32_t bufferSize = U_COL_SAFECLONE_BUFFERSIZE;
     const char sampleRuleChars[] = "&Z < CH";
     UChar sampleRule[sizeof(sampleRuleChars)];
-    int index;
 
     if (TestBufferSize()) {
         log_err("U_COL_SAFECLONE_BUFFERSIZE should be larger than sizeof(UCollator)\n");
         return;
     }
 
-    test1=(UChar*)malloc(sizeof(UChar) * testSize);
-    test2=(UChar*)malloc(sizeof(UChar) * testSize);
     u_uastrcpy(test1, "abCda");
     u_uastrcpy(test2, "abcda");
     u_uastrcpy(sampleRule, sampleRuleChars);
@@ -677,6 +674,9 @@ void TestSafeClone() {
     someCollators[2] = ucol_open("ja_JP", &err);
     someCollators[3] = ucol_openRules(sampleRule, -1, UCOL_ON, UCOL_TERTIARY, NULL, &err);
     if(U_FAILURE(err)) {
+        for (index = 0; index < CLONETEST_COLLATOR_COUNT; index++) {
+            ucol_close(someCollators[index]);
+        }
         log_data_err("Couldn't open one or more collators\n");
         return;
     }
@@ -771,6 +771,7 @@ void TestSafeClone() {
         ucol_close(ucol_safeClone(someCollators[index], buffer[index], &bufferSize, &err));
         if (err != U_SAFECLONE_ALLOCATED_WARNING) {
             log_err("FAIL: collator number %d was not allocated.\n", index);
+            log_err("FAIL: status of Collator[%d] is %d  (hex: %x).\n", index, err, err);
         }
 
         bufferSize = U_COL_SAFECLONE_BUFFERSIZE;
@@ -802,8 +803,6 @@ void TestSafeClone() {
 
         ucol_close(someClonedCollators[index]);
     }
-    free(test1);
-    free(test2);
 }
 
 void TestCloneBinary(){
@@ -866,10 +865,17 @@ void TestSortKey()
 {   
     uint8_t *sortk1 = NULL, *sortk2 = NULL, *sortk3 = NULL, *sortkEmpty = NULL;
     uint8_t sortk2_compat[] = { 
+        /* 3.9 key, from UCA 5.1 */
+        0x2c, 0x2e, 0x30, 0x32, 0x2c, 0x01, 
+        0x09, 0x01, 0x09, 0x01, 0x2b, 0x01, 
+        0x92, 0x93, 0x94, 0x95, 0x92, 0x0
+
         /* 3.6 key, from UCA 5.0 */
+        /*
         0x29, 0x2b, 0x2d, 0x2f, 0x29, 0x01, 
         0x09, 0x01, 0x09, 0x01, 0x28, 0x01, 
         0x92, 0x93, 0x94, 0x95, 0x92, 0x00
+	*/
         /* 3.4 key, from UCA 4.1 */
         /* 0x28, 0x2a, 0x2c, 0x2e, 0x28, 0x01, 0x09, 0x01, 0x09, 0x01, 0x27, 0x01, 0x92, 0x93, 0x94, 0x95, 0x92, 0x00 */
         /* 2.6.1 key */
@@ -1838,7 +1844,7 @@ static void TestShortString(void)
         int32_t    expectedOffset;
         uint32_t   expectedIdentifier;
     } testCases[] = {
-        {"LDE_RDE_KPHONEBOOK_T0041_ZLATN","B2900_KPHONEBOOK_LDE", "de@collation=phonebook", U_USING_FALLBACK_WARNING, 0, 0 },
+        {"LDE_RDE_KPHONEBOOK_T0041_ZLATN","B2C00_KPHONEBOOK_LDE", "de@collation=phonebook", U_USING_FALLBACK_WARNING, 0, 0 },
         {"LEN_RUS_NO_AS_S4","AS_LEN_NO_S4", NULL, U_USING_FALLBACK_WARNING, 0, 0 },
         {"LDE_VPHONEBOOK_EO_SI","EO_KPHONEBOOK_LDE_SI", "de@collation=phonebook", U_ZERO_ERROR, 0, 0 },
         {"LDE_Kphonebook","KPHONEBOOK_LDE", "de@collation=phonebook", U_ZERO_ERROR, 0, 0 },
@@ -1848,12 +1854,11 @@ static void TestShortString(void)
         {"S3_ASS_MMM", "", NULL, U_ILLEGAL_ARGUMENT_ERROR, 5, 0 }
     };
 
-    int32_t i = 0, j = 0;
-    UCollator *coll = NULL, *fromID = NULL, *fromNormalized = NULL;
+    int32_t i = 0;
+    UCollator *coll = NULL, *fromNormalized = NULL;
     UParseError parseError;
     UErrorCode status = U_ZERO_ERROR;
-    char fromShortBuffer[256], fromIDBuffer[256], fromIDRoundtrip[256], normalizedBuffer[256], fromNormalizedBuffer[256];
-    uint32_t identifier = 0, idFromSS = 0;
+    char fromShortBuffer[256], normalizedBuffer[256], fromNormalizedBuffer[256];
     const char* locale = NULL;
 
 
@@ -1892,35 +1897,6 @@ static void TestShortString(void)
             if(!ucol_equals(coll, fromNormalized)) {
                 log_err("Collator from short string ('%s') differs from one obtained through a normalized version ('%s')\n", 
                     testCases[i].input, normalizedBuffer);
-            }
-
-            /* test identifiers */
-            identifier = ucol_collatorToIdentifier(coll, locale, &status);
-            if(identifier < UCOL_SIT_COLLATOR_NOT_ENCODABLE) {
-                ucol_identifierToShortString(identifier, fromIDBuffer, 256, FALSE, &status);
-                fromID = ucol_openFromIdentifier(identifier, FALSE, &status);
-                if(!ucol_equals(coll, fromID)) {
-                    log_err("Collator from short string ('%s') differs from one obtained through an identifier ('%s')\n", 
-                        testCases[i].input, fromIDBuffer);
-                }
-                ucol_close(fromID);
-            }
-
-            /* round-trip short string - identifier */
-            for(j = 1; j < 2; j++) {
-                idFromSS = ucol_shortStringToIdentifier(testCases[i].input, (UBool)j, &status);
-                ucol_identifierToShortString(idFromSS, fromIDBuffer, 256, (UBool)j, &status);
-                identifier = ucol_shortStringToIdentifier(fromIDBuffer, (UBool)j, &status);
-                ucol_identifierToShortString(identifier, fromIDRoundtrip, 256, (UBool)j, &status);
-
-                if(idFromSS != identifier) {
-                    log_err("FD = %i, id didn't round trip. %08X vs %08X (%s)\n", 
-                        j, idFromSS, identifier, testCases[i].input);
-                }
-                if(strcmp(fromIDBuffer, fromIDRoundtrip)) {
-                    log_err("FD = %i, SS didn't round trip. %s vs %s (%s)\n", 
-                        j, fromIDBuffer, fromIDRoundtrip, testCases[i].input);
-                }
             }
 
             ucol_close(fromNormalized);
@@ -2086,7 +2062,7 @@ TestOpenBinary(void)
     int32_t uRulesLen = u_unescape(rule, uRules, 256);
 
     UCollator *coll = ucol_openRules(uRules, uRulesLen, UCOL_DEFAULT, UCOL_DEFAULT, NULL, &status);
-    UCollator *UCA = ucol_open("root", &status);
+    UCollator *UCA = NULL;
     UCollator *cloneNOUCA = NULL, *cloneWUCA = NULL;
 
     uint8_t imageBuffer[32768];
@@ -2095,8 +2071,14 @@ TestOpenBinary(void)
 
     int32_t imageSize;
 
-    if((coll==NULL)||(UCA==NULL)||(U_FAILURE(status))) {
+    if((coll==NULL)||(U_FAILURE(status))) {
         log_data_err("could not load collators or error occured: %s\n",
+            u_errorName(status));
+        return;
+    }		
+    UCA = ucol_open("root", &status);
+    if((UCA==NULL)||(U_FAILURE(status))) {
+        log_data_err("could not load UCA collator or error occured: %s\n",
             u_errorName(status));
         return;
     }		

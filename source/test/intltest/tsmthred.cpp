@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1999-2007, International Business Machines Corporation and
+ * Copyright (c) 1999-2008, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -1049,7 +1049,8 @@ public:
                 messageLocale=                      Locale("de","DE@currency=DEM");
                 countryToCheck=                     Locale("","BF");
                 currencyToCheck=                    2.32;
-                expected=                           "1:A customer in Burkina Faso is receiving a #8 error - U_INDEX_OUTOFBOUNDS_ERROR. Their telephone call is costing 2,32 DM.";
+                expected=                           CharsToUnicodeString(
+                                                    "1:A customer in Burkina Faso is receiving a #8 error - U_INDEX_OUTOFBOUNDS_ERROR. Their telephone call is costing 2,32\\u00A0DM.");
                 break;
             case 2:
                 statusToCheck=                      U_MEMORY_ALLOCATION_ERROR;
@@ -1062,7 +1063,7 @@ public:
                 expected=       CharsToUnicodeString(
                             "2:user in Vereinigte Staaten is receiving a #7 error"
                             " - U_MEMORY_ALLOCATION_ERROR. They insist they just spent"
-                            " \\u00f6S 40.193,12 on memory.");
+                            " \\u00f6S\\u00A040.193,12 on memory.");
                 break;
             }
             
@@ -1303,7 +1304,7 @@ void MultithreadTest::TestCollators()
 
             if (testFile == 0) {
                 *(buffer+bufLen) = 0;
-                errln("ERROR: could not open any of the conformance test files, tried opening base %s", buffer);
+                dataerrln("[DATA] could not open any of the conformance test files, tried opening base %s", buffer);
                 return;        
             } else {
                 infoln(
@@ -1339,7 +1340,7 @@ void MultithreadTest::TestCollators()
     }
     fclose(testFile);
     if(U_FAILURE(status)) {
-      errln("Couldn't read the test file!");
+      dataerrln("[DATA] Couldn't read the test file!");
       return;
     }
 

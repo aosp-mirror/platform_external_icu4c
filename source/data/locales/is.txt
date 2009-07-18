@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2007 International Business Machines
+// * Copyright (C) 2008 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/is.xml
@@ -12,6 +12,36 @@
 is{
     AuxExemplarCharacters{"[c q w z]"}
     Countries{
+        001{"heimur"}
+        002{"Afríka"}
+        003{"Norður-Ameríka"}
+        005{"Suður-Ameríka"}
+        009{"Eyjaálfa"}
+        011{"Vestur-Afríka"}
+        013{"Mið-Ameríka"}
+        014{"Austur-Afríka"}
+        015{"Norður-Afríka"}
+        017{"Mið-Afríka"}
+        018{"Suðurhluti Afríku"}
+        019{"Ameríka"}
+        021{"Ameríka norðan Mexikó"}
+        030{"Austur-Asía"}
+        034{"suðurhluti Asíu"}
+        035{"Suðaustur-Asía"}
+        039{"Suður-Evrópa"}
+        053{"Ástralía og Nýja-Sjáland"}
+        054{"Melanesía"}
+        057{"Míkrónesía"}
+        061{"Pólýnesía"}
+        062{"Syðri-Mið-Asía"}
+        142{"Asía"}
+        143{"Mið-Asía"}
+        150{"Evrópa"}
+        151{"Austur-Evrópa"}
+        154{"Norður-Evrópa"}
+        172{"Samveldi sjálfstæðra ríkja"}
+        419{"Latín-Ameríka og Karíbahaf"}
+        830{"Ermasundseyjar"}
         AD{"Andorra"}
         AE{"Sameinuðu arabísku furstadæmin"}
         AF{"Afganistan"}
@@ -27,6 +57,7 @@ is{
         AT{"Austurríki"}
         AU{"Ástralía"}
         AW{"Arúba"}
+        AX{"Álandseyjar"}
         AZ{"Aserbaídsjan"}
         BA{"Bosnía og Hersegóvína"}
         BB{"Barbados"}
@@ -55,10 +86,12 @@ is{
         CH{"Sviss"}
         CI{"Fílabeinsströndin"}
         CK{"Cookseyjar"}
+        CL{"Chíle"}
         CM{"Kamerún"}
         CN{"Kína"}
         CO{"Kólumbía"}
         CR{"Kostaríka"}
+        CS{"Serbía og Svartfjallaland"}
         CU{"Kúba"}
         CV{"Grænhöfðaeyjar"}
         CX{"Jólaey"}
@@ -111,6 +144,7 @@ is{
         ID{"Indónesía"}
         IE{"Írland"}
         IL{"Ísrael"}
+        IM{"Mön"}
         IN{"Indland"}
         IO{"Bresku Indlandshafseyjar"}
         IQ{"Írak"}
@@ -146,6 +180,7 @@ is{
         MA{"Marokkó"}
         MC{"Mónakó"}
         MD{"Moldóva"}
+        ME{"Svartfjallaland"}
         MG{"Madagaskar"}
         MH{"Marshalleyjar"}
         MK{"Makedónía"}
@@ -177,6 +212,7 @@ is{
         NU{"Niue"}
         NZ{"Nýja-Sjáland"}
         OM{"Óman"}
+        PA{"Panama"}
         PE{"Perú"}
         PF{"Franska Pólýnesía"}
         PG{"Papúa Nýja-Gínea"}
@@ -191,6 +227,8 @@ is{
         PW{"Palá"}
         PY{"Paragvæ"}
         QA{"Katar"}
+        QO{"Ytri Eyjaálfa"}
+        QU{"Evrópusambandið"}
         RE{"Réunion"}
         RO{"Rúmenía"}
         RS{"Serbía"}
@@ -250,6 +288,7 @@ is{
         YT{"Mayotte"}
         ZA{"Suður-Afríka"}
         ZM{"Sambía"}
+        ZZ{"Óþekkt eða ógilt svæði"}
     }
     Currencies{
         ADP{
@@ -796,6 +835,10 @@ is{
             "TL",
             "Tyrknesk líra",
         }
+        TRY{
+            "TRY",
+            "Ný tyrknesk líra",
+        }
         TTD{
             "TT$",
             "Trínidad og Tóbagó-dalur",
@@ -864,6 +907,10 @@ is{
             "CFPF",
             "Pólinesískur franki",
         }
+        XXX{
+            "XXX",
+            "Óþekktur eða ógildur gjaldeyrir",
+        }
         YDD{
             "YDD",
             "Jemenskur denari",
@@ -887,6 +934,12 @@ is{
         ZWD{
             "Z$",
             "Simbabveskur dalur",
+        }
+    }
+    CurrencyPlurals{
+        XXX{
+            one{"óþekktur eða ógildur gjaldeyrir"}
+            other{"óþekktur eða ógildur gjaldeyrir"}
         }
     }
     ExemplarCharacters{"[a á b d ð e é f-i í j-o ó p r-u ú v y ý þ æ ö]"}
@@ -994,6 +1047,8 @@ is{
         dar{"dargva"}
         day{"dajak"}
         de{"þýska"}
+        de_AT{"austurrísk þýska"}
+        de_CH{"svissnesk háþýska"}
         del{"delaver"}
         den{"slav"}
         dgr{"dogríb"}
@@ -1013,10 +1068,15 @@ is{
         el{"nýgríska (1453-)"}
         elx{"elamít"}
         en{"enska"}
-        en_US{"enska (BNA)"}
+        en_AU{"áströlsk enska"}
+        en_CA{"kanadísk enska"}
+        en_GB{"bresk enska"}
+        en_US{"bandarísk enska"}
         enm{"miðenska (1100-1500)"}
         eo{"esperantó"}
         es{"spænska"}
+        es_419{"latnesk-amerísk spænska"}
+        es_ES{"spænsk spænska"}
         et{"eistneska"}
         eu{"baskneska"}
         ewo{"evondó"}
@@ -1025,11 +1085,14 @@ is{
         fat{"fantí"}
         ff{"fúla"}
         fi{"finnska"}
+        fil{"filipínska"}
         fiu{"finnskúgrísk mál (önnur)"}
         fj{"fídjeyska"}
         fo{"færeyska"}
         fon{"fón"}
         fr{"franska"}
+        fr_CA{"kanadísk franska"}
+        fr_CH{"svissnesk franska"}
         frm{"miðfranska (um 1400-1600)"}
         fro{"fornfranska (842 - um 1400)"}
         fur{"fríúlska"}
@@ -1051,6 +1114,7 @@ is{
         got{"gotneska"}
         grb{"gerbó"}
         grc{"forngríska (til 1453)"}
+        gsw{"svissnesk þýska"}
         gu{"gújaratí"}
         gv{"manx"}
         gwi{"gvísín"}
@@ -1199,6 +1263,7 @@ is{
         nic{"nígerkordófanmál (önnur)"}
         niu{"níveska"}
         nl{"hollenska"}
+        nl_BE{"flæmska"}
         nn{"nýnorska"}
         no{"norska"}
         nog{"nógaí"}
@@ -1237,6 +1302,8 @@ is{
         pro{"fornpróvensalska (til 1500)"}
         ps{"pastú"}
         pt{"portúgalska"}
+        pt_BR{"brasílísk portúgalska"}
+        pt_PT{"íberísk portúgalska"}
         qu{"kvesjúa"}
         raj{"rajastaní"}
         rap{"rapanúí"}
@@ -1257,6 +1324,7 @@ is{
         sas{"sasak"}
         sat{"santalí"}
         sc{"sardínska"}
+        scn{"sikileyska"}
         sco{"skoska"}
         sd{"sindí"}
         se{"norðursamíska"}
@@ -1279,6 +1347,7 @@ is{
         smj{"lúlesamíska"}
         smn{"enaresamíska"}
         sms{"skoltesamíska"}
+        sn{"shóna"}
         snk{"sóninke"}
         so{"sómalska"}
         sog{"sogdíen"}
@@ -1355,6 +1424,7 @@ is{
         ypk{"júpísk mál"}
         za{"súang"}
         zap{"sapótek"}
+        zbl{"blisstákn"}
         zen{"senaga"}
         zh{"kínverska"}
         zh_Hans{"kínverska (einfölduð)"}
@@ -1362,6 +1432,7 @@ is{
         znd{"sande"}
         zu{"súlú"}
         zun{"súní"}
+        zxx{"ekkert tungutengt efni"}
     }
     LocaleScript{
         "Latn",
@@ -1373,18 +1444,37 @@ is{
         "%",
         "0",
         "#",
-        "-",
-        "E",
+        "−",
+        "×10^",
         "‰",
         "∞",
-        "NaN",
+        "EiTa",
         "+",
     }
     NumberPatterns{
         "#,##0.###",
-        "#,##0.00 ¤",
+        "#,##0.00 ¤",
         "#,##0%",
         "#E0",
+    }
+    Scripts{
+        Arab{"arabísk"}
+        Cans{"Cans"}
+        Cyrl{"kyrillísk"}
+        Ethi{"eþíópísk"}
+        Geor{"georgrísk"}
+        Grek{"grísk"}
+        Hang{"hangul"}
+        Hani{"kínversk"}
+        Hans{"einfaldað han"}
+        Hant{"hefðbundið han"}
+        Hira{"hiragana"}
+        Hrkt{"katakana eða hiragana"}
+        Jpan{"japönsk"}
+        Kana{"katakana"}
+        Latn{"latnesk"}
+        Zxxx{"Óskrifað"}
+        Zzzz{"Óþekkt eða ógilt letur"}
     }
     Types{
         calendar{
@@ -1392,21 +1482,29 @@ is{
             chinese{"Kínverskt dagatal"}
             gregorian{"Gregorískt dagatal"}
             hebrew{"Hebreskt  dagatal"}
+            indian{"indverskt dagatal"}
             islamic{"Íslamskt dagatal"}
             islamic-civil{"Íslamskt borgaradagatal"}
             japanese{"Japanskt dagatal"}
+            roc{"kínverskt dagatal"}
         }
         collation{
+            big5han{"hefðbundin kínversk röðun - Big5"}
             direct{"Bein röðun"}
+            gb2312han{"einfölduð kínversk röðun - GB2312"}
             phonebook{"Símaskráarröðun"}
             pinyin{"Pinyin-röðun"}
             stroke{"Strikaröðun"}
             traditional{"Hefðbundin"}
         }
     }
-    Version{"1.77"}
+    Version{"1.88"}
     calendar{
         gregorian{
+            AmPmMarkers{
+                "f.h.",
+                "e.h.",
+            }
             DateTimePatterns{
                 "HH:mm:ss v",
                 "HH:mm:ss z",
@@ -1417,6 +1515,32 @@ is{
                 "d.M.yyyy",
                 "d.M.yyyy",
                 "{1} {0}",
+            }
+            availableFormats{
+                HHmm{"HH:mm"}
+                HHmmss{"HH:mm:ss"}
+                Hm{"H:mm"}
+                M{"L."}
+                MEd{"E d.M."}
+                MMM{"LLL"}
+                MMMEd{"E d. MMM"}
+                MMMMEd{"E d. MMMM"}
+                MMMMd{"d. MMMM"}
+                MMMd{"d. MMM"}
+                Md{"d.M"}
+                d{"d"}
+                ms{"mm:ss"}
+                y{"yyyy"}
+                yM{"M. yyyy"}
+                yMEd{"EEE d.M.yyyy"}
+                yMMM{"MMM yyyy"}
+                yMMMEd{"EEE d. MMM yyyy"}
+                yMMMM{"MMMM yyyy"}
+                yQ{"Q. yyyy"}
+                yQQQ{"QQQ yyyy"}
+                yyQ{"Q yy"}
+                yyyyM{"M.yyyy"}
+                yyyyMMMM{"MMMM yyyy"}
             }
             dayNames{
                 format{
@@ -1449,6 +1573,127 @@ is{
                         "f",
                         "l",
                     }
+                }
+            }
+            eras{
+                abbreviated{
+                    "fyrir Krist",
+                    "eftir Krist",
+                }
+                narrow{
+                    "f.k.",
+                    "e.k.",
+                }
+            }
+            fields{
+                day{
+                    dn{"dagur"}
+                    relative{
+                        "-1"{"í gær"}
+                        "-2"{"fyrir tveimur dögum"}
+                        "-3"{"fyrir þremur dögum"}
+                        "0"{"í dag"}
+                        "1"{"á morgun"}
+                        "2"{"eftir tvo daga"}
+                        "3"{"eftir þrjá daga"}
+                    }
+                }
+                dayperiod{
+                    dn{"f.h./e.h."}
+                }
+                era{
+                    dn{"tímabil"}
+                }
+                hour{
+                    dn{"klukkustund"}
+                }
+                minute{
+                    dn{"mínúta"}
+                }
+                month{
+                    dn{"mánuður"}
+                }
+                second{
+                    dn{"sekúnda"}
+                }
+                week{
+                    dn{"vika"}
+                }
+                weekday{
+                    dn{"vikudagur"}
+                }
+                year{
+                    dn{"ár"}
+                }
+                zone{
+                    dn{"svæði"}
+                }
+            }
+            intervalFormats{
+                M{
+                    M{"M-M"}
+                }
+                MEd{
+                    M{"E, d.M - E, d.M"}
+                    d{"E, d.M - E, d.M"}
+                }
+                MMM{
+                    M{"MMM-MMM"}
+                }
+                MMMEd{
+                    M{"E, d. MMM - E, d. MMM"}
+                    d{"E, d. - E, d. MMM"}
+                }
+                MMMd{
+                    M{"d. MMM - d. MMM"}
+                    d{"d.-d. MMM"}
+                }
+                Md{
+                    M{"d.M - d.M"}
+                    d{"d.M - d.M"}
+                }
+                fallback{"{0} - {1}"}
+                hm{
+                    h{"HH:mm-HH:mm"}
+                    m{"HH:mm-HH:mm"}
+                }
+                hmv{
+                    h{"HH:mm-HH:mm v"}
+                    m{"HH:mm-HH:mm v"}
+                }
+                hv{
+                    h{"HH-HH v"}
+                }
+                y{
+                    y{"y-y"}
+                }
+                yM{
+                    M{"M.yyyy - M.yyyy"}
+                    y{"M.yyyy - M.yyyy"}
+                }
+                yMEd{
+                    M{"E, d.M.yyyy - E, d.M.yyyy"}
+                    d{"E, d.M.yyyy - E, d.M.yyyy"}
+                    y{"E, d.M.yyyy - E, d.M.yyyy"}
+                }
+                yMMM{
+                    M{"MMM-MMM yyyy"}
+                    y{"MMM yyyy - MMM yyyy"}
+                }
+                yMMMEd{
+                    M{"E, d. MMM - E, d. MMM yyyy"}
+                    d{"E, d. - E, d. MMM yyyy"}
+                    y{"E, d. MMM yyyy - E, d. MMM yyyy"}
+                }
+                yMMMd{
+                    M{"d. MMM - d. MMM yyyy"}
+                    d{"d.-d. MMM yyyy"}
+                    y{"d. MMM yyyy - d. MMM yyyy"}
+                }
+                yMd{
+                    M{"d.M.yyyy - d.M.yyyy"}
+                    d{"d.M.yyyy - d.M.yyyy"}
+                    y{"d.M.yyyy - d.M.yyyy"}
                 }
             }
             monthNames{
@@ -1514,13 +1759,146 @@ is{
                         "4th fjórðungur",
                     }
                 }
+                stand-alone{
+                    abbreviated{
+                        "1F",
+                        "2F",
+                        "3F",
+                        "4F",
+                    }
+                    narrow{
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                    }
+                    wide{
+                        "1. fjórðungur",
+                        "2. fjórðungur",
+                        "3. fjórðungur",
+                        "4. fjórðungur",
+                    }
+                }
             }
         }
+    }
+    codePatterns{
+        language{"tungumál: {0}"}
+        script{"leturgerð: {0}"}
+        territory{"svæði: {0}"}
     }
     delimiters{
         alternateQuotationEnd{"‘"}
         alternateQuotationStart{"‚"}
         quotationEnd{"“"}
         quotationStart{"„"}
+    }
+    localeDisplayPattern{
+        pattern{"{0} ({1})"}
+        separator{", "}
+    }
+    measurementSystemNames{
+        US{"bandarískt"}
+        metric{"metrakerfi"}
+    }
+    units{
+        day{
+            one{"{0} dagur"}
+            other{"{0} dagar"}
+        }
+        hour{
+            one{"{0} klukkustund"}
+            other{"{0} klukkustundir"}
+        }
+        minute{
+            one{"{0} mínúta"}
+            other{"{0} mínútur"}
+        }
+        month{
+            one{"{0} mánuður"}
+            other{"{0} mánuðir"}
+        }
+        second{
+            one{"{0} sekúnda"}
+            other{"{0} sekúndur"}
+        }
+        week{
+            one{"{0} vika"}
+            other{"{0} vikur"}
+        }
+        year{
+            one{"{0} ár"}
+            other{"{0} ár"}
+        }
+    }
+    zoneStrings{
+        "America:Anchorage"{
+            ec{"Anchorage"}
+        }
+        "America:Cancun"{
+            ec{"Kankún"}
+        }
+        "America:Denver"{
+            ec{"Denver"}
+        }
+        "America:Indianapolis"{
+            ec{"Indianapolis"}
+        }
+        "America:Mexico_City"{
+            ec{"Mexíkóborg"}
+        }
+        "America:Regina"{
+            ec{"Regína"}
+        }
+        "America:Rio_Branco"{
+            ec{"Rio Branco"}
+        }
+        "Antarctica:DumontDUrville"{
+            ec{"Dumont D'Urville"}
+        }
+        "Antarctica:South_Pole"{
+            ec{"Suðurpóllinn"}
+        }
+        "Asia:Jakarta"{
+            ec{"Djakarta"}
+        }
+        "Asia:Ulaanbaatar"{
+            ec{"Úlan Bator"}
+        }
+        "Atlantic:Azores"{
+            ec{"Azoreyjar"}
+        }
+        "Atlantic:Canary"{
+            ec{"Kanaríeyjar"}
+        }
+        "Etc:Unknown"{
+            ec{"óþekkt"}
+        }
+        "Europe:Moscow"{
+            ec{"Moskva"}
+        }
+        "Pacific:Easter"{
+            ec{"Páskaeyja"}
+        }
+        "Pacific:Honolulu"{
+            ec{"Honolulu"}
+        }
+        "Pacific:Marquesas"{
+            ec{"Marquesas-eyjar"}
+        }
+        "meta:Europe_Central"{
+            ld{"sumartími Mið-Evrópu"}
+            ls{"Mið-Evróputími"}
+            sd{"STME"}
+            ss{"MET"}
+        }
+        "meta:Europe_Eastern"{
+            ld{"sumartími Austur-Evrópu"}
+            ls{"Austur-Evróputími"}
+            sd{"STAE"}
+            ss{"AET"}
+        }
+        gmtFormat{"GMT{0}"}
+        hourFormat{"+HH:mm;−HH:mm"}
     }
 }

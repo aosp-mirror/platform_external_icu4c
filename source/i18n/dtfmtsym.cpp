@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 1997-2007, International Business Machines Corporation and    *
+* Copyright (C) 1997-2008, International Business Machines Corporation and    *
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 *
@@ -276,15 +276,30 @@ void
 DateFormatSymbols::createZoneStrings(const UnicodeString *const * otherStrings)
 {
     int32_t row, col;
+    UBool failed = FALSE;
 
     fZoneStrings = (UnicodeString **)uprv_malloc(fZoneStringsRowCount * sizeof(UnicodeString *));
-    for (row=0; row<fZoneStringsRowCount; ++row)
-    {
-        fZoneStrings[row] = newUnicodeStringArray(fZoneStringsColCount);
-        for (col=0; col<fZoneStringsColCount; ++col) {
-            // fastCopyFrom() - see assignArray comments
-            fZoneStrings[row][col].fastCopyFrom(otherStrings[row][col]);
+    if (fZoneStrings != NULL) {
+        for (row=0; row<fZoneStringsRowCount; ++row)
+        {
+            fZoneStrings[row] = newUnicodeStringArray(fZoneStringsColCount);
+            if (fZoneStrings[row] == NULL) {
+                failed = TRUE;
+                break;
+            }
+            for (col=0; col<fZoneStringsColCount; ++col) {
+                // fastCopyFrom() - see assignArray comments
+                fZoneStrings[row][col].fastCopyFrom(otherStrings[row][col]);
+            }
         }
+    }
+    // If memory allocation failed, roll back and delete fZoneStrings
+    if (failed) {
+        for (int i = row; i >= 0; i--) {
+            delete[] fZoneStrings[i];
+        }
+        uprv_free(fZoneStrings);
+        fZoneStrings = NULL;
     }
 }
 
@@ -1068,7 +1083,6 @@ DateFormatSymbols::setZoneStrings(const UnicodeString* const *strings, int32_t r
     // since deleting a 2-d array is a pain in the butt, we offload that task to
     // a separate function
     disposeZoneStrings();
-    UErrorCode status = U_ZERO_ERROR;
     // we always own the new list, which we create here (we duplicate rather
     // than adopting the list passed in)
     fZoneStringsRowCount = rowCount;
@@ -1353,14 +1367,18 @@ DateFormatSymbols::initializeData(const Locale& locale, const char *type, UError
                 // CLDR 1.5 does not have GMT offset pattern including second field.
                 // For now, append "ss" to the end.
                 if (fGmtHourFormats[GMT_NEGATIVE_HM].indexOf((UChar)0x003A /* ':' */) != -1) {
-                    fGmtHourFormats[GMT_NEGATIVE_HMS] = fGmtHourFormats[GMT_NEGATIVE_HM] + ":ss";
+                    fGmtHourFormats[GMT_NEGATIVE_HMS] = fGmtHourFormats[GMT_NEGATIVE_HM] + UNICODE_STRING_SIMPLE(":ss");
+                } else if (fGmtHourFormats[GMT_NEGATIVE_HM].indexOf((UChar)0x002E /* '.' */) != -1) {
+                    fGmtHourFormats[GMT_NEGATIVE_HMS] = fGmtHourFormats[GMT_NEGATIVE_HM] + UNICODE_STRING_SIMPLE(".ss");
                 } else {
-                    fGmtHourFormats[GMT_NEGATIVE_HMS] = fGmtHourFormats[GMT_NEGATIVE_HM] + "ss";
+                    fGmtHourFormats[GMT_NEGATIVE_HMS] = fGmtHourFormats[GMT_NEGATIVE_HM] + UNICODE_STRING_SIMPLE("ss");
                 }
                 if (fGmtHourFormats[GMT_POSITIVE_HM].indexOf((UChar)0x003A /* ':' */) != -1) {
-                    fGmtHourFormats[GMT_POSITIVE_HMS] = fGmtHourFormats[GMT_POSITIVE_HM] + ":ss";
+                    fGmtHourFormats[GMT_POSITIVE_HMS] = fGmtHourFormats[GMT_POSITIVE_HM] + UNICODE_STRING_SIMPLE(":ss");
+                } else if (fGmtHourFormats[GMT_POSITIVE_HM].indexOf((UChar)0x002E /* '.' */) != -1) {
+                    fGmtHourFormats[GMT_POSITIVE_HMS] = fGmtHourFormats[GMT_POSITIVE_HM] + UNICODE_STRING_SIMPLE(".ss");
                 } else {
-                    fGmtHourFormats[GMT_POSITIVE_HMS] = fGmtHourFormats[GMT_POSITIVE_HM] + "ss";
+                    fGmtHourFormats[GMT_POSITIVE_HMS] = fGmtHourFormats[GMT_POSITIVE_HM] + UNICODE_STRING_SIMPLE("ss");
                 }
             }
         }

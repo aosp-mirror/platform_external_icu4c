@@ -1,6 +1,6 @@
 /*
  ****************************************************************************
- * Copyright (c) 2005-2006, International Business Machines Corporation and *
+ * Copyright (c) 2005-2008, International Business Machines Corporation and *
  * others. All Rights Reserved.                                             *
  ****************************************************************************
  */
@@ -16,7 +16,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define ARRAY_SIZE(array) (sizeof array / sizeof array[0])
+#define ARRAY_SIZE(array) (sizeof(array)/sizeof(array[0]))
 
 #define NEW_ARRAY(type,count) (type *) malloc((count) * sizeof(type))
 #define DELETE_ARRAY(array) free(array)
@@ -27,6 +27,7 @@ static void TestUTF16(void);
 static void TestC1Bytes(void);
 static void TestInputFilter(void);
 static void TestChaining(void);
+static void TestBufferOverflow(void);
 
 void addUCsdetTest(TestNode** root);
 
@@ -38,6 +39,7 @@ void addUCsdetTest(TestNode** root)
     addTest(root, &TestC1Bytes, "ucsdetst/TestC1Bytes");
     addTest(root, &TestInputFilter, "ucsdetst/TestInputFilter");
     addTest(root, &TestChaining, "ucsdetst/TestErrorChaining");
+    addTest(root, &TestBufferOverflow, "ucsdetst/TestBufferOverflow");
 }
 
 static int32_t preflight(const UChar *src, int32_t length, UConverter *cnv)
@@ -123,6 +125,11 @@ static void TestUTF8(void)
     bytes = extractBytes(s, sLength, "UTF-8", &byteLength);
 
     ucsdet_setText(csd, bytes, byteLength, &status);
+    if (U_FAILURE(status)) {
+        log_err("status is %s\n", u_errorName(status));
+        goto bail;
+    }
+
     match = ucsdet_detect(csd, &status);
 
     if (match == NULL) {
@@ -353,3 +360,62 @@ static void TestChaining(void) {
         log_err("Status got changed to %s\n", u_errorName(status));
     }
 }
+
+static void TestBufferOverflow(void) {
+    UErrorCode status = U_ZERO_ERROR;
+    static const char *testStrings[] = {
+        "\x80\x20\x54\x68\x69\x73\x20\x69\x73\x20\x45\x6E\x67\x6C\x69\x73\x68\x20\x1b", /* A partial ISO-2022 shift state at the end */
+        "\x80\x20\x54\x68\x69\x73\x20\x69\x73\x20\x45\x6E\x67\x6C\x69\x73\x68\x20\x1b\x24", /* A partial ISO-2022 shift state at the end */
+        "\x80\x20\x54\x68\x69\x73\x20\x69\x73\x20\x45\x6E\x67\x6C\x69\x73\x68\x20\x1b\x24\x28", /* A partial ISO-2022 shift state at the end */
+        "\x80\x20\x54\x68\x69\x73\x20\x69\x73\x20\x45\x6E\x67\x6C\x69\x73\x68\x20\x1b\x24\x28\x44", /* A complete ISO-2022 shift state at the end with a bad one at the start */
+        "\x1b\x24\x28\x44", /* A complete ISO-2022 shift state at the end */
+        "\xa1", /* Could be a single byte shift-jis at the end */
+        "\x74\x68\xa1", /* Could be a single byte shift-jis at the end */
+        "\x74\x68\x65\xa1" /* Could be a single byte shift-jis at the end, but now we have English creeping in. */
+    };
+    static const char *testResults[] = {
+        "windows-1252",
+        "windows-1252",
+        "windows-1252",
+        "windows-1252",
+        "ISO-2022-JP",
+        NULL,
+        NULL,
+        "ISO-8859-1"
+    };
+    int32_t idx = 0;
+    UCharsetDetector *csd = ucsdet_open(&status);
+    const UCharsetMatch *match;
+
+    ucsdet_setDeclaredEncoding(csd, "ISO-2022-JP", -1, &status);
+
+    if (U_FAILURE(status)) {
+        log_err("Couldn't open detector. %s\n", u_errorName(status));
+        goto bail;
+    }
+
+    for (idx = 0; idx < ARRAY_SIZE(testStrings); idx++) {
+        ucsdet_setText(csd, testStrings[idx], -1, &status);
+        match = ucsdet_detect(csd, &status);
+
+        if (match == NULL) {
+            if (testResults[idx] != NULL) {
+                log_err("Unexpectedly got no results at index %d.\n", idx);
+            }
+            else {
+                log_verbose("Got no result as expected at index %d.\n", idx);
+            }
+            continue;
+        }
+
+        if (testResults[idx] == NULL || strcmp(ucsdet_getName(match, &status), testResults[idx]) != 0) {
+            log_err("Unexpectedly got %s instead of %s at index %d with confidence %d.\n",
+                ucsdet_getName(match, &status), testResults[idx], idx, ucsdet_getConfidence(match, &status));
+            goto bail;
+        }
+    }
+
+bail:
+    ucsdet_close(csd);
+}
+

@@ -1,6 +1,6 @@
 /*
 ***************************************************************************
-* Copyright (C) 1999-2007, International Business Machines Corporation
+* Copyright (C) 1999-2008, International Business Machines Corporation
 * and others. All Rights Reserved.
 ***************************************************************************
 *   Date        Name        Description
@@ -16,10 +16,10 @@
 #include "unicode/uset.h"
 
 /**
- * \file 
+ * \file
  * \brief C++ API: Unicode Set
  */
- 
+
 U_NAMESPACE_BEGIN
 
 class BMPSet;
@@ -256,6 +256,15 @@ class RuleCharacterIterator;
  *     </tr>
  *   </table>
  * \htmlonly</blockquote>\endhtmlonly
+ * 
+ * <p>Note:
+ *  - Most UnicodeSet methods do not take a UErrorCode parameter because
+ *   there are usually very few opportunities for failure other than a shortage
+ *   of memory, error codes in low-level C++ string methods would be inconvenient,
+ *   and the error code as the last parameter (ICU convention) would prevent
+ *   the use of default parameter values.
+ *   Instead, such methods set the UnicodeSet into a "bogus" state
+ *   (see isBogus()) if an error occurs.
  *
  * @author Alan Liu
  * @stable ICU 2.0
@@ -282,6 +291,41 @@ class U_COMMON_API UnicodeSet : public UnicodeFilter {
     UChar *pat;
     UVector* strings; // maintained in sorted order
     UnicodeSetStringSpan *stringSpan;
+
+private:
+    enum { // constants
+        kIsBogus = 1       // This set is bogus (i.e. not valid)
+    };
+    uint8_t fFlags;         // Bit flag (see constants above)
+public:
+    /**
+     * Determine if this object contains a valid set.
+     * A bogus set has no value. It is different from an empty set.
+     * It can be used to indicate that no set value is available.
+     *
+     * @return TRUE if the set is valid, FALSE otherwise
+     * @see setToBogus()
+     * @draft ICU 4.0
+     */
+    inline UBool isBogus(void) const;
+    
+    /**
+     * Make this UnicodeSet object invalid.
+     * The string will test TRUE with isBogus().
+     *
+     * A bogus set has no value. It is different from an empty set.
+     * It can be used to indicate that no set value is available.
+     *
+     * This utility function is used throughout the UnicodeSet
+     * implementation to indicate that a UnicodeSet operation failed,
+     * and may be used in other functions,
+     * especially but not exclusively when such functions do not
+     * take a UErrorCode for simplicity.
+     *
+     * @see isBogus()
+     * @draft ICU 4.0
+     */
+    void setToBogus();
 
 public:
 
@@ -436,7 +480,7 @@ public:
      * @return TRUE/FALSE for whether the set has been frozen
      * @see freeze
      * @see cloneAsThawed
-     * @draft ICU 3.8
+     * @stable ICU 4.0
      */
     inline UBool isFrozen() const;
 
@@ -451,7 +495,7 @@ public:
      * @return this set.
      * @see isFrozen
      * @see cloneAsThawed
-     * @draft ICU 3.8
+     * @stable ICU 4.0
      */
     UnicodeFunctor *freeze();
 
@@ -461,7 +505,7 @@ public:
      * @return the mutable clone
      * @see freeze
      * @see isFrozen
-     * @draft ICU 3.8
+     * @stable ICU 4.0
      */
     UnicodeFunctor *cloneAsThawed() const;
 
@@ -772,7 +816,7 @@ public:
      * @param spanCondition specifies the containment condition
      * @return the length of the initial substring according to the spanCondition;
      *         0 if the start of the string does not fit the spanCondition
-     * @draft ICU 3.8
+     * @stable ICU 4.0
      * @see USetSpanCondition
      */
     int32_t span(const UChar *s, int32_t length, USetSpanCondition spanCondition) const;
@@ -791,7 +835,7 @@ public:
      * @param spanCondition specifies the containment condition
      * @return the start of the trailing substring according to the spanCondition;
      *         the string length if the end of the string does not fit the spanCondition
-     * @draft ICU 3.8
+     * @stable ICU 4.0
      * @see USetSpanCondition
      */
     int32_t spanBack(const UChar *s, int32_t length, USetSpanCondition spanCondition) const;
@@ -811,7 +855,7 @@ public:
      * @param spanCondition specifies the containment condition
      * @return the length of the initial substring according to the spanCondition;
      *         0 if the start of the string does not fit the spanCondition
-     * @draft ICU 3.8
+     * @stable ICU 4.0
      * @see USetSpanCondition
      */
     int32_t spanUTF8(const char *s, int32_t length, USetSpanCondition spanCondition) const;
@@ -830,7 +874,7 @@ public:
      * @param spanCondition specifies the containment condition
      * @return the start of the trailing substring according to the spanCondition;
      *         the string length if the end of the string does not fit the spanCondition
-     * @draft ICU 3.8
+     * @stable ICU 4.0
      * @see USetSpanCondition
      */
     int32_t spanBackUTF8(const char *s, int32_t length, USetSpanCondition spanCondition) const;
@@ -1214,6 +1258,14 @@ public:
     UnicodeSet& closeOver(int32_t attribute);
 
     /**
+     * Remove all strings from this set.
+     *
+     * @return a reference to this set.
+     * @internal
+     */
+    virtual UnicodeSet &removeAllStrings();
+
+    /**
      * Iteration method that returns the number of ranges contained in
      * this set.
      * @see #getRangeStart
@@ -1366,9 +1418,9 @@ private:
     // Implementation: Utility methods
     //----------------------------------------------------------------
 
-    void ensureCapacity(int32_t newLen);
+    void ensureCapacity(int32_t newLen, UErrorCode& ec);
 
-    void ensureBufferCapacity(int32_t newLen);
+    void ensureBufferCapacity(int32_t newLen, UErrorCode& ec);
 
     void swapBuffers(void);
 
@@ -1451,6 +1503,8 @@ private:
                               UnicodeString& rebuiltPat,
                               UErrorCode& ec);
 
+    static const UnicodeSet* getInclusions(int32_t src, UErrorCode &status);
+
     /**
      * A filter that returns TRUE if the given code point should be
      * included in the UnicodeSet being constructed.
@@ -1501,6 +1555,10 @@ inline UBool UnicodeSet::containsSome(const UnicodeSet& s) const {
 
 inline UBool UnicodeSet::containsSome(const UnicodeString& s) const {
     return !containsNone(s);
+}
+
+inline UBool UnicodeSet::isBogus() const {
+    return (UBool)(fFlags & kIsBogus);
 }
 
 U_NAMESPACE_END
