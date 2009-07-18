@@ -10,6 +10,8 @@ brkitr/title.brk
 brkitr/word.brk
 brkitr/word_POSIX.brk
 cnvalias.icu
+coll/cs.res
+coll/cs_CZ.res
 coll/de.res
 coll/de_.res
 coll/de_AT.res
@@ -36,8 +38,6 @@ coll/en_US_POSIX.res
 coll/en_VI.res
 coll/en_ZA.res
 coll/en_ZW.res
-coll/cs.res
-coll/cs_CZ.res
 coll/nl.res
 coll/nl_BE.res
 coll/nl_NL.res
