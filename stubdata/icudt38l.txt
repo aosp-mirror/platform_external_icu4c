@@ -132,6 +132,7 @@ res_index.res
 root.res
 supplementalData.res
 ucadata.icu
+windows-874-2000.cnv
 windows-936-2000.cnv
 windows-949-2000.cnv
 windows-950-2000.cnv
