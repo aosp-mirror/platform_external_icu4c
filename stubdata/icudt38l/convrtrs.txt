@@ -558,7 +558,9 @@ ibm-954_P101-2007 { UTR22* }
 # Here are various interpretations and extentions of Big5
 ibm-1373_P100-2002 { UTR22* } # IBM's interpretation of Windows' Taiwan Big-5 without HKSCS extensions
                         ibm-1373 { IBM* }
-                        windows-950 # Alternate mapping. Leave untagged. This is the IBM interpretation of a Windows codepage.
+                        # BEGIN android-removed
+                        # windows-950 # Alternate mapping. Leave untagged. This is the IBM interpretation of a Windows codepage.
+                        # END android-removed
 windows-950-2000 { UTR22* }
                         Big5 { IANA* MIME* JAVA* WINDOWS }
                         csBig5 { IANA WINDOWS }
