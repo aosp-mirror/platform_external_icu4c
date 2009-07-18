@@ -73,7 +73,7 @@
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.4
  */
-#define U_ICU_VERSION_PATCHLEVEL_NUM 0
+#define U_ICU_VERSION_PATCHLEVEL_NUM 1
 
 /** Glued version suffix for renamers 
  *  This value will change in the subsequent releases of ICU
@@ -86,7 +86,7 @@
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.4
  */
-#define U_ICU_VERSION "3.8"
+#define U_ICU_VERSION "3.8.1"
 
 /** The current ICU library major/minor version as a string without dots, for library name suffixes. 
  *  This value will change in the subsequent releases of ICU
