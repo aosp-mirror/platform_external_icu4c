@@ -4,6 +4,7 @@ res_index:table(nofallback) {
         de {""}
         en {""}
         en_GB {""}
+	fr {""}
 	nl {""}
     }
 }

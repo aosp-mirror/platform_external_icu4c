@@ -2,7 +2,8 @@
 
 echo "Compiling (possibly modified) source files into binaries..."
 cd icudt38l
- ../../../../prebuilt/Linux/icu-3.8/gencnval convrtrs.txt
+../../../../prebuilt/Linux/icu-3.8/gencnval convrtrs.txt
+../../../../prebuilt/Linux/icu-3.8/genrb res_index.txt
 cd ..
 
 cd icudt38l/brkitr

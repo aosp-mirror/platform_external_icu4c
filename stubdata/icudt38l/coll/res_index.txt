@@ -32,6 +32,9 @@ res_index:table(nofallback) {
         en {""}
         en_BE {""}
 
+        fr_FR {""}
+	fr {""}
+
 	nl_BE {""}
 	nl_NL {""}
 	nl {""}
