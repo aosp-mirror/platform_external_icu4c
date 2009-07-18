@@ -2,7 +2,8 @@
 res_index:table(nofallback) {
     InstalledLocales {
         en {""}
-        en_US {""}
-        en_US_POSIX {""}
+        en_GB {""}
+        
+        ja {""}
     }
 }
