@@ -751,8 +751,8 @@ windows-949-2000 { UTR22* }
 windows-874-2000 { UTR22* }   # Thai (w/ euro update)
                         # BEGIN android-changed
                         TIS-620 { IANA* WINDOWS JAVA }
-                        # END android-changed
                         windows-874 { JAVA WINDOWS* }
+                        # END android-changed
                         MS874 { JAVA }
                         # iso-8859-11 { WINDOWS } # iso-8859-11 is similar to TIS-620. ibm-13162 is a closer match.
                         # BEGIN android-added
