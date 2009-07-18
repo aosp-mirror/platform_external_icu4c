@@ -9240,7 +9240,6 @@ supplementalData:table(nofallback){
             "meta:Chile_AQ"{"Antarctica/Palmer"}
             "meta:China_001"{"Asia/Shanghai"}
             "meta:China_MO"{"Asia/Macau"}
-            "meta:China_TW"{"Asia/Taipei"}
             "meta:Choibalsan_001"{"Asia/Choibalsan"}
             "meta:Christmas_001"{"Indian/Christmas"}
             "meta:Cocos_001"{"Indian/Cocos"}
