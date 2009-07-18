@@ -12,7 +12,7 @@ LOCAL_C_INCLUDES +=            \
 
 LOCAL_STATIC_LIBRARIES += libicuuc libicudata libicui18n libicutu
 
-ifneq ($(DEVICE_ARCH),arm)
+ifneq ($(TARGET_ARCH),arm)
 LOCAL_LDLIBS += -lpthread -ldl -licudata
 endif
 

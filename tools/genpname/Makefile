@@ -9,7 +9,7 @@ LOCAL_C_INCLUDES += \
 	$(LOCAL_PATH)/../toolutil \
 	$(LOCAL_PATH)/../../common
 
-ifneq ($(DEVICE_ARCH),arm)
+ifneq ($(TARGET_ARCH),arm)
 LOCAL_LDLIBS += -lpthread -ldl
 endif
 

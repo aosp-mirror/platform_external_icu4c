@@ -14,7 +14,7 @@ LOCAL_SRC_FILES := \
 
 LOCAL_STATIC_LIBRARIES := libicutu libicui18n libicuuc
 
-ifneq ($(DEVICE_ARCH),arm)
+ifneq ($(TARGET_ARCH),arm)
 LOCAL_LDLIBS += -lpthread -ldl
 endif
 

@@ -41,7 +41,7 @@ LOCAL_SRC_FILES:= \
 	utrace.c           utrie.c            \
 	utypes.c           wintz.c
 
-ifeq ($(DEVICE_ARCH),arm)
+ifeq ($(TARGET_ARCH),arm)
 LOCAL_SRC_FILES += \
 	noser.c
 endif
@@ -85,7 +85,7 @@ LOCAL_C_INCLUDES +=       \
 LOCAL_CFLAGS  += -D_REENTRANT -DPIC -DU_COMMON_IMPLEMENTATION -fPIC 
 LOCAL_CFLAGS  +=  -O3
 
-ifeq ($(DEVICE_ARCH),arm)
+ifeq ($(TARGET_ARCH),arm)
 LOCAL_CFLAGS += -DARM_FLAG
 endif
 

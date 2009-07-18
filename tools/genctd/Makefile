@@ -6,7 +6,7 @@ LOCAL_SRC_FILES := genctd.cpp
 
 LOCAL_STATIC_LIBRARIES := libicutu libicuuc libicudata
 
-ifneq ($(DEVICE_ARCH),arm)
+ifneq ($(TARGET_ARCH),arm)
 LOCAL_LDLIBS += -lpthread -ldl
 endif
 
