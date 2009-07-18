@@ -115,7 +115,7 @@
  * @stable ICU 2.4
  */
 #ifndef UCONFIG_NO_LEGACY_CONVERSION
-#   define UCONFIG_NO_LEGACY_CONVERSION 0
+#   define UCONFIG_NO_LEGACY_CONVERSION 1
 #endif
 
 /**
@@ -157,7 +157,7 @@
  * @stable ICU 2.6
  */
 #ifndef UCONFIG_NO_IDNA
-#   define UCONFIG_NO_IDNA 0
+#   define UCONFIG_NO_IDNA 1
 #endif
 
 /* i18n library switches ---------------------------------------------------- */
@@ -189,7 +189,7 @@
  * @stable ICU 2.4
  */
 #ifndef UCONFIG_NO_TRANSLITERATION
-#   define UCONFIG_NO_TRANSLITERATION 0
+#   define UCONFIG_NO_TRANSLITERATION 1
 #endif
 
 /**
@@ -209,7 +209,7 @@
  * @stable ICU 3.2
  */
 #ifndef UCONFIG_NO_SERVICE
-#   define UCONFIG_NO_SERVICE 0
+#   define UCONFIG_NO_SERVICE 1
 #endif
 
 #endif

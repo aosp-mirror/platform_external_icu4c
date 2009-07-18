@@ -23,7 +23,7 @@
 
 #include "cmemory.h"
 #include "cstring.h"
-#include "util.h"
+#include "../common/util.h"
 
 // debugging
 // #define DEBUG

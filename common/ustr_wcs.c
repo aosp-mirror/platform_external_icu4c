@@ -25,6 +25,11 @@
 #include "ustr_imp.h"
 #include "ustr_cnv.h"
 
+#ifdef ARM_FLAG
+#define MB_CUR_MAX      (__ctype_get_mb_cur_max ())
+extern size_t __ctype_get_mb_cur_max (void);
+#endif
+
 #if defined(U_WCHAR_IS_UTF16) || defined(U_WCHAR_IS_UTF32) || !UCONFIG_NO_CONVERSION
 
 #define _STACK_BUFFER_CAPACITY 1000

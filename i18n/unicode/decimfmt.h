@@ -631,6 +631,11 @@ public:
         kPadAfterSuffix
     };
 
+    typedef struct attributeBuffer {
+        char * buffer;
+        size_t bufferSize;
+    } AttributeBuffer, *AttrBuffer;
+
     /**
      * Create a DecimalFormat using the default pattern and symbols
      * for the default locale. This is a convenient way to obtain a
@@ -784,6 +789,12 @@ public:
     virtual UnicodeString& format(double number,
                                   UnicodeString& appendTo,
                                   FieldPosition& pos) const;
+
+    virtual UnicodeString& format(double number,
+                                  UnicodeString& appendTo,
+                                  FieldPosition& pos,
+                                  AttrBuffer attrBuffer) const;
+
     /**
      * Format a long number using base-10 representation.
      *
@@ -798,6 +809,12 @@ public:
     virtual UnicodeString& format(int32_t number,
                                   UnicodeString& appendTo,
                                   FieldPosition& pos) const;
+
+    virtual UnicodeString& format(int32_t number,
+                                  UnicodeString& appendTo,
+                                  FieldPosition& pos,
+                                  AttrBuffer attrBuffer) const;
+
     /**
      * Format an int64 number using base-10 representation.
      *
@@ -812,6 +829,11 @@ public:
     virtual UnicodeString& format(int64_t number,
                                   UnicodeString& appendTo,
                                   FieldPosition& pos) const;
+
+    virtual UnicodeString& format(int64_t number,
+                                  UnicodeString& appendTo,
+                                  FieldPosition& pos,
+                                  AttrBuffer attrBuffer) const;
 
     /**
      * Format a Formattable using base-10 representation.
@@ -1704,6 +1726,12 @@ private:
                              DigitList& digits,
                              UBool         isInteger) const;
 
+    UnicodeString& subformat(UnicodeString& appendTo,
+                             FieldPosition& fieldPosition,
+                             AttrBuffer attrBuffer,
+                             DigitList& digits,
+                             UBool         isInteger) const;
+
     void parse(const UnicodeString& text,
                Formattable& result,
                ParsePosition& pos,
@@ -1753,6 +1781,9 @@ private:
     int32_t appendAffix(UnicodeString& buf, double number,
                         UBool isNegative, UBool isPrefix) const;
 
+    int32_t appendAffix(UnicodeString& buf, double number, AttrBuffer attrBuffer,
+                        UBool isNegative, UBool isPrefix) const;
+
     /**
      * Append an affix to the given UnicodeString, using quotes if
      * there are special characters.  Single quotes themselves must be
@@ -1768,6 +1799,12 @@ private:
     void expandAffix(const UnicodeString& pattern,
                      UnicodeString& affix,
                      double number,
+                     UBool doFormat) const;
+
+    void expandAffix(const UnicodeString& pattern,
+                     UnicodeString& affix,
+                     double number,
+                     AttrBuffer attrBuffer,
                      UBool doFormat) const;
 
     void expandAffixes();
@@ -1832,6 +1869,8 @@ private:
     int32_t                 fFormatWidth;
     EPadPosition            fPadPosition;
 
+    void addAttribute(AttrBuffer attrBuffer, char *fieldname, int begin, int end) const;
+
 protected:
 
     /**
@@ -1879,14 +1918,14 @@ inline UnicodeString&
 DecimalFormat::format(double number,
                       UnicodeString& appendTo) const {
     FieldPosition pos(0);
-    return format(number, appendTo, pos);
+    return format(number, appendTo, pos, NULL);
 }
 
 inline UnicodeString&
 DecimalFormat::format(int32_t number,
                       UnicodeString& appendTo) const {
     FieldPosition pos(0);
-    return format((int64_t)number, appendTo, pos);
+    return format((int64_t)number, appendTo, pos, NULL);
 }
 
 inline const UnicodeString &

@@ -28,7 +28,7 @@
 
 #include "ucol_tok.h"
 #include "cmemory.h"
-#include "util.h"
+#include "../common/util.h"
 
 U_CDECL_BEGIN
 static int32_t U_CALLCONV

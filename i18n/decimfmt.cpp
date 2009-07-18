@@ -50,13 +50,15 @@
 #include "unicode/uchar.h"
 #include "unicode/curramt.h"
 #include "ucurrimp.h"
-#include "util.h"
+#include "../common/util.h"
 #include "digitlst.h"
 #include "cmemory.h"
 #include "cstring.h"
 #include "umutex.h"
 #include "uassert.h"
 #include "putilimp.h"
+#include <stdio.h>
+
 
 U_NAMESPACE_BEGIN
 
@@ -614,7 +616,16 @@ DecimalFormat::format(int32_t number,
                       UnicodeString& appendTo,
                       FieldPosition& fieldPosition) const
 {
-    return format((int64_t)number, appendTo, fieldPosition);
+    return format((int64_t)number, appendTo, fieldPosition, NULL);
+}
+ 
+UnicodeString&
+DecimalFormat::format(int32_t number,
+                      UnicodeString& appendTo,
+                      FieldPosition& fieldPosition,
+                      AttrBuffer attrBuffer) const
+{
+    return format((int64_t)number, appendTo, fieldPosition, attrBuffer);
 }
 
 //------------------------------------------------------------------------------
@@ -623,6 +634,15 @@ UnicodeString&
 DecimalFormat::format(int64_t number,
                       UnicodeString& appendTo,
                       FieldPosition& fieldPosition) const
+{
+    return format(number, appendTo, fieldPosition, NULL);
+}
+
+UnicodeString&
+DecimalFormat::format(int64_t number,
+                      UnicodeString& appendTo,
+                      FieldPosition& fieldPosition,
+                      AttrBuffer attrBuffer) const
 {
     DigitList digits;
 
@@ -652,7 +672,7 @@ DecimalFormat::format(int64_t number,
         digits.set(number * fMultiplier, precision(TRUE));
     }
 
-    return subformat(appendTo, fieldPosition, digits, TRUE);
+    return subformat(appendTo, fieldPosition, attrBuffer, digits, TRUE);
 }
  
 //------------------------------------------------------------------------------
@@ -662,6 +682,15 @@ DecimalFormat::format(  double number,
                         UnicodeString& appendTo,
                         FieldPosition& fieldPosition) const
 {
+    return format(number, appendTo, fieldPosition, NULL);
+}
+
+UnicodeString&
+DecimalFormat::format(  double number,
+                        UnicodeString& appendTo,
+                        FieldPosition& fieldPosition,
+                        AttrBuffer attrBuffer) const
+{
     // Clears field positions.
     fieldPosition.setBeginIndex(0);
     fieldPosition.setEndIndex(0);
@@ -670,13 +699,18 @@ DecimalFormat::format(  double number,
     // the string length of localized name of NaN.
     if (uprv_isNaN(number))
     {
+        int begin = appendTo.length();
         if (fieldPosition.getField() == NumberFormat::kIntegerField)
-            fieldPosition.setBeginIndex(appendTo.length());
+            fieldPosition.setBeginIndex(begin);
 
         appendTo += getConstSymbol(DecimalFormatSymbols::kNaNSymbol);
 
+        int end = appendTo.length();
+
         if (fieldPosition.getField() == NumberFormat::kIntegerField)
-            fieldPosition.setEndIndex(appendTo.length());
+            fieldPosition.setEndIndex(end);
+
+        addAttribute(attrBuffer, "integer", begin, end);
 
         addPadding(appendTo, fieldPosition, 0, 0);
         return appendTo;
@@ -714,17 +748,23 @@ DecimalFormat::format(  double number,
     // Special case for INFINITE,
     if (uprv_isInfinite(number))
     {
-        int32_t prefixLen = appendAffix(appendTo, number, isNegative, TRUE);
+        int32_t prefixLen = appendAffix(appendTo, number, attrBuffer, isNegative, TRUE);
+
+        int begin = appendTo.length();
 
         if (fieldPosition.getField() == NumberFormat::kIntegerField)
-            fieldPosition.setBeginIndex(appendTo.length());
+            fieldPosition.setBeginIndex(begin);
 
         appendTo += getConstSymbol(DecimalFormatSymbols::kInfinitySymbol);
 
-        if (fieldPosition.getField() == NumberFormat::kIntegerField)
-            fieldPosition.setEndIndex(appendTo.length());
+        int end = appendTo.length();
 
-        int32_t suffixLen = appendAffix(appendTo, number, isNegative, FALSE);
+        if (fieldPosition.getField() == NumberFormat::kIntegerField)
+            fieldPosition.setEndIndex(end);
+
+        addAttribute(attrBuffer, "integer", begin, end);
+
+        int32_t suffixLen = appendAffix(appendTo, number, attrBuffer, isNegative, FALSE);
 
         addPadding(appendTo, fieldPosition, prefixLen, suffixLen);
         return appendTo;
@@ -740,7 +780,7 @@ DecimalFormat::format(  double number,
     digits.set(number, precision(FALSE),
                !fUseExponentialNotation && !areSignificantDigitsUsed());
 
-    return subformat(appendTo, fieldPosition, digits, FALSE);
+    return subformat(appendTo, fieldPosition, attrBuffer, digits, FALSE);
 }
  
 /**
@@ -821,6 +861,20 @@ DecimalFormat::subformat(UnicodeString& appendTo,
                          DigitList&     digits,
                          UBool         isInteger) const
 {
+    return subformat(appendTo, fieldPosition, NULL, digits, isInteger);
+}
+
+/**
+ * Complete the formatting of a finite number.  On entry, the fDigitList must
+ * be filled in with the correct digits.
+ */
+UnicodeString&
+DecimalFormat::subformat(UnicodeString& appendTo,
+                         FieldPosition& fieldPosition,
+                         AttrBuffer attrBuffer,
+                         DigitList&     digits,
+                         UBool         isInteger) const
+{
     // Gets the localized zero Unicode character.
     UChar32 zero = getConstSymbol(DecimalFormatSymbols::kZeroDigitSymbol).char32At(0);
     int32_t zeroDelta = zero - '0'; // '0' is the DigitList representation of zero
@@ -853,7 +907,7 @@ DecimalFormat::subformat(UnicodeString& appendTo,
 
     // Appends the prefix.
     double doubleValue = digits.getDouble();
-    int32_t prefixLen = appendAffix(appendTo, doubleValue, !digits.fIsPositive, TRUE);
+    int32_t prefixLen = appendAffix(appendTo, doubleValue, attrBuffer, !digits.fIsPositive, TRUE);
 
     if (fUseExponentialNotation)
     {
@@ -867,6 +921,11 @@ DecimalFormat::subformat(UnicodeString& appendTo,
         {
             fieldPosition.setBeginIndex(-1);
         }
+
+        int currentLength = appendTo.length();
+        int intBegin = currentLength;
+        int intEnd = -1;
+        int fracBegin = -1;
 
         int32_t minFracDig = 0;
         if (useSigDig) {
@@ -930,15 +989,21 @@ DecimalFormat::subformat(UnicodeString& appendTo,
         {
             if (i == integerDigits)
             {
+                intEnd = appendTo.length();
+                addAttribute(attrBuffer, "integer", intBegin, intEnd);
+
                 // Record field information for caller.
                 if (fieldPosition.getField() == NumberFormat::kIntegerField)
-                    fieldPosition.setEndIndex(appendTo.length());
+                    fieldPosition.setEndIndex(intEnd);
 
                 appendTo += *decimal;
 
+                fracBegin = appendTo.length();
+                addAttribute(attrBuffer, "decimal_separator", fracBegin - 1, fracBegin);
+
                 // Record field information for caller.
                 if (fieldPosition.getField() == NumberFormat::kFractionField)
-                    fieldPosition.setBeginIndex(appendTo.length());
+                    fieldPosition.setBeginIndex(fracBegin);
             }
             // Restores the digit character or pads the buffer with zeros.
             UChar32 c = (UChar32)((i < digits.fCount) ?
@@ -947,17 +1012,26 @@ DecimalFormat::subformat(UnicodeString& appendTo,
             appendTo += c;
         }
 
+        currentLength = appendTo.length();
+
         // Record field information
         if (fieldPosition.getField() == NumberFormat::kIntegerField)
         {
             if (fieldPosition.getEndIndex() < 0)
-                fieldPosition.setEndIndex(appendTo.length());
+                fieldPosition.setEndIndex(currentLength);
         }
         else if (fieldPosition.getField() == NumberFormat::kFractionField)
         {
             if (fieldPosition.getBeginIndex() < 0)
                 fieldPosition.setBeginIndex(appendTo.length());
-            fieldPosition.setEndIndex(appendTo.length());
+            fieldPosition.setEndIndex(currentLength);
+        }
+
+        if (intEnd < 0) {
+            addAttribute(attrBuffer, "integer", intBegin, currentLength);
+        }
+        if (fracBegin > 0) {
+            addAttribute(attrBuffer, "fraction", fracBegin, currentLength);
         }
 
         // The exponent is output using the pattern-specified minimum
@@ -965,6 +1039,9 @@ DecimalFormat::subformat(UnicodeString& appendTo,
         // digits, since truncating the exponent would appendTo in an
         // unacceptable inaccuracy.
         appendTo += getConstSymbol(DecimalFormatSymbols::kExponentialSymbol);
+
+        addAttribute(attrBuffer, "exponent_symbol",currentLength, appendTo.length());
+        currentLength = appendTo.length();
 
         // For zero values, we force the exponent to zero.  We
         // must do this here, and not earlier, because the value
@@ -974,9 +1051,14 @@ DecimalFormat::subformat(UnicodeString& appendTo,
 
         if (exponent < 0) {
             appendTo += getConstSymbol(DecimalFormatSymbols::kMinusSignSymbol);
+            addAttribute(attrBuffer, "exponent_sign",currentLength,appendTo.length());
         } else if (fExponentSignAlwaysShown) {
             appendTo += getConstSymbol(DecimalFormatSymbols::kPlusSignSymbol);
+            addAttribute(attrBuffer, "exponent_sign",currentLength,appendTo.length());
         }
+
+
+        currentLength = appendTo.length();
 
         DigitList expDigits;
         expDigits.set(exponent);
@@ -994,9 +1076,14 @@ DecimalFormat::subformat(UnicodeString& appendTo,
                           (expDigits.fDigits[i] + zeroDelta) : zero);
             appendTo += c;
         }
+
+        addAttribute(attrBuffer, "exponent", currentLength, appendTo.length());
     }
     else  // Not using exponential notation
     {
+        int currentLength = appendTo.length();
+        int intBegin = currentLength;
+
         // Record field information for caller.
         if (fieldPosition.getField() == NumberFormat::kIntegerField)
             fieldPosition.setBeginIndex(appendTo.length());
@@ -1052,7 +1139,9 @@ DecimalFormat::subformat(UnicodeString& appendTo,
 
             // Output grouping separator if necessary.
             if (isGroupingPosition(i)) {
+                currentLength = appendTo.length();
                 appendTo.append(*grouping);
+                addAttribute(attrBuffer, "grouping_separator",currentLength,appendTo.length());
             }
         }
 
@@ -1071,13 +1160,21 @@ DecimalFormat::subformat(UnicodeString& appendTo,
         if (!fractionPresent && appendTo.length() == sizeBeforeIntegerPart)
             appendTo += (zero);
 
+        currentLength = appendTo.length();
+        addAttribute(attrBuffer, "integer", intBegin, currentLength);
+
         // Output the decimal separator if we always do so.
-        if (fDecimalSeparatorAlwaysShown || fractionPresent)
+        if (fDecimalSeparatorAlwaysShown || fractionPresent) {
             appendTo += *decimal;
+            addAttribute(attrBuffer, "decimal_separator", currentLength, appendTo.length());
+            currentLength = appendTo.length();
+        }
+
+        int fracBegin = currentLength;
 
         // Record field information for caller.
         if (fieldPosition.getField() == NumberFormat::kFractionField)
-            fieldPosition.setBeginIndex(appendTo.length());
+            fieldPosition.setBeginIndex(fracBegin);
 
         count = useSigDig ? INT32_MAX : getMaximumFractionDigits();
         if (useSigDig && (sigCount == maxSigDig ||
@@ -1129,9 +1226,11 @@ DecimalFormat::subformat(UnicodeString& appendTo,
         // Record field information for caller.
         if (fieldPosition.getField() == NumberFormat::kFractionField)
             fieldPosition.setEndIndex(appendTo.length());
+
+        addAttribute(attrBuffer, "fraction", fracBegin, appendTo.length());
     }
 
-    int32_t suffixLen = appendAffix(appendTo, doubleValue, !digits.fIsPositive, FALSE);
+    int32_t suffixLen = appendAffix(appendTo, doubleValue, attrBuffer, !digits.fIsPositive, FALSE);
 
     addPadding(appendTo, fieldPosition, prefixLen, suffixLen);
     return appendTo;
@@ -2099,9 +2198,9 @@ DecimalFormat::setMultiplier(int32_t newValue)
 //    if (newValue <= 0) {
 //        throw new IllegalArgumentException("Bad multiplier: " + newValue);
 //    }
-    if (newValue > 0) {
+//    if (newValue > 0) {
         fMultiplier = newValue;
-    }
+//    }
     // else No way to return an error.
 }
 
@@ -2439,6 +2538,14 @@ void DecimalFormat::expandAffixes() {
 #endif
 }
 
+void DecimalFormat::expandAffix(const UnicodeString& pattern,
+                                UnicodeString& affix,
+                                double number,
+                                UBool doFormat) const {
+
+    expandAffix(pattern, affix, number, NULL, doFormat);
+}
+
 /**
  * Expand an affix pattern into an affix string.  All characters in the
  * pattern are literal unless prefixed by kQuote.  The following characters
@@ -2473,6 +2580,7 @@ void DecimalFormat::expandAffixes() {
 void DecimalFormat::expandAffix(const UnicodeString& pattern,
                                 UnicodeString& affix,
                                 double number,
+                                AttrBuffer attrBuffer,
                                 UBool doFormat) const {
     affix.remove();
     for (int i=0; i<pattern.length(); ) {
@@ -2481,6 +2589,7 @@ void DecimalFormat::expandAffix(const UnicodeString& pattern,
         if (c == kQuote) {
             c = pattern.char32At(i);
             i += U16_LENGTH(c);
+            int beginIdx = affix.length();
             switch (c) {
             case kCurrencySign: {
                 // As of ICU 2.2 we use the currency object, and
@@ -2498,6 +2607,7 @@ void DecimalFormat::expandAffix(const UnicodeString& pattern,
                     UErrorCode ec = U_ZERO_ERROR;
                     if(intl) {
                         affix += currencyUChars;
+                        addAttribute(attrBuffer, "currency", beginIdx, affix.length());
                     } else {
                         int32_t len;
                         UBool isChoiceFormat;
@@ -2546,11 +2656,13 @@ void DecimalFormat::expandAffix(const UnicodeString& pattern,
                                     // We only arrive here if the currency choice
                                     // format in the locale data is INVALID.
                                     affix += currencyUChars;
+                                    addAttribute(attrBuffer, "currency", beginIdx, affix.length());
                                 }
                             }
                             continue;
                         }
                         affix += UnicodeString(s, len);
+                        addAttribute(attrBuffer, "currency", beginIdx, affix.length());
                     }
                 } else {
                     if(intl) {
@@ -2558,20 +2670,25 @@ void DecimalFormat::expandAffix(const UnicodeString& pattern,
                     } else {
                         affix += getConstSymbol(DecimalFormatSymbols::kCurrencySymbol);
                     }
+                    addAttribute(attrBuffer, "currency", beginIdx, affix.length());
                 }
                 break;
             }
             case kPatternPercent:
                 affix += getConstSymbol(DecimalFormatSymbols::kPercentSymbol);
+                addAttribute(attrBuffer, "percent", beginIdx, affix.length());
                 break;
             case kPatternPerMill:
                 affix += getConstSymbol(DecimalFormatSymbols::kPerMillSymbol);
+                addAttribute(attrBuffer, "permille", beginIdx, affix.length());
                 break;
             case kPatternPlus:
                 affix += getConstSymbol(DecimalFormatSymbols::kPlusSignSymbol);
+                addAttribute(attrBuffer, "sign", beginIdx, affix.length());
                 break;
             case kPatternMinus:
                 affix += getConstSymbol(DecimalFormatSymbols::kMinusSignSymbol);
+                addAttribute(attrBuffer, "sign", beginIdx, affix.length());
                 break;
             default:
                 affix.append(c);
@@ -2584,6 +2701,11 @@ void DecimalFormat::expandAffix(const UnicodeString& pattern,
     }
 }
 
+int32_t DecimalFormat::appendAffix(UnicodeString& buf, double number,
+                                   UBool isNegative, UBool isPrefix) const {
+    return appendAffix(buf, number, NULL, isNegative, isPrefix);
+}
+
 /**
  * Append an affix to the given StringBuffer.
  * @param buf buffer to append to
@@ -2591,7 +2713,8 @@ void DecimalFormat::expandAffix(const UnicodeString& pattern,
  * @param isPrefix
  */
 int32_t DecimalFormat::appendAffix(UnicodeString& buf, double number,
-                                   UBool isNegative, UBool isPrefix) const {
+                                   AttrBuffer attrBuffer, UBool isNegative, 
+                                   UBool isPrefix) const {
     if (fCurrencyChoice != 0) {
         const UnicodeString* affixPat;
         if (isPrefix) {
@@ -2601,7 +2724,7 @@ int32_t DecimalFormat::appendAffix(UnicodeString& buf, double number,
         }
         if (affixPat) {
             UnicodeString affixBuf;
-            expandAffix(*affixPat, affixBuf, number, TRUE);
+            expandAffix(*affixPat, affixBuf, number, attrBuffer, TRUE);
             buf.append(affixBuf);
             return affixBuf.length();
         }
@@ -2614,7 +2737,41 @@ int32_t DecimalFormat::appendAffix(UnicodeString& buf, double number,
     } else {
         affix = isNegative ? &fNegativeSuffix : &fPositiveSuffix;
     }
+
+    int begin = (int)buf.length();
+
     buf.append(*affix);
+
+    int offset = (int) (*affix).indexOf(getConstSymbol(DecimalFormatSymbols::kCurrencySymbol));
+    if (offset > -1) {
+        UnicodeString aff = getConstSymbol(DecimalFormatSymbols::kCurrencySymbol);
+        addAttribute(attrBuffer, "currency", begin + offset, begin + offset + aff.length());
+    }
+
+    offset = (int) (*affix).indexOf(getConstSymbol(DecimalFormatSymbols::kIntlCurrencySymbol));
+    if (offset > -1) {
+        UnicodeString aff = getConstSymbol(DecimalFormatSymbols::kIntlCurrencySymbol);
+        addAttribute(attrBuffer, "currency", begin + offset, begin + offset + aff.length());
+    }
+
+    offset = (int) (*affix).indexOf(getConstSymbol(DecimalFormatSymbols::kMinusSignSymbol));
+    if (offset > -1) {
+        UnicodeString aff = getConstSymbol(DecimalFormatSymbols::kMinusSignSymbol);
+        addAttribute(attrBuffer, "sign", begin + offset, begin + offset + aff.length());
+    }
+
+    offset = (int) (*affix).indexOf(getConstSymbol(DecimalFormatSymbols::kPercentSymbol));
+    if (offset > -1) {
+        UnicodeString aff = getConstSymbol(DecimalFormatSymbols::kPercentSymbol);
+        addAttribute(attrBuffer, "percent", begin + offset, begin + offset + aff.length());
+    }
+
+    offset = (int) (*affix).indexOf(getConstSymbol(DecimalFormatSymbols::kPerMillSymbol));
+    if (offset > -1) {
+        UnicodeString aff = getConstSymbol(DecimalFormatSymbols::kPerMillSymbol);
+        addAttribute(attrBuffer, "permille", begin + offset, begin + offset + aff.length());
+    }
+
     return affix->length();
 }
 
@@ -3739,6 +3896,27 @@ DecimalFormat::precision(UBool isIntegral) const {
     } else {
         return isIntegral ? 0 : getMaximumFractionDigits();
     }
+}
+
+void DecimalFormat::addAttribute(AttrBuffer attrBuffer, char *fieldname, 
+                                 int begin, int end) const {
+    if(attrBuffer == NULL || begin == end) {
+        return;
+    }
+
+    char * tmp;
+    tmp = attrBuffer->buffer;
+
+    if((128 + strlen(attrBuffer->buffer)) > attrBuffer->bufferSize) {
+        attrBuffer->bufferSize = 2 * attrBuffer->bufferSize;
+        attrBuffer->buffer = 
+                (char *) malloc(attrBuffer->bufferSize * sizeof(char));
+        attrBuffer->buffer[0] = '\0';       
+        sprintf(attrBuffer->buffer,"%s;%s;%d;%d", tmp, fieldname, begin, end);
+        free(tmp);
+        return;
+    }
+    sprintf(attrBuffer->buffer,"%s;%s;%d;%d", tmp, fieldname, begin, end);
 }
 
 U_NAMESPACE_END
