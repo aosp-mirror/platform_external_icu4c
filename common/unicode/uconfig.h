@@ -157,7 +157,7 @@
  * @stable ICU 2.6
  */
 #ifndef UCONFIG_NO_IDNA
-#   define UCONFIG_NO_IDNA 1
+#   define UCONFIG_NO_IDNA 0
 #endif
 
 /* i18n library switches ---------------------------------------------------- */
