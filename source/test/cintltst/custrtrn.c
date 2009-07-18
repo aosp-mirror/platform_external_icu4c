@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 2001-2008, International Business Machines Corporation and
+ * Copyright (c) 2001-2009, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /********************************************************************************
@@ -30,7 +30,10 @@
 
 void addUCharTransformTest(TestNode** root);
 
-static void Test_UChar_UTF32_API(void);
+static void Test_strToUTF32(void);
+static void Test_strToUTF32_surrogates(void);
+static void Test_strFromUTF32(void);
+static void Test_strFromUTF32_surrogates(void);
 static void Test_UChar_UTF8_API(void);
 static void Test_FromUTF8(void);
 static void Test_FromUTF8Lenient(void);
@@ -41,7 +44,10 @@ static void Test_WCHART_LongString(void);
 void 
 addUCharTransformTest(TestNode** root)
 {
-   addTest(root, &Test_UChar_UTF32_API, "custrtrn/Test_UChar_UTF32_API");
+   addTest(root, &Test_strToUTF32, "custrtrn/Test_strToUTF32");
+   addTest(root, &Test_strToUTF32_surrogates, "custrtrn/Test_strToUTF32_surrogates");
+   addTest(root, &Test_strFromUTF32, "custrtrn/Test_strFromUTF32");
+   addTest(root, &Test_strFromUTF32_surrogates, "custrtrn/Test_strFromUTF32_surrogates");
    addTest(root, &Test_UChar_UTF8_API, "custrtrn/Test_UChar_UTF8_API");
    addTest(root, &Test_FromUTF8, "custrtrn/Test_FromUTF8");
    addTest(root, &Test_FromUTF8Lenient, "custrtrn/Test_FromUTF8Lenient");
@@ -126,138 +132,365 @@ static const UChar src16[] = {
 };
 
 
-static void Test_UChar_UTF32_API(void){
-
+static void Test_strToUTF32(void){
     UErrorCode err = U_ZERO_ERROR;
-    UChar uTemp[1];
-    UChar32 u32Temp[1];
-    UChar* uTarget=uTemp;
-    const UChar32* u32Src = src32;
-    int32_t u32SrcLen = sizeof(src32)/4;
-    int32_t uTargetLength = 0;
-    int32_t uDestLen=0;
-    const UChar* uSrc = src16;
-    int32_t uSrcLen   = sizeof(src16)/2;
-    UChar32* u32Target = u32Temp;
-    uint32_t u32TargetLength =0;
-    int32_t u32DestLen =0;
-    UBool failed = FALSE;
+    UChar32 u32Target[400];
+    int32_t u32DestLen;
     int i= 0;
-    {
-        /* preflight */
-        u_strToUTF32(u32Target,u32TargetLength, &u32DestLen, uSrc, uSrcLen,&err);
-        if(err == U_BUFFER_OVERFLOW_ERROR){
-            err = U_ZERO_ERROR; 
-            u32Target = (UChar32*) malloc (sizeof(uint32_t) * (u32DestLen+1));
-            u32TargetLength = u32DestLen+1;
-        
-            u_strToUTF32(u32Target,u32TargetLength, &u32DestLen, uSrc, uSrcLen,&err);
-        }
-        else {
-            log_err("Should have gotten U_BUFFER_OVERFLOW_ERROR");
-        }
-        failed = FALSE;
-        /*for(i=0; i< u32DestLen; i++){
-            printf("0x%08X, ",uTarget[i]);
-            if(i%10==0){
-                printf("\n");
-            }
-        }*/
-        for(i=0; i< u32SrcLen; i++){
-            if(u32Target[i] != src32[i]){
-                log_verbose("u_strToUTF32() failed expected: \\U%08X got: \\U%08X at index: %i \n", src32[i], u32Target[i],i);
-                failed =TRUE;
-            }
-        }
-        if(failed){
-            log_err("u_strToUTF32() failed \n");
-        }
 
-        /* preflight */
-        u_strFromUTF32(uTarget,uTargetLength,&uDestLen,u32Src,u32SrcLen,&err);
-        if(err == U_BUFFER_OVERFLOW_ERROR){
-            err = U_ZERO_ERROR; 
-            uTarget = (UChar*) malloc( sizeof(UChar) * (uDestLen+1));
-            uTargetLength =  uDestLen+1;
-            u_strFromUTF32(uTarget,uTargetLength,&uDestLen,u32Src,u32SrcLen,&err);
-
-        }
-        /*for(i=0; i< uDestLen; i++){
-            printf("0x%04X, ",uTarget[i]);
-            if(i%10==0){
-                printf("\n");
-            }
-        }*/
-        
-        for(i=0; i< uDestLen; i++){
-            if(uTarget[i] != src16[i]){
-                log_verbose("u_strFromUTF32() failed expected: \\U%08X got: \\U%08X at index: %i \n", src16[i] ,uTarget[i],i);
-                failed =TRUE;
-            }
-        }
-        if(failed){
-            log_err("u_strToUTF32() failed \n");
-        }
-
-        free(u32Target);
-        free(uTarget);
+    /* first with length */
+    u32DestLen = -2;
+    u_strToUTF32(u32Target, 0, &u32DestLen, src16, LENGTHOF(src16),&err);
+    if(err != U_BUFFER_OVERFLOW_ERROR || u32DestLen != LENGTHOF(src32)) {
+        log_err("u_strToUTF32(preflight with length): "
+                "length %ld != %ld and %s != U_BUFFER_OVERFLOW_ERROR\n",
+                (long)u32DestLen, (long)LENGTHOF(src32), u_errorName(err));
+        return;
     }
-    {
-        u32SrcLen = -1;
-        uTargetLength = 0;
-        uSrcLen =-1;
-        u32TargetLength=0;
-        failed = FALSE;
+    err = U_ZERO_ERROR; 
+    u32DestLen = -2;
+    u_strToUTF32(u32Target, LENGTHOF(src32)+1, &u32DestLen, src16, LENGTHOF(src16),&err);
+    if(err != U_ZERO_ERROR || u32DestLen != LENGTHOF(src32)) {
+        log_err("u_strToUTF32(with length): "
+                "length %ld != %ld and %s != U_ZERO_ERROR\n",
+                (long)u32DestLen, (long)LENGTHOF(src32), u_errorName(err));
+        return;
+    }
+    /*for(i=0; i< u32DestLen; i++){
+        printf("0x%08X, ",uTarget[i]);
+        if(i%10==0){
+            printf("\n");
+        }
+    }*/
+    for(i=0; i< LENGTHOF(src32); i++){
+        if(u32Target[i] != src32[i]){
+            log_verbose("u_strToUTF32(with length) failed expected: %04X got: %04X at index: %i \n", src32[i], u32Target[i],i);
+        }
+    }
+    if(u32Target[i] != 0){
+        log_verbose("u_strToUTF32(with length) failed expected: %04X got: %04X at index: %i \n", 0, u32Target[i],i);
+    }
 
-       /* preflight */
-        u_strToUTF32(NULL,u32TargetLength, &u32DestLen, uSrc, uSrcLen,&err);
-        if(err == U_BUFFER_OVERFLOW_ERROR){
-            err = U_ZERO_ERROR; 
-            u32Target = (UChar32*) malloc (sizeof(uint32_t) * (u32DestLen+1));
-            u32TargetLength = u32DestLen+1;
-        
-            u_strToUTF32(u32Target,u32TargetLength, &u32DestLen, uSrc, uSrcLen,&err);
-        }
-        else {
-            log_err("Should have gotten U_BUFFER_OVERFLOW_ERROR");
-        }
-        failed = FALSE;
+    /* now NUL-terminated */
+    u32DestLen = -2;
+    u_strToUTF32(NULL,0, &u32DestLen, src16, -1,&err);
+    if(err != U_BUFFER_OVERFLOW_ERROR || u32DestLen != LENGTHOF(src32)-1) {
+        log_err("u_strToUTF32(preflight with NUL-termination): "
+                "length %ld != %ld and %s != U_BUFFER_OVERFLOW_ERROR\n",
+                (long)u32DestLen, (long)LENGTHOF(src32)-1, u_errorName(err));
+        return;
+    }
+    err = U_ZERO_ERROR; 
+    u32DestLen = -2;
+    u_strToUTF32(u32Target, LENGTHOF(src32), &u32DestLen, src16, -1,&err);
+    if(err != U_ZERO_ERROR || u32DestLen != LENGTHOF(src32)-1) {
+        log_err("u_strToUTF32(with NUL-termination): "
+                "length %ld != %ld and %s != U_ZERO_ERROR\n",
+                (long)u32DestLen, (long)LENGTHOF(src32)-1, u_errorName(err));
+        return;
+    }
 
-        for(i=0; i< u32SrcLen; i++){
-            if(u32Target[i] != src32[i]){
-                log_verbose("u_strToUTF32() failed expected: \\U%08X got: \\U%08X \n", src32[i], u32Target[i]);
-                failed =TRUE;
-            }
+    for(i=0; i< LENGTHOF(src32); i++){
+        if(u32Target[i] != src32[i]){
+            log_verbose("u_strToUTF32(NUL-termination) failed expected: %04X got: %04X \n", src32[i], u32Target[i]);
         }
-        if(failed){
-            log_err("u_strToUTF32() failed \n");
-        }
-
-        /* preflight */
-        u_strFromUTF32(NULL,uTargetLength,&uDestLen,u32Src,u32SrcLen,&err);
-        if(err == U_BUFFER_OVERFLOW_ERROR){
-            err = U_ZERO_ERROR; 
-            uTarget = (UChar*) malloc( sizeof(UChar) * (uDestLen+1));
-            uTargetLength =  uDestLen+1;
-            u_strFromUTF32(uTarget,uTargetLength,&uDestLen,u32Src,u32SrcLen,&err);
-
-        }
-        
-        for(i=0; i< uDestLen; i++){
-            if(uTarget[i] != src16[i]){
-                log_verbose("u_strFromUTF32() failed expected: \\U%08X got: \\U%08X \n", src16[i] ,uTarget[i]);
-                failed =TRUE;
-            }
-        }
-        if(failed){
-            log_err("u_strToUTF32() failed \n");
-        }
-
-        free(u32Target);
-        free(uTarget);
     }
 }
 
+/* test unpaired surrogates */
+static void Test_strToUTF32_surrogates() {
+    UErrorCode err = U_ZERO_ERROR;
+    UChar32 u32Target[400];
+    int32_t len16, u32DestLen;
+    int32_t numSubstitutions;
+    int i;
+
+    static const UChar surr16[] = { 0x41, 0xd900, 0x61, 0xdc00, 0x5a, 0xd900, 0xdc00, 0x7a, 0 };
+    static const UChar32 expected[] = { 0x5a, 0x50000, 0x7a, 0 };
+    static const UChar32 expected_FFFD[] = { 0x41, 0xfffd, 0x61, 0xfffd, 0x5a, 0x50000, 0x7a, 0 };
+    static const UChar32 expected_12345[] = { 0x41, 0x12345, 0x61, 0x12345, 0x5a, 0x50000, 0x7a, 0 };
+    len16 = LENGTHOF(surr16);
+    for(i = 0; i < 4; ++i) {
+        err = U_ZERO_ERROR;
+        u_strToUTF32(u32Target, 0, &u32DestLen, surr16+i, len16-i, &err);
+        if(err != U_INVALID_CHAR_FOUND) {
+            log_err("u_strToUTF32(preflight surr16+%ld) sets %s != U_INVALID_CHAR_FOUND\n",
+                    (long)i, u_errorName(err));
+            return;
+        }
+
+        err = U_ZERO_ERROR;
+        u_strToUTF32(u32Target, LENGTHOF(u32Target), &u32DestLen, surr16+i, len16-i, &err);
+        if(err != U_INVALID_CHAR_FOUND) {
+            log_err("u_strToUTF32(surr16+%ld) sets %s != U_INVALID_CHAR_FOUND\n",
+                    (long)i, u_errorName(err));
+            return;
+        }
+
+        err = U_ZERO_ERROR;
+        u_strToUTF32(NULL, 0, &u32DestLen, surr16+i, -1, &err);
+        if(err != U_INVALID_CHAR_FOUND) {
+            log_err("u_strToUTF32(preflight surr16+%ld/NUL) sets %s != U_INVALID_CHAR_FOUND\n",
+                    (long)i, u_errorName(err));
+            return;
+        }
+
+        err = U_ZERO_ERROR;
+        u_strToUTF32(u32Target, LENGTHOF(u32Target), &u32DestLen, surr16+i, -1, &err);
+        if(err != U_INVALID_CHAR_FOUND) {
+            log_err("u_strToUTF32(surr16+%ld/NUL) sets %s != U_INVALID_CHAR_FOUND\n",
+                    (long)i, u_errorName(err));
+            return;
+        }
+    }
+
+    err = U_ZERO_ERROR;
+    u_strToUTF32(u32Target, 0, &u32DestLen, surr16+4, len16-4-1, &err);
+    if(err != U_BUFFER_OVERFLOW_ERROR || u32DestLen != 3) {
+        log_err("u_strToUTF32(preflight surr16+4) sets %s != U_BUFFER_OVERFLOW_ERROR or an unexpected length\n",
+                u_errorName(err));
+        return;
+    }
+
+    err = U_ZERO_ERROR;
+    u_strToUTF32(u32Target, LENGTHOF(u32Target), &u32DestLen, surr16+4, len16-4-1, &err);
+    if(err != U_ZERO_ERROR || u32DestLen != 3 || uprv_memcmp(u32Target, expected, 4*4)) {
+        log_err("u_strToUTF32(surr16+4) sets %s != U_ZERO_ERROR or does not produce the expected string\n",
+                u_errorName(err));
+        return;
+    }
+
+    err = U_ZERO_ERROR;
+    u_strToUTF32(NULL, 0, &u32DestLen, surr16+4, -1, &err);
+    if(err != U_BUFFER_OVERFLOW_ERROR || u32DestLen != 3) {
+        log_err("u_strToUTF32(preflight surr16+4/NUL) sets %s != U_BUFFER_OVERFLOW_ERROR or an unexpected length\n",
+                u_errorName(err));
+        return;
+    }
+
+    err = U_ZERO_ERROR;
+    u_strToUTF32(u32Target, LENGTHOF(u32Target), &u32DestLen, surr16+4, -1, &err);
+    if(err != U_ZERO_ERROR || u32DestLen != 3 || uprv_memcmp(u32Target, expected, 4*4)) {
+        log_err("u_strToUTF32(surr16+4/NUL) sets %s != U_ZERO_ERROR or does not produce the expected string\n",
+                u_errorName(err));
+        return;
+    }
+
+    /* with substitution character */
+    numSubstitutions = -1;
+    err = U_ZERO_ERROR;
+    u_strToUTF32WithSub(u32Target, 0, &u32DestLen, surr16, len16-1, 0xfffd, &numSubstitutions, &err);
+    if(err != U_BUFFER_OVERFLOW_ERROR || u32DestLen != 7 || numSubstitutions != 2) {
+        log_err("u_strToUTF32WithSub(preflight surr16) sets %s != U_BUFFER_OVERFLOW_ERROR or an unexpected length\n",
+                u_errorName(err));
+        return;
+    }
+
+    err = U_ZERO_ERROR;
+    u_strToUTF32WithSub(u32Target, LENGTHOF(u32Target), &u32DestLen, surr16, len16-1, 0xfffd, &numSubstitutions, &err);
+    if(err != U_ZERO_ERROR || u32DestLen != 7 || numSubstitutions != 2 || uprv_memcmp(u32Target, expected_FFFD, 8*4)) {
+        log_err("u_strToUTF32WithSub(surr16) sets %s != U_ZERO_ERROR or does not produce the expected string\n",
+                u_errorName(err));
+        return;
+    }
+
+    err = U_ZERO_ERROR;
+    u_strToUTF32WithSub(NULL, 0, &u32DestLen, surr16, -1, 0x12345, &numSubstitutions, &err);
+    if(err != U_BUFFER_OVERFLOW_ERROR || u32DestLen != 7 || numSubstitutions != 2) {
+        log_err("u_strToUTF32WithSub(preflight surr16/NUL) sets %s != U_BUFFER_OVERFLOW_ERROR or an unexpected length\n",
+                u_errorName(err));
+        return;
+    }
+
+    err = U_ZERO_ERROR;
+    u_strToUTF32WithSub(u32Target, LENGTHOF(u32Target), &u32DestLen, surr16, -1, 0x12345, &numSubstitutions, &err);
+    if(err != U_ZERO_ERROR || u32DestLen != 7 || numSubstitutions != 2 || uprv_memcmp(u32Target, expected_12345, 8*4)) {
+        log_err("u_strToUTF32WithSub(surr16/NUL) sets %s != U_ZERO_ERROR or does not produce the expected string\n",
+                u_errorName(err));
+        return;
+    }
+}
+
+static void Test_strFromUTF32(void){
+    UErrorCode err = U_ZERO_ERROR;
+    UChar uTarget[400];
+    int32_t uDestLen;
+    int i= 0;
+
+    /* first with length */
+    uDestLen = -2;
+    u_strFromUTF32(uTarget,0,&uDestLen,src32,LENGTHOF(src32),&err);
+    if(err != U_BUFFER_OVERFLOW_ERROR || uDestLen != LENGTHOF(src16)) {
+        log_err("u_strFromUTF32(preflight with length): "
+                "length %ld != %ld and %s != U_BUFFER_OVERFLOW_ERROR\n",
+                (long)uDestLen, (long)LENGTHOF(src16), u_errorName(err));
+        return;
+    }
+    err = U_ZERO_ERROR; 
+    uDestLen = -2;
+    u_strFromUTF32(uTarget, LENGTHOF(src16)+1,&uDestLen,src32,LENGTHOF(src32),&err);
+    if(err != U_ZERO_ERROR || uDestLen != LENGTHOF(src16)) {
+        log_err("u_strFromUTF32(with length): "
+                "length %ld != %ld and %s != U_ZERO_ERROR\n",
+                (long)uDestLen, (long)LENGTHOF(src16), u_errorName(err));
+        return;
+    }
+    /*for(i=0; i< uDestLen; i++){
+        printf("0x%04X, ",uTarget[i]);
+        if(i%10==0){
+            printf("\n");
+        }
+    }*/
+    
+    for(i=0; i< uDestLen; i++){
+        if(uTarget[i] != src16[i]){
+            log_verbose("u_strFromUTF32(with length) failed expected: %04X got: %04X at index: %i \n", src16[i] ,uTarget[i],i);
+        }
+    }
+    if(uTarget[i] != 0){
+        log_verbose("u_strFromUTF32(with length) failed expected: %04X got: %04X at index: %i \n", 0,uTarget[i],i);
+    }
+
+    /* now NUL-terminated */
+    uDestLen = -2;
+    u_strFromUTF32(NULL,0,&uDestLen,src32,-1,&err);
+    if(err != U_BUFFER_OVERFLOW_ERROR || uDestLen != LENGTHOF(src16)-1) {
+        log_err("u_strFromUTF32(preflight with NUL-termination): "
+                "length %ld != %ld and %s != U_BUFFER_OVERFLOW_ERROR\n",
+                (long)uDestLen, (long)LENGTHOF(src16)-1, u_errorName(err));
+        return;
+    }
+    err = U_ZERO_ERROR; 
+    uDestLen = -2;
+    u_strFromUTF32(uTarget, LENGTHOF(src16),&uDestLen,src32,-1,&err);
+    if(err != U_ZERO_ERROR || uDestLen != LENGTHOF(src16)-1) {
+        log_err("u_strFromUTF32(with NUL-termination): "
+                "length %ld != %ld and %s != U_ZERO_ERROR\n",
+                (long)uDestLen, (long)LENGTHOF(src16)-1, u_errorName(err));
+        return;
+    }
+
+    for(i=0; i< uDestLen; i++){
+        if(uTarget[i] != src16[i]){
+            log_verbose("u_strFromUTF32(with NUL-termination) failed expected: %04X got: %04X \n", src16[i] ,uTarget[i]);
+        }
+    }
+}
+
+/* test surrogate code points */
+static void Test_strFromUTF32_surrogates() {
+    UErrorCode err = U_ZERO_ERROR;
+    UChar uTarget[400];
+    int32_t len32, uDestLen;
+    int32_t numSubstitutions;
+    int i;
+
+    static const UChar32 surr32[] = { 0x41, 0xd900, 0x61, 0xdc00, -1, 0x110000, 0x5a, 0x50000, 0x7a, 0 };
+    static const UChar expected[] = { 0x5a, 0xd900, 0xdc00, 0x7a, 0 };
+    static const UChar expected_FFFD[] = { 0x41, 0xfffd, 0x61, 0xfffd, 0xfffd, 0xfffd, 0x5a, 0xd900, 0xdc00, 0x7a, 0 };
+    static const UChar expected_12345[] = { 0x41, 0xd808, 0xdf45, 0x61, 0xd808, 0xdf45, 0xd808, 0xdf45, 0xd808, 0xdf45,
+                                            0x5a, 0xd900, 0xdc00, 0x7a, 0 };
+    len32 = LENGTHOF(surr32);
+    for(i = 0; i < 6; ++i) {
+        err = U_ZERO_ERROR;
+        u_strFromUTF32(uTarget, 0, &uDestLen, surr32+i, len32-i, &err);
+        if(err != U_INVALID_CHAR_FOUND) {
+            log_err("u_strFromUTF32(preflight surr32+%ld) sets %s != U_INVALID_CHAR_FOUND\n",
+                    (long)i, u_errorName(err));
+            return;
+        }
+
+        err = U_ZERO_ERROR;
+        u_strFromUTF32(uTarget, LENGTHOF(uTarget), &uDestLen, surr32+i, len32-i, &err);
+        if(err != U_INVALID_CHAR_FOUND) {
+            log_err("u_strFromUTF32(surr32+%ld) sets %s != U_INVALID_CHAR_FOUND\n",
+                    (long)i, u_errorName(err));
+            return;
+        }
+
+        err = U_ZERO_ERROR;
+        u_strFromUTF32(NULL, 0, &uDestLen, surr32+i, -1, &err);
+        if(err != U_INVALID_CHAR_FOUND) {
+            log_err("u_strFromUTF32(preflight surr32+%ld/NUL) sets %s != U_INVALID_CHAR_FOUND\n",
+                    (long)i, u_errorName(err));
+            return;
+        }
+
+        err = U_ZERO_ERROR;
+        u_strFromUTF32(uTarget, LENGTHOF(uTarget), &uDestLen, surr32+i, -1, &err);
+        if(err != U_INVALID_CHAR_FOUND) {
+            log_err("u_strFromUTF32(surr32+%ld/NUL) sets %s != U_INVALID_CHAR_FOUND\n",
+                    (long)i, u_errorName(err));
+            return;
+        }
+    }
+
+    err = U_ZERO_ERROR;
+    u_strFromUTF32(uTarget, 0, &uDestLen, surr32+6, len32-6-1, &err);
+    if(err != U_BUFFER_OVERFLOW_ERROR || uDestLen != 4) {
+        log_err("u_strFromUTF32(preflight surr32+6) sets %s != U_BUFFER_OVERFLOW_ERROR or an unexpected length\n",
+                u_errorName(err));
+        return;
+    }
+
+    err = U_ZERO_ERROR;
+    u_strFromUTF32(uTarget, LENGTHOF(uTarget), &uDestLen, surr32+6, len32-6-1, &err);
+    if(err != U_ZERO_ERROR || uDestLen != 4 || u_memcmp(uTarget, expected, 5)) {
+        log_err("u_strFromUTF32(surr32+6) sets %s != U_ZERO_ERROR or does not produce the expected string\n",
+                u_errorName(err));
+        return;
+    }
+
+    err = U_ZERO_ERROR;
+    u_strFromUTF32(NULL, 0, &uDestLen, surr32+6, -1, &err);
+    if(err != U_BUFFER_OVERFLOW_ERROR || uDestLen != 4) {
+        log_err("u_strFromUTF32(preflight surr32+6/NUL) sets %s != U_BUFFER_OVERFLOW_ERROR or an unexpected length\n",
+                u_errorName(err));
+        return;
+    }
+
+    err = U_ZERO_ERROR;
+    u_strFromUTF32(uTarget, LENGTHOF(uTarget), &uDestLen, surr32+6, -1, &err);
+    if(err != U_ZERO_ERROR || uDestLen != 4 || u_memcmp(uTarget, expected, 5)) {
+        log_err("u_strFromUTF32(surr32+6/NUL) sets %s != U_ZERO_ERROR or does not produce the expected string\n",
+                u_errorName(err));
+        return;
+    }
+
+    /* with substitution character */
+    numSubstitutions = -1;
+    err = U_ZERO_ERROR;
+    u_strFromUTF32WithSub(uTarget, 0, &uDestLen, surr32, len32-1, 0xfffd, &numSubstitutions, &err);
+    if(err != U_BUFFER_OVERFLOW_ERROR || uDestLen != 10 || numSubstitutions != 4) {
+        log_err("u_strFromUTF32WithSub(preflight surr32) sets %s != U_BUFFER_OVERFLOW_ERROR or an unexpected length\n",
+                u_errorName(err));
+        return;
+    }
+
+    err = U_ZERO_ERROR;
+    u_strFromUTF32WithSub(uTarget, LENGTHOF(uTarget), &uDestLen, surr32, len32-1, 0xfffd, &numSubstitutions, &err);
+    if(err != U_ZERO_ERROR || uDestLen != 10 || numSubstitutions != 4 || u_memcmp(uTarget, expected_FFFD, 11)) {
+        log_err("u_strFromUTF32WithSub(surr32) sets %s != U_ZERO_ERROR or does not produce the expected string\n",
+                u_errorName(err));
+        return;
+    }
+
+    err = U_ZERO_ERROR;
+    u_strFromUTF32WithSub(NULL, 0, &uDestLen, surr32, -1, 0x12345, &numSubstitutions, &err);
+    if(err != U_BUFFER_OVERFLOW_ERROR || uDestLen != 14 || numSubstitutions != 4) {
+        log_err("u_strFromUTF32WithSub(preflight surr32/NUL) sets %s != U_BUFFER_OVERFLOW_ERROR or an unexpected length\n",
+                u_errorName(err));
+        return;
+    }
+
+    err = U_ZERO_ERROR;
+    u_strFromUTF32WithSub(uTarget, LENGTHOF(uTarget), &uDestLen, surr32, -1, 0x12345, &numSubstitutions, &err);
+    if(err != U_ZERO_ERROR || uDestLen != 14 || numSubstitutions != 4 || u_memcmp(uTarget, expected_12345, 15)) {
+        log_err("u_strFromUTF32WithSub(surr32/NUL) sets %s != U_ZERO_ERROR or does not produce the expected string\n",
+                u_errorName(err));
+        return;
+    }
+}
 
 static void Test_UChar_UTF8_API(void){
 
@@ -308,7 +541,7 @@ static void Test_UChar_UTF8_API(void){
         }*/
         /*for(i=0; i< u8DestLen; i++){
             if(u8Target[i] != src8[i]){
-                log_verbose("u_strToUTF8() failed expected: \\U%08X got: \\U%08X \n", src8[i], u8Target[i]);
+                log_verbose("u_strToUTF8() failed expected: %04X got: %04X \n", src8[i], u8Target[i]);
                 failed =TRUE;
             }
         }
@@ -384,7 +617,7 @@ static void Test_UChar_UTF8_API(void){
         }*/
         /*for(i=0; i< u8DestLen; i++){
             if(u8Target[i] != src8[i]){
-                log_verbose("u_strToUTF8() failed expected: \\U%08X got: \\U%08X \n", src8[i], u8Target[i]);
+                log_verbose("u_strToUTF8() failed expected: %04X got: %04X \n", src8[i], u8Target[i]);
                 failed =TRUE;
             }
         }
@@ -1018,12 +1251,13 @@ static void Test_UChar_WCHART_API(void){
             u_strFromWCS(uDest, uDestLen,&reqLen,wDest,reqLen,&err);
         }
     
-
-        for(i=0; i< uSrcLen; i++){
+        if(!U_FAILURE(err)) {
+         for(i=0; i< uSrcLen; i++){
             if(uDest[i] != src16WithNulls[i]){
                 log_verbose("u_str*WCS() failed for string with nulls expected: \\u%04X got: \\u%04X at index: %i \n", src16WithNulls[i] ,uDest[i],i);
                 failed =TRUE;
             }
+         }
         }
 
         if(U_FAILURE(err)){
@@ -1067,11 +1301,13 @@ static void Test_UChar_WCHART_API(void){
         }
     
 
-        for(i=0; i< uSrcLen; i++){
+        if(!U_FAILURE(err)) {
+         for(i=0; i< uSrcLen; i++){
             if(uDest[i] != src16j[i]){
                 log_verbose("u_str*WCS() failed for null terminated string expected: \\u%04X got: \\u%04X at index: %i \n", src16j[i] ,uDest[i],i);
                 failed =TRUE;
             }
+         }
         }
 
         if(U_FAILURE(err)){

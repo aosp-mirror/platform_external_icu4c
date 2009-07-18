@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2008, International Business Machines Corporation and
+* Copyright (C) 2008-2009, International Business Machines Corporation and
 * others. All Rights Reserved.
 *******************************************************************************
 *
@@ -13,7 +13,7 @@
 
 #if !UCONFIG_NO_FORMATTING
 
-//FIXME: define it in compiler time
+//TODO: define it in compiler time
 //#define DTITVINF_DEBUG 1
 
 
@@ -317,7 +317,8 @@ DateIntervalInfo::initializeData(const Locale& locale, UErrorCode& err)
     ures_close(calBundle);
     ures_close(rb);
     status = U_ZERO_ERROR;
-    locNameLen = uloc_getParent(parentLocale, parentLocale,50,&status);
+    locNameLen = uloc_getParent(parentLocale, parentLocale,
+                                ULOC_FULLNAME_CAPACITY,&status);
   } while ( locNameLen > 0 );
 }
 
@@ -574,12 +575,12 @@ U_CDECL_BEGIN
  * @param val2  the other value in comparison
  * @return      TRUE if 2 values are the same, FALSE otherwise
  */
-static UBool U_CALLCONV hashTableValueComparator(UHashTok val1, UHashTok val2);
+UBool U_CALLCONV dtitvinfHashTableValueComparator(UHashTok val1, UHashTok val2);
 
 U_CDECL_END
 
 UBool 
-U_CALLCONV hashTableValueComparator(UHashTok val1, UHashTok val2) {
+U_CALLCONV dtitvinfHashTableValueComparator(UHashTok val1, UHashTok val2) {
     const UnicodeString* pattern1 = (UnicodeString*)val1.pointer;
     const UnicodeString* pattern2 = (UnicodeString*)val2.pointer;
     UBool ret = TRUE;
@@ -602,7 +603,7 @@ DateIntervalInfo::initHash(UErrorCode& status) {
         status = U_MEMORY_ALLOCATION_ERROR;
         return NULL;
     }
-    hTable->setValueCompartor(hashTableValueComparator);
+    hTable->setValueCompartor(dtitvinfHashTableValueComparator);
     return hTable;
 }
 

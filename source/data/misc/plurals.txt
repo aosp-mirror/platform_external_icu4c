@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2008 International Business Machines
+// * Copyright (C) 2009 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/plurals.xml
@@ -39,6 +39,7 @@ plurals:table(nofallback){
         fy{"set2"}
         ga{"set6"}
         gl{"set2"}
+        gsw{"set2"}
         gu{"set2"}
         guw{"set3"}
         ha{"set2"}

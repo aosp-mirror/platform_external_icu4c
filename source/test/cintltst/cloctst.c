@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1997-2008, International Business Machines Corporation and
+ * Copyright (c) 1997-2009, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /*****************************************************************************
@@ -34,6 +34,7 @@
 #include "unicode/utypes.h"
 #include "unicode/ulocdata.h"
 #include "unicode/parseerr.h" /* may not be included with some uconfig switches */
+#include "unicode/udbgutil.h"
 #define LENGTHOF(array) (int32_t)(sizeof(array)/sizeof((array)[0]))
 
 static void TestNullDefault(void);
@@ -98,15 +99,15 @@ static const char* const rawData2[LOCALE_INFO_SIZE][LOCALE_SIZE] = {
     /* display language (Catalan) */
     {   "angl\\u00E8s", "franc\\u00E8s", "catal\\u00E0", "grec",  "noruec", "xin\\u00E8s", "alemany", "espanyol", "japon\\u00E8s"    },
     /* display script code (Catalan) */
-    {   "",     "",     "",     "",     "",     "Xin\\u00e8s Simplificat (Han)", "", "", ""         },
+    {   "",     "",     "",     "",     "",     "xin\\u00e8s simplificat", "", "", ""         },
     /* display country (Catalan) */
     {   "Estats Units", "Fran\\u00E7a", "Espanya",  "Gr\\u00E8cia", "Noruega",  "Xina", "Alemanya", "", "Jap\\u00F3"    },
     /* display variant (Catalan) */
     {   "", "", "",                    "", "NY",    "", "", "", ""    },
     /* display name (Catalan) */
     {   "angl\\u00E8s (Estats Units)", "franc\\u00E8s (Fran\\u00E7a)", "catal\\u00E0 (Espanya)", 
-    "grec (Gr\\u00E8cia)", "noruec (Noruega, NY)", "xin\\u00E8s (Xin\\u00e8s Simplificat (Han), Xina)", 
-    "alemany (Alemanya, ordre alfab\\u00e8tic=phonebook)", "espanyol (ordre alfab\\u00e8tic=traditional)", "japon\\u00E8s (Jap\\u00F3, calendari=calendari japon\\u00e8s)" },
+    "grec (Gr\\u00E8cia)", "noruec (Noruega, NY)", "xin\\u00E8s (xin\\u00e8s simplificat, Xina)", 
+    "alemany (Alemanya, ordre alfab\\u00e8tic=ordre de la guia telef\\u00F2nica)", "espanyol (ordre alfab\\u00e8tic=ordre tradicional)", "japon\\u00E8s (Jap\\u00F3, calendari=calendari japon\\u00e8s)" },
 
     /* display language (Greek) */
     {
@@ -122,10 +123,10 @@ static const char* const rawData2[LOCALE_INFO_SIZE][LOCALE_SIZE] = {
     },
     /* display script code (Greek) */
 
-    {   "",     "",     "",     "",     "", "\\u039a\\u03b9\\u03bd\\u03b5\\u03b6\\u03b9\\u03ba\\u03cc \\u0391\\u03c0\\u03bb\\u03bf\\u03c0\\u03bf\\u03b9\\u03b7\\u03bc\\u03ad\\u03bd\\u03bf", "", "", "" },
+    {   "",     "",     "",     "",     "", "\\u0391\\u03c0\\u03bb\\u03bf\\u03c0\\u03bf\\u03b9\\u03b7\\u03bc\\u03ad\\u03bd\\u03bf \\u039a\\u03b9\\u03bd\\u03b5\\u03b6\\u03b9\\u03ba\\u03cc", "", "", "" },
     /* display country (Greek) */
     {
-        "\\u0397\\u03bd\\u03c9\\u03bc\\u03ad\\u03bd\\u03b5\\u03c2 \\u03a0\\u03bf\\u03bb\\u03b9\\u03c4\\u03b5\\u03af\\u03b5\\u03c2",
+        "\\u0397\\u03BD\\u03C9\\u03BC\\u03AD\\u03BD\\u03B5\\u03C2 \\u03A0\\u03BF\\u03BB\\u03B9\\u03C4\\u03B5\\u03AF\\u03B5\\u03C2 \\u03C4\\u03B7\\u03C2 \\u0391\\u03BC\\u03B5\\u03C1\\u03B9\\u03BA\\u03AE\\u03C2",
         "\\u0393\\u03b1\\u03bb\\u03bb\\u03af\\u03b1",
         "\\u0399\\u03c3\\u03c0\\u03b1\\u03bd\\u03af\\u03b1",
         "\\u0395\\u03bb\\u03bb\\u03ac\\u03b4\\u03b1",
@@ -139,15 +140,15 @@ static const char* const rawData2[LOCALE_INFO_SIZE][LOCALE_SIZE] = {
     {   "", "", "", "", "NY", "", "", "", ""    }, /* TODO: currently there is no translation for NY in Greek fix this test when we have it */
     /* display name (Greek) */
     {
-        "\\u0391\\u03b3\\u03b3\\u03bb\\u03b9\\u03ba\\u03ac (\\u0397\\u03bd\\u03c9\\u03bc\\u03ad\\u03bd\\u03b5\\u03c2 \\u03a0\\u03bf\\u03bb\\u03b9\\u03c4\\u03b5\\u03af\\u03b5\\u03c2)",
+        "\\u0391\\u03b3\\u03b3\\u03bb\\u03b9\\u03ba\\u03ac (\\u0397\\u03BD\\u03C9\\u03BC\\u03AD\\u03BD\\u03B5\\u03C2 \\u03A0\\u03BF\\u03BB\\u03B9\\u03C4\\u03B5\\u03AF\\u03B5\\u03C2 \\u03C4\\u03B7\\u03C2 \\u0391\\u03BC\\u03B5\\u03C1\\u03B9\\u03BA\\u03AE\\u03C2)",
         "\\u0393\\u03b1\\u03bb\\u03bb\\u03b9\\u03ba\\u03ac (\\u0393\\u03b1\\u03bb\\u03bb\\u03af\\u03b1)",
         "\\u039a\\u03b1\\u03c4\\u03b1\\u03bb\\u03b1\\u03bd\\u03b9\\u03ba\\u03ac (\\u0399\\u03c3\\u03c0\\u03b1\\u03bd\\u03af\\u03b1)",
         "\\u0395\\u03bb\\u03bb\\u03b7\\u03bd\\u03b9\\u03ba\\u03ac (\\u0395\\u03bb\\u03bb\\u03ac\\u03b4\\u03b1)",
         "\\u039d\\u03bf\\u03c1\\u03b2\\u03b7\\u03b3\\u03b9\\u03ba\\u03ac (\\u039d\\u03bf\\u03c1\\u03b2\\u03b7\\u03b3\\u03af\\u03b1, NY)",
-        "\\u039A\\u03B9\\u03BD\\u03B5\\u03B6\\u03B9\\u03BA\\u03AC (\\u039a\\u03b9\\u03bd\\u03b5\\u03b6\\u03b9\\u03ba\\u03cc \\u0391\\u03c0\\u03bb\\u03bf\\u03c0\\u03bf\\u03b9\\u03b7\\u03bc\\u03ad\\u03bd\\u03bf, \\u039A\\u03AF\\u03BD\\u03B1)",
-        "\\u0393\\u03B5\\u03C1\\u03BC\\u03B1\\u03BD\\u03B9\\u03BA\\u03AC (\\u0393\\u03B5\\u03C1\\u03BC\\u03B1\\u03BD\\u03AF\\u03B1, \\u03A4\\u03B1\\u03BA\\u03C4\\u03BF\\u03C0\\u03BF\\u03AF\\u03B7\\u03C3\\u03B7=\\u03A3\\u03B5\\u03B9\\u03C1\\u03AC \\u03A4\\u03B7\\u03BB\\u03B5\\u03C6\\u03C9\\u03BD\\u03B9\\u03BA\\u03BF\\u03CD \\u039A\\u03B1\\u03C4\\u03B1\\u03BB\\u03CC\\u03B3\\u03BF\\u03C5)", 
-        "\\u0399\\u03C3\\u03C0\\u03B1\\u03BD\\u03B9\\u03BA\\u03AC (\\u03A4\\u03B1\\u03BA\\u03C4\\u03BF\\u03C0\\u03BF\\u03AF\\u03B7\\u03C3\\u03B7\\u003D\\u03A0\\u03B1\\u03C1\\u03B1\\u03B4\\u03BF\\u03C3\\u03B9\\u03B1\\u03BA\\u03AE \\u03A3\\u03B5\\u03B9\\u03C1\\u03AC)", 
-        "\\u0399\\u03B1\\u03C0\\u03C9\\u03BD\\u03B9\\u03BA\\u03AC (\\u0399\\u03B1\\u03C0\\u03C9\\u03BD\\u03AF\\u03B1, \\u0397\\u03BC\\u03B5\\u03C1\\u03BF\\u03BB\\u03CC\\u03B3\\u03B9\\u03BF=\\u0399\\u03B1\\u03C0\\u03C9\\u03BD\\u03B9\\u03BA\\u03CC \\u0397\\u03BC\\u03B5\\u03C1\\u03BF\\u03BB\\u03CC\\u03B3\\u03B9\\u03BF)"
+        "\\u039A\\u03B9\\u03BD\\u03B5\\u03B6\\u03B9\\u03BA\\u03AC (\\u0391\\u03c0\\u03bb\\u03bf\\u03c0\\u03bf\\u03b9\\u03b7\\u03bc\\u03ad\\u03bd\\u03bf \\u039a\\u03b9\\u03bd\\u03b5\\u03b6\\u03b9\\u03ba\\u03cc, \\u039A\\u03AF\\u03BD\\u03B1)",
+        "\\u0393\\u03B5\\u03C1\\u03BC\\u03B1\\u03BD\\u03B9\\u03BA\\u03AC (\\u0393\\u03B5\\u03C1\\u03BC\\u03B1\\u03BD\\u03AF\\u03B1, \\u03C4\\u03B1\\u03BA\\u03C4\\u03BF\\u03C0\\u03BF\\u03AF\\u03B7\\u03C3\\u03B7=\\u03A3\\u03B5\\u03B9\\u03C1\\u03AC \\u03C4\\u03B1\\u03BE\\u03B9\\u03BD\\u03CC\\u03BC\\u03B7\\u03C3\\u03B7\\u03C2 \\u03C4\\u03B7\\u03BB\\u03B5\\u03C6\\u03C9\\u03BD\\u03B9\\u03BA\\u03BF\\u03CD \\u03BA\\u03B1\\u03C4\\u03B1\\u03BB\\u03CC\\u03B3\\u03BF\\u03C5)", 
+        "\\u0399\\u03C3\\u03C0\\u03B1\\u03BD\\u03B9\\u03BA\\u03AC (\\u03C4\\u03B1\\u03BA\\u03C4\\u03BF\\u03C0\\u03BF\\u03AF\\u03B7\\u03C3\\u03B7=\\u03A0\\u03B1\\u03C1\\u03B1\\u03B4\\u03BF\\u03C3\\u03B9\\u03B1\\u03BA\\u03AE \\u03C3\\u03B5\\u03B9\\u03C1\\u03AC \\u03C4\\u03B1\\u03BE\\u03B9\\u03BD\\u03CC\\u03BC\\u03B7\\u03C3\\u03B7\\u03C2)", 
+        "\\u0399\\u03B1\\u03C0\\u03C9\\u03BD\\u03B9\\u03BA\\u03AC (\\u0399\\u03B1\\u03C0\\u03C9\\u03BD\\u03AF\\u03B1, \\u03B7\\u03BC\\u03B5\\u03C1\\u03BF\\u03BB\\u03CC\\u03B3\\u03B9\\u03BF=\\u0399\\u03B1\\u03C0\\u03C9\\u03BD\\u03B9\\u03BA\\u03CC \\u03B7\\u03BC\\u03B5\\u03C1\\u03BF\\u03BB\\u03CC\\u03B3\\u03B9\\u03BF)"
     }
 };
 
@@ -233,6 +234,8 @@ void addLocaleTest(TestNode** root)
     TESTCASE(TestGetLocaleForLCID);
     TESTCASE(TestOrientation);
     TESTCASE(TestLikelySubtags);
+    TESTCASE(TestToLanguageTag);
+    TESTCASE(TestForLanguageTag);
 }
 
 
@@ -600,8 +603,8 @@ static void TestDisplayNames()
             "el_GR" };
         static const char *expect[] = { "Spanish (calendar=Japanese Calendar, collation=Traditional Sort Order)", /* note sorted order of keywords */
             "espagnol (Calendrier=Calendrier japonais, Ordonnancement=Ordre traditionnel)",
-            "espanyol (calendari=calendari japon\\u00e8s, ordre alfab\\u00e8tic=traditional)",
-            "\\u0399\\u03C3\\u03C0\\u03B1\\u03BD\\u03B9\\u03BA\\u03AC (\\u0397\\u03BC\\u03B5\\u03C1\\u03BF\\u03BB\\u03CC\\u03B3\\u03B9\\u03BF=\\u0399\\u03B1\\u03C0\\u03C9\\u03BD\\u03B9\\u03BA\\u03CC \\u0397\\u03BC\\u03B5\\u03C1\\u03BF\\u03BB\\u03CC\\u03B3\\u03B9\\u03BF, \\u03A4\\u03B1\\u03BA\\u03C4\\u03BF\\u03C0\\u03BF\\u03AF\\u03B7\\u03C3\\u03B7=\\u03A0\\u03B1\\u03C1\\u03B1\\u03B4\\u03BF\\u03C3\\u03B9\\u03B1\\u03BA\\u03AE \\u03A3\\u03B5\\u03B9\\u03C1\\u03AC)" };
+            "espanyol (calendari=calendari japon\\u00e8s, ordre alfab\\u00e8tic=ordre tradicional)",
+            "\\u0399\\u03C3\\u03C0\\u03B1\\u03BD\\u03B9\\u03BA\\u03AC (\\u03B7\\u03BC\\u03B5\\u03C1\\u03BF\\u03BB\\u03CC\\u03B3\\u03B9\\u03BF=\\u0399\\u03B1\\u03C0\\u03C9\\u03BD\\u03B9\\u03BA\\u03CC \\u03B7\\u03BC\\u03B5\\u03C1\\u03BF\\u03BB\\u03CC\\u03B3\\u03B9\\u03BF, \\u03C4\\u03B1\\u03BA\\u03C4\\u03BF\\u03C0\\u03BF\\u03AF\\u03B7\\u03C3\\u03B7=\\u03A0\\u03B1\\u03C1\\u03B1\\u03B4\\u03BF\\u03C3\\u03B9\\u03B1\\u03BA\\u03AE \\u03C3\\u03B5\\u03B9\\u03C1\\u03AC \\u03C4\\u03B1\\u03BE\\u03B9\\u03BD\\u03CC\\u03BC\\u03B7\\u03C3\\u03B7\\u03C2)" };
         UChar *expectBuffer;
 
         for(i=0;i<LENGTHOF(testL);i++) {
@@ -1056,21 +1059,28 @@ static void TestSimpleDisplayNames()
      names, and other stuff like that.  This test just checks specific language
      and country codes to make sure we have the correct names for them.
   */
-    char languageCodes[] [4] = { "he", "id", "iu", "ug", "yi", "za" };
+    char languageCodes[] [4] = { "he", "id", "iu", "ug", "yi", "za", "419" };
     const char* languageNames [] = { "Hebrew", "Indonesian", "Inuktitut", "Uighur", "Yiddish",
-                               "Zhuang" };
+                               "Zhuang", "419" };
+    const char* inLocale [] = { "en_US", "zh_Hant"};
     UErrorCode status=U_ZERO_ERROR;
 
     int32_t i;
-    for (i = 0; i < 6; i++) {
+    int32_t localeIndex = 0;
+    for (i = 0; i < 7; i++) {
         UChar *testLang=0;
         UChar *expectedLang=0;
         int size=0;
-        size=uloc_getDisplayLanguage(languageCodes[i], "en_US", NULL, size, &status);
+        
+        if (i == 6) {
+            localeIndex = 1; /* Use the second locale for the rest of the test. */
+        }
+        
+        size=uloc_getDisplayLanguage(languageCodes[i], inLocale[localeIndex], NULL, size, &status);
         if(status==U_BUFFER_OVERFLOW_ERROR) {
             status=U_ZERO_ERROR;
             testLang=(UChar*)malloc(sizeof(UChar) * (size + 1));
-            uloc_getDisplayLanguage(languageCodes[i], "en_US", testLang, size + 1, &status);
+            uloc_getDisplayLanguage(languageCodes[i], inLocale[localeIndex], testLang, size + 1, &status);
         }
         expectedLang=(UChar*)malloc(sizeof(UChar) * (strlen(languageNames[i])+1));
         u_uastrcpy(expectedLang, languageNames[i]);
@@ -1932,7 +1942,7 @@ static void TestDisplayKeywordValues(void){
         UChar displayKeywordValue[500];
     } testCases[] = {
         {   "ca_ES@currency=ESP",         "de_AT", 
-            {0x0053, 0x0070, 0x0061, 0x006e, 0x0069, 0x0073, 0x0063, 0x0068, 0x0065, 0x0020, 0x0050, 0x0065, 0x0073, 0x0065, 0x0074, 0x0065, 0x0000}
+            {0x0053, 0x0070, 0x0061, 0x006e, 0x0069, 0x0073, 0x0063, 0x0068, 0x0065, 0x0020, 0x0050, 0x0065, 0x0073, 0x0065, 0x0074, 0x0061, 0x0000}
         },
         {   "de_AT@currency=ATS",         "fr_FR", 
             {0x0073, 0x0063, 0x0068, 0x0069, 0x006c, 0x006c, 0x0069, 0x006e, 0x0067, 0x0020, 0x0061, 0x0075, 0x0074, 0x0072, 0x0069, 0x0063, 0x0068, 0x0069, 0x0065, 0x006e, 0x0000}
@@ -2353,6 +2363,10 @@ static void TestLanguageExemplarsFallbacks(void) {
     ulocdata_close(uld);
 }
 
+static const char *acceptResult(UAcceptResult uar) {
+    return  udbg_enumName(UDBG_UAcceptResult, uar);
+}
+
 static void TestAcceptLanguage(void) {
     UErrorCode status = U_ZERO_ERROR;
     UAcceptResult outResult;
@@ -2362,16 +2376,20 @@ static void TestAcceptLanguage(void) {
     int32_t rc = 0;
 
     struct { 
-        int32_t httpSet; 
-        const char *icuSet;
-        const char *expect;
-        UAcceptResult res;
+        int32_t httpSet;       /**< Which of http[] should be used? */
+        const char *icuSet;    /**< ? */
+        const char *expect;    /**< The expected locale result */
+        UAcceptResult res;     /**< The expected error code */
     } tests[] = { 
         /*0*/{ 0, NULL, "mt_MT", ULOC_ACCEPT_VALID },
         /*1*/{ 1, NULL, "en", ULOC_ACCEPT_VALID },
         /*2*/{ 2, NULL, "en", ULOC_ACCEPT_FALLBACK },
         /*3*/{ 3, NULL, "", ULOC_ACCEPT_FAILED },
         /*4*/{ 4, NULL, "es", ULOC_ACCEPT_VALID },
+        
+        /*5*/{ 5, NULL, "en", ULOC_ACCEPT_VALID },  /* XF */
+        /*6*/{ 6, NULL, "ja", ULOC_ACCEPT_FALLBACK },  /* XF */
+        /*7*/{ 7, NULL, "zh", ULOC_ACCEPT_FALLBACK },  /* XF */
     };
     const int32_t numTests = sizeof(tests)/sizeof(tests[0]);
     static const char *http[] = {
@@ -2386,29 +2404,35 @@ static void TestAcceptLanguage(void) {
               "xxx-yyy;q=.01, xxx-yyy;q=.01, xxx-yyy;q=.01, xxx-yyy;q=.01, xxx-yyy;q=.01, "
               "xxx-yyy;q=.01, xxx-yyy;q=.01, xxx-yyy;q=.01, xxx-yyy;q=.01, xxx-yyy;q=.01, "
               "xxx-yyy;q=.01, xxx-yyy;q=.01, xxx-yyy;q=.01, xx-yy;q=.1, "
-              "es"
+              "es",
+              
+        /*5*/ "zh-xx;q=0.9, en;q=0.6",
+        /*6*/ "ja-JA",
+        /*7*/ "zh-xx;q=0.9",
     };
 
     for(i=0;i<numTests;i++) {
         outResult = -3;
         status=U_ZERO_ERROR;
-        log_verbose("test #%d: http[%s], ICU[%s], expect %s, %d\n", 
-            i, http[tests[i].httpSet], tests[i].icuSet, tests[i].expect, tests[i].res);
+        log_verbose("test #%d: http[%s], ICU[%s], expect %s, %s\n", 
+            i, http[tests[i].httpSet], tests[i].icuSet, tests[i].expect, acceptResult(tests[i].res));
 
         available = ures_openAvailableLocales(tests[i].icuSet, &status);
         tmp[0]=0;
         rc = uloc_acceptLanguageFromHTTP(tmp, 199, &outResult, http[tests[i].httpSet], available, &status);
         uenum_close(available);
-        log_verbose(" got %s, %d [%s]\n", tmp[0]?tmp:"(EMPTY)", outResult, u_errorName(status));
+        log_verbose(" got %s, %s [%s]\n", tmp[0]?tmp:"(EMPTY)", acceptResult(outResult), u_errorName(status));
         if(outResult != tests[i].res) {
-            log_err("FAIL: #%d: expected outResult of %d but got %d\n", i, tests[i].res, outResult);
-            log_info("test #%d: http[%s], ICU[%s], expect %s, %d\n", 
-                i, http[tests[i].httpSet], tests[i].icuSet, tests[i].expect, tests[i].res);
+            log_err("FAIL: #%d: expected outResult of %s but got %s\n", i, 
+                acceptResult( tests[i].res), 
+                acceptResult( outResult));
+            log_info("test #%d: http[%s], ICU[%s], expect %s, %s\n", 
+                i, http[tests[i].httpSet], tests[i].icuSet, tests[i].expect,acceptResult(tests[i].res));
         }
         if((outResult>0)&&uprv_strcmp(tmp, tests[i].expect)) {
             log_err("FAIL: #%d: expected %s but got %s\n", i, tests[i].expect, tmp);
-            log_info("test #%d: http[%s], ICU[%s], expect %s, %d\n", 
-                i, http[tests[i].httpSet], tests[i].icuSet, tests[i].expect, tests[i].res);
+            log_info("test #%d: http[%s], ICU[%s], expect %s, %s\n", 
+                i, http[tests[i].httpSet], tests[i].icuSet, tests[i].expect, acceptResult(tests[i].res));
         }
     }
 }
@@ -2707,14 +2731,14 @@ static void TestUResourceBundle() {
             log_err("ures_open(%s) failed %s\n", oldLoc, u_errorName(status));
         }
 
-        us1 = ures_getLocale(rb1, &status);
+        us1 = ures_getLocaleByType(rb1, ULOC_ACTUAL_LOCALE, &status);
 
         status = U_ZERO_ERROR;
         rb2 = ures_open(NULL, newLoc, &status);
         if (U_FAILURE(status)) {
             log_err("ures_open(%s) failed %s\n", oldLoc, u_errorName(status));
         } 
-        us2 = ures_getLocale(rb2, &status);
+        us2 = ures_getLocaleByType(rb2, ULOC_ACTUAL_LOCALE, &status);
 
         if (strcmp(us1,newLoc)!=0 || strcmp(us1,us2)!=0 ) {
             log_err("The locales are not equal!.Old: %s, New: %s \n", oldLoc, newLoc);
@@ -3173,7 +3197,7 @@ const char* const full_data[][3] = {
     "ig"
   }, {
     "ii",
-    "ii_Latn_CN",
+    "ii_Yiii_CN",
     "ii"
   }, {
     "is",
@@ -3653,16 +3677,16 @@ const char* const full_data[][3] = {
     "bn_IN"
   }, {
     "und_CD",
-    "fr_Latn_CD",
-    "fr_CD"
+    "sw_Latn_CD",
+    "sw_CD"
   }, {
     "und_CF",
-    "sg_Latn_CF",
-    "sg"
+    "fr_Latn_CF",
+    "fr_CF"
   }, {
     "und_CG",
-    "ln_Latn_CG",
-    "ln_CG"
+    "fr_Latn_CG",
+    "fr_CG"
   }, {
     "und_CH",
     "de_Latn_CH",
@@ -3709,8 +3733,8 @@ const char* const full_data[][3] = {
     "cs"
   }, {
     "und_Cans",
-    "cwd_Cans_CA",
-    "cwd"
+    "crk_Cans_CA",
+    "crk"
   }, {
     "und_Cyrl",
     "ru_Cyrl_RU",
@@ -3769,8 +3793,8 @@ const char* const full_data[][3] = {
     "es"
   }, {
     "und_ET",
-    "am_Ethi_ET",
-    "am"
+    "en_Latn_ET",
+    "en_ET"
   }, {
     "und_Ethi",
     "am_Ethi_ET",
@@ -3837,8 +3861,8 @@ const char* const full_data[][3] = {
     "es_GT"
   }, {
     "und_GU",
-    "ch_Latn_GU",
-    "ch"
+    "en_Latn_GU",
+    "en_GU"
   }, {
     "und_GW",
     "pt_Latn_GW",
@@ -4017,8 +4041,8 @@ const char* const full_data[][3] = {
     "es"
   }, {
     "und_Latn_ET",
-    "om_Latn_ET",
-    "om"
+    "en_Latn_ET",
+    "en_ET"
   }, {
     "und_Latn_GB",
     "en_Latn_GB",
@@ -4037,8 +4061,8 @@ const char* const full_data[][3] = {
     "it"
   }, {
     "und_Latn_NG",
-    "ha_Latn_NG",
-    "ha"
+    "en_Latn_NG",
+    "en_NG"
   }, {
     "und_Latn_TR",
     "tr_Latn_TR",
@@ -4061,7 +4085,7 @@ const char* const full_data[][3] = {
     "ro_MD"
   }, {
     "und_ME",
-    "sr_Cyrl_ME",
+    "sr_Latn_ME",
     "sr_ME"
   }, {
     "und_MG",
@@ -4141,8 +4165,8 @@ const char* const full_data[][3] = {
     "ha_NE"
   }, {
     "und_NG",
-    "ha_Latn_NG",
-    "ha"
+    "en_Latn_NG",
+    "en_NG"
   }, {
     "und_NI",
     "es_Latn_NI",
@@ -4161,8 +4185,8 @@ const char* const full_data[][3] = {
     "ne"
   }, {
     "und_NR",
-    "na_Latn_NR",
-    "na"
+    "en_Latn_NR",
+    "en_NR"
   }, {
     "und_NU",
     "niu_Latn_NU",
@@ -4185,8 +4209,8 @@ const char* const full_data[][3] = {
     "es_PE"
   }, {
     "und_PF",
-    "ty_Latn_PF",
-    "ty"
+    "fr_Latn_PF",
+    "fr_PF"
   }, {
     "und_PG",
     "tpi_Latn_PG",
@@ -4309,12 +4333,12 @@ const char* const full_data[][3] = {
     "si"
   }, {
     "und_TD",
-    "ar_Arab_TD",
-    "ar_TD"
+    "fr_Latn_TD",
+    "fr_TD"
   }, {
     "und_TG",
-    "ee_Latn_TG",
-    "ee_TG"
+    "fr_Latn_TG",
+    "fr_TG"
   }, {
     "und_TH",
     "th_Thai_TH",
@@ -4325,12 +4349,12 @@ const char* const full_data[][3] = {
     "tg"
   }, {
     "und_TK",
-    "tkl_Latn_TK",
-    "tkl"
+    "en_Latn_TK",
+    "en_TK"
   }, {
     "und_TL",
-    "tet_Latn_TL",
-    "tet"
+    "pt_Latn_TL",
+    "pt_TL"
   }, {
     "und_TM",
     "tk_Latn_TM",
@@ -4401,8 +4425,8 @@ const char* const full_data[][3] = {
     "vi"
   }, {
     "und_VU",
-    "fr_Latn_VU",
-    "fr_VU"
+    "bi_Latn_VU",
+    "bi"
   }, {
     "und_WF",
     "fr_Latn_WF",
@@ -4421,8 +4445,8 @@ const char* const full_data[][3] = {
     "fr_YT"
   }, {
     "und_Yiii",
-    "en_Yiii_US",
-    "en_Yiii"
+    "ii_Yiii_CN",
+    "ii"
   }, {
     "ur",
     "ur_Arab_PK",
@@ -4549,8 +4573,8 @@ const char* const full_data[][3] = {
     "en"
   }, {
     "und_Latn_CN",
-    "ii_Latn_CN",
-    "ii"
+    "za_Latn_CN",
+    "za"
   }, {
     "und_Latn_TW",
     "zh_Latn_TW",
@@ -5336,3 +5360,159 @@ static void TestLikelySubtags()
         }
     }
 }
+
+const char* const locale_to_langtag[][3] = {
+    {"",            "und",          "und"},
+    {"en",          "en",           "en"},
+    {"en_US",       "en-us",        "en-us"},
+    {"iw_IL",       "he-il",        "he-il"},
+    {"sr_Latn_SR",  "sr-latn-sr",   "sr-latn-sr"},
+    {"en__POSIX",   "en-posix",     "en-posix"},
+    {"en_POSIX",    "en",           NULL},
+    {"und_555",     "und-555",      "und-555"},
+    {"123",         "und",          NULL},
+    {"%$#&",        "und",          NULL},
+    {"_Latn",       "und-latn",     "und-latn"},
+    {"_DE",         "und-de",       "und-de"},
+    {"und_FR",      "und-fr",       "und-fr"},
+    {"th_TH_TH",    "th-th",        NULL},
+    {"bogus",       "bogus",        "bogus"},
+    {"foooobarrr",  "und",          NULL},
+    {"az_AZ_CYRL",  "az-cyrl-az",   "az-cyrl-az"},
+    {"aa_BB_CYRL",  "aa-bb",        NULL},
+    {"en_US_1234",  "en-us-1234",   "en-us-1234"},
+    {"en_US_VARIANTA_VARIANTB", "en-us-varianta-variantb",  "en-us-varianta-variantb"},
+    {"en_US_VARIANTB_VARIANTA", "en-us-varianta-variantb",  "en-us-varianta-variantb"},
+    {"ja__9876_5432",   "ja-5432-9876", "ja-5432-9876"},
+    {"zh_Hant__VAR",    "zh-hant",  NULL},
+    {"es__BADVARIANT_GOODVAR",  "es-goodvar",   NULL},
+    {"en@calendar=gregorian",   "en-u-ca-gregory",  "en-u-ca-gregory"},
+    {"de@collation=phonebook;calendar=gregorian",   "de-u-ca-gregory-co-phonebk",   "de-u-ca-gregory-co-phonebk"},
+    {"th@numbers=thai;z=extz;x=priv-use;a=exta",   "th-a-exta-u-nu-thai-z-extz-x-priv-use", "th-a-exta-u-nu-thai-z-extz-x-priv-use"},
+    {"en@timezone=America/New_York;calendar=japanese",    "en-u-ca-japanese-tz-usnyc",    "en-u-ca-japanese-tz-usnyc"},
+    {"en@x=x-y-z;a=a-b-c",  "en-x-x-y-z",   NULL},
+    {"it@collation=badcollationtype;colStrength=identical;cu=usd-eur", "it-u-ks-identic",  NULL},
+    {NULL,          NULL,           NULL}
+};
+
+static void TestToLanguageTag(void) {
+    char langtag[256];
+    int32_t i;
+    UErrorCode status;
+    int32_t len;
+    const char *inloc;
+    const char *expected;
+
+    for (i = 0; locale_to_langtag[i][0] != NULL; i++) {
+        inloc = locale_to_langtag[i][0];
+
+        /* testing non-strict mode */
+        status = U_ZERO_ERROR;
+        langtag[0] = 0;
+        expected = locale_to_langtag[i][1];
+
+        len = uloc_toLanguageTag(inloc, langtag, sizeof(langtag), FALSE, &status);
+        if (U_FAILURE(status)) {
+            if (expected != NULL) {
+                log_err("Error returned by uloc_toLanguageTag for locale id [%s] - error: %s\n",
+                    inloc, u_errorName(status));
+            }
+        } else {
+            if (expected == NULL) {
+                log_err("Error should be returned by uloc_toLanguageTag for locale id [%s], but [%s] is returned without errors\n",
+                    inloc, langtag);
+            } else if (uprv_strcmp(langtag, expected) != 0) {
+                log_err("uloc_toLanguageTag returned language tag [%s] for input locale [%s] - expected: [%s]\n",
+                    langtag, inloc, expected);
+            }
+        }
+
+        /* testing strict mode */
+        status = U_ZERO_ERROR;
+        langtag[0] = 0;
+        expected = locale_to_langtag[i][2];
+
+        len = uloc_toLanguageTag(inloc, langtag, sizeof(langtag), TRUE, &status);
+        if (U_FAILURE(status)) {
+            if (expected != NULL) {
+                log_err("Error returned by uloc_toLanguageTag {strict} for locale id [%s] - error: %s\n",
+                    inloc, u_errorName(status));
+            }
+        } else {
+            if (expected == NULL) {
+                log_err("Error should be returned by uloc_toLanguageTag {strict} for locale id [%s], but [%s] is returned without errors\n",
+                    inloc, langtag);
+            } else if (uprv_strcmp(langtag, expected) != 0) {
+                log_err("uloc_toLanguageTag {strict} returned language tag [%s] for input locale [%s] - expected: [%s]\n",
+                    langtag, inloc, expected);
+            }
+        }
+    }
+}
+
+static const struct {
+    const char  *bcpID;
+    const char  *locID;
+    int32_t     len;
+} langtag_to_locale[] = {
+    {"en",                  "en",                   2},
+    {"en-us",               "en_US",                5},
+    {"und-us",              "_US",                  6},
+    {"und-latn",            "_Latn",                8},
+    {"en-us-posix",         "en_US_POSIX",          11},
+    {"de-de_euro",          "de",                   2},
+    {"kok-in",              "kok_IN",               6},
+    {"123",                 "",                     0},
+    {"en_us",               "",                     0},
+    {"en-latn-x",           "en_Latn",              7},
+    {"art-lojban",          "jbo",                  10},
+    {"zh-hakka",            "hak",                  8},
+    {"zh-cmn-CH",           "cmn_CH",               9},
+    {"xxx-yy",              "xxx_YY",               6},
+    {"fr-234",              "fr_234",               6},
+    {"i-default",           "",                     9},
+    {"i-test",              "",                     0},
+    {"ja-jp-jp",            "ja_JP",                5},
+    {"bogus",               "bogus",                5},
+    {"boguslang",           "",                     0},
+    {"EN-lATN-us",          "en_Latn_US",           10},
+    {"und-variant-1234",    "__1234_VARIANT",       16},
+    {"und-varzero-var1-vartwo", "__VARZERO",        11},
+    {"en-u-ca-gregory",     "en@calendar=gregorian",    15},
+    {"en-U-cu-USD",         "en@currency=usd",      11},
+    {"ar-x-1-2-3",          "ar@x=1-2-3",           10},
+    {"fr-u-nu-latn-cu-eur", "fr@currency=eur;numbers=latn", 19},
+    {"de-k-kext-u-co-phonebk-nu-latn",  "de@collation=phonebook;k=kext;numbers=latn",   30},
+    {"ja-u-cu-jpy-ca-jp",   "ja@currency=jpy",      11},
+    {"en-us-u-tz-usnyc",    "en_US@timezone=america/new_york",      16},
+    {"und-a-abc-def",       "und@a=abc-def",        13},
+    {"zh-u-ca-chinese-x-u-ca-chinese",  "zh@calendar=chinese;x=u-ca-chinese",   30},
+    {NULL,          NULL,           0}
+};
+
+static void TestForLanguageTag(void) {
+    char locale[256];
+    int32_t i;
+    UErrorCode status;
+    int32_t parsedLen;
+
+    for (i = 0; langtag_to_locale[i].bcpID != NULL; i++) {
+        status = U_ZERO_ERROR;
+        locale[0] = 0;        
+        uloc_forLanguageTag(langtag_to_locale[i].bcpID, locale, sizeof(locale), &parsedLen, &status);
+        if (U_FAILURE(status)) {
+            log_err("Error returned by uloc_forLanguageTag for language tag [%s] - error: %s\n",
+                langtag_to_locale[i].bcpID, u_errorName(status));
+        } else {
+            if (uprv_strcmp(langtag_to_locale[i].locID, locale) != 0) {
+                log_err("uloc_forLanguageTag returned locale [%s] for input language tag [%s] - expected: [%s]\n",
+                    locale, langtag_to_locale[i].bcpID, langtag_to_locale[i].locID);
+            }
+            if (parsedLen != langtag_to_locale[i].len) {
+                log_err("uloc_forLanguageTag parsed length of %d for input language tag [%s] - expected parsed length: %d\n",
+                    parsedLen, langtag_to_locale[i].bcpID, langtag_to_locale[i].len);
+            }
+        }
+    }
+}
+

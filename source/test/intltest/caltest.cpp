@@ -1,6 +1,6 @@
 /************************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2008, International Business Machines Corporation
+ * Copyright (c) 1997-2009, International Business Machines Corporation
  * and others. All Rights Reserved.
  ************************************************************************/
 
@@ -14,6 +14,10 @@
 #include "unicode/smpdtfmt.h"
 #include "unicode/simpletz.h"
 #include "unicode/dbgutil.h"
+#include "unicode/udat.h"
+#include "unicode/ustring.h"
+
+#define mkcstr(U) u_austrcpy(calloc(8, u_strlen(U) + 1), U)
 
 // *****************************************************************************
 // class CalendarTest
@@ -203,7 +207,20 @@ void CalendarTest::runIndexedTest( int32_t index, UBool exec, const char* &name,
             TestDebug();
           }
           break;
-           
+        case 22:
+          name = "Test6703";
+          if(exec) {
+            logln("Test6703---"); logln("");
+            Test6703();
+          }
+          break;
+        case 23:
+          name = "Test3785";
+          if(exec) {
+            logln("Test3785---"); logln("");
+            Test3785();
+          }
+          break;
         default: name = ""; break;
     }
 }
@@ -625,6 +642,7 @@ CalendarTest::TestDisambiguation765()
     c->set(UCAL_DAY_OF_WEEK, UCAL_TUESDAY);
     c->set(UCAL_MONTH, UCAL_JUNE);
     c->set(UCAL_WEEK_OF_MONTH, 0);
+    c->setMinimalDaysInFirstWeek(1);
     c->getTime(status);
     verify765("1997 Tuesday in week 0 of June = ", status);
 
@@ -644,6 +662,7 @@ CalendarTest::TestDisambiguation765()
     c->set(UCAL_WEEK_OF_YEAR, 1);
     verify765("1997 Tuesday in week 1 of yearWOY = ", c, 1996, UCAL_DECEMBER, 31);
     c->clear(); // - add test for YEAR
+    c->setMinimalDaysInFirstWeek(1);
     c->set(UCAL_YEAR, 1997);
     c->set(UCAL_DAY_OF_WEEK, UCAL_TUESDAY);
     c->set(UCAL_WEEK_OF_YEAR, 1);
@@ -886,6 +905,7 @@ CalendarTest::TestAddRollExtensive()
     temp->set(UCAL_MINUTE, min);
     temp->set(UCAL_SECOND, sec);
     temp->set(UCAL_MILLISECOND, ms);
+    temp->setMinimalDaysInFirstWeek(1);
 
     UCalendarDateFields e;
 
@@ -1891,7 +1911,7 @@ void CalendarTest::TestDebug()
 			continue;
 		}
 	    for(int32_t i=0;i<=count;i++) {
-	  	  if(i<count) {
+	  	  if(t<=UDBG_HIGHEST_CONTIGUOUS_ENUM && i<count) {
 	  		  if( i!=udbg_enumArrayValue((UDebugEnumType)t, i)) {
 	  			  errln("FAIL: udbg_enumArrayValue(%d,%d) returned %d, expected %d", t, i, udbg_enumArrayValue((UDebugEnumType)t,i), i);
 	  		  }
@@ -1900,7 +1920,7 @@ void CalendarTest::TestDebug()
 	  	  }
                   const char *name = udbg_enumName((UDebugEnumType)t,i);
                   if(name==NULL) {
-                          if(i==count) {
+                          if(i==count || t>UDBG_HIGHEST_CONTIGUOUS_ENUM  ) {
                                 logln(" null name - expected.\n");
                           } else {
                                 errln("FAIL: udbg_enumName(%d,%d) returned NULL", t, i);
@@ -1911,7 +1931,7 @@ void CalendarTest::TestDebug()
 				  	name, udbg_enumArrayValue((UDebugEnumType)t,i));
 	  	  logln("udbg_enumString = " + udbg_enumString((UDebugEnumType)t,i));
 	    }
-	    if(udbg_enumExpectedCount((UDebugEnumType)t) != count) {
+	    if(udbg_enumExpectedCount((UDebugEnumType)t) != count && t<=UDBG_HIGHEST_CONTIGUOUS_ENUM) {
 	  	  errln("FAIL: udbg_enumExpectedCount(%d): %d, != UCAL_FIELD_COUNT=%d ", t, udbg_enumExpectedCount((UDebugEnumType)t), count);
 	    } else {
 	  	  logln("udbg_ucal_fieldCount: %d, UCAL_FIELD_COUNT=udbg_enumCount %d ", udbg_enumExpectedCount((UDebugEnumType)t), count);
@@ -1979,6 +1999,62 @@ UDate CalendarTest::minDateOfCalendar(const Calendar& cal, UBool &isGregorian, U
   return doMinDateOfCalendar(cal.clone(), isGregorian, status);
 }
 
+void CalendarTest::Test6703()
+{
+    UErrorCode status = U_ZERO_ERROR;
+    Calendar *cal;
+
+    Locale loc1("en@calendar=fubar");
+    cal = Calendar::createInstance(loc1, status);
+    if (failure(status, "Calendar::createInstance")) return;
+    delete cal;
+  
+    status = U_ZERO_ERROR;
+    Locale loc2("en");
+    cal = Calendar::createInstance(loc2, status);
+    if (failure(status, "Calendar::createInstance")) return;
+    delete cal;
+
+    status = U_ZERO_ERROR;
+    Locale loc3("en@calendar=roc");
+    cal = Calendar::createInstance(loc3, status);
+    if (failure(status, "Calendar::createInstance")) return;
+    delete cal;
+
+    return;
+}
+
+void CalendarTest::Test3785()
+{
+    UErrorCode status = U_ZERO_ERROR; 
+    UChar uzone[] = {'E', 'u', 'r', 'o', 'p', 'e', '/', 'P', 'a', 'r', 'i', 's', 0}; 
+
+    UDateFormat * df = udat_open(UDAT_NONE, UDAT_NONE, "en@calendar=islamic", uzone, 
+                               u_strlen(uzone), NULL, 0, &status);
+    if (NULL == df || U_FAILURE(status)) return;
+
+    UChar upattern[64];   
+    u_uastrcpy(upattern, "EEE d MMMM y G, HH:mm:ss"); 
+    udat_applyPattern(df, FALSE, upattern, u_strlen(upattern));
+
+    UChar ubuffer[1024]; 
+    UDate ud0 = 1337557623000.0;
+
+    status = U_ZERO_ERROR; 
+    udat_format(df, ud0, ubuffer, 1024, NULL, &status); 
+    if (U_FAILURE(status)) return; 
+    //printf("formatted: '%s'\n", mkcstr(ubuffer));
+
+    ud0 += 1000.0; // add one second
+
+    status = U_ZERO_ERROR; 
+    udat_format(df, ud0, ubuffer, 1024, NULL, &status); 
+    if (U_FAILURE(status)) return; 
+    //printf("formatted: '%s'\n", mkcstr(ubuffer));
+
+    udat_close(df);
+    return;
+}
 
 
 

@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 2000-2007, International Business Machines
+*   Copyright (C) 2000-2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -1400,6 +1400,7 @@ ucnv_MBCSLoad(UConverterSharedData *sharedData,
         /* TODO parse package name out of the prefix of the base name in the extension .cnv file? */
         args.size=sizeof(UConverterLoadArgs);
         args.nestedLoads=2;
+        args.onlyTestIsLoadable=pArgs->onlyTestIsLoadable;
         args.reserved=pArgs->reserved;
         args.options=pArgs->options;
         args.pkg=pArgs->pkg;
@@ -1413,6 +1414,16 @@ ucnv_MBCSLoad(UConverterSharedData *sharedData,
         ) {
             ucnv_unload(baseSharedData);
             *pErrorCode=U_INVALID_TABLE_FORMAT;
+            return;
+        }
+        if(pArgs->onlyTestIsLoadable) {
+            /*
+             * Exit as soon as we know that we can load the converter
+             * and the format is valid and supported.
+             * The worst that can happen in the following code is a memory
+             * allocation error.
+             */
+            ucnv_unload(baseSharedData);
             return;
         }
 
@@ -1527,6 +1538,15 @@ ucnv_MBCSLoad(UConverterSharedData *sharedData,
             break;
         default:
             *pErrorCode=U_INVALID_TABLE_FORMAT;
+            return;
+        }
+        if(pArgs->onlyTestIsLoadable) {
+            /*
+             * Exit as soon as we know that we can load the converter
+             * and the format is valid and supported.
+             * The worst that can happen in the following code is a memory
+             * allocation error.
+             */
             return;
         }
 
@@ -1660,24 +1680,26 @@ ucnv_MBCSUnload(UConverterSharedData *sharedData) {
 
 static void
 ucnv_MBCSOpen(UConverter *cnv,
-          const char *name,
-          const char *locale,
-          uint32_t options,
-          UErrorCode *pErrorCode) {
+              UConverterLoadArgs *pArgs,
+              UErrorCode *pErrorCode) {
     UConverterMBCSTable *mbcsTable;
     const int32_t *extIndexes;
     uint8_t outputType;
     int8_t maxBytesPerUChar;
+
+    if(pArgs->onlyTestIsLoadable) {
+        return;
+    }
 
     mbcsTable=&cnv->sharedData->mbcs;
     outputType=mbcsTable->outputType;
 
     if(outputType==MBCS_OUTPUT_DBCS_ONLY) {
         /* the swaplfnl option does not apply, remove it */
-        cnv->options=options&=~UCNV_OPTION_SWAP_LFNL;
+        cnv->options=pArgs->options&=~UCNV_OPTION_SWAP_LFNL;
     }
 
-    if((options&UCNV_OPTION_SWAP_LFNL)!=0) {
+    if((pArgs->options&UCNV_OPTION_SWAP_LFNL)!=0) {
         /* do this because double-checked locking is broken */
         UBool isCached;
 
@@ -1692,13 +1714,13 @@ ucnv_MBCSOpen(UConverter *cnv,
                 }
 
                 /* the option does not apply, remove it */
-                cnv->options=options&=~UCNV_OPTION_SWAP_LFNL;
+                cnv->options=pArgs->options&=~UCNV_OPTION_SWAP_LFNL;
             }
         }
     }
 
-    if(uprv_strstr(name, "18030")!=NULL) {
-        if(uprv_strstr(name, "gb18030")!=NULL || uprv_strstr(name, "GB18030")!=NULL) {
+    if(uprv_strstr(pArgs->name, "18030")!=NULL) {
+        if(uprv_strstr(pArgs->name, "gb18030")!=NULL || uprv_strstr(pArgs->name, "GB18030")!=NULL) {
             /* set a flag for GB 18030 mode, which changes the callback behavior */
             cnv->options|=_MBCS_OPTION_GB18030;
         }
@@ -2151,6 +2173,65 @@ unrolled:
     pArgs->offsets=offsets;
 }
 
+static UBool
+hasValidTrailBytes(const int32_t (*stateTable)[256], uint8_t state) {
+    const int32_t *row=stateTable[state];
+    int32_t b, entry;
+    /* First test for final entries in this state for some commonly valid byte values. */
+    entry=row[0xa1];
+    if( !MBCS_ENTRY_IS_TRANSITION(entry) &&
+        MBCS_ENTRY_FINAL_ACTION(entry)!=MBCS_STATE_ILLEGAL
+    ) {
+        return TRUE;
+    }
+    entry=row[0x41];
+    if( !MBCS_ENTRY_IS_TRANSITION(entry) &&
+        MBCS_ENTRY_FINAL_ACTION(entry)!=MBCS_STATE_ILLEGAL
+    ) {
+        return TRUE;
+    }
+    /* Then test for final entries in this state. */
+    for(b=0; b<=0xff; ++b) {
+        entry=row[b];
+        if( !MBCS_ENTRY_IS_TRANSITION(entry) &&
+            MBCS_ENTRY_FINAL_ACTION(entry)!=MBCS_STATE_ILLEGAL
+        ) {
+            return TRUE;
+        }
+    }
+    /* Then recurse for transition entries. */
+    for(b=0; b<=0xff; ++b) {
+        entry=row[b];
+        if( MBCS_ENTRY_IS_TRANSITION(entry) &&
+            hasValidTrailBytes(stateTable, (uint8_t)MBCS_ENTRY_TRANSITION_STATE(entry))
+        ) {
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+/*
+ * Is byte b a single/lead byte in this state?
+ * Recurse for transition states, because here we don't want to say that
+ * b is a lead byte if all byte sequences that start with b are illegal.
+ */
+static UBool
+isSingleOrLead(const int32_t (*stateTable)[256], uint8_t state, UBool isDBCSOnly, uint8_t b) {
+    const int32_t *row=stateTable[state];
+    int32_t entry=row[b];
+    if(MBCS_ENTRY_IS_TRANSITION(entry)) {   /* lead byte */
+        return hasValidTrailBytes(stateTable, (uint8_t)MBCS_ENTRY_TRANSITION_STATE(entry));
+    } else {
+        uint8_t action=(uint8_t)(MBCS_ENTRY_FINAL_ACTION(entry));
+        if(action==MBCS_STATE_CHANGE_ONLY && isDBCSOnly) {
+            return FALSE;   /* SI/SO are illegal for DBCS-only conversion */
+        } else {
+            return action!=MBCS_STATE_ILLEGAL;
+        }
+    }
+}
+
 U_CFUNC void
 ucnv_MBCSToUnicodeWithOffsets(UConverterToUnicodeArgs *pArgs,
                           UErrorCode *pErrorCode) {
@@ -2506,6 +2587,34 @@ ucnv_MBCSToUnicodeWithOffsets(UConverterToUnicodeArgs *pArgs,
             sourceIndex=nextSourceIndex;
         } else if(U_FAILURE(*pErrorCode)) {
             /* callback(illegal) */
+            if(byteIndex>1) {
+                /*
+                 * Ticket 5691: consistent illegal sequences:
+                 * - We include at least the first byte in the illegal sequence.
+                 * - If any of the non-initial bytes could be the start of a character,
+                 *   we stop the illegal sequence before the first one of those.
+                 */
+                UBool isDBCSOnly=(UBool)(cnv->sharedData->mbcs.dbcsOnlyState!=0);
+                int8_t i;
+                for(i=1;
+                    i<byteIndex && !isSingleOrLead(stateTable, state, isDBCSOnly, bytes[i]);
+                    ++i) {}
+                if(i<byteIndex) {
+                    /* Back out some bytes. */
+                    int8_t backOutDistance=byteIndex-i;
+                    int32_t bytesFromThisBuffer=(int32_t)(source-(const uint8_t *)pArgs->source);
+                    byteIndex=i;  /* length of reported illegal byte sequence */
+                    if(backOutDistance<=bytesFromThisBuffer) {
+                        source-=backOutDistance;
+                    } else {
+                        /* Back out bytes from the previous buffer: Need to replay them. */
+                        cnv->preToULength=(int8_t)(bytesFromThisBuffer-backOutDistance);
+                        /* preToULength is negative! */
+                        uprv_memcpy(cnv->preToU, bytes+i, -cnv->preToULength);
+                        source=(const uint8_t *)pArgs->source;
+                    }
+                }
+            }
             break;
         } else /* unassigned sequences indicated with byteIndex>0 */ {
             /* try an extension mapping */
@@ -2516,7 +2625,7 @@ ucnv_MBCSToUnicodeWithOffsets(UConverterToUnicodeArgs *pArgs,
                               &offsets, sourceIndex,
                               pArgs->flush,
                               pErrorCode);
-            sourceIndex=nextSourceIndex+(int32_t)(source-(const uint8_t *)pArgs->source);
+            sourceIndex=nextSourceIndex+=(int32_t)(source-(const uint8_t *)pArgs->source);
 
             if(U_FAILURE(*pErrorCode)) {
                 /* not mappable or buffer overflow */
@@ -2807,15 +2916,37 @@ ucnv_MBCSGetNextUChar(UConverterToUnicodeArgs *pArgs,
 
     if(c<0) {
         if(U_SUCCESS(*pErrorCode) && source==sourceLimit && lastSource<source) {
-            *pErrorCode=U_TRUNCATED_CHAR_FOUND;
-        }
-        if(U_FAILURE(*pErrorCode)) {
             /* incomplete character byte sequence */
             uint8_t *bytes=cnv->toUBytes;
             cnv->toULength=(int8_t)(source-lastSource);
             do {
                 *bytes++=*lastSource++;
             } while(lastSource<source);
+            *pErrorCode=U_TRUNCATED_CHAR_FOUND;
+        } else if(U_FAILURE(*pErrorCode)) {
+            /* callback(illegal) */
+            /*
+             * Ticket 5691: consistent illegal sequences:
+             * - We include at least the first byte in the illegal sequence.
+             * - If any of the non-initial bytes could be the start of a character,
+             *   we stop the illegal sequence before the first one of those.
+             */
+            UBool isDBCSOnly=(UBool)(cnv->sharedData->mbcs.dbcsOnlyState!=0);
+            uint8_t *bytes=cnv->toUBytes;
+            *bytes++=*lastSource++;     /* first byte */
+            if(lastSource==source) {
+                cnv->toULength=1;
+            } else /* lastSource<source: multi-byte character */ {
+                int8_t i;
+                for(i=1;
+                    lastSource<source && !isSingleOrLead(stateTable, state, isDBCSOnly, *lastSource);
+                    ++i
+                ) {
+                    *bytes++=*lastSource++;
+                }
+                cnv->toULength=i;
+                source=lastSource;
+            }
         } else {
             /* no output because of empty input or only state changes */
             *pErrorCode=U_INDEX_OUTOFBOUNDS_ERROR;

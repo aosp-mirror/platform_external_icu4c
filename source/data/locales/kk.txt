@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2008 International Business Machines
+// * Copyright (C) 2009 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/kk.xml
@@ -43,22 +43,26 @@ kk{
     }
     NumberPatterns{
         "#,##0.###",
-        "#,##0.00 ¤;-#,##0.00 ¤",
+        "#,##0.00 ¤",
         "#,##0%",
         "#E0",
     }
-    Version{"1.57"}
+    Version{"1.65"}
     calendar{
         gregorian{
             DateTimePatterns{
-                "HH:mm:ss v",
+                "HH:mm:ss zzzz",
                 "HH:mm:ss z",
                 "HH:mm:ss",
                 "HH:mm",
-                "EEEE, d MMMM yyyy 'ж'.",
-                "d MMMM yyyy 'ж'.",
+                "EEEE, d MMMM y 'ж'.",
+                "d MMMM y 'ж'.",
                 "dd.MM.yyyy",
                 "dd.MM.yy",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
                 "{1} {0}",
             }
             dayNames{

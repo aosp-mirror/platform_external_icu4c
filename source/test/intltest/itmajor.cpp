@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1998-2006, International Business Machines Corporation and
+ * Copyright (c) 1998-2009, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -25,6 +25,7 @@
 #include "itrbnf.h"
 #include "itrbnfp.h"
 #include "itrbnfrt.h"
+#include "itspoof.h"
 #include "normconf.h"
 #include "regextst.h"
 #include "tstnorm.h"
@@ -177,6 +178,16 @@ void MajorTestLevel::runIndexedTest( int32_t index, UBool exec, const char* &nam
                     callTest(test, par);
                 }
 
+                break;
+
+            case 14: name = "spoof";
+#if !UCONFIG_NO_REGULAR_EXPRESSIONS
+                if (exec) {
+                    logln("TestSuite SpoofDetection---"); logln();
+                    IntlTestSpoof test;
+                    callTest(test, par);
+                }
+#endif
                 break;
 
         default: name = ""; break;

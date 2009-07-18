@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2008 International Business Machines
+// * Copyright (C) 2009 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/is.xml
@@ -300,19 +300,19 @@ is{
             "Arabískt dírham",
         }
         ALL{
-            "lek",
+            "ALL",
             "Lek",
         }
         AMD{
-            "dram",
+            "AMD",
             "Dramm",
         }
         ANG{
-            "NA f.",
+            "NAf.",
             "Hollenskt Antillugyllini",
         }
         ARA{
-            "ARA",
+            "₳",
             "Argentine Austral",
         }
         ARP{
@@ -320,7 +320,7 @@ is{
             "Argentískur pesi (1983-1985)",
         }
         ARS{
-            "Arg$",
+            "AR$",
             "Argentískur pesi",
         }
         ATS{
@@ -328,11 +328,11 @@ is{
             "Austurrískur skildingur",
         }
         AUD{
-            "$A",
+            "AU$",
             "Ástralskur dalur",
         }
         BBD{
-            "BDS$",
+            "Bds$",
             "Barbadoskur dalur",
         }
         BEF{
@@ -340,7 +340,7 @@ is{
             "Belgískur franki",
         }
         BGL{
-            "lev",
+            "BGL",
             "Lef",
         }
         BGN{
@@ -348,15 +348,15 @@ is{
             "Lef, nýtt",
         }
         BMD{
-            "Ber$",
+            "BD$",
             "Bermúdeyskur dalur",
         }
         BND{
-            "BND",
+            "BN$",
             "Brúneiskur dalur",
         }
         BOP{
-            "BOP",
+            "$b.",
             "Bólivískur pesi",
         }
         BOV{
@@ -368,7 +368,7 @@ is{
             "Brasilískt ríal",
         }
         BSD{
-            "BSD",
+            "BS$",
             "Bahameyskur dalur",
         }
         BUK{
@@ -380,11 +380,11 @@ is{
             "Belískur dalur",
         }
         CAD{
-            "Can$",
+            "CA$",
             "Kanadískur dalur",
         }
         CHF{
-            "SwF",
+            "Fr.",
             "Svissneskur franki",
         }
         CLF{
@@ -392,15 +392,15 @@ is{
             "Chilean Unidades de Fomento",
         }
         CLP{
-            "Ch$",
+            "CL$",
             "Chileskur pesi",
         }
         CNY{
-            "Y",
+            "CN¥",
             "Júan",
         }
         COP{
-            "Col$",
+            "CO$",
             "Kólumbískur pesi",
         }
         CSK{
@@ -408,19 +408,19 @@ is{
             "Tékknesk króna, eldri",
         }
         CUP{
-            "CUP",
+            "CU$",
             "Kúbverskur pesi",
         }
         CVE{
-            "CVEsc",
+            "CV$",
             "Grænhöfðeyskur skúti",
         }
         CYP{
-            "£C",
+            "CY£",
             "Kýpverskt pund",
         }
         CZK{
-            "CZK",
+            "Kč",
             "Tékknesk króna",
         }
         DDM{
@@ -428,15 +428,15 @@ is{
             "Austurþýskt mark",
         }
         DEM{
-            "DEM",
+            "DM",
             "Þýskt mark",
         }
         DJF{
-            "DF",
+            "Fdj",
             "Djibouti Franc",
         }
         DKK{
-            "DKr",
+            "Dkr",
             "Dönsk króna",
         }
         DOP{
@@ -448,15 +448,15 @@ is{
             "Ecuador Sucre",
         }
         EEK{
-            "EEK",
+            "Ekr",
             "Eistnesk króna",
         }
         EGP{
-            "EGP",
+            "EG£",
             "Egypskt pund",
         }
         ESP{
-            "ESP",
+            "Pts",
             "Spænskur peseti",
         }
         EUR{
@@ -464,39 +464,39 @@ is{
             "Euro",
         }
         FIM{
-            "FIM",
+            "mk",
             "Finnskt mark",
         }
         FJD{
-            "F$",
+            "FJ$",
             "Fídjeyskur dalur",
         }
         FKP{
-            "FKP",
+            "FK£",
             "Falklenskt pund",
         }
         FRF{
-            "FRF",
+            "₣",
             "Franskur franki",
         }
         GBP{
-            "UK£",
+            "£",
             "Sterlingspund",
         }
         GIP{
-            "GIP",
+            "GI£",
             "Gíbraltarspund",
         }
         GNF{
-            "GF",
+            "FG",
             "Gíneufranki",
         }
         GRD{
-            "GRD",
+            "₯",
             "Drakma",
         }
         GTQ{
-            "Q",
+            "GTQ",
             "Guatemala Quetzal",
         }
         GWE{
@@ -504,7 +504,7 @@ is{
             "Portúgalskur, gíneskur skúti",
         }
         GYD{
-            "G$",
+            "GY$",
             "Gvæjanskur dalur",
         }
         HKD{
@@ -512,11 +512,11 @@ is{
             "Hong Kong-dalur",
         }
         HNL{
-            "L",
+            "HNL",
             "Hoduras Lempira",
         }
         HRK{
-            "HRK",
+            "kn",
             "Kúna",
         }
         HUF{
@@ -532,27 +532,27 @@ is{
             "Írskt pund",
         }
         ILP{
-            "ILP",
+            "I£",
             "Ísraelskt pund",
         }
         ILS{
-            "ILS",
+            "₪",
             "Sikill",
         }
         INR{
-            "INR",
+            "₨",
             "Indversk rúpía",
         }
         IQD{
-            "ID",
+            "IQD",
             "Írakskur denari",
         }
         IRR{
-            "RI",
+            "IRR",
             "Íranskt ríal",
         }
         ISK{
-            "kr.",
+            "kr",
             "Íslensk króna",
         }
         ITL{
@@ -572,11 +572,11 @@ is{
             "Kómoreyskur franki",
         }
         KPW{
-            "KPW",
+            "KP₩",
             "Norðurkóreskt vonn",
         }
         KRW{
-            "KRW",
+            "₩",
             "Suðurkóreskt vonn",
         }
         KWD{
@@ -584,31 +584,31 @@ is{
             "Kúveiskur denari",
         }
         KYD{
-            "KYD",
+            "KY$",
             "Caymaneyskur dalur",
         }
         KZT{
-            "T",
+            "KZT",
             "Kazakhstan Tenge",
         }
         LBP{
-            "LL",
+            "LB£",
             "Líbanskt pund",
         }
         LKR{
-            "SL Re",
+            "SLRs",
             "Srílönsk rúpía",
         }
         LRD{
-            "LRD",
+            "L$",
             "Líberískur dalur",
         }
         LSL{
-            "M",
+            "LSL",
             "Lesotho Loti",
         }
         LTL{
-            "LTL",
+            "Lt",
             "Lít",
         }
         LTT{
@@ -620,7 +620,7 @@ is{
             "Lúxemborgarfranki",
         }
         LVL{
-            "LVL",
+            "Ls",
             "Lat",
         }
         LVR{
@@ -648,7 +648,7 @@ is{
             "Madagaskur franki",
         }
         MKD{
-            "MDen",
+            "MKD",
             "Makedónskur denari",
         }
         MLF{
@@ -660,11 +660,11 @@ is{
             "Mjanmarskt kjat",
         }
         MNT{
-            "Tug",
+            "₮",
             "Túríkur",
         }
         MOP{
-            "MOP",
+            "MOP$",
             "Macao Pataca",
         }
         MRO{
@@ -676,16 +676,16 @@ is{
             "Meltnesk líra",
         }
         MTP{
-            "MTP",
+            "MT£",
             "Maltneskt pund",
         }
         MXN{
-            "MEX$",
+            "MXN",
             "Mexíkóskur pesi",
         }
         MXP{
-            "MXP",
-            "Mexíkóskur silfurpesi  (1861-1992)",
+            "MX$",
+            "Mexíkóskur silfurpesi (1861-1992)",
         }
         MXV{
             "MXV",
@@ -704,31 +704,31 @@ is{
             "Namibískur dalur",
         }
         NGN{
-            "NGN",
+            "₦",
             "Nigerian Naira",
         }
         NLG{
-            "NLG",
+            "fl",
             "Hollenskt gyllini",
         }
         NOK{
-            "NKr",
+            "Nkr",
             "Norsk króna",
         }
         NZD{
-            "$NZ",
+            "NZ$",
             "Nýsjálenskur dalur",
         }
         OMR{
-            "RO",
+            "OMR",
             "Ómanskt ríal",
         }
         PAB{
-            "PAB",
+            "B/.",
             "Balbói",
         }
         PKR{
-            "Pra",
+            "PKRs",
             "Pakistönsk rúpía",
         }
         PLZ{
@@ -736,11 +736,11 @@ is{
             "Slot",
         }
         PTE{
-            "PTE",
+            "Esc",
             "Portúgalskur skúti",
         }
         ROL{
-            "leu",
+            "ROL",
             "Rúmenskt lei",
         }
         RUR{
@@ -748,11 +748,11 @@ is{
             "Rússnesk rúbla (1991-1998)",
         }
         RWF{
-            "RWF",
+            "RF",
             "Rwandan Franc",
         }
         SAR{
-            "SRl",
+            "SR",
             "Sádiarabískt ríal",
         }
         SBD{
@@ -760,11 +760,11 @@ is{
             "Salómonseyskur dalur",
         }
         SCR{
-            "SR",
+            "SRe",
             "Seychelles rúpía",
         }
         SDD{
-            "SDD",
+            "LSd",
             "Súdanskur denari",
         }
         SDP{
@@ -772,7 +772,7 @@ is{
             "Súdanskt pund",
         }
         SEK{
-            "SKr",
+            "Skr",
             "Sænsk króna",
         }
         SGD{
@@ -780,7 +780,7 @@ is{
             "Singapúrskur dalur",
         }
         SHP{
-            "SHP",
+            "SH£",
             "Helenskt pund",
         }
         SIT{
@@ -804,15 +804,15 @@ is{
             "Soviet Rouble",
         }
         SVC{
-            "SVC",
+            "SV₡",
             "El Salvador Colon",
         }
         SYP{
-            "LS",
+            "SY£",
             "Sýrlenskt pund",
         }
         THB{
-            "THB",
+            "฿",
             "Bat",
         }
         TJR{
@@ -832,11 +832,11 @@ is{
             "Tímorskur skúti",
         }
         TRL{
-            "TL",
+            "TRL",
             "Tyrknesk líra",
         }
         TRY{
-            "TRY",
+            "TL",
             "Ný tyrknesk líra",
         }
         TTD{
@@ -848,11 +848,11 @@ is{
             "Taívanskur dalur",
         }
         TZS{
-            "T Sh",
+            "TSh",
             "Tanzanian Shilling",
         }
         UAH{
-            "UAH",
+            "₴",
             "Hrinja",
         }
         UAK{
@@ -872,7 +872,7 @@ is{
             "Bandaríkjadalur (sama dag)",
         }
         VEB{
-            "Be",
+            "Bs.",
             "Venezuelan Bolivar",
         }
         VUV{
@@ -880,7 +880,7 @@ is{
             "Vanuatu Vatu",
         }
         XAF{
-            "XAF",
+            "FCFA",
             "Miðafrískur franki, BEAC",
         }
         XCD{
@@ -900,7 +900,7 @@ is{
             "Franskur franki, UIC",
         }
         XOF{
-            "XOF",
+            "CFA",
             "Miðafrískur franki, BCEAO",
         }
         XPF{
@@ -916,7 +916,7 @@ is{
             "Jemenskur denari",
         }
         YER{
-            "YRl",
+            "YR",
             "Jemenskt ríal",
         }
         YUM{
@@ -928,7 +928,7 @@ is{
             "Rand (viðskipta)",
         }
         ZMK{
-            "ZMK",
+            "ZK",
             "Zambian Kwacha",
         }
         ZWD{
@@ -1050,7 +1050,7 @@ is{
         de_AT{"austurrísk þýska"}
         de_CH{"svissnesk háþýska"}
         del{"delaver"}
-        den{"slav"}
+        den{"slavneska"}
         dgr{"dogríb"}
         din{"dinka"}
         doi{"dogrí"}
@@ -1076,7 +1076,7 @@ is{
         eo{"esperantó"}
         es{"spænska"}
         es_419{"latnesk-amerísk spænska"}
-        es_ES{"spænsk spænska"}
+        es_ES{"íberísk spænska"}
         et{"eistneska"}
         eu{"baskneska"}
         ewo{"evondó"}
@@ -1095,6 +1095,8 @@ is{
         fr_CH{"svissnesk franska"}
         frm{"miðfranska (um 1400-1600)"}
         fro{"fornfranska (842 - um 1400)"}
+        frr{"norðurfrísneska"}
+        frs{"austurfrísneska"}
         fur{"fríúlska"}
         fy{"frísneska"}
         ga{"írska"}
@@ -1268,6 +1270,7 @@ is{
         no{"norska"}
         nog{"nógaí"}
         non{"norræna"}
+        nqo{"N’Ko"}
         nr{"suðurndebele"}
         nso{"norðursótó"}
         nub{"núbísk mál"}
@@ -1313,6 +1316,7 @@ is{
         ro{"rúmenska"}
         roa{"rómönsk mál (önnur)"}
         rom{"romaní"}
+        root{"rót"}
         ru{"rússneska"}
         rw{"kínjarvanda"}
         sa{"sanskrít"}
@@ -1364,6 +1368,7 @@ is{
         sux{"súmerska"}
         sv{"sænska"}
         sw{"svahílí"}
+        syc{"klassísk sýrlenska"}
         syr{"sýrlenska"}
         ta{"tamílska"}
         tai{"taímál (önnur)"}
@@ -1379,6 +1384,7 @@ is{
         tk{"túrkmenska"}
         tkl{"tókeláska"}
         tl{"tagalog"}
+        tlh{"klingónska"}
         tli{"tlingit"}
         tmh{"tamasjek"}
         tn{"tsúana"}
@@ -1401,7 +1407,7 @@ is{
         uga{"úgarítíska"}
         uk{"úkraínska"}
         umb{"úmbúndú"}
-        und{"óljóst"}
+        und{"óþekkt eða ógilt tungumál"}
         ur{"úrdú"}
         uz{"úsbekska"}
         vai{"vaí"}
@@ -1481,7 +1487,7 @@ is{
             buddhist{"Búddískt dagatal"}
             chinese{"Kínverskt dagatal"}
             gregorian{"Gregorískt dagatal"}
-            hebrew{"Hebreskt  dagatal"}
+            hebrew{"Hebreskt dagatal"}
             indian{"indverskt dagatal"}
             islamic{"Íslamskt dagatal"}
             islamic-civil{"Íslamskt borgaradagatal"}
@@ -1498,7 +1504,7 @@ is{
             traditional{"Hefðbundin"}
         }
     }
-    Version{"1.88"}
+    Version{"1.98"}
     calendar{
         gregorian{
             AmPmMarkers{
@@ -1506,14 +1512,18 @@ is{
                 "e.h.",
             }
             DateTimePatterns{
-                "HH:mm:ss v",
+                "HH:mm:ss zzzz",
                 "HH:mm:ss z",
                 "HH:mm:ss",
                 "HH:mm",
-                "EEEE, d. MMMM yyyy",
-                "d. MMMM yyyy",
+                "EEEE, d. MMMM y",
+                "d. MMMM y",
                 "d.M.yyyy",
                 "d.M.yyyy",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
                 "{1} {0}",
             }
             availableFormats{
@@ -1530,17 +1540,17 @@ is{
                 Md{"d.M"}
                 d{"d"}
                 ms{"mm:ss"}
-                y{"yyyy"}
+                y{"y"}
                 yM{"M. yyyy"}
                 yMEd{"EEE d.M.yyyy"}
-                yMMM{"MMM yyyy"}
-                yMMMEd{"EEE d. MMM yyyy"}
-                yMMMM{"MMMM yyyy"}
+                yMMM{"MMM y"}
+                yMMMEd{"EEE d. MMM y"}
+                yMMMM{"MMMM y"}
                 yQ{"Q. yyyy"}
-                yQQQ{"QQQ yyyy"}
+                yQQQ{"QQQ y"}
                 yyQ{"Q yy"}
                 yyyyM{"M.yyyy"}
-                yyyyMMMM{"MMMM yyyy"}
+                yyyyMMMM{"MMMM y"}
             }
             dayNames{
                 format{
@@ -1677,18 +1687,18 @@ is{
                     y{"E, d.M.yyyy - E, d.M.yyyy"}
                 }
                 yMMM{
-                    M{"MMM-MMM yyyy"}
-                    y{"MMM yyyy - MMM yyyy"}
+                    M{"MMM-MMM y"}
+                    y{"MMM y - MMM y"}
                 }
                 yMMMEd{
-                    M{"E, d. MMM - E, d. MMM yyyy"}
-                    d{"E, d. - E, d. MMM yyyy"}
-                    y{"E, d. MMM yyyy - E, d. MMM yyyy"}
+                    M{"E, d. MMM - E, d. MMM y"}
+                    d{"E, d. - E, d. MMM y"}
+                    y{"E, d. MMM y - E, d. MMM y"}
                 }
                 yMMMd{
-                    M{"d. MMM - d. MMM yyyy"}
-                    d{"d.-d. MMM yyyy"}
-                    y{"d. MMM yyyy - d. MMM yyyy"}
+                    M{"d. MMM - d. MMM y"}
+                    d{"d.-d. MMM y"}
+                    y{"d. MMM y - d. MMM y"}
                 }
                 yMd{
                     M{"d.M.yyyy - d.M.yyyy"}

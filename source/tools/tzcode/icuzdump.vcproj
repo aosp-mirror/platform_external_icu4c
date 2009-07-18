@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="icuzdump"
 	ProjectGUID="{655F4481-B461-4DF0-AF10-0D01114A26C1}"
 	RootNamespace="icuzdump"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -17,8 +18,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\Debug"
-			IntermediateDirectory=".\Debug"
+			OutputDirectory=".\x86\Debug"
+			IntermediateDirectory=".\x86\Debug"
 			ConfigurationType="1"
 			CharacterSet="1"
 			>
@@ -49,10 +50,10 @@
 				RuntimeLibrary="3"
 				DisableLanguageExtensions="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Debug/icuzdump.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile=".\x86\Debug/icuzdump.pch"
+				AssemblerListingLocation=".\x86\Debug/"
+				ObjectFile=".\x86\Debug/"
+				ProgramDataBaseFileName=".\x86\Debug/"
 				BrowseInformation="1"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="false"
@@ -71,12 +72,14 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="icuucd.lib icuind.lib icutud.lib icuiod.lib"
-				OutputFile=".\Debug/icuzdump.exe"
+				OutputFile=".\x86\Debug/icuzdump.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\..\lib"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/icuzdump.pdb"
+				ProgramDatabaseFile=".\x86\Debug/icuzdump.pdb"
 				SubSystem="1"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="0"
 			/>
 			<Tool
@@ -97,9 +100,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -153,6 +153,8 @@
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -172,9 +174,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"

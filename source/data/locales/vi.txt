@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2008 International Business Machines
+// * Copyright (C) 2009 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/vi.xml
@@ -296,15 +296,15 @@ vi{
             "BRL",
         }
         CHF{
-            "CHF",
+            "Fr.",
             "Franc Thụy sĩ",
         }
         CNY{
-            "CNY",
+            "CN¥",
             "CNY",
         }
         EEK{
-            "EEK",
+            "Ekr",
             "Crun Extônia",
         }
         EUR{
@@ -312,15 +312,15 @@ vi{
             "Euro",
         }
         FJD{
-            "FJD",
+            "FJ$",
             "Đô-la Fi-ji",
         }
         FRF{
-            "FRF",
+            "₣",
             "Franc Pháp",
         }
         GBP{
-            "UK£",
+            "£",
             "Bảng Anh",
         }
         GEL{
@@ -328,19 +328,19 @@ vi{
             "Lari Georgia",
         }
         GHC{
-            "GHC",
+            "₵",
             "Cedi Ghana (1979-2007)",
         }
         GHS{
-            "GHS",
+            "GH₵",
             "Cedi Ghana",
         }
         GIP{
-            "GIP",
+            "GI£",
             "Pao Gibraltar",
         }
         GNF{
-            "GNF",
+            "FG",
             "Franc Guinea",
         }
         GNS{
@@ -348,7 +348,7 @@ vi{
             "Syli Guinea",
         }
         GRD{
-            "GRD",
+            "₯",
             "Drachma Hy Lạp",
         }
         GTQ{
@@ -360,11 +360,11 @@ vi{
             "Peso Guinea-Bissau",
         }
         GYD{
-            "GYD",
+            "GY$",
             "Đô-la Guyana",
         }
         HKD{
-            "HKD",
+            "HK$",
             "Đô-la Hồng Kông",
         }
         HNL{
@@ -376,27 +376,27 @@ vi{
             "Gourde Haiti",
         }
         HUF{
-            "HUF",
+            "Ft",
             "Phôrin Hungari",
         }
         IDR{
-            "IDR",
+            "Rp",
             "Rupia Inđônêxia",
         }
         IEP{
-            "IEP",
+            "IR£",
             "Pao Ai-len",
         }
         ILP{
-            "ILP",
+            "I£",
             "Pao Ixraen",
         }
         ILS{
-            "ILS",
+            "₪",
             "Sêken Ixraen",
         }
         INR{
-            "0≤Rs.|1≤Re.|1<Rs.",
+            "₨",
             "Rupi Ấn Độ",
         }
         IQD{
@@ -412,11 +412,11 @@ vi{
             "Lia Ý",
         }
         JMD{
-            "JMD",
+            "J$",
             "Đô la Jamaica",
         }
         JOD{
-            "JOD",
+            "JD",
             "Dinar Jordan",
         }
         JPY{
@@ -424,11 +424,11 @@ vi{
             "Yên Nhật",
         }
         KES{
-            "KES",
+            "Ksh",
             "Si-ling Kê-ny-a",
         }
         KRW{
-            "KRW",
+            "₩",
             "Won Hàn Quốc",
         }
         KZT{
@@ -436,7 +436,7 @@ vi{
             "Kazakhstan Tenge",
         }
         LTL{
-            "LTL",
+            "Lt",
             "Litat Lituani",
         }
         MAD{
@@ -444,7 +444,7 @@ vi{
             "Điaham Marốc",
         }
         MTL{
-            "MTL",
+            "Lm",
             "Lia xứ Man-tơ",
         }
         MXN{
@@ -452,31 +452,31 @@ vi{
             "Peso Mêhicô",
         }
         MYR{
-            "MYR",
+            "RM",
             "Rinhgit Malaixia",
         }
         NOK{
-            "NOK",
+            "Nkr",
             "Curon Na Uy",
         }
         NZD{
-            "NZD",
+            "NZ$",
             "Đô-la New Zealand",
         }
         PEN{
-            "PEN",
+            "S/.",
             "Nuevo Sol Pêru",
         }
         PHP{
-            "PHP",
+            "₱",
             "Peso Philíppin",
         }
         PKR{
-            "PKR",
+            "PKRs",
             "Rupi Pakistan",
         }
         PLN{
-            "PLN",
+            "zł",
             "Zloty Ba Lan",
         }
         RON{
@@ -484,7 +484,7 @@ vi{
             "Lây Rumani",
         }
         RSD{
-            "RSD",
+            "din.",
             "Đina Xéc-bi",
         }
         RUB{
@@ -492,15 +492,15 @@ vi{
             "Rúp Nga",
         }
         SAR{
-            "SAR",
+            "SR",
             "Rian Ả rập Xêút",
         }
         SEK{
-            "SEK",
+            "Skr",
             "Cua-ron Thuỵ Điển",
         }
         SGD{
-            "SGD",
+            "S$",
             "Đô-la Singapore",
         }
         SIT{
@@ -508,11 +508,11 @@ vi{
             "Tôla Xlôvênia",
         }
         SKK{
-            "SKK",
+            "Sk",
             "Cuaron Xlôvác",
         }
         THB{
-            "THB",
+            "฿",
             "Bạt Thái Lan",
         }
         TRL{
@@ -520,15 +520,15 @@ vi{
             "Lia Thổ Nhĩ Kỳ",
         }
         TRY{
-            "TRY",
+            "TL",
             "Lia Thổ Nhĩ Kỳ Mới",
         }
         TWD{
-            "TWD",
+            "NT$",
             "Đô-la Đài Loan",
         }
         UAH{
-            "UAH",
+            "₴",
             "Rúp U-crai-na",
         }
         USD{
@@ -536,7 +536,7 @@ vi{
             "Đô-la Mỹ",
         }
         VEB{
-            "VEB",
+            "Bs.",
             "Bôliva Vênêduêla",
         }
         VND{
@@ -552,7 +552,7 @@ vi{
             "Tiền tệ chưa biết hoặc không hợp lệ",
         }
         ZAR{
-            "ZAR",
+            "R",
             "Ran Nam Phi",
         }
     }
@@ -601,7 +601,7 @@ vi{
         gd{"Tiếng Xentơ (Xcốt len)"}
         gl{"Tiếng Galician"}
         gn{"Tiếng Guarani"}
-        gu{"Tiếng  Gujarati"}
+        gu{"Tiếng Gujarati"}
         he{"Tiếng Hê-brơ"}
         hi{"Tiếng Hin-đi"}
         hr{"Tiếng Crô-a-ti-a"}
@@ -708,7 +708,7 @@ vi{
             gregorian{"gregorian"}
         }
     }
-    Version{"1.70"}
+    Version{"1.82"}
     calendar{
         gregorian{
             AmPmMarkers{
@@ -716,14 +716,18 @@ vi{
                 "CH",
             }
             DateTimePatterns{
-                "HH:mm:ss v",
+                "HH:mm:ss zzzz",
                 "HH:mm:ss z",
                 "HH:mm:ss",
                 "HH:mm",
-                "EEEE, 'ngày' dd MMMM 'năm' yyyy",
-                "'Ngày' dd 'tháng' M 'năm' yyyy",
+                "EEEE, 'ngày' dd MMMM 'năm' y",
+                "'Ngày' dd 'tháng' M 'năm' y",
                 "dd-MM-yyyy",
                 "dd/MM/yyyy",
+                "{0} {1}",
+                "{0} {1}",
+                "{0} {1}",
+                "{0} {1}",
                 "{0} {1}",
             }
             availableFormats{
@@ -739,13 +743,13 @@ vi{
                 Md{"d-M"}
                 mmss{"mm:ss"}
                 yMEd{"EEE, d-M-yyyy"}
-                yMMM{"MMM yyyy"}
-                yMMMEd{"EEE, d MMM yyyy"}
-                yMMMM{"MMMM yyyy"}
+                yMMM{"MMM y"}
+                yMMMEd{"EEE, d MMM y"}
+                yMMMM{"MMMM y"}
                 yQ{"Q yyyy"}
-                yQQQ{"QQQ yyyy"}
+                yQQQ{"QQQ y"}
                 yyQ{"Q yy"}
-                yyyy{"yyyy"}
+                yyyy{"y"}
                 yyyyMM{"MM-yyyy"}
             }
             dayNames{
@@ -767,17 +771,6 @@ vi{
                         "Thứ năm",
                         "Thứ sáu",
                         "Thứ bảy",
-                    }
-                }
-                stand-alone{
-                    narrow{
-                        "1",
-                        "2",
-                        "3",
-                        "4",
-                        "5",
-                        "6",
-                        "7",
                     }
                 }
             }
@@ -843,24 +836,18 @@ vi{
                     y{"EEEE, dd/MM/yyyy - EEEE, dd/MM/yyyy"}
                 }
                 yMMM{
-                    M{"'Tháng' M - 'Tháng' M 'năm' yyyy"}
-                    y{"'Tháng' M 'năm' yyyy - 'Tháng' M 'năm' yyyy"}
+                    M{"'Tháng' M - 'Tháng' M 'năm' y"}
+                    y{"'Tháng' M 'năm' y - 'Tháng' M 'năm' y"}
                 }
                 yMMMEd{
-                    M{"EEEE, 'ngày' dd MMM - EEEE, 'ngày' dd MMM 'năm' yyyy"}
-                    d{"EEEE, 'ngày' dd MMM - EEEE, 'ngày' dd MMM 'năm' yyyy"}
-                    y{
-                        "EEEE, 'ngày' dd MMM 'năm' yyyy - EEEE, 'ngày' dd MMM 'năm' y"
-                        "yyy"
-                    }
+                    M{"EEEE, 'ngày' dd MMM - EEEE, 'ngày' dd MMM 'năm' y"}
+                    d{"EEEE, 'ngày' dd MMM - EEEE, 'ngày' dd MMM 'năm' y"}
+                    y{"EEEE, 'ngày' dd MMM 'năm' y - EEEE, 'ngày' dd MMM 'năm' y"}
                 }
                 yMMMd{
-                    M{"'Ngày' dd 'tháng' M - 'Ngày' dd 'tháng' M 'năm' yyyy"}
-                    d{"'Ngày' dd 'tháng' M - 'Ngày' dd 'tháng' M 'năm' yyyy"}
-                    y{
-                        "'Ngày' dd 'tháng' M 'năm' yyyy - 'Ngày' dd 'tháng' M 'năm' y"
-                        "yyy"
-                    }
+                    M{"'Ngày' dd 'tháng' M - 'Ngày' dd 'tháng' M 'năm' y"}
+                    d{"'Ngày' dd 'tháng' M - 'Ngày' dd 'tháng' M 'năm' y"}
+                    y{"'Ngày' dd 'tháng' M 'năm' y - 'Ngày' dd 'tháng' M 'năm' y"}
                 }
                 yMd{
                     M{"dd/MM/yyyy - dd/MM/yyyy"}
@@ -899,38 +886,6 @@ vi{
                         "tháng mười hai",
                     }
                 }
-                stand-alone{
-                    narrow{
-                        "1",
-                        "2",
-                        "3",
-                        "4",
-                        "5",
-                        "6",
-                        "7",
-                        "8",
-                        "9",
-                        "10",
-                        "11",
-                        "12",
-                    }
-                }
-            }
-            quarters{
-                format{
-                    abbreviated{
-                        "Q1",
-                        "Q2",
-                        "Q3",
-                        "Q4",
-                    }
-                    wide{
-                        "Q1",
-                        "Q2",
-                        "Q3",
-                        "Q4",
-                    }
-                }
             }
         }
     }
@@ -964,6 +919,29 @@ vi{
         }
         second{
             other{"{0} giây"}
+        }
+        week{
+            other{"{0} tuần"}
+        }
+        year{
+            other{"{0} năm"}
+        }
+    }
+    unitsShort{
+        day{
+            other{"{0} ngày"}
+        }
+        hour{
+            other{"{0} g"}
+        }
+        minute{
+            other{"{0} ph"}
+        }
+        month{
+            other{"{0} tháng"}
+        }
+        second{
+            other{"{0} s"}
         }
         week{
             other{"{0} tuần"}

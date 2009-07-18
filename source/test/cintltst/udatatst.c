@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1998-2008, International Business Machines Corporation and
+ * Copyright (c) 1998-2009, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /*
@@ -48,6 +48,7 @@
 #include "ucnv_io.h"
 #include "uprops.h"
 #include "ucase.h"
+#include "ucol_imp.h"
 #include "ucol_swp.h"
 #include "ucnv_bld.h"
 #include "unormimp.h"
@@ -1291,7 +1292,7 @@ static const struct {
 #endif
 
 #if !UCONFIG_NO_IDNA
-    {"uidna",                    "spp", usprep_swap},
+    {"rfc3491",                    "spp", usprep_swap},
 #endif
 
 #if !UCONFIG_NO_BREAK_ITERATION
@@ -1643,6 +1644,11 @@ TestSwapData() {
             pkg=U_ICUDATA_BRKITR;
             nm=swapCases[i].name;
             uprv_strcpy(name, U_ICUDATA_BRKITR);
+        } else if (uprv_strcmp(swapCases[i].name, "ucadata")==0
+            || uprv_strcmp(swapCases[i].name, "invuca")==0) {
+            pkg=U_ICUDATA_COLL;
+            nm=swapCases[i].name;
+            uprv_strcpy(name, U_ICUDATA_COLL);
         } else {
             pkg=NULL;
             nm=swapCases[i].name;

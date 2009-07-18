@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2008, International Business Machines Corporation and
+ * Copyright (c) 1997-2009, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -180,11 +180,11 @@ void DataDrivenFormatTest::testConvertDate(TestData *testData,
         if(date.startsWith(kMILLIS)) {
             UnicodeString millis = UnicodeString(date, kMILLIS.length());
             useDate = TRUE;
-            fromDate = udbg_stoi(millis);
+            fromDate = udbg_stod(millis);
         } else if(date.startsWith(kRELATIVE_MILLIS)) {
             UnicodeString millis = UnicodeString(date, kRELATIVE_MILLIS.length());
             useDate = TRUE;
-            fromDate = udbg_stoi(millis) + now;
+            fromDate = udbg_stod(millis) + now;
         } else if(date.startsWith(kRELATIVE_ADD)) {
             UnicodeString add = UnicodeString(date, kRELATIVE_ADD.length());  // "add" is a string indicating which fields to add
             if(fromSet.parseFrom(add, status)<0 || U_FAILURE(status)) {
@@ -196,10 +196,10 @@ void DataDrivenFormatTest::testConvertDate(TestData *testData,
             cal->setTime(now, status);
             for (int q=0; q<UCAL_FIELD_COUNT; q++) {
                 if (fromSet.isSet((UCalendarDateFields)q)) {
-                    int32_t oldv = cal->get((UCalendarDateFields)q, status);
+                    //int32_t oldv = cal->get((UCalendarDateFields)q, status);
                     cal->add((UCalendarDateFields)q,
                                 fromSet.get((UCalendarDateFields)q), status);
-                    int32_t newv = cal->get((UCalendarDateFields)q, status);
+                    //int32_t newv = cal->get((UCalendarDateFields)q, status);
                 }
             }
             fromDate = cal->getTime(status);

@@ -1,6 +1,6 @@
 /*
 ********************************************************************************
-*   Copyright (C) 1999-2008 International Business Machines Corporation and
+*   Copyright (C) 1999-2009 International Business Machines Corporation and
 *   others. All Rights Reserved.
 ********************************************************************************
 *   Date        Name        Description
@@ -696,6 +696,18 @@ void UnicodeSetTest::TestAPI() {
         errln("FAIL: serialize");
         return;
     }
+
+    // Conversions to and from USet
+    UnicodeSet *uniset = &set;
+    USet *uset = uniset->toUSet();
+    TEST_ASSERT((void *)uset == (void *)uniset);
+    UnicodeSet *setx = UnicodeSet::fromUSet(uset);
+    TEST_ASSERT((void *)setx == (void *)uset);
+    const UnicodeSet *constSet = uniset;
+    const USet *constUSet = constSet->toUSet();
+    TEST_ASSERT((void *)constUSet == (void *)constSet);
+    const UnicodeSet *constSetx = UnicodeSet::fromUSet(constUSet);
+    TEST_ASSERT((void *)constSetx == (void *)constUSet);
 }
 
 void UnicodeSetTest::TestIteration() {
@@ -1641,7 +1653,8 @@ void UnicodeSetTest::TestSurrogate() {
     for (int i=0; DATA[i] != 0; ++i) {
         UErrorCode ec = U_ZERO_ERROR;
         logln((UnicodeString)"Test pattern " + i + " :" + UnicodeString(DATA[i], -1, US_INV));
-        UnicodeSet set(UnicodeString(DATA[i], -1, US_INV), ec);
+        UnicodeString str = UnicodeString(DATA[i], -1, US_INV);
+        UnicodeSet set(str, ec);
         if (U_FAILURE(ec)) {
             errln("FAIL: UnicodeSet constructor");
             continue;

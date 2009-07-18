@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 2000-2008, International Business Machines
+*   Copyright (C) 2000-2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *   file name:  ucnv2022.c
@@ -165,7 +165,8 @@ typedef enum  {
  *   all versions, not just JIS7 and JIS8.
  * - ICU does not distinguish between different versions of JIS X 0208.
  */
-static const uint16_t jpCharsetMasks[5]={
+enum { MAX_JA_VERSION=4 };
+static const uint16_t jpCharsetMasks[MAX_JA_VERSION+1]={
     CSM(ASCII)|CSM(JISX201)|CSM(JISX208)|CSM(HWKANA_7BIT),
     CSM(ASCII)|CSM(JISX201)|CSM(JISX208)|CSM(HWKANA_7BIT)|CSM(JISX212),
     CSM(ASCII)|CSM(JISX201)|CSM(JISX208)|CSM(HWKANA_7BIT)|CSM(JISX212)|CSM(GB2312)|CSM(KSC5601)|CSM(ISO8859_1)|CSM(ISO8859_7),
@@ -370,7 +371,7 @@ typedef enum{
 
 /*********** ISO 2022 Converter Protos ***********/
 static void
-_ISO2022Open(UConverter *cnv, const char *name, const char *locale,uint32_t options, UErrorCode *errorCode);
+_ISO2022Open(UConverter *cnv, UConverterLoadArgs *pArgs, UErrorCode *errorCode);
 
 static void
  _ISO2022Close(UConverter *converter);
@@ -448,40 +449,53 @@ setInitialStateFromUnicodeKR(UConverter* converter,UConverterDataISO2022 *myConv
 }
 
 static void
-_ISO2022Open(UConverter *cnv, const char *name, const char *locale,uint32_t options, UErrorCode *errorCode){
+_ISO2022Open(UConverter *cnv, UConverterLoadArgs *pArgs, UErrorCode *errorCode){
 
     char myLocale[6]={' ',' ',' ',' ',' ',' '};
 
     cnv->extraInfo = uprv_malloc (sizeof (UConverterDataISO2022));
     if(cnv->extraInfo != NULL) {
+        UConverterNamePieces stackPieces;
+        UConverterLoadArgs stackArgs={ (int32_t)sizeof(UConverterLoadArgs) };
         UConverterDataISO2022 *myConverterData=(UConverterDataISO2022 *) cnv->extraInfo;
         uint32_t version;
+
+        stackArgs.onlyTestIsLoadable = pArgs->onlyTestIsLoadable;
 
         uprv_memset(myConverterData, 0, sizeof(UConverterDataISO2022));
         myConverterData->currentType = ASCII1;
         cnv->fromUnicodeStatus =FALSE;
-        if(locale){
-            uprv_strncpy(myLocale, locale, sizeof(myLocale));
+        if(pArgs->locale){
+            uprv_strncpy(myLocale, pArgs->locale, sizeof(myLocale));
         }
-        version = options & UCNV_OPTIONS_VERSION_MASK;
+        version = pArgs->options & UCNV_OPTIONS_VERSION_MASK;
         myConverterData->version = version;
         if(myLocale[0]=='j' && (myLocale[1]=='a'|| myLocale[1]=='p') &&
             (myLocale[2]=='_' || myLocale[2]=='\0'))
         {
             size_t len=0;
             /* open the required converters and cache them */
-            if(jpCharsetMasks[version]&CSM(ISO8859_7)) {
-                myConverterData->myConverterArray[ISO8859_7]= ucnv_loadSharedData("ISO8859_7", NULL, errorCode);
+            if(version>MAX_JA_VERSION) {
+                /* prevent indexing beyond jpCharsetMasks[] */
+                myConverterData->version = version = 0;
             }
-            myConverterData->myConverterArray[JISX208]      = ucnv_loadSharedData("Shift-JIS", NULL, errorCode);
+            if(jpCharsetMasks[version]&CSM(ISO8859_7)) {
+                myConverterData->myConverterArray[ISO8859_7] =
+                    ucnv_loadSharedData("ISO8859_7", &stackPieces, &stackArgs, errorCode);
+            }
+            myConverterData->myConverterArray[JISX208] =
+                ucnv_loadSharedData("Shift-JIS", &stackPieces, &stackArgs, errorCode);
             if(jpCharsetMasks[version]&CSM(JISX212)) {
-                myConverterData->myConverterArray[JISX212]  = ucnv_loadSharedData("jisx-212", NULL, errorCode);
+                myConverterData->myConverterArray[JISX212] =
+                    ucnv_loadSharedData("jisx-212", &stackPieces, &stackArgs, errorCode);
             }
             if(jpCharsetMasks[version]&CSM(GB2312)) {
-                myConverterData->myConverterArray[GB2312]   = ucnv_loadSharedData("ibm-5478", NULL, errorCode);   /* gb_2312_80-1 */
+                myConverterData->myConverterArray[GB2312] =
+                    ucnv_loadSharedData("ibm-5478", &stackPieces, &stackArgs, errorCode);   /* gb_2312_80-1 */
             }
             if(jpCharsetMasks[version]&CSM(KSC5601)) {
-                myConverterData->myConverterArray[KSC5601]  = ucnv_loadSharedData("ksc_5601", NULL, errorCode);
+                myConverterData->myConverterArray[KSC5601] =
+                    ucnv_loadSharedData("ksc_5601", &stackPieces, &stackArgs, errorCode);
             }
 
             /* set the function pointers to appropriate funtions */
@@ -496,48 +510,55 @@ _ISO2022Open(UConverter *cnv, const char *name, const char *locale,uint32_t opti
         else if(myLocale[0]=='k' && (myLocale[1]=='o'|| myLocale[1]=='r') &&
             (myLocale[2]=='_' || myLocale[2]=='\0'))
         {
-            if (version==1){
-                myConverterData->currentConverter=
-                    ucnv_open("icu-internal-25546",errorCode);
-
-                if (U_FAILURE(*errorCode)) {
-                    _ISO2022Close(cnv);
-                    return;
-                }
-
-                (void)uprv_strcpy(myConverterData->name,"ISO_2022,locale=ko,version=1");
-                uprv_memcpy(cnv->subChars, myConverterData->currentConverter->subChars, 4);
-                cnv->subCharLen = myConverterData->currentConverter->subCharLen;
-            }else{
-                myConverterData->currentConverter=ucnv_open("ibm-949",errorCode);
-
-                if (U_FAILURE(*errorCode)) {
-                    _ISO2022Close(cnv);
-                    return;
-                }
-
-                myConverterData->version = 0;
-                (void)uprv_strcpy(myConverterData->name,"ISO_2022,locale=ko,version=0");
+            const char *cnvName;
+            if(version==1) {
+                cnvName="icu-internal-25546";
+            } else {
+                cnvName="ibm-949";
+                myConverterData->version=version=0;
             }
+            if(pArgs->onlyTestIsLoadable) {
+                ucnv_canCreateConverter(cnvName, errorCode);  /* errorCode carries result */
+                uprv_free(cnv->extraInfo);
+                cnv->extraInfo=NULL;
+                return;
+            } else {
+                myConverterData->currentConverter=ucnv_open(cnvName, errorCode);
+                if (U_FAILURE(*errorCode)) {
+                    _ISO2022Close(cnv);
+                    return;
+                }
 
-            /* initialize the state variables */
-            setInitialStateToUnicodeKR(cnv, myConverterData);
-            setInitialStateFromUnicodeKR(cnv, myConverterData);
+                if(version==1) {
+                    (void)uprv_strcpy(myConverterData->name,"ISO_2022,locale=ko,version=1");
+                    uprv_memcpy(cnv->subChars, myConverterData->currentConverter->subChars, 4);
+                    cnv->subCharLen = myConverterData->currentConverter->subCharLen;
+                }else{
+                    (void)uprv_strcpy(myConverterData->name,"ISO_2022,locale=ko,version=0");
+                }
 
-            /* set the function pointers to appropriate funtions */
-            cnv->sharedData=(UConverterSharedData*)&_ISO2022KRData;
-            uprv_strcpy(myConverterData->locale,"ko");
+                /* initialize the state variables */
+                setInitialStateToUnicodeKR(cnv, myConverterData);
+                setInitialStateFromUnicodeKR(cnv, myConverterData);
+
+                /* set the function pointers to appropriate funtions */
+                cnv->sharedData=(UConverterSharedData*)&_ISO2022KRData;
+                uprv_strcpy(myConverterData->locale,"ko");
+            }
         }
         else if(((myLocale[0]=='z' && myLocale[1]=='h') || (myLocale[0]=='c'&& myLocale[1]=='n'))&&
             (myLocale[2]=='_' || myLocale[2]=='\0'))
         {
 
             /* open the required converters and cache them */
-            myConverterData->myConverterArray[GB2312_1]         = ucnv_loadSharedData("ibm-5478", NULL, errorCode);
+            myConverterData->myConverterArray[GB2312_1] =
+                ucnv_loadSharedData("ibm-5478", &stackPieces, &stackArgs, errorCode);
             if(version==1) {
-                myConverterData->myConverterArray[ISO_IR_165]   = ucnv_loadSharedData("iso-ir-165", NULL, errorCode);
+                myConverterData->myConverterArray[ISO_IR_165] =
+                    ucnv_loadSharedData("iso-ir-165", &stackPieces, &stackArgs, errorCode);
             }
-            myConverterData->myConverterArray[CNS_11643]        = ucnv_loadSharedData("cns-11643-1992", NULL, errorCode);
+            myConverterData->myConverterArray[CNS_11643] =
+                ucnv_loadSharedData("cns-11643-1992", &stackPieces, &stackArgs, errorCode);
 
 
             /* set the function pointers to appropriate funtions */
@@ -572,7 +593,7 @@ _ISO2022Open(UConverter *cnv, const char *name, const char *locale,uint32_t opti
 
         cnv->maxBytesPerUChar=cnv->sharedData->staticData->maxBytesPerChar;
 
-        if(U_FAILURE(*errorCode)) {
+        if(U_FAILURE(*errorCode) || pArgs->onlyTestIsLoadable) {
             _ISO2022Close(cnv);
         }
     } else {
@@ -754,6 +775,7 @@ changeState_2022(UConverter* _this,
     UConverterDataISO2022* myData2022 = ((UConverterDataISO2022*)_this->extraInfo);
     uint32_t key = myData2022->key;
     int32_t offset = 0;
+    int8_t initialToULength = _this->toULength;
     char c;
 
     value = VALID_NON_TERMINAL_2022;
@@ -806,7 +828,6 @@ DONE:
         return;
     } else if (value == INVALID_2022 ) {
         *err = U_ILLEGAL_ESCAPE_SEQUENCE;
-        return;
     } else /* value == VALID_TERMINAL_2022 */ {
         switch(var){
 #ifdef U_ENABLE_GENERIC_ISO_2022
@@ -938,6 +959,35 @@ DONE:
     }
     if(U_SUCCESS(*err)) {
         _this->toULength = 0;
+    } else if(*err==U_ILLEGAL_ESCAPE_SEQUENCE) {
+        if(_this->toULength>1) {
+            /*
+             * Ticket 5691: consistent illegal sequences:
+             * - We include at least the first byte (ESC) in the illegal sequence.
+             * - If any of the non-initial bytes could be the start of a character,
+             *   we stop the illegal sequence before the first one of those.
+             *   In escape sequences, all following bytes are "printable", that is,
+             *   unless they are completely illegal (>7f in SBCS, outside 21..7e in DBCS),
+             *   they are valid single/lead bytes.
+             *   For simplicity, we always only report the initial ESC byte as the
+             *   illegal sequence and back out all other bytes we looked at.
+             */
+            /* Back out some bytes. */
+            int8_t backOutDistance=_this->toULength-1;
+            int8_t bytesFromThisBuffer=_this->toULength-initialToULength;
+            if(backOutDistance<=bytesFromThisBuffer) {
+                /* same as initialToULength<=1 */
+                *source-=backOutDistance;
+            } else {
+                /* Back out bytes from the previous buffer: Need to replay them. */
+                _this->preToULength=(int8_t)(bytesFromThisBuffer-backOutDistance);
+                /* same as -(initialToULength-1) */
+                /* preToULength is negative! */
+                uprv_memcpy(_this->preToU, _this->toUBytes+1, -_this->preToULength);
+                *source-=bytesFromThisBuffer;
+            }
+            _this->toULength=1;
+        }
     } else if(*err==U_UNSUPPORTED_ESCAPE_SEQUENCE) {
         _this->toUCallbackReason = UCNV_UNASSIGNED;
     }
@@ -1118,6 +1168,7 @@ _2022FromGR94DBCS(uint32_t value) {
     }
 }
 
+#if 0 /* 5691: Call sites now check for validity. They can just += 0x8080 after that. */
 /*
  * This method does the reverse of _2022FromGR94DBCS(). Given the 2022 code point, it returns the
  * 2 byte value that is in the range A1..FE for each byte. Otherwise it returns the 2022 code point
@@ -1133,6 +1184,7 @@ _2022ToGR94DBCS(uint32_t value) {
         return value;
     }
 }
+#endif
 
 #ifdef U_ENABLE_GENERIC_ISO_2022
 
@@ -1990,6 +2042,7 @@ UConverter_toUnicode_ISO_2022_JP_OFFSETS_LOGIC(UConverterToUnicodeArgs *args,
         mySourceChar = args->converter->toUBytes[0];
         args->converter->toULength = 0;
         cs = (StateEnum)pToU2022State->cs[pToU2022State->g];
+        targetUniChar = missingCharMarker;
         goto getTrailByte;
     }
 
@@ -2119,21 +2172,44 @@ escape:
                 default:
                     /* G0 DBCS */
                     if(mySource < mySourceLimit) {
-                        char trailByte;
+                        int leadIsOk, trailIsOk;
+                        uint8_t trailByte;
 getTrailByte:
-                        trailByte = *mySource++;
-                        tmpSourceChar = (mySourceChar << 8) | (uint8_t)(trailByte);
-                        if(cs == JISX208) {
-                            _2022ToSJIS((uint8_t)mySourceChar, (uint8_t)trailByte, tempBuf);
-                        } else {
-                            if (cs == KSC5601) {
-                                tmpSourceChar = _2022ToGR94DBCS(tmpSourceChar);
+                        trailByte = (uint8_t)*mySource;
+                        /*
+                         * Ticket 5691: consistent illegal sequences:
+                         * - We include at least the first byte in the illegal sequence.
+                         * - If any of the non-initial bytes could be the start of a character,
+                         *   we stop the illegal sequence before the first one of those.
+                         *
+                         * In ISO-2022 DBCS, if the second byte is in the 21..7e range or is
+                         * an ESC/SO/SI, we report only the first byte as the illegal sequence.
+                         * Otherwise we convert or report the pair of bytes.
+                         */
+                        leadIsOk = (uint8_t)(mySourceChar - 0x21) <= (0x7e - 0x21);
+                        trailIsOk = (uint8_t)(trailByte - 0x21) <= (0x7e - 0x21);
+                        if (leadIsOk && trailIsOk) {
+                            ++mySource;
+                            tmpSourceChar = (mySourceChar << 8) | trailByte;
+                            if(cs == JISX208) {
+                                _2022ToSJIS((uint8_t)mySourceChar, trailByte, tempBuf);
+                                mySourceChar = tmpSourceChar;
+                            } else {
+                                /* Copy before we modify tmpSourceChar so toUnicodeCallback() sees the correct bytes. */
+                                mySourceChar = tmpSourceChar;
+                                if (cs == KSC5601) {
+                                    tmpSourceChar += 0x8080;  /* = _2022ToGR94DBCS(tmpSourceChar) */
+                                }
+                                tempBuf[0] = (char)(tmpSourceChar >> 8);
+                                tempBuf[1] = (char)(tmpSourceChar);
                             }
-                            tempBuf[0] = (char)(tmpSourceChar >> 8);
-                            tempBuf[1] = (char)(tmpSourceChar);
+                            targetUniChar = ucnv_MBCSSimpleGetNextUChar(myData->myConverterArray[cs], tempBuf, 2, FALSE);
+                        } else if (!(trailIsOk || IS_2022_CONTROL(trailByte))) {
+                            /* report a pair of illegal bytes if the second byte is not a DBCS starter */
+                            ++mySource;
+                            /* add another bit so that the code below writes 2 bytes in case of error */
+                            mySourceChar = 0x10000 | (mySourceChar << 8) | trailByte;
                         }
-                        targetUniChar = ucnv_MBCSSimpleGetNextUChar(myData->myConverterArray[cs], tempBuf, 2, FALSE);
-                        mySourceChar = tmpSourceChar;
                     } else {
                         args->converter->toUBytes[0] = (uint8_t)mySourceChar;
                         args->converter->toULength = 1;
@@ -2275,7 +2351,12 @@ UConverter_fromUnicode_ISO_2022_KR_OFFSETS_LOGIC(UConverterFromUnicodeArgs* args
             }
             /* only DBCS or SBCS characters are expected*/
             /* DB characters with high bit set to 1 are expected */
-            if(length > 2 || length==0 ||(((targetByteUnit & 0x8080) != 0x8080)&& length==2)){
+            if( length > 2 || length==0 ||
+                (length == 1 && targetByteUnit > 0x7f) ||
+                (length == 2 &&
+                    ((uint16_t)(targetByteUnit - 0xa1a1) > (0xfefe - 0xa1a1) ||
+                    (uint8_t)(targetByteUnit - 0xa1) > (0xfe - 0xa1)))
+            ) {
                 targetByteUnit=missingCharMarker;
             }
             if (targetByteUnit != missingCharMarker){
@@ -2574,7 +2655,7 @@ UConverter_toUnicode_ISO_2022_KR_OFFSETS_LOGIC(UConverterToUnicodeArgs *args,
                     myData->isEmptySegment = FALSE;	/* we are handling it, reset to avoid future spurious errors */
                     *err = U_ILLEGAL_ESCAPE_SEQUENCE;
                     args->converter->toUCallbackReason = UCNV_IRREGULAR;
-                    args->converter->toUBytes[0] = mySourceChar;
+                    args->converter->toUBytes[0] = (uint8_t)mySourceChar;
                     args->converter->toULength = 1;
                     args->target = myTarget;
                     args->source = mySource;
@@ -2604,17 +2685,34 @@ escape:
             myData->isEmptySegment = FALSE;	/* Any invalid char errors will be detected separately, so just reset this */
             if(myData->toU2022State.g == 1) {
                 if(mySource < mySourceLimit) {
-                    char trailByte;
+                    int leadIsOk, trailIsOk;
+                    uint8_t trailByte;
 getTrailByte:
-                    trailByte = *mySource++;
-                    tempBuf[0] = (char)(mySourceChar + 0x80);
-                    tempBuf[1] = (char)(trailByte + 0x80);
-                    mySourceChar = (mySourceChar << 8) | (uint8_t)(trailByte);
-                    if((mySourceChar & 0x8080) == 0) {
+                    targetUniChar = missingCharMarker;
+                    trailByte = (uint8_t)*mySource;
+                    /*
+                     * Ticket 5691: consistent illegal sequences:
+                     * - We include at least the first byte in the illegal sequence.
+                     * - If any of the non-initial bytes could be the start of a character,
+                     *   we stop the illegal sequence before the first one of those.
+                     *
+                     * In ISO-2022 DBCS, if the second byte is in the 21..7e range or is
+                     * an ESC/SO/SI, we report only the first byte as the illegal sequence.
+                     * Otherwise we convert or report the pair of bytes.
+                     */
+                    leadIsOk = (uint8_t)(mySourceChar - 0x21) <= (0x7e - 0x21);
+                    trailIsOk = (uint8_t)(trailByte - 0x21) <= (0x7e - 0x21);
+                    if (leadIsOk && trailIsOk) {
+                        ++mySource;
+                        tempBuf[0] = (char)(mySourceChar + 0x80);
+                        tempBuf[1] = (char)(trailByte + 0x80);
                         targetUniChar = ucnv_MBCSSimpleGetNextUChar(sharedData, tempBuf, 2, useFallback);
-                    } else {
-                        /* illegal bytes > 0x7f */
-                        targetUniChar = missingCharMarker;
+                        mySourceChar = (mySourceChar << 8) | trailByte;
+                    } else if (!(trailIsOk || IS_2022_CONTROL(trailByte))) {
+                        /* report a pair of illegal bytes if the second byte is not a DBCS starter */
+                        ++mySource;
+                        /* add another bit so that the code below writes 2 bytes in case of error */
+                        mySourceChar = 0x10000 | (mySourceChar << 8) | trailByte;
                     }
                 } else {
                     args->converter->toUBytes[0] = (uint8_t)mySourceChar;
@@ -2622,8 +2720,10 @@ getTrailByte:
                     break;
                 }
             }
-            else{
+            else if(mySourceChar <= 0x7f) {
                 targetUniChar = ucnv_MBCSSimpleGetNextUChar(sharedData, mySource - 1, 1, useFallback);
+            } else {
+                targetUniChar = 0xffff;
             }
             if(targetUniChar < 0xfffe){
                 if(args->offsets) {
@@ -3120,6 +3220,7 @@ UConverter_toUnicode_ISO_2022_CN_OFFSETS_LOGIC(UConverterToUnicodeArgs *args,
         /* continue with a partial double-byte character */
         mySourceChar = args->converter->toUBytes[0];
         args->converter->toULength = 0;
+        targetUniChar = missingCharMarker;
         goto getTrailByte;
     }
 
@@ -3199,29 +3300,50 @@ escape:
                         UConverterSharedData *cnv;
                         StateEnum tempState;
                         int32_t tempBufLen;
-                        char trailByte;
+                        int leadIsOk, trailIsOk;
+                        uint8_t trailByte;
 getTrailByte:
-                        trailByte = *mySource++;
-                        tempState = (StateEnum)pToU2022State->cs[pToU2022State->g];
-                        if(tempState >= CNS_11643_0) {
-                            cnv = myData->myConverterArray[CNS_11643];
-                            tempBuf[0] = (char) (0x80+(tempState-CNS_11643_0));
-                            tempBuf[1] = (char) (mySourceChar);
-                            tempBuf[2] = trailByte;
-                            tempBufLen = 3;
+                        trailByte = (uint8_t)*mySource;
+                        /*
+                         * Ticket 5691: consistent illegal sequences:
+                         * - We include at least the first byte in the illegal sequence.
+                         * - If any of the non-initial bytes could be the start of a character,
+                         *   we stop the illegal sequence before the first one of those.
+                         *
+                         * In ISO-2022 DBCS, if the second byte is in the 21..7e range or is
+                         * an ESC/SO/SI, we report only the first byte as the illegal sequence.
+                         * Otherwise we convert or report the pair of bytes.
+                         */
+                        leadIsOk = (uint8_t)(mySourceChar - 0x21) <= (0x7e - 0x21);
+                        trailIsOk = (uint8_t)(trailByte - 0x21) <= (0x7e - 0x21);
+                        if (leadIsOk && trailIsOk) {
+                            ++mySource;
+                            tempState = (StateEnum)pToU2022State->cs[pToU2022State->g];
+                            if(tempState >= CNS_11643_0) {
+                                cnv = myData->myConverterArray[CNS_11643];
+                                tempBuf[0] = (char) (0x80+(tempState-CNS_11643_0));
+                                tempBuf[1] = (char) (mySourceChar);
+                                tempBuf[2] = (char) trailByte;
+                                tempBufLen = 3;
 
-                        }else{
-                            cnv = myData->myConverterArray[tempState];
-                            tempBuf[0] = (char) (mySourceChar);
-                            tempBuf[1] = trailByte;
-                            tempBufLen = 2;
+                            }else{
+                                cnv = myData->myConverterArray[tempState];
+                                tempBuf[0] = (char) (mySourceChar);
+                                tempBuf[1] = (char) trailByte;
+                                tempBufLen = 2;
+                            }
+                            targetUniChar = ucnv_MBCSSimpleGetNextUChar(cnv, tempBuf, tempBufLen, FALSE);
+                            mySourceChar = (mySourceChar << 8) | trailByte;
+                        } else if (!(trailIsOk || IS_2022_CONTROL(trailByte))) {
+                            /* report a pair of illegal bytes if the second byte is not a DBCS starter */
+                            ++mySource;
+                            /* add another bit so that the code below writes 2 bytes in case of error */
+                            mySourceChar = 0x10000 | (mySourceChar << 8) | trailByte;
                         }
-                        mySourceChar = (mySourceChar << 8) | (uint8_t)(trailByte);
                         if(pToU2022State->g>=2) {
                             /* return from a single-shift state to the previous one */
                             pToU2022State->g=pToU2022State->prevG;
                         }
-                        targetUniChar = ucnv_MBCSSimpleGetNextUChar(cnv, tempBuf, tempBufLen, FALSE);
                     } else {
                         args->converter->toUBytes[0] = (uint8_t)mySourceChar;
                         args->converter->toULength = 1;

@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2008 International Business Machines
+// * Copyright (C) 2009 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/sr_Cyrl_BA.xml
@@ -13,18 +13,22 @@ sr_Cyrl_BA{
             "Конвертибилна Марка",
         }
     }
-    Version{"1.35"}
+    Version{"1.38"}
     calendar{
         gregorian{
             DateTimePatterns{
-                "HH 'часова', mm 'минута', ss 'секунди' v",
+                "HH 'часова', mm 'минута', ss 'секунди' zzzz",
                 "HH.mm.ss z",
                 "HH:mm:ss",
                 "HH:mm",
-                "EEEE, dd. MMMM yyyy.",
-                "dd. MMMM yyyy.",
+                "EEEE, dd. MMMM y.",
+                "dd. MMMM y.",
                 "yyyy-MM-dd",
                 "yy-MM-dd",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
                 "{1} {0}",
             }
             dayNames{

@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 1997-2008, International Business Machines Corporation and others.
+* Copyright (C) 1997-2009, International Business Machines Corporation and others.
 * All Rights Reserved.
 * Modification History:
 *
@@ -157,6 +157,11 @@ typedef enum UNumberFormatStyle {
      * @stable ICU 3.0
      */
     UNUM_DURATION,
+    /** 
+     * Numbering system rule-based format 
+     * @draft ICU 4.2
+     */
+    UNUM_NUMBERING_SYSTEM,
     /** 
      * Rule-based format defined by pattern 
      * @stable ICU 3.0
@@ -507,13 +512,13 @@ unum_applyPattern(          UNumberFormat  *format,
 * A UNumberFormat in a locale returned by this function will perform the correct
 * formatting and parsing for the locale.  The results of this call are not
 * valid for rule-based number formats.
-* @param index The index of the desired locale.
+* @param localeIndex The index of the desired locale.
 * @return A locale for which number formatting patterns are available, or 0 if none.
 * @see unum_countAvailable
 * @stable ICU 2.0
 */
 U_STABLE const char* U_EXPORT2 
-unum_getAvailable(int32_t index);
+unum_getAvailable(int32_t localeIndex);
 
 /**
 * Determine how many locales have decimal formatting patterns available.  The

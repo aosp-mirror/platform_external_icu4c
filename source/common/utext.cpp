@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2005-2008, International Business Machines
+*   Copyright (C) 2005-2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -1603,11 +1603,17 @@ static const struct UTextFuncs utf8Funcs =
 };
 
 
+static const char gEmptyString[] = {0};
+
 U_CAPI UText * U_EXPORT2
 utext_openUTF8(UText *ut, const char *s, int64_t length, UErrorCode *status) {
     if(U_FAILURE(*status)) {
         return NULL;
     }
+    if(s==NULL && length==0) {
+        s = gEmptyString;
+    }
+
     if(s==NULL || length<-1 || length>INT32_MAX) {
         *status=U_ILLEGAL_ARGUMENT_ERROR;
         return NULL;
@@ -2449,7 +2455,13 @@ ucstrTextAccess(UText *ut, int64_t index, UBool  forward) {
             if (U16_IS_LEAD(str[chunkLimit-1])) {
                 --chunkLimit;
             }
+            // Null-terminated chunk with end still unknown.
+            // Update the chunk length to reflect what has been scanned thus far.
+            // That the full length is still unknown is (still) flagged by
+            //    ut->a being < 0.
             ut->chunkNativeLimit = chunkLimit;
+            ut->nativeIndexingLimit = chunkLimit;
+            ut->chunkLength = chunkLimit;
         }
 
     }
@@ -2564,13 +2576,17 @@ static const struct UTextFuncs ucstrFuncs =
 
 U_CDECL_END
 
+static const UChar gEmptyUString[] = {0};
 
 U_CAPI UText * U_EXPORT2
 utext_openUChars(UText *ut, const UChar *s, int64_t length, UErrorCode *status) {
     if (U_FAILURE(*status)) {
         return NULL;
     }
-    if (length < -1 || length>INT32_MAX) {
+    if(s==NULL && length==0) {
+        s = gEmptyUString;
+    }
+    if (s==NULL || length < -1 || length>INT32_MAX) {
         *status = U_ILLEGAL_ARGUMENT_ERROR;
         return NULL;
     }

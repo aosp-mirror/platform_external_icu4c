@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 1998-2008, International Business Machines
+*   Copyright (C) 1998-2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *
@@ -26,7 +26,11 @@
  * \brief C++ API: Unicode String 
  */
 
+#include "unicode/utypes.h"
 #include "unicode/rep.h"
+#include "unicode/std_string.h"
+#include "unicode/stringpiece.h"
+#include "unicode/bytestream.h"
 
 struct UConverter;          // unicode/ucnv.h
 class  StringThreadTest;
@@ -1444,6 +1448,34 @@ public:
            int32_t targetCapacity,
            enum EInvariant inv) const;
 
+#if U_CHARSET_IS_UTF8 || !UCONFIG_NO_CONVERSION
+
+  /**
+   * Copy the characters in the range
+   * [<tt>start</TT>, <tt>start + length</TT>) into an array of characters
+   * in the platform's default codepage.
+   * This function does not write any more than <code>targetLength</code>
+   * characters but returns the length of the entire output string
+   * so that one can allocate a larger buffer and call the function again
+   * if necessary.
+   * The output string is NUL-terminated if possible.
+   *
+   * @param start offset of first character which will be copied
+   * @param startLength the number of characters to extract
+   * @param target the target buffer for extraction
+   * @param targetLength the length of the target buffer
+   * If <TT>target</TT> is NULL, then the number of bytes required for
+   * <TT>target</TT> is returned.
+   * @return the output string length, not including the terminating NUL
+   * @stable ICU 2.0
+   */
+  int32_t extract(int32_t start,
+           int32_t startLength,
+           char *target,
+           uint32_t targetLength) const;
+
+#endif
+
 #if !UCONFIG_NO_CONVERSION
 
   /**
@@ -1509,7 +1541,7 @@ public:
            int32_t startLength,
            char *target,
            uint32_t targetLength,
-           const char *codepage = 0) const;
+           const char *codepage) const;
 
   /**
    * Convert the UnicodeString into a codepage string using an existing UConverter.
@@ -1533,6 +1565,58 @@ public:
                   UErrorCode &errorCode) const;
 
 #endif
+
+  /**
+   * Convert the UnicodeString to UTF-8 and write the result
+   * to a ByteSink. This is called by toUTF8String().
+   * Unpaired surrogates are replaced with U+FFFD.
+   * Calls u_strToUTF8WithSub().
+   *
+   * @param sink A ByteSink to which the UTF-8 version of the string is written.
+   * @draft ICU 4.2
+   * @see toUTF8String
+   */
+  void toUTF8(ByteSink &sink) const;
+
+#if U_HAVE_STD_STRING
+
+  /**
+   * Convert the UnicodeString to UTF-8 and append the result
+   * to a standard string.
+   * Unpaired surrogates are replaced with U+FFFD.
+   * Calls toUTF8().
+   *
+   * @param A standard string (or a compatible object)
+   *        to which the UTF-8 version of the string is appended.
+   * @return The string object.
+   * @draft ICU 4.2
+   * @see toUTF8
+   */
+  template<typename StringClass>
+  StringClass &toUTF8String(StringClass &result) const {
+    StringByteSink<StringClass> sbs(&result);
+    toUTF8(sbs);
+    return result;
+  }
+
+#endif
+
+  /**
+   * Convert the UnicodeString to UTF-32.
+   * Unpaired surrogates are replaced with U+FFFD.
+   * Calls u_strToUTF32WithSub().
+   *
+   * @param utf32 destination string buffer, can be NULL if capacity==0
+   * @param capacity the number of UChar32s available at utf32
+   * @param errorCode Standard ICU error code. Its input value must
+   *                  pass the U_SUCCESS() test, or else the function returns
+   *                  immediately. Check for U_FAILURE() on output or use with
+   *                  function chaining. (See User Guide for details.)
+   * @return The length of the UTF-32 string.
+   * @see fromUTF32
+   * @draft ICU 4.2
+   */
+  int32_t toUTF32(UChar32 *utf32, int32_t capacity, UErrorCode &errorCode) const;
 
   /* Length operations */
 
@@ -2501,7 +2585,7 @@ public:
    * @see U_TITLECASE_NO_LOWERCASE
    * @see U_TITLECASE_NO_BREAK_ADJUSTMENT
    * @see ucasemap_open
-   * @stable ICU 4.0
+   * @stable ICU 3.8
    */
   UnicodeString &toTitle(BreakIterator *titleIter, const Locale &locale, uint32_t options);
 
@@ -2755,6 +2839,26 @@ public:
    */
   UnicodeString(UChar *buffer, int32_t buffLength, int32_t buffCapacity);
 
+#if U_CHARSET_IS_UTF8 || !UCONFIG_NO_CONVERSION
+
+  /**
+   * char* constructor.
+   * @param codepageData an array of bytes, null-terminated,
+   *                     in the platform's default codepage.
+   * @stable ICU 2.0
+   */
+  UnicodeString(const char *codepageData);
+
+  /**
+   * char* constructor.
+   * @param codepageData an array of bytes in the platform's default codepage.
+   * @param dataLength The number of bytes in <TT>codepageData</TT>.
+   * @stable ICU 2.0
+   */
+  UnicodeString(const char *codepageData, int32_t dataLength);
+
+#endif
+
 #if !UCONFIG_NO_CONVERSION
 
   /**
@@ -2774,8 +2878,7 @@ public:
    *
    * @stable ICU 2.0
    */
-  UnicodeString(const char *codepageData,
-        const char *codepage = 0);
+  UnicodeString(const char *codepageData, const char *codepage);
 
   /**
    * char* constructor.
@@ -2794,9 +2897,7 @@ public:
    *
    * @stable ICU 2.0
    */
-  UnicodeString(const char *codepageData,
-        int32_t dataLength,
-        const char *codepage = 0);
+  UnicodeString(const char *codepageData, int32_t dataLength, const char *codepage);
 
   /**
    * char * / UConverter constructor.
@@ -2900,6 +3001,33 @@ public:
    */
   virtual ~UnicodeString();
 
+  /**
+   * Create a UnicodeString from a UTF-8 string.
+   * Illegal input is replaced with U+FFFD. Otherwise, errors result in a bogus string.
+   * Calls u_strFromUTF8WithSub().
+   *
+   * @param utf8 UTF-8 input string.
+   *             Note that a StringPiece can be implicitly constructed
+   *             from a std::string or a NUL-terminated const char * string.
+   * @return A UnicodeString with equivalent UTF-16 contents.
+   * @see toUTF8
+   * @see toUTF8String
+   * @draft ICU 4.2
+   */
+  static UnicodeString fromUTF8(const StringPiece &utf8);
+
+  /**
+   * Create a UnicodeString from a UTF-32 string.
+   * Illegal input is replaced with U+FFFD. Otherwise, errors result in a bogus string.
+   * Calls u_strFromUTF32WithSub().
+   *
+   * @param utf32 UTF-32 input string. Must not be NULL.
+   * @param length Length of the input string, or -1 if NUL-terminated.
+   * @return A UnicodeString with equivalent UTF-16 contents.
+   * @see toUTF32
+   * @draft ICU 4.2
+   */
+  static UnicodeString fromUTF32(const UChar32 *utf32, int32_t length);
 
   /* Miscellaneous operations */
 
@@ -3000,6 +3128,17 @@ protected:
   virtual UChar32 getChar32At(int32_t offset) const;
 
 private:
+  // For char* constructors. Could be made public.
+  UnicodeString &setToUTF8(const StringPiece &utf8);
+  // For extract(char*).
+  // We could make a toUTF8(target, capacity, errorCode) public but not
+  // this version: New API will be cleaner if we make callers create substrings
+  // rather than having start+length on every method,
+  // and it should take a UErrorCode&.
+  int32_t
+  toUTF8(int32_t start, int32_t len,
+         char *target, int32_t capacity) const;
+
 
   inline int8_t
   doCompare(int32_t start,
@@ -4023,9 +4162,12 @@ UnicodeString::getTerminatedBuffer() {
   } else {
     UChar *array = getArrayStart();
     int32_t len = length();
+#ifndef U_VALGRIND
     if(len < getCapacity() && array[len] == 0) {
       return array;
-    } else if(cloneArrayIfNeeded(len+1)) {
+    }
+#endif
+    if(cloneArrayIfNeeded(len+1)) {
       array = getArrayStart();
       array[len] = 0;
       return array;

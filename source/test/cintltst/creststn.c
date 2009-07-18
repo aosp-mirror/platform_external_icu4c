@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2008, International Business Machines Corporation and
+ * Copyright (c) 1997-2009, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /*******************************************************************************
@@ -29,12 +29,16 @@
 #define RESTEST_HEAP_CHECK 0
 
 #include "unicode/uloc.h"
+#include "unicode/ulocdata.h"
 #include "uresimp.h"
 #include "creststn.h"
 #include "unicode/ctest.h"
 #include "ucbuf.h"
 static int32_t pass;
 static int32_t fail;
+
+static void TestCLDRVersion();
+
 
 /*****************************************************************************/
 /**
@@ -170,6 +174,7 @@ param[] =
 static int32_t bundles_count = sizeof(param) / sizeof(param[0]);
 
 
+
 /*static void printUChars(UChar*);*/
 static void TestDecodedBundle(void);
 static void TestGetKeywordValues(void);
@@ -208,6 +213,7 @@ void addNEWResourceBundleTest(TestNode** root)
     addTest(root, &TestFallbackCodes,         "tsutil/creststn/TestFallbackCodes");    
     addTest(root, &TestStackReuse,            "tsutil/creststn/TestStackReuse");
     addTest(root, &TestGetUTF8String,         "tsutil/creststn/TestGetUTF8String");
+    addTest(root, &TestCLDRVersion,           "tsutil/creststn/TestCLDRVersion");
 }
 
 
@@ -2055,7 +2061,7 @@ static void TestFallback()
         UResourceBundle* resLocID = ures_getByKey(myResB, "Version", NULL, &err);
         UResourceBundle* tResB;
         const UChar* version = NULL;
-        static const UChar versionStr[] = { 0x0031, 0x002E, 0x0034, 0x0035, 0x0000};
+        static const UChar versionStr[] = { 0x0031, 0x002E, 0x0034, 0x0036, 0x0000};
 
         if(err != U_ZERO_ERROR){
             log_data_err("Expected U_ZERO_ERROR when trying to test no_NO_NY aliased to nn_NO for Version err=%s\n",u_errorName(err));
@@ -2949,3 +2955,73 @@ TestGetUTF8String() {
 
     ures_close(res);
 }
+
+void TestCLDRVersion() {
+  UVersionInfo zeroVersion;
+  UVersionInfo testExpect;
+  UVersionInfo testCurrent;
+  UVersionInfo cldrVersion;
+  char tmp[200];
+  UErrorCode status = U_ZERO_ERROR;
+
+  /* setup the constant value */
+  u_versionFromString(zeroVersion, "0.0.0.0");
+
+  /* test CLDR value from API */
+  ulocdata_getCLDRVersion(cldrVersion, &status);
+  if(U_FAILURE(status)) {
+    /* the show is pretty much over at this point */
+    log_err("FAIL: ulocdata_getCLDRVersion() returned %s\n", u_errorName(status));
+    return;
+  } else {
+    u_versionToString(cldrVersion, tmp);
+    log_info("ulocdata_getCLDRVersion() returned: '%s'\n", tmp);
+  }
+
+  
+  /* setup from resource bundle */
+  {
+    UResourceBundle *res;
+    const char *testdatapath;
+    char buffer8[16];
+    const char *s8;
+    int32_t length8;
+
+    status = U_ZERO_ERROR;
+    testdatapath = loadTestData(&status);
+    if(U_FAILURE(status)) {
+        log_data_err("Could not load testdata.dat - %s\n", u_errorName(status));
+        return;
+    }
+
+    res = ures_openDirect(testdatapath, "root", &status);
+    if(U_FAILURE(status)) {
+        log_err("Unable to ures_open(testdata, \"\") - %s\n", u_errorName(status
+));
+        return;
+    }
+    ures_getVersionByKey(res, "ExpectCLDRVersionAtLeast", testExpect, &status);
+    ures_getVersionByKey(res, "CurrentCLDRVersion", testCurrent, &status);
+    ures_close(res);
+    if(U_FAILURE(status)) {
+        log_err("Unable to get test data for CLDR version - %s\n", u_errorName(status));
+    }
+  }
+  if(U_FAILURE(status)) return;
+
+
+  u_versionToString(testExpect,tmp);
+  log_verbose("(data) ExpectCLDRVersionAtLeast { %s }\n", tmp); 
+  if(u_compareVersions(cldrVersion, testExpect) < 0) {
+    log_data_err("CLDR version is too old, expect at least %s.", tmp);
+  }
+  u_versionToString(testCurrent,tmp);
+  log_verbose("(data) CurrentCLDRVersion { %s }\n", tmp); 
+  switch(u_compareVersions(cldrVersion, testCurrent)) {
+    case 0: break; /* OK- current. */
+    case -1: log_info("CLDR version is behind 'current' (for testdata/root.txt) %s. Some things may fail.\n", tmp); break;
+    case 1: log_info("CLDR version is ahead of 'current' (for testdata/root.txt) %s. Some things may fail.\n", tmp); break;
+  }
+
+}
+

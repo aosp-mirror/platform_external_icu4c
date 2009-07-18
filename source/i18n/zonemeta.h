@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 2007-2008, International Business Machines Corporation and    *
+* Copyright (C) 2007-2009, International Business Machines Corporation and    *
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 */
@@ -17,7 +17,7 @@
 U_NAMESPACE_BEGIN
 
 typedef struct CanonicalMapEntry {
-    UChar *id;
+    const UChar *id; // const because it's a reference to a resource bundle string.
     const UChar *country; // const because it's a reference to a resource bundle string.
 } CanonicalMapEntry;
 
@@ -71,10 +71,12 @@ private:
     ZoneMeta(); // Prevent construction.
     static const CanonicalMapEntry* U_EXPORT2 getCanonicalInfo(const UnicodeString &tzid);
 
-    static void initialize(void);
-    static Hashtable* createCanonicalMap(void);
-    static Hashtable* createOlsonToMetaMap(void);
-    static Hashtable* createMetaToOlsonMap(void);
+    static void initializeCanonicalMap(void);
+    static void initializeOlsonToMeta(void);
+    static void initializeMetaToOlson(void);
+    static UHashtable* createCanonicalMap(void);
+    static UHashtable* createOlsonToMetaMap(void);
+    static UHashtable* createMetaToOlsonMap(void);
 };
 
 U_NAMESPACE_END
