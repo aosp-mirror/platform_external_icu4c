@@ -703,7 +703,7 @@ public:
     *       and to cause subsequent find() operations to begin at
     *       the specified position in the input string.
     * <p>
-    *   The matcher's region is reset to its default, wich is the entire
+    *   The matcher's region is reset to its default, which is the entire
     *   input string.
     * <p>
     *   An alternative to this function is to set a match region
@@ -1034,8 +1034,10 @@ private:
     RegexMatcher &operator =(const RegexMatcher &rhs);
     friend class RegexPattern;
     friend class RegexCImpl;
-    
+public:
+    /** @internal  */
     void resetPreserveRegion();  // Reset matcher state, but preserve any region.
+private:
 
     //
     //  MatchAt   This is the internal interface to the match engine itself.

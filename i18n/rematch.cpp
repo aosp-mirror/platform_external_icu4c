@@ -612,8 +612,8 @@ UBool RegexMatcher::lookingAt(UErrorCode &status) {
         status = fDeferredStatus;
         return FALSE;
     }
-    reset();
-    MatchAt(0, FALSE, status);
+    resetPreserveRegion();
+    MatchAt(fRegionStart, FALSE, status);
     return fMatch;
 }
 
@@ -627,7 +627,7 @@ UBool RegexMatcher::lookingAt(int32_t start, UErrorCode &status) {
         return FALSE;
     }
     reset();
-    if (start < 0 || start > fRegionLimit) {
+    if (start < fRegionStart || start > fRegionLimit) {
         status = U_INDEX_OUTOFBOUNDS_ERROR;
         return FALSE;
     }

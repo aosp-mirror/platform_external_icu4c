@@ -59,12 +59,32 @@ typedef enum URegexpFlag{
     /**  If set, '.' matches line terminators,  otherwise '.' matching stops at line end.
       *  @stable ICU 2.4 */
     UREGEX_DOTALL           = 32,
+    
+    /**  If set, treat the entire pattern as a literal string.  
+      *  Metacharacters or escape sequences in the input sequence will be given 
+      *  no special meaning.
+      *
+      *  The flags CASE_INSENSITIVE and UNICODE_CASE retain their impact
+      *  on matching when used in conjunction with this flag.
+      *  The other flags become superfluous.
+      *  TODO:  say which escapes are still handled; anything Java does
+      *         early (\u) we should still do.
+      * @draft ICU 4.0
+      */
+    UREGEG_LITERAL = 16,
 
     /**   Control behavior of "$" and "^"
       *    If set, recognize line terminators within string,
       *    otherwise, match only at start and end of input string.
       *   @stable ICU 2.4 */
     UREGEX_MULTILINE        = 8,
+    
+    /**   Unix-only line endings.
+      *   When this mode is enabled, only \u000a is recognized as a line ending
+      *    in the behavior of ., ^, and $.
+      *   @draft ICU 4.0
+      */
+    URGEGX_UNIX_LINES = 1,
 
     /**  Unicode word boundaries.
       *     If set, \b uses the Unicode TR 29 definition of word boundaries.
@@ -261,11 +281,21 @@ uregex_getText(URegularExpression *regexp,
                UErrorCode         *status);
 
 /**
-  *   Attempts to match the input string, beginning at startIndex, against the pattern.
-  *   To succeed, the match must extend to the end of the input string.
+  *   Attempts to match the input string against the pattern.
+  *   To succeed, the match must extend to the end of the string,
+  *   or cover the complete match region.
+  *
+  *   If startIndex >= zero the match operation starts at the specified
+  *   index and must extend to the end of the input string.  Any region
+  *   that has been specified is reset.
+  *
+  *   If startIndex == -1 the match must cover the input region, or the entire
+  *   input string if no region has been set.  This directly corresponds to
+  *   Matcher.matches() in Java
   *
   *    @param  regexp      The compiled regular expression.
-  *    @param  startIndex  The input string index at which to begin matching.
+  *    @param  startIndex  The input string index at which to begin matching, or -1
+  *                        to match the input Region.
   *    @param  status      Receives errors detected by this function.
   *    @return             TRUE if there is a match
   *    @stable ICU 3.0
@@ -280,12 +310,20 @@ uregex_matches(URegularExpression *regexp,
   *   The match may be of any length, and is not required to extend to the end
   *   of the input string.  Contrast with uregex_matches().
   *
+  *   <p>If startIndex is >= 0 any input region that was set for this
+  *   URegularExpression is reset before the operation begins.
+  *
+  *   <p>If the specified starting index == -1 the match begins at the start of the input 
+  *   region, or at the start of the full string if no region has been specified.
+  *   This corresponds directly with Matcher.lookingAt() in Java.
+  *
   *   <p>If the match succeeds then more information can be obtained via the
   *    <code>uregexp_start()</code>, <code>uregexp_end()</code>,
   *    and <code>uregexp_group()</code> functions.</p>
   *
   *    @param   regexp      The compiled regular expression.
-  *    @param   startIndex  The input string index at which to begin matching.
+  *    @param   startIndex  The input string index at which to begin matching, or
+  *                         -1 to match the Input Region
   *    @param   status      A reference to a UErrorCode to receive any errors.
   *    @return  TRUE if there is a match.
   *    @stable ICU 3.0
@@ -297,12 +335,22 @@ uregex_lookingAt(URegularExpression *regexp,
 
 /**
   *   Find the first matching substring of the input string that matches the pattern.
-  *   The search for a match begins at the specified index.
+  *   If startIndex is >= zero the search for a match begins at the specified index,
+  *          and any match region is reset.  This corresponds directly with
+  *          Matcher.find(startIndex) in Java.
+  *
+  *   If startIndex == -1 the search begins at the start of the input region,
+  *           or at the start of the full string if no region has been specified.
+  *           TODO:  Or, should this be the same as findNext()?
+  *                  Consistency between the C functions (as it is), or
+  *                  consistency with -1 meaning match Java?
+  *
   *   If a match is found, <code>uregex_start(), uregex_end()</code>, and
   *   <code>uregex_group()</code> will provide more information regarding the match.
   *
   *   @param   regexp      The compiled regular expression.
-  *   @param   startIndex  The position in the input string to begin the search
+  *   @param   startIndex  The position in the input string to begin the search, or
+  *                        -1 to search within the Input Region.
   *   @param   status      A reference to a UErrorCode to receive any errors.
   *   @return              TRUE if a match is found.
   *   @stable ICU 3.0

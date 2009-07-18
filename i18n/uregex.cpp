@@ -304,10 +304,15 @@ U_CAPI UBool U_EXPORT2
 uregex_matches(URegularExpression *regexp,
                 int32_t            startIndex,
                 UErrorCode        *status)  {
+    UBool result = FALSE;
     if (validateRE(regexp, status) == FALSE) {
-        return FALSE;
+        return result;
     }
-    UBool result = regexp->fMatcher->matches(startIndex, *status);
+    if (startIndex == -1) {
+        result = regexp->fMatcher->matches(*status);
+    } else {
+        result = regexp->fMatcher->matches(startIndex, *status);
+    }
     return result;
 }
 
@@ -322,10 +327,15 @@ U_CAPI UBool U_EXPORT2
 uregex_lookingAt(URegularExpression *regexp,
                  int32_t             startIndex,
                  UErrorCode         *status)  {
+    UBool result = FALSE;
     if (validateRE(regexp, status) == FALSE) {
-        return FALSE;
+        return result;
     }
-    UBool result = regexp->fMatcher->lookingAt(startIndex, *status);
+    if (startIndex == -1) {
+        result = regexp->fMatcher->lookingAt(*status);
+    } else {
+        result = regexp->fMatcher->lookingAt(startIndex, *status);
+    }
     return result;
 }
 
@@ -340,10 +350,16 @@ U_CAPI UBool U_EXPORT2
 uregex_find(URegularExpression *regexp,
             int32_t             startIndex, 
             UErrorCode         *status)  {
+    UBool result = FALSE;
     if (validateRE(regexp, status) == FALSE) {
-        return FALSE;
+        return result;
     }
-    UBool result = regexp->fMatcher->find(startIndex, *status);
+    if (startIndex == -1) {
+        regexp->fMatcher->resetPreserveRegion();
+        result = regexp->fMatcher->find();
+    } else {
+        result = regexp->fMatcher->find(startIndex, *status);
+    }
     return result;
 }
 
