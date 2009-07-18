@@ -81,3 +81,11 @@ windows-1255
 windows-1256
 windows-1257
 windows-1258
+
+NOTE: Standard commands to deal with a new data file (saved on desktop)
+$ cd device/tools
+$ gcc -o ~/data-to-dot-s data-to-dot-s.c
+$ cd ../extlibs/icu4c-3.8/stubdata
+$ unzip ~/Desktop/icudt38l.zip
+$ mv icudt38l.dat icudt38_reduced.dat
+$ ~/data-to-dot-s icudt38_dat < icudt38_reduced.dat > icudt38_dat_reduced.S
