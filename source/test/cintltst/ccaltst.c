@@ -1,5 +1,5 @@
 /********************************************************************
- * Copyright (c) 1997-2008, International Business Machines
+ * Copyright (c) 1997-2009, International Business Machines
  * Corporation and others. All Rights Reserved.
  ********************************************************************
  *
@@ -18,6 +18,7 @@
 #if !UCONFIG_NO_FORMATTING
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "unicode/uloc.h"
 #include "unicode/ucal.h"
@@ -27,6 +28,7 @@
 #include "ccaltst.h"
 #include "cformtst.h"
 #include "cstring.h"
+#include "ulist.h"
 
 void TestGregorianChange(void);
 
@@ -43,6 +45,7 @@ void addCalTest(TestNode** root)
     addTest(root, &TestDOWProgression, "tsformat/ccaltst/TestDOWProgression");
     addTest(root, &TestGMTvsLocal, "tsformat/ccaltst/TestGMTvsLocal");
     addTest(root, &TestGregorianChange, "tsformat/ccaltst/TestGregorianChange");
+    addTest(root, &TestGetKeywordValuesForLocale, "tsformat/ccaltst/TestGetKeywordValuesForLocale");
 }
 
 /* "GMT" */
@@ -56,6 +59,20 @@ static const UChar EUROPE_PARIS[] = {0x45, 0x75, 0x72, 0x6F, 0x70, 0x65, 0x2F, 0
 static const UChar AMERICA_LOS_ANGELES[] = {0x41, 0x6D, 0x65, 0x72, 0x69, 0x63, 0x61, 0x2F,
     0x4C, 0x6F, 0x73, 0x5F, 0x41, 0x6E, 0x67, 0x65, 0x6C, 0x65, 0x73, 0x00}; /* America/Los_Angeles */
 
+typedef struct {
+    const char *    locale;
+    UCalendarType   calType;
+    const char *    expectedResult;
+} UCalGetTypeTest;
+
+static const UCalGetTypeTest ucalGetTypeTests[] = {
+    { "en_US",                   UCAL_GREGORIAN, "gregorian" },
+    { "ja_JP@calendar=japanese", UCAL_DEFAULT,   "japanese"  },
+    { "th_TH",                   UCAL_GREGORIAN, "gregorian" },
+    { "th_TH",                   UCAL_DEFAULT,   "buddhist"  },
+    { NULL, 0, NULL } /* terminator */
+};    
+    
 static void TestCalendar()
 {
     UCalendar *caldef = 0, *caldef2 = 0, *calfr = 0, *calit = 0, *calfrclone = 0;
@@ -73,6 +90,7 @@ static void TestCalendar()
     const char *tzver = 0;
     UChar canonicalID[64];
     UBool isSystemID = FALSE;
+    const UCalGetTypeTest * ucalGetTypeTestPtr;
 
 #ifdef U_USE_UCAL_OBSOLETE_2_8
     /*Testing countAvailableTimeZones*/
@@ -388,14 +406,33 @@ static void TestCalendar()
     else
         log_err("FAIL: It is not in daylight saving's time\n");
 
-    
-    
     /*closing the UCalendar*/
     ucal_close(caldef);
     ucal_close(caldef2);
     ucal_close(calfr);
     ucal_close(calit);
     ucal_close(calfrclone);
+    
+    /*testing ucal_getType, and ucal_open with UCAL_GREGORIAN*/
+    for (ucalGetTypeTestPtr = ucalGetTypeTests; ucalGetTypeTestPtr->locale != NULL; ++ucalGetTypeTestPtr) {
+        status = U_ZERO_ERROR;
+        caldef = ucal_open(NULL, 0, ucalGetTypeTestPtr->locale, ucalGetTypeTestPtr->calType, &status);
+        if ( U_SUCCESS(status) ) {
+            const char * calType = ucal_getType(caldef, &status);
+            if ( U_SUCCESS(status) && calType != NULL ) {
+                if ( strcmp( calType, ucalGetTypeTestPtr->expectedResult ) != 0 ) {
+                    log_err("FAIL: ucal_open %s type %d does not return %s calendar\n", ucalGetTypeTestPtr->locale,
+                                                ucalGetTypeTestPtr->calType, ucalGetTypeTestPtr->expectedResult);
+                }
+            } else {
+                log_err("FAIL: ucal_open %s type %d, then ucal_getType fails\n", ucalGetTypeTestPtr->locale, ucalGetTypeTestPtr->calType);
+            }
+            ucal_close(caldef);
+        } else {
+            log_err("FAIL: ucal_open %s type %d fails\n", ucalGetTypeTestPtr->locale, ucalGetTypeTestPtr->calType);
+        }
+    }
+
     /*closing the UDateFormat used */
     udat_close(datdef);
     free(result);
@@ -628,7 +665,7 @@ static void TestFieldGetSet()
         ucal_get(cal, UCAL_DATE, &status)!=12 || ucal_get(cal, UCAL_HOUR, &status)!=5)
         log_err("error in ucal_get()\n");    
     else if(ucal_get(cal, UCAL_DAY_OF_WEEK_IN_MONTH, &status)!=2 || ucal_get(cal, UCAL_DAY_OF_WEEK, &status)!=6
-        || ucal_get(cal, UCAL_WEEK_OF_MONTH, &status)!=2 || ucal_get(cal, UCAL_WEEK_OF_YEAR, &status)!= 11)
+        || ucal_get(cal, UCAL_WEEK_OF_MONTH, &status)!=2 || ucal_get(cal, UCAL_WEEK_OF_YEAR, &status)!= 10)
         log_err("FAIL: error in ucal_get()\n");
     else
         log_verbose("PASS: ucal_get() works fine\n");
@@ -685,6 +722,7 @@ static void TestFieldGetSet()
     ucal_set(cal, UCAL_DAY_OF_WEEK, UCAL_TUESDAY);
     ucal_set(cal, UCAL_MONTH, UCAL_JUNE);
     ucal_set(cal, UCAL_WEEK_OF_MONTH, 0);
+    ucal_setAttribute(cal, UCAL_MINIMAL_DAYS_IN_FIRST_WEEK,1);
     d1 = ucal_getMillis(cal,&status);
     if (status != U_ILLEGAL_ARGUMENT_ERROR){ 
         log_err("FAIL: U_ILLEGAL_ARGUMENT_ERROR was not returned for : 1997 Tuesday zero-th week in June\n");
@@ -767,6 +805,7 @@ static void TestAddRollExtensive()
     ucal_set(cal, UCAL_YEAR, y);
     ucal_set(cal, UCAL_MONTH, m);
     ucal_set(cal, UCAL_DATE, d);
+    ucal_setAttribute(cal, UCAL_MINIMAL_DAYS_IN_FIRST_WEEK,1);
 
     /* Confirm that adding to various fields works.*/
     log_verbose("\nTesting to confirm that adding to various fields works with ucal_add()\n");
@@ -861,6 +900,7 @@ static void TestAddRollExtensive()
     ucal_set(cal, UCAL_MINUTE, min);
     ucal_set(cal, UCAL_SECOND,sec);
     ucal_set(cal, UCAL_MILLISECOND, ms);
+    ucal_setAttribute(cal, UCAL_MINIMAL_DAYS_IN_FIRST_WEEK,1);
     status=U_ZERO_ERROR;
 
     log_verbose("\nTesting UCalendar add...\n");
@@ -1347,6 +1387,104 @@ void TestGregorianChange() {
                 u_errorName(errorCode));
     }
     ucal_close(cal);
+}
+
+static void TestGetKeywordValuesForLocale() {
+#define PREFERRED_SIZE 15
+#define MAX_NUMBER_OF_KEYWORDS 4
+    const char *PREFERRED[PREFERRED_SIZE][MAX_NUMBER_OF_KEYWORDS+1] = {
+            { "root",        "gregorian", NULL, NULL, NULL },
+            { "und",         "gregorian", NULL, NULL, NULL },
+            { "en_US",       "gregorian", NULL, NULL, NULL },
+            { "en_029",      "gregorian", NULL, NULL, NULL },
+            { "th_TH",       "buddhist", "gregorian", NULL, NULL },
+            { "und_TH",      "buddhist", "gregorian", NULL, NULL },
+            { "en_TH",       "buddhist", "gregorian", NULL, NULL },
+            { "he_IL",       "gregorian", "hebrew", "islamic", "islamic-civil" },
+            { "ar_EG",       "gregorian", "coptic", "islamic", "islamic-civil" },
+            { "ja",          "gregorian", "japanese", NULL, NULL },
+            { "ps_Guru_IN",  "gregorian", "indian", NULL, NULL },
+            { "th@calendar=gregorian", "buddhist", "gregorian", NULL, NULL },
+            { "en@calendar=islamic",   "gregorian", NULL, NULL, NULL },
+            { "zh_TW",       "gregorian", "roc", "chinese", NULL },
+            { "ar_IR",       "gregorian", "persian", "islamic", "islamic-civil" },
+    };
+    const int32_t EXPECTED_SIZE[PREFERRED_SIZE] = { 1, 1, 1, 1, 2, 2, 2, 4, 4, 2, 2, 2, 1, 3, 4 };
+    UErrorCode status = U_ZERO_ERROR;
+    int32_t i, size, j;
+    UEnumeration *all, *pref;
+    const char *loc = NULL;
+    UBool matchPref, matchAll;
+    const char *value;
+    int32_t valueLength;
+    UList *ALLList = NULL;
+    
+    UEnumeration *ALL = ucal_getKeywordValuesForLocale("calendar", uloc_getDefault(), FALSE, &status);
+    if (U_SUCCESS(status)) {
+        for (i = 0; i < PREFERRED_SIZE; i++) {
+            pref = NULL;
+            all = NULL;
+            loc = PREFERRED[i][0];
+            pref = ucal_getKeywordValuesForLocale("calendar", loc, TRUE, &status);
+            matchPref = FALSE;
+            matchAll = FALSE;
+            
+            value = NULL;
+            valueLength = 0;
+            
+            if (U_SUCCESS(status) && uenum_count(pref, &status) == EXPECTED_SIZE[i]) {
+                matchPref = TRUE;
+                for (j = 0; j < EXPECTED_SIZE[i]; j++) {
+                    if ((value = uenum_next(pref, &valueLength, &status)) != NULL && U_SUCCESS(status)) {
+                        if (uprv_strcmp(value, PREFERRED[i][j+1]) != 0) {
+                            matchPref = FALSE;
+                            break;
+                        }
+                    } else {
+                        matchPref = FALSE;
+                        log_err("ERROR getting keyword value for locale \"%s\"\n", loc);
+                        break;
+                    }
+                }
+            }
+            
+            if (!matchPref) {
+                log_err("FAIL: Preferred values for locale \"%s\" does not match expected.\n", loc);
+                break;
+            }
+            uenum_close(pref);
+            
+            all = ucal_getKeywordValuesForLocale("calendar", loc, FALSE, &status);
+            
+            size = uenum_count(all, &status);
+            
+            if (U_SUCCESS(status) && size == uenum_count(ALL, &status)) {
+                matchAll = TRUE;
+                ALLList = ulist_getListFromEnum(ALL);
+                for (j = 0; j < size; j++) {
+                    if ((value = uenum_next(all, &valueLength, &status)) != NULL && U_SUCCESS(status)) {
+                        if (!ulist_containsString(ALLList, value, uprv_strlen(value))) {
+                            log_err("Locale %s have %s not in ALL\n", loc, value);
+                            matchAll = FALSE;
+                            break;
+                        }
+                    } else {
+                        matchAll = FALSE;
+                        log_err("ERROR getting \"all\" keyword value for locale \"%s\"\n", loc);
+                        break;
+                    }
+                }
+            }
+            if (!matchAll) {
+                log_err("FAIL: All values for locale \"%s\" does not match expected.\n", loc);
+            }
+            
+            uenum_close(all);
+        }
+    } else {
+        log_err("Failed to get ALL keyword values for default locale %s: %s.\n", uloc_getDefault(), u_errorName(status));
+    }
+    uenum_close(ALL);
 }
 
 #endif /* #if !UCONFIG_NO_FORMATTING */

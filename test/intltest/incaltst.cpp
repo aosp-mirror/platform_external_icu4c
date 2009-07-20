@@ -1,6 +1,6 @@
 /***********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2008, International Business Machines Corporation
+ * Copyright (c) 1997-2009, International Business Machines Corporation
  * and others. All Rights Reserved.
  ***********************************************************************/
 
@@ -104,16 +104,24 @@ IntlCalendarTest::TestTypes()
                             "ja_JP_TRADITIONAL",   
                             "th_TH_TRADITIONAL", 
                             "th_TH_TRADITIONAL@calendar=gregorian", 
-                            "en_US", NULL };
+                            "en_US",
+                            "th_TH",    // Default calendar for th_TH is buddhist
+                            "th",       // th's default region is TH and buddhist is used as default for TH
+                            "en_TH",    // Default calendar for any locales with region TH is buddhist
+                            NULL };
   const char *types[40] = { "gregorian", 
                             "japanese",
                             "gregorian",
                             "japanese",
-                            "buddhist",           
+                            "buddhist",
                             "japanese",
                             "buddhist",           
                             "gregorian",
-                            "gregorian", NULL };
+                            "gregorian",
+                            "buddhist",           
+                            "buddhist",           
+                            "buddhist",           
+                            NULL };
 
   for(j=0;locs[j];j++) {
     logln(UnicodeString("Creating calendar of locale ")  + locs[j]);
@@ -670,8 +678,6 @@ void IntlCalendarTest::TestJapanese3860()
         }
     }
     
-#if 0
-    // this will NOT work - *all the time*. If it is the 1st of the month, for example it will get Jan 1 heisei 1  => jan 1 showa 64,  wrong era.
     {
         // Test simple parse/format with adopt
         UDate aDate = 0; 
@@ -701,7 +707,7 @@ void IntlCalendarTest::TestJapanese3860()
             int32_t gotYear = cal2->get(UCAL_YEAR, s2);
             int32_t gotEra = cal2->get(UCAL_ERA, s2);
             int32_t expectYear = 1;
-            int32_t expectEra = JapaneseCalendar::kCurrentEra;
+            int32_t expectEra = 235; //JapaneseCalendar::kCurrentEra;
             if((gotYear!=1) || (gotEra != expectEra)) {
                 errln(UnicodeString("parse "+samplestr+" of 'y' as Japanese Calendar, expected year ") + expectYear + 
                     UnicodeString(" and era ") + expectEra +", but got year " + gotYear + " and era " + gotEra + " (Gregorian:" + str +")");
@@ -711,7 +717,7 @@ void IntlCalendarTest::TestJapanese3860()
             delete fmt;
         }
     }    
-#endif
+
     delete cal2;
     delete cal;
     delete fmt2;

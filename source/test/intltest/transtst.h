@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 1999-2008, International Business Machines
+*   Copyright (C) 1999-2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *   Date        Name        Description
@@ -334,6 +334,8 @@ private:
 
     void TestAnyX(void);
 
+    void TestAny(void);
+
     void TestSourceTargetSet(void);
 
     void TestRuleWhitespace(void);
@@ -347,6 +349,8 @@ private:
     void TestRuleStripping(void);
 
     void TestHalfwidthFullwidth(void);
+
+    void TestThai(void);
 
     /**
      * Tests the multiple-pass syntax

@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-*   Copyright (C) 1996-2008, International Business Machines
+*   Copyright (C) 1996-2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *******************************************************************************
 *   file name:  ucol_res.cpp
@@ -43,6 +43,8 @@
 #include "putilimp.h"
 #include "utracimp.h"
 #include "cmemory.h"
+#include "uenumimp.h"
+#include "ulist.h"
 
 U_NAMESPACE_USE
 
@@ -108,16 +110,19 @@ ucol_initUCA(UErrorCode *status) {
     UMTX_CHECK(NULL, (_staticUCA == NULL), needsInit);
 
     if(needsInit) {
-        UDataMemory *result = udata_openChoice(NULL, UCA_DATA_TYPE, UCA_DATA_NAME, isAcceptableUCA, NULL, status);
+        UDataMemory *result = udata_openChoice(U_ICUDATA_COLL, UCA_DATA_TYPE, UCA_DATA_NAME, isAcceptableUCA, NULL, status);
 
         if(U_SUCCESS(*status)){
             UCollator *newUCA = ucol_initCollator((const UCATableHeader *)udata_getMemory(result), NULL, NULL, status);
             if(U_SUCCESS(*status)){
+                // Initalize variables for implicit generation
+                uprv_uca_initImplicitConstants(status);
+
                 umtx_lock(NULL);
                 if(_staticUCA == NULL) {
+                    UCA_DATA_MEM = result;
                     _staticUCA = newUCA;
                     newUCA = NULL;
-                    UCA_DATA_MEM = result;
                     result = NULL;
                 }
                 umtx_unlock(NULL);
@@ -127,8 +132,6 @@ ucol_initUCA(UErrorCode *status) {
                     ucol_close(newUCA);
                     udata_close(result);
                 }
-                // Initalize variables for implicit generation
-                uprv_uca_initImplicitConstants(status);
             }else{
                 ucol_close(newUCA);
                 udata_close(result);
@@ -182,7 +185,8 @@ ucol_open_internal(const char *loc,
     UResourceBundle *collElem = NULL;
     char keyBuffer[256];
     // if there is a keyword, we pick it up and try to get elements
-    if(!uloc_getKeywordValue(loc, "collation", keyBuffer, 256, status)) {
+    if(!uloc_getKeywordValue(loc, "collation", keyBuffer, 256, status) ||
+        !uprv_strcmp(keyBuffer,"default")) { /* Treat 'zz@collation=default' as 'zz'. */
         // no keyword. we try to find the default setting, which will give us the keyword value
         intStatus = U_ZERO_ERROR;
         // finding default value does not affect collation fallback status
@@ -229,9 +233,12 @@ ucol_open_internal(const char *loc,
             if(U_FAILURE(*status)) {
                 goto clean;
             }
-        } else if(U_SUCCESS(*status)) { /* otherwise, we'll pick a collation data that exists */
+        } else if(U_SUCCESS(intStatus)) { /* otherwise, we'll pick a collation data that exists */
             int32_t len = 0;
             const uint8_t *inData = ures_getBinary(binary, &len, status);
+            if(U_FAILURE(*status)) {
+                goto clean;
+            }
             UCATableHeader *colData = (UCATableHeader *)inData;
             if(uprv_memcmp(colData->UCAVersion, UCA->image->UCAVersion, sizeof(UVersionInfo)) != 0 ||
                 uprv_memcmp(colData->UCDVersion, UCA->image->UCDVersion, sizeof(UVersionInfo)) != 0 ||
@@ -259,6 +266,11 @@ ucol_open_internal(const char *loc,
                 }
                 result->freeImageOnClose = FALSE;
             }
+        } else { // !U_SUCCESS(binaryStatus)
+            if(U_SUCCESS(*status)) {
+                *status = intStatus; // propagate underlying error
+            }
+            goto clean;
         }
         intStatus = U_ZERO_ERROR;
         result->rules = ures_getStringByKey(collElem, "Sequence", &result->rulesLength, &intStatus);
@@ -271,7 +283,7 @@ ucol_open_internal(const char *loc,
     result->ucaRules = ures_getStringByKey(b,"UCARules",NULL,&intStatus);
 
     if(loc == NULL) {
-        loc = ures_getLocale(b, status);
+        loc = ures_getLocaleByType(b, ULOC_ACTUAL_LOCALE, status);
     }
     result->requestedLocale = uprv_strdup(loc);
     /* test for NULL */
@@ -279,14 +291,14 @@ ucol_open_internal(const char *loc,
         *status = U_MEMORY_ALLOCATION_ERROR;
         goto clean;
     }
-    loc = ures_getLocale(collElem, status);
+    loc = ures_getLocaleByType(collElem, ULOC_ACTUAL_LOCALE, status);
     result->actualLocale = uprv_strdup(loc);
     /* test for NULL */
     if (result->actualLocale == NULL) {
         *status = U_MEMORY_ALLOCATION_ERROR;
         goto clean;
     }
-    loc = ures_getLocale(b, status);
+    loc = ures_getLocaleByType(b, ULOC_ACTUAL_LOCALE, status);
     result->validLocale = uprv_strdup(loc);
     /* test for NULL */
     if (result->validLocale == NULL) {
@@ -696,7 +708,7 @@ ucol_openAvailableLocales(UErrorCode *status) {
         *status = U_MEMORY_ALLOCATION_ERROR;
         return NULL;
     }
-    return uenum_openStringEnumeration(s, status);
+    return uenum_openFromStringEnumeration(s, status);
 }
 #endif
 
@@ -730,6 +742,116 @@ ucol_getKeywordValues(const char *keyword, UErrorCode *status) {
         return NULL;
     }
     return ures_getKeywordValues(U_ICUDATA_COLL, RESOURCE_NAME, status);
+}
+
+static const UEnumeration defaultKeywordValues = {
+    NULL,
+    NULL,
+    ulist_close_keyword_values_iterator,
+    ulist_count_keyword_values,
+    uenum_unextDefault,
+    ulist_next_keyword_value,
+    ulist_reset_keyword_values_iterator
+};
+
+U_CAPI UEnumeration* U_EXPORT2
+ucol_getKeywordValuesForLocale(const char* /*key*/, const char* locale,
+                               UBool /*commonlyUsed*/, UErrorCode* status) {
+    /* Get the locale base name. */
+    char localeBuffer[ULOC_FULLNAME_CAPACITY] = "";
+    uloc_getBaseName(locale, localeBuffer, sizeof(localeBuffer), status);
+
+    /* Create the 2 lists
+     * -values is the temp location for the keyword values
+     * -results hold the actual list used by the UEnumeration object
+     */
+    UList *values = ulist_createEmptyList(status);
+    UList *results = ulist_createEmptyList(status);
+    UEnumeration *en = (UEnumeration *)uprv_malloc(sizeof(UEnumeration));
+    if (U_FAILURE(*status) || en == NULL) {
+        if (en == NULL) {
+            *status = U_MEMORY_ALLOCATION_ERROR;
+        } else {
+            uprv_free(en);
+        }
+        ulist_deleteList(values);
+        ulist_deleteList(results);
+        return NULL;
+    }
+
+    memcpy(en, &defaultKeywordValues, sizeof(UEnumeration));
+    en->context = results;
+
+    /* Open the resource bundle for collation with the given locale. */
+    UResourceBundle bundle, collations, collres, defres;
+    ures_initStackObject(&bundle);
+    ures_initStackObject(&collations);
+    ures_initStackObject(&collres);
+    ures_initStackObject(&defres);
+
+    ures_openFillIn(&bundle, U_ICUDATA_COLL, localeBuffer, status);
+
+    while (U_SUCCESS(*status)) {
+        ures_getByKey(&bundle, RESOURCE_NAME, &collations, status);
+        ures_resetIterator(&collations);
+        while (U_SUCCESS(*status) && ures_hasNext(&collations)) {
+            ures_getNextResource(&collations, &collres, status);
+            const char *key = ures_getKey(&collres);
+            /* If the key is default, get the string and store it in results list only
+             * if results list is empty.
+             */
+            if (uprv_strcmp(key, "default") == 0) {
+                if (ulist_getListSize(results) == 0) {
+                    char *defcoll = (char *)uprv_malloc(sizeof(char) * ULOC_KEYWORDS_CAPACITY);
+                    int32_t defcollLength = ULOC_KEYWORDS_CAPACITY;
+
+                    ures_getNextResource(&collres, &defres, status);
+                    ures_getUTF8String(&defres, defcoll, &defcollLength, TRUE, status);
+
+                    ulist_addItemBeginList(results, defcoll, TRUE, status);
+                }
+            } else {
+                ulist_addItemEndList(values, key, FALSE, status);
+            }
+        }
+
+        /* If the locale is "" this is root so exit. */
+        if (uprv_strlen(localeBuffer) == 0) {
+            break;
+        }
+        /* Get the parent locale and open a new resource bundle. */
+        uloc_getParent(localeBuffer, localeBuffer, sizeof(localeBuffer), status);
+        ures_openFillIn(&bundle, U_ICUDATA_COLL, localeBuffer, status);
+    }
+
+    ures_close(&defres);
+    ures_close(&collres);
+    ures_close(&collations);
+    ures_close(&bundle);
+
+    if (U_SUCCESS(*status)) {
+        char *value = NULL;
+        ulist_resetList(values);
+        while ((value = (char *)ulist_getNext(values)) != NULL) {
+            if (!ulist_containsString(results, value, uprv_strlen(value))) {
+                ulist_addItemEndList(results, value, FALSE, status);
+                if (U_FAILURE(*status)) {
+                    break;
+                }
+            }
+        }
+    }
+
+    ulist_deleteList(values);
+
+    if (U_FAILURE(*status)){
+        uenum_close(en);
+        en = NULL;
+    } else {
+        ulist_resetList(results);
+    }
+
+    return en;
 }
 
 U_CAPI int32_t U_EXPORT2

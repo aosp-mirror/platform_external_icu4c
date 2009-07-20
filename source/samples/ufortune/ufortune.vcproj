@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="ufortune"
 	ProjectGUID="{25F534DF-93C9-4853-A88E-DB7D8CF74042}"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
 			Name="Win32"
+		/>
+		<Platform
+			Name="x64"
 		/>
 	</Platforms>
 	<ToolFiles>
@@ -15,8 +19,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\Debug"
-			IntermediateDirectory=".\Debug"
+			OutputDirectory=".\x86\Debug"
+			IntermediateDirectory=".\x86\Debug"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -37,7 +41,7 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Debug/ufortune.tlb"
+				TypeLibraryName=".\x86\Debug/ufortune.tlb"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
@@ -47,10 +51,10 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				TreatWChar_tAsBuiltInType="true"
-				PrecompiledHeaderFile=".\Debug/ufortune.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile=".\x86\Debug/ufortune.pch"
+				AssemblerListingLocation=".\x86\Debug/"
+				ObjectFile=".\x86\Debug/"
+				ProgramDataBaseFileName=".\x86\Debug/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="4"
@@ -70,13 +74,15 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="icuucd.lib resources\fortune_resources.lib icuiod.lib"
-				OutputFile=".\Debug/ufortune.exe"
+				OutputFile=".\x86\Debug/ufortune.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="../../../lib"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/ufortune.pdb"
+				ProgramDatabaseFile=".\x86\Debug/ufortune.pdb"
 				SubSystem="1"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -97,16 +103,13 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release|Win32"
-			OutputDirectory=".\Release"
-			IntermediateDirectory=".\Release"
+			Name="Debug|x64"
+			OutputDirectory=".\x64\Debug"
+			IntermediateDirectory=".\x64\Debug"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -127,23 +130,24 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Release/ufortune.tlb"
+				TargetEnvironment="3"
+				TypeLibraryName=".\x64\Debug/ufortune.tlb"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				InlineFunctionExpansion="1"
+				Optimization="0"
 				AdditionalIncludeDirectories="..\..\..\include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CRT_SECURE_NO_DEPRECATE"
-				StringPooling="true"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
+				PreprocessorDefinitions="WIN64;WIN32;_DEBUG;_CRT_SECURE_NO_DEPRECATE"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
 				TreatWChar_tAsBuiltInType="true"
-				PrecompiledHeaderFile=".\Release/ufortune.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile=".\x64\Debug/ufortune.pch"
+				AssemblerListingLocation=".\x64\Debug/"
+				ObjectFile=".\x64\Debug/"
+				ProgramDataBaseFileName=".\x64\Debug/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
+				DebugInformationFormat="3"
 				CompileAs="0"
 			/>
 			<Tool
@@ -151,7 +155,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
+				PreprocessorDefinitions="_DEBUG"
 				Culture="1033"
 			/>
 			<Tool
@@ -159,13 +163,17 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="icuuc.lib resources\fortune_resources.lib icuio.lib"
-				OutputFile=".\Release/ufortune.exe"
-				LinkIncremental="1"
+				AdditionalDependencies="icuucd.lib resources\fortune_resources.lib icuiod.lib"
+				OutputFile=".\x64\Debug/ufortune.exe"
+				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="../../../lib"
-				ProgramDatabaseFile=".\Release/ufortune.pdb"
+				GenerateDebugInformation="true"
+				ProgramDatabaseFile=".\x64\Debug/ufortune.pdb"
 				SubSystem="1"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="17"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -186,7 +194,182 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
-				Name="VCWebDeploymentTool"
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory=".\x86\Release"
+			IntermediateDirectory=".\x86\Release"
+			ConfigurationType="1"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				TypeLibraryName=".\x86\Release/ufortune.tlb"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="..\..\..\include"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CRT_SECURE_NO_DEPRECATE"
+				StringPooling="true"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="true"
+				TreatWChar_tAsBuiltInType="true"
+				PrecompiledHeaderFile=".\x86\Release/ufortune.pch"
+				AssemblerListingLocation=".\x86\Release/"
+				ObjectFile=".\x86\Release/"
+				ProgramDataBaseFileName=".\x86\Release/"
+				WarningLevel="3"
+				SuppressStartupBanner="true"
+				CompileAs="0"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="1033"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="icuuc.lib resources\fortune_resources.lib icuio.lib"
+				OutputFile=".\x86\Release/ufortune.exe"
+				LinkIncremental="1"
+				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="../../../lib"
+				ProgramDatabaseFile=".\x86\Release/ufortune.pdb"
+				SubSystem="1"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|x64"
+			OutputDirectory=".\x64\Release"
+			IntermediateDirectory=".\x64\Release"
+			ConfigurationType="1"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				TargetEnvironment="3"
+				TypeLibraryName=".\x64\Release/ufortune.tlb"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="..\..\..\include"
+				PreprocessorDefinitions="WIN64;WIN32;NDEBUG;_CRT_SECURE_NO_DEPRECATE"
+				StringPooling="true"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="true"
+				TreatWChar_tAsBuiltInType="true"
+				PrecompiledHeaderFile=".\x64\Release/ufortune.pch"
+				AssemblerListingLocation=".\x64\Release/"
+				ObjectFile=".\x64\Release/"
+				ProgramDataBaseFileName=".\x64\Release/"
+				WarningLevel="3"
+				SuppressStartupBanner="true"
+				CompileAs="0"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="1033"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="icuuc.lib resources\fortune_resources.lib icuio.lib"
+				OutputFile=".\x64\Release/ufortune.exe"
+				LinkIncremental="1"
+				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="../../../lib"
+				ProgramDatabaseFile=".\x64\Release/ufortune.pdb"
+				SubSystem="1"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="17"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -238,7 +421,16 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="cd resources&#x0D;&#x0A;nmake -f fortune_resources.mak&#x0D;&#x0A;copy Fortune_Resources.DLL &quot;$(TargetDir)&quot;&#x0D;&#x0A;"
+						CommandLine="cd resources&#x0D;&#x0A;nmake -f fortune_resources.mak CFG=x86\Debug&#x0D;&#x0A;copy Fortune_Resources.DLL &quot;$(TargetDir)&quot;&#x0D;&#x0A;"
+						Outputs="resources\fortune_resources.DLL"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|x64"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="cd resources&#x0D;&#x0A;nmake -f fortune_resources.mak CFG=x64\Debug&#x0D;&#x0A;copy Fortune_Resources.DLL &quot;$(TargetDir)&quot;&#x0D;&#x0A;"
 						Outputs="resources\fortune_resources.DLL"
 					/>
 				</FileConfiguration>
@@ -247,7 +439,16 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="cd resources&#x0D;&#x0A;nmake -f fortune_resources.mak&#x0D;&#x0A;copy Fortune_Resources.DLL &quot;$(TargetDir)&quot;&#x0D;&#x0A;"
+						CommandLine="cd resources&#x0D;&#x0A;nmake -f fortune_resources.mak CFG=x86\Release&#x0D;&#x0A;copy Fortune_Resources.DLL &quot;$(TargetDir)&quot;&#x0D;&#x0A;"
+						Outputs="resources\fortune_resources.DLL"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|x64"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="cd resources&#x0D;&#x0A;nmake -f fortune_resources.mak CFG=x64\Release&#x0D;&#x0A;copy Fortune_Resources.DLL &quot;$(TargetDir)&quot;&#x0D;&#x0A;"
 						Outputs="resources\fortune_resources.DLL"
 					/>
 				</FileConfiguration>

@@ -1,6 +1,6 @@
 /*  
 **********************************************************************
-*   Copyright (C) 2002-2004, International Business Machines
+*   Copyright (C) 2002-2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *   file name:  ucnv_u7.c
@@ -190,12 +190,11 @@ _UTF7Reset(UConverter *cnv, UConverterResetChoice choice) {
 
 static void
 _UTF7Open(UConverter *cnv,
-          const char *name,
-          const char *locale,
-          uint32_t options,
+          UConverterLoadArgs *pArgs,
           UErrorCode *pErrorCode) {
-    if((options&0xf)<=1) {
-        cnv->fromUnicodeStatus=(options&0xf)<<28;
+    if(UCNV_GET_VERSION(cnv)<=1) {
+        /* TODO(markus): Should just use cnv->options rather than copying the version number. */
+        cnv->fromUnicodeStatus=UCNV_GET_VERSION(cnv)<<28;
         _UTF7Reset(cnv, UCNV_RESET_BOTH);
     } else {
         *pErrorCode=U_ILLEGAL_ARGUMENT_ERROR;

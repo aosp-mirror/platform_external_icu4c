@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-*   Copyright (C) 2000-2008, International Business Machines
+*   Copyright (C) 2000-2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *******************************************************************************
 *
@@ -51,7 +51,7 @@
  *  @stable ICU 2.4
  */
 #define U_COPYRIGHT_STRING \
-  " Copyright (C) 2008, International Business Machines Corporation and others. All Rights Reserved. "
+  " Copyright (C) 2009, International Business Machines Corporation and others. All Rights Reserved. "
 
 /** Maximum length of the copyright string.
  *  @stable ICU 2.4
@@ -68,7 +68,7 @@
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.6
  */
-#define U_ICU_VERSION_MINOR_NUM 0
+#define U_ICU_VERSION_MINOR_NUM 2
 
 /** The current ICU patchlevel version as an integer.  
  *  This value will change in the subsequent releases of ICU
@@ -78,7 +78,7 @@
 
 /** The current ICU build level version as an integer.  
  *  This value is for use by ICU clients. It defaults to 0.
- *  @draft ICU 4.0
+ *  @stable ICU 4.0
  */
 #ifndef U_ICU_VERSION_BUILDLEVEL_NUM
 #define U_ICU_VERSION_BUILDLEVEL_NUM 0
@@ -88,20 +88,20 @@
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.6
  */
-#define U_ICU_VERSION_SUFFIX _4_0
+#define U_ICU_VERSION_SUFFIX _4_2
 
 /** The current ICU library version as a dotted-decimal string. The patchlevel
  *  only appears in this string if it non-zero. 
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.4
  */
-#define U_ICU_VERSION "4.0"
+#define U_ICU_VERSION "4.2"
 
 /** The current ICU library major/minor version as a string without dots, for library name suffixes. 
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.6
  */
-#define U_ICU_VERSION_SHORT "40"
+#define U_ICU_VERSION_SHORT "42"
 
 /** An ICU version consists of up to 4 numbers from 0..255.
  *  @stable ICU 2.4
@@ -163,7 +163,7 @@ typedef uint8_t UVersionInfo[U_MAX_VERSION_LENGTH];
 #       define U_ICU_NAMESPACE icu
         namespace U_ICU_NAMESPACE { }
 #   else
-#       define U_ICU_NAMESPACE icu_4_0
+#       define U_ICU_NAMESPACE icu_4_2
         namespace U_ICU_NAMESPACE { }
         namespace icu = U_ICU_NAMESPACE;
 #   endif
@@ -206,6 +206,20 @@ U_STABLE void U_EXPORT2
 u_versionFromString(UVersionInfo versionArray, const char *versionString);
 
 /**
+ * Parse a Unicode string with dotted-decimal version information and
+ * fill in a UVersionInfo structure with the result.
+ * Definition of this function lives in putil.c
+ *
+ * @param versionArray The destination structure for the version information.
+ * @param versionString A Unicode string with dotted-decimal version
+ *                      information, with up to four non-negative number
+ *                      fields with values of up to 255 each.
+ * @draft ICU 4.2
+ */
+U_STABLE void U_EXPORT2
+u_versionFromUString(UVersionInfo versionArray, const UChar *versionString);
+
+/**
  * Write a string with dotted-decimal version information according
  * to the input UVersionInfo.
  * Definition of this function lives in putil.c
@@ -230,6 +244,19 @@ u_versionToString(UVersionInfo versionArray, char *versionString);
  */
 U_STABLE void U_EXPORT2
 u_getVersion(UVersionInfo versionArray);
+
+/**
+ * Compare two version numbers, v1 and v2, numerically.
+ * Returns 0 if v1 == v2
+ * Returns -1 if v1 < v2  (v1 is older, v2 is newer)
+ * Returns +1 if v1 > v2  (v1 is newer, v2 is older)
+ * @param v1 version to compare
+ * @param v2 version to compare
+ * @return comparison result
+ * @draft ICU 4.2
+ */
+U_STABLE int32_t U_EXPORT2
+u_compareVersions(UVersionInfo v1, UVersionInfo v2);
 
 
 /*===========================================================================

@@ -1,13 +1,13 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2008 International Business Machines
+// * Copyright (C) 2009 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/fa_AF.xml
 // *
 // ***************************************************************************
 fa_AF{
-    AuxExemplarCharacters{"[ٖ ٰ \u200C \u200D ټ ځ څ ډ ړ ږ ښ ګ ڼ ي]"}
+    AuxExemplarCharacters{"[\u0656 \u0670 \u200C \u200D ټ ځ څ ډ ړ ږ ښ ګ ڼ ي]"}
     Countries{
         AD{"اندورا"}
         AE{"امارات متحدهٔ عربی"}
@@ -109,14 +109,14 @@ fa_AF{
     Currencies{
         AFN{
             "؋",
-            "افغانی",
+            "افغانی افغانستان",
         }
         AUD{
-            "AUD",
+            "AU$",
             "دالر آسترالیا",
         }
         BND{
-            "BND",
+            "BN$",
             "دالر برونی",
         }
         BYR{
@@ -124,15 +124,15 @@ fa_AF{
             "روبل روسیهٔ سفید",
         }
         CAD{
-            "CAD",
+            "CA$",
             "دالر کانادا",
         }
         CHF{
-            "CHF",
+            "Fr.",
             "فرانک سویس",
         }
         DKK{
-            "DKK",
+            "Dkr",
             "کرون دنمارک",
         }
         JPY{
@@ -144,19 +144,19 @@ fa_AF{
             "پزوی مکسیکو",
         }
         NLG{
-            "NLG",
+            "fl",
             "گیلدر هالند",
         }
         NOK{
-            "NOK",
+            "Nkr",
             "کرون ناروی",
         }
         SEK{
-            "SEK",
+            "Skr",
             "کرون سویدن",
         }
         SGD{
-            "SGD",
+            "S$",
             "دالر سینگاپور",
         }
         TJS{
@@ -198,7 +198,7 @@ fa_AF{
         "#",
         "−",
         "×۱۰^",
-        "‰",
+        "؉",
         "∞",
         "NaN",
         "+",
@@ -212,12 +212,12 @@ fa_AF{
     Scripts{
         Mong{"مغلی"}
     }
-    Version{"1.59"}
+    Version{"1.63"}
     calendar{
         gregorian{
             DateTimeElements:intvector{
                 7,
-                1,
+                4,
             }
             monthNames{
                 format{

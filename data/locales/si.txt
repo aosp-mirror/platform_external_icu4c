@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2008 International Business Machines
+// * Copyright (C) 2009 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/si.xml
@@ -10,16 +10,17 @@
  *  ICU <specials> source: <path>/xml/main/si.xml
  */
 si{
+    AuxExemplarCharacters{"[\u200B-\u200D ඎ-ඐ ඦ ෳ]"}
     Countries{
         LK{"ශ්‍රී ලංකාව"}
     }
     Currencies{
         LKR{
             "SL Re",
-            "ලංකා රුපියල",
+            "ලංකා රුපියල්",
         }
     }
-    ExemplarCharacters{"[\u200C \u200D ං ඃ අ-ඖ ක-න ඳ-ර ල ව-ෆ ් ා-ු ූ ෘ-ෟ ෲ ෳ]"}
+    ExemplarCharacters{"[අ-ඍ එ-ඖ ං ඃ ක-ඣ ඥ ඤ ට-න ඳ-ර ල ව-ෆ ා-\u0DD4 \u0DD6 ෘ ෲ ෟ ෙ-ෞ \u0DCA]"}
     Keys{
         calendar{"දිනදසුන"}
         currency{"මුදල්"}
@@ -45,7 +46,7 @@ si{
             gregorian{"දිනදසුන"}
         }
     }
-    Version{"1.2"}
+    Version{"1.6"}
     calendar{
         gregorian{
             AmPmMarkers{
@@ -53,14 +54,18 @@ si{
                 "ප.ව.",
             }
             DateTimePatterns{
-                "h:mm:ss a v",
+                "h:mm:ss a zzzz",
                 "h:mm:ss a z",
                 "h:mm:ss a",
                 "h:mm a",
-                "EEEE, yyyy MMMM d",
-                "yyyy MMMM d",
-                "yyyy MMM d",
+                "EEEE, y MMMM d",
+                "y MMMM d",
+                "y MMM d",
                 "yyyy/MM/dd",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
                 "{1} {0}",
             }
             dayNames{

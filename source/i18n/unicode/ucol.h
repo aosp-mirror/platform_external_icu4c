@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (c) 1996-2008, International Business Machines Corporation and others.
+* Copyright (c) 1996-2009, International Business Machines Corporation and others.
 * All Rights Reserved.
 *******************************************************************************
 */
@@ -520,13 +520,13 @@ ucol_getDisplayName(    const    char        *objLoc,
  * Get a locale for which collation rules are available.
  * A UCollator in a locale returned by this function will perform the correct
  * collation for the locale.
- * @param index The index of the desired locale.
+ * @param localeIndex The index of the desired locale.
  * @return A locale for which collation rules are available, or 0 if none.
  * @see ucol_countAvailable
  * @stable ICU 2.0
  */
 U_STABLE const char* U_EXPORT2 
-ucol_getAvailable(int32_t index);
+ucol_getAvailable(int32_t localeIndex);
 
 /**
  * Determine how many locales have collation rules available.
@@ -577,6 +577,28 @@ ucol_getKeywords(UErrorCode *status);
  */
 U_STABLE UEnumeration* U_EXPORT2
 ucol_getKeywordValues(const char *keyword, UErrorCode *status);
+
+/**
+ * Given a key and a locale, returns an array of string values in a preferred
+ * order that would make a difference. These are all and only those values where
+ * the open (creation) of the service with the locale formed from the input locale
+ * plus input keyword and that value has different behavior than creation with the
+ * input locale alone.
+ * @param key           one of the keys supported by this service.  For now, only
+ *                      "collation" is supported.
+ * @param locale        the locale
+ * @param commonlyUsed  if set to true it will return only commonly used values
+ *                      with the given locale in preferred order.  Otherwise,
+ *                      it will return all the available values for the locale.
+ * @param status error status
+ * @return a string enumeration over keyword values for the given key and the locale.
+ * @draft ICU 4.2
+ */
+U_DRAFT UEnumeration* U_EXPORT2
+ucol_getKeywordValuesForLocale(const char* key,
+                               const char* locale,
+                               UBool commonlyUsed,
+                               UErrorCode* status);
 
 /**
  * Return the functionally equivalent locale for the given

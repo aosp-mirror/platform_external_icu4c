@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-*   Copyright (C) 1996-2008, International Business Machines
+*   Copyright (C) 1996-2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *******************************************************************************
 * Modification History:
@@ -129,6 +129,10 @@ unum_open(  UNumberFormatStyle    style,
 
     case UNUM_DURATION:
         retVal = (UNumberFormat*)new RuleBasedNumberFormat(URBNF_DURATION, Locale(locale), *status);
+        break;
+
+    case UNUM_NUMBERING_SYSTEM:
+        retVal = (UNumberFormat*)new RuleBasedNumberFormat(URBNF_NUMBERING_SYSTEM, Locale(locale), *status);
         break;
 #endif
 
@@ -313,13 +317,13 @@ parseRes(Formattable& res,
         ((const NumberFormat*)fmt)->parse(src, res, pp);
     }
     
-    if(parsePos != 0) {
-        if(pp.getErrorIndex() == -1)
-            *parsePos = pp.getIndex();
-        else {
+    if(pp.getErrorIndex() != -1) {
+        *status = U_PARSE_ERROR;
+        if(parsePos != 0) {
             *parsePos = pp.getErrorIndex();
-            *status = U_PARSE_ERROR;
         }
+    } else if(parsePos != 0) {
+        *parsePos = pp.getIndex();
     }
 }
 

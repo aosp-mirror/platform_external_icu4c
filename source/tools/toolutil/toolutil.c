@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 1999-2008, International Business Machines
+*   Copyright (C) 1999-2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -13,10 +13,13 @@
 *   created on: 1999nov19
 *   created by: Markus W. Scherer
 *
+*	6/25/08 - Added Cygwin specific code in uprv_mkdir - Brian Rower
+*	
 *   This file contains utility functions for ICU tools like genccode.
 */
 
 #include <stdio.h>
+#include <sys/stat.h>
 #include "unicode/utypes.h"
 #include "unicode/putil.h"
 #include "cmemory.h"
@@ -104,6 +107,7 @@ findBasename(const char *filename) {
 
 U_CAPI void U_EXPORT2
 uprv_mkdir(const char *pathname, UErrorCode *status) {
+
     int retVal = 0;
 #if defined(U_WINDOWS)
     retVal = _mkdir(pathname);
@@ -111,15 +115,44 @@ uprv_mkdir(const char *pathname, UErrorCode *status) {
     retVal = mkdir(pathname, S_IRWXU | (S_IROTH | S_IXOTH) | (S_IROTH | S_IXOTH));
 #endif
     if (retVal && errno != EEXIST) {
+#if defined(U_CYGWIN)
+		/*if using Cygwin and the mkdir says it failed...check if the directory already exists..*/
+		/* if it does...don't give the error, if it does not...give the error - Brian Rower - 6/25/08 */
+		struct stat st;
+		
+		if(stat(pathname,&st) != 0)
+		{
+			*status = U_FILE_ACCESS_ERROR;
+		}
+#else
         *status = U_FILE_ACCESS_ERROR;
+#endif
     }
 }
+
+/*U_CAPI UDate U_EXPORT2
+uprv_getModificationDate(const char *pathname, UErrorCode *status)
+{
+    if(U_FAILURE(*status)) {
+        return;
+    }
+    //  TODO: handle case where stat is not available
+    struct stat st;
+    
+    if(stat(pathname,&st) != 0)
+    {
+        *status = U_FILE_ACCESS_ERROR;
+    } else {
+        return st.st_mtime;
+    }
+}
+*/
 
 /* tool memory helper ------------------------------------------------------- */
 
 struct UToolMemory {
     char name[64];
-    int32_t capacity, maxCapacity, size, index;
+    int32_t capacity, maxCapacity, size, idx;
     void *array;
     UAlignedMemory staticArray[1];
 };
@@ -143,7 +176,7 @@ utm_open(const char *name, int32_t initialCapacity, int32_t maxCapacity, int32_t
     mem->capacity=initialCapacity;
     mem->maxCapacity=maxCapacity;
     mem->size=size;
-    mem->index=0;
+    mem->idx=0;
     return mem;
 }
 
@@ -165,7 +198,7 @@ utm_getStart(UToolMemory *mem) {
 
 U_CAPI int32_t U_EXPORT2
 utm_countItems(UToolMemory *mem) {
-    return mem->index;
+    return mem->idx;
 }
 
 
@@ -192,7 +225,7 @@ utm_hasCapacity(UToolMemory *mem, int32_t capacity) {
         if(mem->array==mem->staticArray) {
             mem->array=uprv_malloc(newCapacity*mem->size);
             if(mem->array!=NULL) {
-                uprv_memcpy(mem->array, mem->staticArray, mem->index*mem->size);
+                uprv_memcpy(mem->array, mem->staticArray, mem->idx*mem->size);
             }
         } else {
             mem->array=uprv_realloc(mem->array, newCapacity*mem->size);
@@ -209,10 +242,10 @@ utm_hasCapacity(UToolMemory *mem, int32_t capacity) {
 
 U_CAPI void * U_EXPORT2
 utm_alloc(UToolMemory *mem) {
-    char *p=(char *)mem->array+mem->index*mem->size;
-    int32_t newIndex=mem->index+1;
+    char *p=(char *)mem->array+mem->idx*mem->size;
+    int32_t newIndex=mem->idx+1;
     if(utm_hasCapacity(mem, newIndex)) {
-        mem->index=newIndex;
+        mem->idx=newIndex;
         uprv_memset(p, 0, mem->size);
     }
     return p;
@@ -220,10 +253,10 @@ utm_alloc(UToolMemory *mem) {
 
 U_CAPI void * U_EXPORT2
 utm_allocN(UToolMemory *mem, int32_t n) {
-    char *p=(char *)mem->array+mem->index*mem->size;
-    int32_t newIndex=mem->index+n;
+    char *p=(char *)mem->array+mem->idx*mem->size;
+    int32_t newIndex=mem->idx+n;
     if(utm_hasCapacity(mem, newIndex)) {
-        mem->index=newIndex;
+        mem->idx=newIndex;
         uprv_memset(p, 0, n*mem->size);
     }
     return p;

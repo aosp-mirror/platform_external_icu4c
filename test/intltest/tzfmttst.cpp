@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 2007-2008, International Business Machines Corporation and    *
+* Copyright (C) 2007-2009, International Business Machines Corporation and    *
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 */
@@ -18,8 +18,6 @@
 #include "unicode/uchar.h"
 #include "unicode/basictz.h"
 #include "cstring.h"
-
-#define DEBUG_ALL 0
 
 static const char* PATTERNS[] = {"z", "zzzz", "Z", "ZZZZ", "v", "vvvv", "V", "VVVV"};
 static const int NUM_PATTERNS = sizeof(PATTERNS)/sizeof(const char*);
@@ -85,11 +83,7 @@ TimeZoneFormatTest::TestTimeZoneRoundTrip(void) {
     }
 
     // Set up test locales
-    const Locale locales1[] = {
-        Locale("en_US")
-    };
-    const Locale locales2[] = {
-        Locale("en_US"),
+    const Locale testLocales[] = {
         Locale("en"),
         Locale("en_CA"),
         Locale("fr"),
@@ -98,14 +92,12 @@ TimeZoneFormatTest::TestTimeZoneRoundTrip(void) {
 
     const Locale *LOCALES;
     int32_t nLocales;
-    if (DEBUG_ALL) {
-        LOCALES = Locale::getAvailableLocales(nLocales);
-    } else if (quick) {
-        LOCALES = locales1;
-        nLocales = sizeof(locales1)/sizeof(Locale);
+
+    if (quick) {
+        LOCALES = testLocales;
+        nLocales = sizeof(testLocales)/sizeof(Locale);
     } else {
-        LOCALES = locales2;
-        nLocales = sizeof(locales2)/sizeof(Locale);
+        LOCALES = Locale::getAvailableLocales(nLocales);
     }
 
     StringEnumeration *tzids = TimeZone::createEnumeration();
@@ -120,9 +112,6 @@ TimeZoneFormatTest::TestTimeZoneRoundTrip(void) {
     // Run the roundtrip test
     for (int32_t locidx = 0; locidx < nLocales; locidx++) {
         for (int32_t patidx = 0; patidx < NUM_PATTERNS; patidx++) {
-
-            //DEBUG static const char* PATTERNS[] = {"z", "zzzz", "Z", "ZZZZ", "v", "vvvv", "V", "VVVV"};
-            //if (patidx != 1) continue;
 
             SimpleDateFormat *sdf = new SimpleDateFormat((UnicodeString)PATTERNS[patidx], LOCALES[locidx], status);
             if (U_FAILURE(status)) {
@@ -178,35 +167,10 @@ TimeZoneFormatTest::TestTimeZoneRoundTrip(void) {
                         status = U_ZERO_ERROR;
                     }
 
-                    // Check if localized GMT format or RFC format is used.
-                    int32_t numDigits = 0;
-                    for (int n = 0; n < tzstr.length(); n++) {
-                        if (u_isdigit(tzstr.charAt(n))) {
-                            numDigits++;
-                        }
-                    }
-                    if (numDigits >= 3) {
-                        // Localized GMT or RFC: total offset (raw + dst) must be preserved.
-                        int32_t inOffset = inRaw + inDst;
-                        int32_t outOffset = outRaw + outDst;
-                        if (inOffset != outOffset) {
-                            errln((UnicodeString)"Offset round trip failed; tz=" + *tzid
-                                + ", locale=" + LOCALES[locidx].getName() + ", pattern=" + PATTERNS[patidx]
-                                + ", time=" + DATES[datidx] + ", str=" + tzstr
-                                + ", inOffset=" + inOffset + ", outOffset=" + outOffset);
-                        }
-                    } else if (uprv_strcmp(PATTERNS[patidx], "z") == 0 || uprv_strcmp(PATTERNS[patidx], "zzzz") == 0
-                            || uprv_strcmp(PATTERNS[patidx], "v") == 0 || uprv_strcmp(PATTERNS[patidx], "vvvv") == 0
-                            || uprv_strcmp(PATTERNS[patidx], "V") == 0) {
-                        // Specific or generic: raw offset must be preserved.
-                        if (inRaw != outRaw) {
-                            errln((UnicodeString)"Raw offset round trip failed; tz=" + *tzid
-                                + ", locale=" + LOCALES[locidx].getName() + ", pattern=" + PATTERNS[patidx]
-                                + ", time=" + DATES[datidx] + ", str=" + tzstr
-                                + ", inRawOffset=" + inRaw + ", outRawOffset=" + outRaw);
-                        }
-                    } else { // "VVVV"
-                        // Location: time zone rule must be preserved.
+                    if (uprv_strcmp(PATTERNS[patidx], "VVVV") == 0) {
+                        // Location: time zone rule must be preserved except
+                        // zones not actually associated with a specific location.
+                        // Time zones in this category do not have "/" in its ID.
                         UnicodeString canonical;
                         TimeZone::getCanonicalID(*tzid, canonical, status);
                         if (U_FAILURE(status)) {
@@ -216,14 +180,50 @@ TimeZoneFormatTest::TestTimeZoneRoundTrip(void) {
                         } else if (outtzid != canonical) {
                             // Canonical ID did not match - check the rules
                             if (!((BasicTimeZone*)&outtz)->hasEquivalentTransitions((BasicTimeZone&)*tz, low, high, TRUE, status)) {
-                                errln("Canonical round trip failed; tz=" + *tzid
+                                if (canonical.indexOf((UChar)0x27 /*'/'*/) == -1) {
+                                    // Exceptional cases, such as CET, EET, MET and WET
+                                    logln("Canonical round trip failed (as expected); tz=" + *tzid
+                                            + ", locale=" + LOCALES[locidx].getName() + ", pattern=" + PATTERNS[patidx]
+                                            + ", time=" + DATES[datidx] + ", str=" + tzstr
+                                            + ", outtz=" + outtzid);
+                                } else {
+                                    errln("Canonical round trip failed; tz=" + *tzid
+                                        + ", locale=" + LOCALES[locidx].getName() + ", pattern=" + PATTERNS[patidx]
+                                        + ", time=" + DATES[datidx] + ", str=" + tzstr
+                                        + ", outtz=" + outtzid);
+                                }
+                                if (U_FAILURE(status)) {
+                                    errln("hasEquivalentTransitions failed");
+                                    status = U_ZERO_ERROR;
+                                }
+                            }
+                        }
+
+                    } else {
+                        // Check if localized GMT format or RFC format is used.
+                        int32_t numDigits = 0;
+                        for (int n = 0; n < tzstr.length(); n++) {
+                            if (u_isdigit(tzstr.charAt(n))) {
+                                numDigits++;
+                            }
+                        }
+                        if (numDigits >= 3) {
+                            // Localized GMT or RFC: total offset (raw + dst) must be preserved.
+                            int32_t inOffset = inRaw + inDst;
+                            int32_t outOffset = outRaw + outDst;
+                            if (inOffset != outOffset) {
+                                errln((UnicodeString)"Offset round trip failed; tz=" + *tzid
                                     + ", locale=" + LOCALES[locidx].getName() + ", pattern=" + PATTERNS[patidx]
                                     + ", time=" + DATES[datidx] + ", str=" + tzstr
-                                    + ", outtz=" + outtzid);
+                                    + ", inOffset=" + inOffset + ", outOffset=" + outOffset);
                             }
-                            if (U_FAILURE(status)) {
-                                errln("hasEquivalentTransitions failed");
-                                status = U_ZERO_ERROR;
+                        } else {
+                            // Specific or generic: raw offset must be preserved.
+                            if (inRaw != outRaw) {
+                                errln((UnicodeString)"Raw offset round trip failed; tz=" + *tzid
+                                    + ", locale=" + LOCALES[locidx].getName() + ", pattern=" + PATTERNS[patidx]
+                                    + ", time=" + DATES[datidx] + ", str=" + tzstr
+                                    + ", inRawOffset=" + inRaw + ", outRawOffset=" + outRaw);
                             }
                         }
                     }
@@ -249,11 +249,13 @@ TimeZoneFormatTest::TestTimeRoundTrip(void) {
     }
 
     UDate START_TIME, END_TIME;
+    const char* testAllProp = getProperty("TimeZoneRoundTripAll");
+    UBool bTestAll = (testAllProp && uprv_strcmp(testAllProp, "true") == 0);
 
-    if (DEBUG_ALL) {
+    if (bTestAll || !quick) {
         cal->set(1900, UCAL_JANUARY, 1);
     } else {
-        cal->set(1965, UCAL_JANUARY, 1);
+        cal->set(1990, UCAL_JANUARY, 1);
     }
     START_TIME = cal->getTime(status);
 
@@ -284,25 +286,23 @@ TimeZoneFormatTest::TestTimeRoundTrip(void) {
 
     // Set up test locales
     const Locale locales1[] = {
-        Locale("en_US")
+        Locale("en")
     };
     const Locale locales2[] = {
-        Locale("en_US"),
-        Locale("en"),
-        Locale("de_DE"),
-        Locale("es_ES"),
-        Locale("fr_FR"),
-        Locale("it_IT"),
-        Locale("ja_JP"),
-        Locale("ko_KR"),
-        Locale("pt_BR"),
-        Locale("zh_Hans_CN"),
-        Locale("zh_Hant_TW")
+        Locale("ar_EG"), Locale("bg_BG"), Locale("ca_ES"), Locale("da_DK"), Locale("de"),
+        Locale("de_DE"), Locale("el_GR"), Locale("en"), Locale("en_AU"), Locale("en_CA"),
+        Locale("en_US"), Locale("es"), Locale("es_ES"), Locale("es_MX"), Locale("fi_FI"),
+        Locale("fr"), Locale("fr_CA"), Locale("fr_FR"), Locale("he_IL"), Locale("hu_HU"),
+        Locale("it"), Locale("it_IT"), Locale("ja"), Locale("ja_JP"), Locale("ko"),
+        Locale("ko_KR"), Locale("nb_NO"), Locale("nl_NL"), Locale("nn_NO"), Locale("pl_PL"),
+        Locale("pt"), Locale("pt_BR"), Locale("pt_PT"), Locale("ru_RU"), Locale("sv_SE"),
+        Locale("th_TH"), Locale("tr_TR"), Locale("zh"), Locale("zh_Hans"), Locale("zh_Hans_CN"),
+        Locale("zh_Hant"), Locale("zh_Hant_TW")
     };
 
     const Locale *LOCALES;
     int32_t nLocales;
-    if (DEBUG_ALL) {
+    if (bTestAll) {
         LOCALES = Locale::getAvailableLocales(nLocales);
     } else if (quick) {
         LOCALES = locales1;

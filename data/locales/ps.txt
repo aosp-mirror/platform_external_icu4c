@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2008 International Business Machines
+// * Copyright (C) 2009 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/ps.xml
@@ -83,8 +83,9 @@ ps{
         }
     }
     ExemplarCharacters{
-        "[َ ِ ُ ً ٍ ٌ ّ ْ ٔ ٰ آ ا أ ء ب پ ت ټ ث ج ځ چ څ ح-د ډ ذ ر ړ ز ژ ږ س ش ښ ص-غ ف"
-        " ق ک ګ ل-ن ڼ ه ة و ؤ ی ي ې ۍ ئ]"
+        "[\u064E \u0650 \u064F \u064B \u064D \u064C \u0651 \u0652 \u0654 \u0670 آ ا أ"
+        " ء ب پ ت ټ ث ج ځ چ څ ح-د ډ ذ ر ړ ز ژ ږ س ش ښ ص-غ ف ق ک ګ ل-ن ڼ ه ة و ؤ ی ي ې"
+        " ۍ ئ]"
     }
     Languages{
         ar{"عربي"}
@@ -146,7 +147,7 @@ ps{
     Scripts{
         Arab{"عربي"}
     }
-    Version{"1.53"}
+    Version{"1.64"}
     calendar{
         gregorian{
             AmPmMarkers{
@@ -154,14 +155,18 @@ ps{
                 "غ.و.",
             }
             DateTimePatterns{
-                "H:mm:ss (v)",
+                "H:mm:ss (zzzz)",
                 "H:mm:ss (z)",
                 "H:mm:ss",
                 "H:mm",
-                "EEEE د yyyy د MMMM d",
-                "د yyyy د MMMM d",
-                "d MMM yyyy",
+                "EEEE د y د MMMM d",
+                "د y د MMMM d",
+                "d MMM y",
                 "yyyy/M/d",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
                 "{1} {0}",
             }
             dayNames{
@@ -205,20 +210,6 @@ ps{
         persian{
             monthNames{
                 format{
-                    abbreviated{
-                        "وری",
-                        "غویی",
-                        "غبرګولی",
-                        "چنګاښ",
-                        "زمری",
-                        "وږی",
-                        "تله",
-                        "لړم",
-                        "لیندۍ",
-                        "مرغومی",
-                        "سلواغه",
-                        "کب",
-                    }
                     wide{
                         "وری",
                         "غویی",
@@ -237,6 +228,7 @@ ps{
             }
         }
     }
+    defaultNumberingSystem{"arabext"}
     layout{
         characters{"right-to-left"}
         lines{"top-to-bottom"}

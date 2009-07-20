@@ -1,6 +1,6 @@
 /***********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2007, International Business Machines Corporation
+ * Copyright (c) 1997-2009, International Business Machines Corporation
  * and others. All Rights Reserved.
  ***********************************************************************/
  
@@ -164,7 +164,7 @@ void DateFormatRoundTripTest::TestDateFormatRoundTrip()
 #if 1
     // installed locales
     for (int i=0; i < locCount; ++i) {
-        test(avail[i]);
+            test(avail[i]);
     }
 #endif
 

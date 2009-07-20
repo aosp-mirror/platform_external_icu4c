@@ -1,6 +1,6 @@
 /*
 ********************************************************************************
-*   Copyright (C) 1997-2008, International Business Machines
+*   Copyright (C) 1997-2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 ********************************************************************************
 *
@@ -358,6 +358,26 @@ public:
      * @stable ICU 2.0
      */
     static const Locale* U_EXPORT2 getAvailableLocales(int32_t& count);
+
+
+    /**
+     * Given a key and a locale, returns an array of string values in a preferred
+     * order that would make a difference. These are all and only those values where
+     * the open (creation) of the service with the locale formed from the input locale
+     * plus input keyword and that value has different behavior than creation with the
+     * input locale alone.
+     * @param key           one of the keys supported by this service.  For now, only
+     *                      "calendar" is supported.
+     * @param locale        the locale
+     * @param commonlyUsed  if set to true it will return only commonly used values
+     *                      with the given locale in preferred order.  Otherwise,
+     *                      it will return all the available values for the locale.
+     * @param status        ICU Error Code
+     * @return a string enumeration over keyword values for the given key and the locale.
+     * @draft ICU 4.2
+     */
+    static StringEnumeration* U_EXPORT2 getKeywordValuesForLocale(const char* key,
+                    const Locale& locale, UBool commonlyUsed, UErrorCode& status);
 
     /**
      * Returns the current UTC (GMT) time measured in milliseconds since 0:00:00 on 1/1/70
@@ -1715,18 +1735,20 @@ protected:
     /**
      * Called by computeJulianDay.  Returns the default month (0-based) for the year,
      * taking year and era into account.  Defaults to 0 for Gregorian, which doesn't care.
-     * @internal
+     * @param eyear The extended year
      * @internal
      */
-    virtual int32_t getDefaultMonthInYear() ;
+    virtual int32_t getDefaultMonthInYear(int32_t eyear) ;
 
 
     /**
      * Called by computeJulianDay.  Returns the default day (1-based) for the month,
      * taking currently-set year and era into account.  Defaults to 1 for Gregorian.
+     * @param eyear the extended year
+     * @param month the month in the year
      * @internal
      */
-    virtual int32_t getDefaultDayInMonth(int32_t /*month*/);
+    virtual int32_t getDefaultDayInMonth(int32_t eyear, int32_t month);
 
     //-------------------------------------------------------------------------
     // Protected utility methods for use by subclasses.  These are very handy
@@ -1951,9 +1973,6 @@ private:
      * variables gregorianXxx.  They are used for time zone computations and by
      * subclasses that are Gregorian derivatives.  Subclasses may call this
      * method to perform a Gregorian calendar millis->fields computation.
-     * To perform a Gregorian calendar fields->millis computation, call
-     * computeGregorianMonthStart().
-     * @see #computeGregorianMonthStart
      */
     void computeGregorianFields(int32_t julianDay, UErrorCode &ec);
 

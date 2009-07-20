@@ -1,5 +1,5 @@
 /********************************************************************************
-* Copyright (C) 2008, International Business Machines Corporation and others. All Rights Reserved.
+* Copyright (C) 2008-2009, International Business Machines Corporation and others. All Rights Reserved.
 *******************************************************************************
 *
 * File DTITVFMT.H
@@ -24,6 +24,7 @@
 #include "unicode/smpdtfmt.h"
 #include "unicode/dtintrv.h"
 #include "unicode/dtitvinf.h"
+#include "unicode/dtptngen.h"
 
 U_NAMESPACE_BEGIN
 
@@ -228,7 +229,7 @@ public:
      * @param skeleton  the skeleton on which interval format based.
      * @param status    output param set to success/failure code on exit
      * @return          a date time interval formatter which the caller owns.
-     * @draft ICU 4.0
+     * @stable ICU 4.0
      */
     static DateIntervalFormat* U_EXPORT2 createInstance(
                                                const UnicodeString& skeleton,
@@ -260,7 +261,7 @@ public:
      * @param locale    the given locale
      * @param status    output param set to success/failure code on exit
      * @return          a date time interval formatter which the caller owns.
-     * @draft ICU 4.0
+     * @stable ICU 4.0
      */
 
     static DateIntervalFormat* U_EXPORT2 createInstance(
@@ -281,7 +282,7 @@ public:
      * @param dtitvinf  the DateIntervalInfo object. 
      * @param status    output param set to success/failure code on exit
      * @return          a date time interval formatter which the caller owns.
-     * @draft ICU 4.0
+     * @stable ICU 4.0
      */
     static DateIntervalFormat* U_EXPORT2 createInstance(
                                               const UnicodeString& skeleton,
@@ -321,7 +322,7 @@ public:
      * @param dtitvinf  the DateIntervalInfo object.
      * @param status    output param set to success/failure code on exit
      * @return          a date time interval formatter which the caller owns.
-     * @draft ICU 4.0
+     * @stable ICU 4.0
      */
     static DateIntervalFormat* U_EXPORT2 createInstance(
                                               const UnicodeString& skeleton,
@@ -331,7 +332,7 @@ public:
 
     /**
      * Destructor.
-     * @draft ICU 4.0
+     * @stable ICU 4.0
      */
     virtual ~DateIntervalFormat();
 
@@ -339,7 +340,7 @@ public:
      * Clone this Format object polymorphically. The caller owns the result and
      * should delete it when done.
      * @return    A copy of the object.
-     * @draft ICU 4.0
+     * @stable ICU 4.0
      */
     virtual Format* clone(void) const;
 
@@ -348,7 +349,7 @@ public:
      * of different subclasses are considered unequal.
      * @param other    the object to be compared with.
      * @return         true if the given Format objects are semantically equal.
-     * @draft ICU 4.0
+     * @stable ICU 4.0
      */
     virtual UBool operator==(const Format& other) const;
 
@@ -357,7 +358,7 @@ public:
      * Objects of different subclasses are considered unequal.
      * @param other the object to be compared with.
      * @return      true if the given Format objects are not semantically equal.
-     * @draft ICU 4.0
+     * @stable ICU 4.0
      */
     UBool operator!=(const Format& other) const;
 
@@ -375,7 +376,7 @@ public:
      *                          On output: the offsets of the alignment field.
      * @param status            Output param filled with success/failure status.
      * @return                  Reference to 'appendTo' parameter.
-     * @draft ICU 4.0
+     * @stable ICU 4.0
      */
     virtual UnicodeString& format(const Formattable& obj,
                                   UnicodeString& appendTo,
@@ -394,7 +395,7 @@ public:
      *                          On output: the offsets of the alignment field.
      * @param status            Output param filled with success/failure status.
      * @return                  Reference to 'appendTo' parameter.
-     * @draft ICU 4.0
+     * @stable ICU 4.0
      */
     UnicodeString& format(const DateInterval* dtInterval,
                           UnicodeString& appendTo,
@@ -420,7 +421,7 @@ public:
      *                          Caller needs to make sure it is SUCCESS
      *                          at the function entrance
      * @return                  Reference to 'appendTo' parameter.
-     * @draft ICU 4.0
+     * @stable ICU 4.0
      */
     UnicodeString& format(Calendar& fromCalendar,
                           Calendar& toCalendar,
@@ -463,7 +464,7 @@ public:
      * Gets the date time interval patterns.
      * @return the date time interval patterns associated with
      * this date interval formatter.
-     * @draft ICU 4.0
+     * @stable ICU 4.0
      */
     const DateIntervalInfo* getDateIntervalInfo(void) const;
 
@@ -472,7 +473,7 @@ public:
      * Set the date time interval patterns. 
      * @param newIntervalPatterns   the given interval patterns to copy.
      * @param status          output param set to success/failure code on exit
-     * @draft ICU 4.0
+     * @stable ICU 4.0
      */
     void setDateIntervalInfo(const DateIntervalInfo& newIntervalPatterns,
                              UErrorCode& status);
@@ -481,7 +482,7 @@ public:
     /**
      * Gets the date formatter
      * @return the date formatter associated with this date interval formatter.
-     * @draft ICU 4.0
+     * @stable ICU 4.0
      */
     const DateFormat* getDateFormat(void) const;
 
@@ -494,7 +495,7 @@ public:
      * .       erived::getStaticClassID()) ...
      * </pre>
      * @return          The class ID for all objects of this class.
-     * @draft ICU 4.0
+     * @stable ICU 4.0
      */
     static UClassID U_EXPORT2 getStaticClassID(void);
 
@@ -507,7 +508,7 @@ public:
      * @return          The class ID for this object. All objects of a
      *                  given class have the same class ID.  Objects of
      *                  other classes have different class IDs.
-     * @draft ICU 4.0
+     * @stable ICU 4.0
      */
     virtual UClassID getDynamicClassID(void) const;
 
@@ -515,13 +516,13 @@ protected:
 
     /**
      * Copy constructor.
-     * @draft ICU 4.0
+     * @stable ICU 4.0
      */
     DateIntervalFormat(const DateIntervalFormat&);
 
     /**
      * Assignment operator.
-     * @draft ICU 4.0
+     * @stable ICU 4.0
      */
     DateIntervalFormat& operator=(const DateIntervalFormat&);
 
@@ -580,13 +581,13 @@ private:
      * DateFormat and DateIntervalInfo objects. 
      * Caller should not delete them.
      *
-     * @param dtfmt     the SimpleDateFormat object to be adopted.
+     * @param locale    the locale of this date interval formatter.
      * @param dtitvinf  the DateIntervalInfo object to be adopted.
      * @param skeleton  the skeleton of the date formatter
      * @param status    output param set to success/failure code on exit
      * @internal ICU 4.0
      */
-    DateIntervalFormat(DateFormat* dtfmt, DateIntervalInfo* dtItvInfo,
+    DateIntervalFormat(const Locale& locale, DateIntervalInfo* dtItvInfo,
                        const UnicodeString* skeleton, UErrorCode& status);
 
     
@@ -596,21 +597,40 @@ private:
      *
      * It is a wrapper of the constructor.
      *
-     * @param dtfmt     the DateFormat object to be adopted.
+     * @param locale    the locale of this date interval formatter.
      * @param dtitvinf  the DateIntervalInfo object to be adopted.
      * @param skeleton  the skeleton of this formatter.
      * @param status    Output param set to success/failure code.
      * @return          a date time interval formatter which the caller owns.
      * @internal ICU 4.0
      */
-    static DateIntervalFormat* U_EXPORT2 create(DateFormat* dtfmt,
+    static DateIntervalFormat* U_EXPORT2 create(const Locale& locale,
                                                 DateIntervalInfo* dtitvinf,
                                                 const UnicodeString* skeleton,
                                                 UErrorCode& status);
 
+    /**
+     * Create a simple date/time formatter from skeleton, given locale,
+     * and date time pattern generator.
+     *
+     * @param skeleton  the skeleton on which date format based.
+     * @param locale    the given locale.
+     * @param dtpng     the date time pattern generator.
+     * @param status    Output param to be set to success/failure code.
+     *                  If it is failure, the returned date formatter will
+     *                  be NULL.
+     * @return          a simple date formatter which the caller owns.
+     * @internal ICU 4.0
+     */
+    static SimpleDateFormat* U_EXPORT2 createSDFPatternInstance(
+                                        const UnicodeString& skeleton,
+                                        const Locale& locale,
+                                        DateTimePatternGenerator* dtpng,
+                                        UErrorCode& status);
+
 
     /**
-     *  Below are for generating interval patterns locale to the formatter 
+     *  Below are for generating interval patterns local to the formatter 
      */
 
 
@@ -684,13 +704,11 @@ private:
      * a skeleton, and a date time pattern generator.
      * @param field      the largest different calendar field
      * @param skeleton   a skeleton
-     * @param dtpng      date time pattern generator
      * @param status     output param set to success/failure code on exit
      * @internal ICU 4.0 
      */
     void setFallbackPattern(UCalendarDateFields field, 
                             const UnicodeString& skeleton,
-                            DateTimePatternGenerator* dtpng,
                             UErrorCode& status);
                             
 
@@ -923,6 +941,11 @@ private:
      */
     Calendar* fFromCalendar;
     Calendar* fToCalendar;
+
+    /**
+     * Date time pattern generator
+     */
+    DateTimePatternGenerator* fDtpng;
 
     /**
      * Following are interval information relavent (locale) to this formatter.

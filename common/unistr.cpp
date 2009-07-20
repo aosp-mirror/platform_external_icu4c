@@ -1,6 +1,6 @@
 /*
 ******************************************************************************
-* Copyright (C) 1999-2008, International Business Machines Corporation and   *
+* Copyright (C) 1999-2009, International Business Machines Corporation and   *
 * others. All Rights Reserved.                                               *
 ******************************************************************************
 *
@@ -295,6 +295,32 @@ UnicodeString::UnicodeString(const char *src, int32_t length, EInvariant)
   }
 }
 
+#if U_CHARSET_IS_UTF8
+
+UnicodeString::UnicodeString(const char *codepageData)
+  : fShortLength(0),
+    fFlags(kShortString) {
+  if(codepageData != 0) {
+    setToUTF8(codepageData);
+  }
+}
+
+UnicodeString::UnicodeString(const char *codepageData, int32_t dataLength)
+  : fShortLength(0),
+    fFlags(kShortString) {
+  // if there's nothing to convert, do nothing
+  if(codepageData == 0 || dataLength == 0 || dataLength < -1) {
+    return;
+  }
+  if(dataLength == -1) {
+    dataLength = (int32_t)uprv_strlen(codepageData);
+  }
+  setToUTF8(StringPiece(codepageData, dataLength));
+}
+
+// else see unistr_cnv.cpp
+#endif
+
 UnicodeString::UnicodeString(const UnicodeString& that)
   : Replaceable(),
     fShortLength(0),
@@ -375,6 +401,47 @@ UnicodeString::~UnicodeString()
   releaseArray();
 }
 
+//========================================
+// Factory methods
+//========================================
+
+UnicodeString UnicodeString::fromUTF8(const StringPiece &utf8) {
+  UnicodeString result;
+  result.setToUTF8(utf8);
+  return result;
+}
+
+UnicodeString UnicodeString::fromUTF32(const UChar32 *utf32, int32_t length) {
+  UnicodeString result;
+  int32_t capacity;
+  // Most UTF-32 strings will be BMP-only and result in a same-length
+  // UTF-16 string. We overestimate the capacity just slightly,
+  // just in case there are a few supplementary characters.
+  if(length <= US_STACKBUF_SIZE) {
+    capacity = US_STACKBUF_SIZE;
+  } else {
+    capacity = length + (length >> 4) + 4;
+  }
+  do {
+    UChar *utf16 = result.getBuffer(capacity);
+    int32_t length16;
+    UErrorCode errorCode = U_ZERO_ERROR;
+    u_strFromUTF32WithSub(utf16, result.getCapacity(), &length16,
+        utf32, length,
+        0xfffd,  // Substitution character.
+        NULL,    // Don't care about number of substitutions.
+        &errorCode);
+    result.releaseBuffer(length16);
+    if(errorCode == U_BUFFER_OVERFLOW_ERROR) {
+      capacity = length16 + 1;  // +1 for the terminating NUL.
+      continue;
+    } else if(U_FAILURE(errorCode)) {
+      result.setToBogus();
+    }
+    break;
+  } while(TRUE);
+  return result;
+}
 
 //========================================
 // Assignment
@@ -712,6 +779,35 @@ UnicodeString::extract(int32_t start,
   return u_terminateChars(target, targetCapacity, length, &status);
 }
 
+int32_t
+UnicodeString::toUTF8(int32_t start, int32_t len,
+                      char *target, int32_t capacity) const {
+  pinIndices(start, len);
+  int32_t length8;
+  UErrorCode errorCode = U_ZERO_ERROR;
+  u_strToUTF8WithSub(target, capacity, &length8,
+                     getBuffer() + start, len,
+                     0xFFFD,  // Standard substitution character.
+                     NULL,    // Don't care about number of substitutions.
+                     &errorCode);
+  return length8;
+}
+
+#if U_CHARSET_IS_UTF8
+
+int32_t
+UnicodeString::extract(int32_t start, int32_t len,
+                       char *target, uint32_t dstSize) const {
+  // if the arguments are illegal, then do nothing
+  if(/*dstSize < 0 || */(dstSize > 0 && target == 0)) {
+    return 0;
+  }
+  return toUTF8(start, len, target, dstSize <= 0x7fffffff ? (int32_t)dstSize : 0x7fffffff);
+}
+
+// else see unistr_cnv.cpp
+#endif
+
 void 
 UnicodeString::extractBetween(int32_t start,
                   int32_t limit,
@@ -719,6 +815,65 @@ UnicodeString::extractBetween(int32_t start,
   pinIndex(start);
   pinIndex(limit);
   doExtract(start, limit - start, target);
+}
+
+// When converting from UTF-16 to UTF-8, the result will have at most 3 times
+// as many bytes as the source has UChars.
+// The "worst cases" are writing systems like Indic, Thai and CJK with
+// 3:1 bytes:UChars.
+void
+UnicodeString::toUTF8(ByteSink &sink) const {
+  int32_t length16 = length();
+  if(length16 != 0) {
+    char stackBuffer[1024];
+    int32_t capacity = (int32_t)sizeof(stackBuffer);
+    UBool utf8IsOwned = FALSE;
+    char *utf8 = sink.GetAppendBuffer(length16 < capacity ? length16 : capacity,
+                                      3*length16,
+                                      stackBuffer, capacity,
+                                      &capacity);
+    int32_t length8 = 0;
+    UErrorCode errorCode = U_ZERO_ERROR;
+    u_strToUTF8WithSub(utf8, capacity, &length8,
+                       getBuffer(), length16,
+                       0xFFFD,  // Standard substitution character.
+                       NULL,    // Don't care about number of substitutions.
+                       &errorCode);
+    if(errorCode == U_BUFFER_OVERFLOW_ERROR) {
+      utf8 = (char *)uprv_malloc(length8);
+      if(utf8 != NULL) {
+        utf8IsOwned = TRUE;
+        errorCode = U_ZERO_ERROR;
+        u_strToUTF8WithSub(utf8, length8, &length8,
+                           getBuffer(), length16,
+                           0xFFFD,  // Standard substitution character.
+                           NULL,    // Don't care about number of substitutions.
+                           &errorCode);
+      } else {
+        errorCode = U_MEMORY_ALLOCATION_ERROR;
+      }
+    }
+    if(U_SUCCESS(errorCode)) {
+      sink.Append(utf8, length8);
+    }
+    if(utf8IsOwned) {
+      uprv_free(utf8);
+    }
+  }
+}
+
+int32_t
+UnicodeString::toUTF32(UChar32 *utf32, int32_t capacity, UErrorCode &errorCode) const {
+  int32_t length32=0;
+  if(U_SUCCESS(errorCode)) {
+    // getBuffer() and u_strToUTF32WithSub() check for illegal arguments.
+    u_strToUTF32WithSub(utf32, capacity, &length32,
+        getBuffer(), length(),
+        0xfffd,  // Substitution character.
+        NULL,    // Don't care about number of substitutions.
+        &errorCode);
+  }
+  return length32;
 }
 
 int32_t 
@@ -986,6 +1141,31 @@ UnicodeString::setTo(UChar *buffer,
 
   setArray(buffer, buffLength, buffCapacity);
   fFlags = kWritableAlias;
+  return *this;
+}
+
+UnicodeString &UnicodeString::setToUTF8(const StringPiece &utf8) {
+  unBogus();
+  int32_t length = utf8.length();
+  int32_t capacity;
+  // The UTF-16 string will be at most as long as the UTF-8 string.
+  if(length <= US_STACKBUF_SIZE) {
+    capacity = US_STACKBUF_SIZE;
+  } else {
+    capacity = length + 1;  // +1 for the terminating NUL.
+  }
+  UChar *utf16 = getBuffer(capacity);
+  int32_t length16;
+  UErrorCode errorCode = U_ZERO_ERROR;
+  u_strFromUTF8WithSub(utf16, getCapacity(), &length16,
+      utf8.data(), length,
+      0xfffd,  // Substitution character.
+      NULL,    // Don't care about number of substitutions.
+      &errorCode);
+  releaseBuffer(length16);
+  if(U_FAILURE(errorCode)) {
+    setToBogus();
+  }
   return *this;
 }
 

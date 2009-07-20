@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2007, International Business Machines Corporation and
+ * Copyright (c) 1997-2009, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -136,7 +136,9 @@ public:
     virtual void TestDateFormatZone146(void);
 
     void TestTimeZoneStringsAPI(void);
- 
+
+    void TestGMTParsing(void);
+
 public: // package
     /**
      * Test the formatting of dates in different locales.
@@ -158,6 +160,12 @@ public: // package
     void TestGenericTime(void);
 
     void TestGenericTimeZoneOrder(void);
+
+    void Test6338(void);
+
+    void Test6726(void);
+
+    void Test6880(void);
 
 public:
     /**
@@ -185,12 +193,15 @@ public:
     
     void TestHostClone(void);
 
+    void TestTimeZoneDisplayName(void);
+
+    void TestRoundtripWithCalendar(void);
+
 public:
     /***
      * Test Relative Dates
      */
      void TestRelative(void);
-     void TestTimeZoneDisplayName(void);
 /*   void TestRelativeError(void);
      void TestRelativeOther(void);
 */

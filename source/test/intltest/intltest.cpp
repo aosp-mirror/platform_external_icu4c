@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1997-2008, International Business Machines Corporation and
+ * Copyright (c) 1997-2009, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -510,6 +510,7 @@ IntlTest::IntlTest()
     leaks = FALSE;
     testoutfp = stdout;
     LL_indentlevel = indentLevel_offset;
+    numProps = 0;
 }
 
 void IntlTest::setCaller( IntlTest* callingTest )
@@ -522,6 +523,10 @@ void IntlTest::setCaller( IntlTest* callingTest )
         quick = caller->quick;
         testoutfp = caller->testoutfp;
         LL_indentlevel = caller->LL_indentlevel + indentLevel_offset;
+        numProps = caller->numProps;
+        for (int32_t i = 0; i < numProps; i++) {
+            proplines[i] = caller->proplines[i];
+        }
     }
 }
 
@@ -985,6 +990,8 @@ main(int argc, char* argv[])
     const char *warnOrErr = "Failure";
     UDate startTime, endTime;
     int32_t diffTime;
+    const char *props[IntlTest::kMaxProps];
+    int32_t nProps = 0;
 
     U_MAIN_INIT_ARGS(argc, argv);
 
@@ -1012,6 +1019,12 @@ main(int argc, char* argv[])
               warnOnMissingData = TRUE;
               warnOrErr = "WARNING";
             }
+            else if (strncmp("prop:", str, 5) == 0) {
+                if (nProps < IntlTest::kMaxProps) {
+                    props[nProps] = str + 5;
+                }
+                nProps++;
+            }
             else {
                 syntax = TRUE;
             }
@@ -1031,7 +1044,7 @@ main(int argc, char* argv[])
                 "### Syntax:\n"
                 "### IntlTest [-option1 -option2 ...] [testname1 testname2 ...] \n"
                 "### where options are: verbose (v), all (a), noerrormsg (n), \n"
-                "### exhaustive (e), leaks (l)"
+                "### exhaustive (e), leaks (l), prop:<propery>=<value>, \n"
                 "### (Specify either -all (shortcut -a) or a test name). \n"
                 "### -all will run all of the tests.\n"
                 "### \n"
@@ -1047,6 +1060,10 @@ main(int argc, char* argv[])
         return 1;
     }
 
+    if (nProps > IntlTest::kMaxProps) {
+        fprintf(stdout, "### Too many properties.  Exiting.\n");
+    }
+
     UBool all_tests_exist = TRUE;
     MajorTestLevel major;
     major.setVerbose( verbose );
@@ -1054,9 +1071,26 @@ main(int argc, char* argv[])
     major.setQuick( quick );
     major.setLeaks( leaks );
     major.setWarnOnMissingData( warnOnMissingData );
+    for (int32_t i = 0; i < nProps; i++) {
+        major.setProperty(props[i]);
+    }
     fprintf(stdout, "-----------------------------------------------\n");
     fprintf(stdout, " IntlTest (C++) Test Suite for                 \n");
     fprintf(stdout, "   International Components for Unicode %s\n", U_ICU_VERSION);
+    {
+	const char *charsetFamily = "Unknown";
+        int32_t voidSize = (int32_t)sizeof(void*);
+        int32_t bits = voidSize * 8;
+        if(U_CHARSET_FAMILY==U_ASCII_FAMILY) {
+           charsetFamily="ASCII";
+        } else if(U_CHARSET_FAMILY==U_EBCDIC_FAMILY) {
+           charsetFamily="EBCDIC";
+        }
+        fprintf(stdout, 
+                    "   Bits: %d, Byte order: %s, Chars: %s\n",
+                     bits, U_IS_BIG_ENDIAN?"Big endian":"Little endian",
+                     charsetFamily);
+    }
     fprintf(stdout, "-----------------------------------------------\n");
     fprintf(stdout, " Options:                                       \n");
     fprintf(stdout, "   all (a)                  : %s\n", (all?               "On" : "Off"));
@@ -1065,6 +1099,9 @@ main(int argc, char* argv[])
     fprintf(stdout, "   Exhaustive (e)           : %s\n", (!quick?            "On" : "Off"));
     fprintf(stdout, "   Leaks (l)                : %s\n", (leaks?             "On" : "Off"));
     fprintf(stdout, "   Warn on missing data (w) : %s\n", (warnOnMissingData? "On" : "Off"));
+    for (int32_t i = 0; i < nProps; i++) {
+        fprintf(stdout, "   Custom property (prop:)  : %s\n", props[i]);
+    }
     fprintf(stdout, "-----------------------------------------------\n");
 
     /* Check whether ICU will initialize without forcing the build data directory into
@@ -1293,8 +1330,8 @@ const char *IntlTest::getSourceTestData(UErrorCode& /*err*/) {
         fclose(f);
     }
     else {
-        /* We're in icu/source/test/intltest/(Debug|Release) */
-        srcDataDir = ".."U_FILE_SEP_STRING".."U_FILE_SEP_STRING".."U_FILE_SEP_STRING"test"U_FILE_SEP_STRING"testdata"U_FILE_SEP_STRING;
+        /* We're in icu/source/test/intltest/Platform/(Debug|Release) */
+        srcDataDir = ".."U_FILE_SEP_STRING".."U_FILE_SEP_STRING".."U_FILE_SEP_STRING".."U_FILE_SEP_STRING"test"U_FILE_SEP_STRING"testdata"U_FILE_SEP_STRING;
     }
 #endif
     return srcDataDir;
@@ -1358,7 +1395,7 @@ const char *  IntlTest::pathToDataDirectory()
                 fgDataDir = ".."U_FILE_SEP_STRING".."U_FILE_SEP_STRING "data" U_FILE_SEP_STRING;
             }
             else {
-                fgDataDir = ".."U_FILE_SEP_STRING".."U_FILE_SEP_STRING".."U_FILE_SEP_STRING "data" U_FILE_SEP_STRING;
+                fgDataDir = ".."U_FILE_SEP_STRING".."U_FILE_SEP_STRING".."U_FILE_SEP_STRING".."U_FILE_SEP_STRING "data" U_FILE_SEP_STRING;
             }
         }
     }
@@ -1584,6 +1621,27 @@ UBool IntlTest::assertEquals(const UnicodeString& message,
     return assertEquals(extractToAssertBuf(message), expected, actual);
 }
 #endif
+
+void IntlTest::setProperty(const char* propline) {
+    if (numProps < kMaxProps) {
+        proplines[numProps] = propline;
+    }
+    numProps++;
+}
+
+const char* IntlTest::getProperty(const char* prop) {
+    const char* val = NULL;
+    for (int32_t i = 0; i < numProps; i++) {
+        int32_t plen = uprv_strlen(prop);
+        if ((int32_t)uprv_strlen(proplines[i]) > plen + 1
+                && proplines[i][plen] == '='
+                && uprv_strncmp(proplines[i], prop, plen) == 0) {
+            val = &(proplines[i][plen+1]);
+            break;
+        }
+    }
+    return val;
+}
 
 /*
  * Hey, Emacs, please set the following:

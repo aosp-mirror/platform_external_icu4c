@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2008 International Business Machines
+// * Copyright (C) 2009 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/mt.xml
@@ -841,7 +841,7 @@ mt{
     Variants{
         REVISED{"Ortografija Irriveda"}
     }
-    Version{"1.77"}
+    Version{"1.89"}
     calendar{
         gregorian{
             AmPmMarkers{
@@ -849,14 +849,18 @@ mt{
                 "WN",
             }
             DateTimePatterns{
-                "HH:mm:ss v",
+                "HH:mm:ss zzzz",
                 "HH:mm:ss z",
                 "HH:mm:ss",
                 "HH:mm",
-                "EEEE, d 'ta'’ MMMM yyyy",
-                "d 'ta'’ MMMM yyyy",
-                "dd MMM yyyy",
+                "EEEE, d 'ta'’ MMMM y",
+                "d 'ta'’ MMMM y",
+                "dd MMM y",
                 "dd/MM/yyyy",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
                 "{1} {0}",
             }
             dayNames{
@@ -949,7 +953,7 @@ mt{
                         "Mej",
                         "Ġun",
                         "Lul",
-                        "Awi",
+                        "Aww",
                         "Set",
                         "Ott",
                         "Nov",
@@ -963,7 +967,7 @@ mt{
                         "Mejju",
                         "Ġunju",
                         "Lulju",
-                        "Awissu",
+                        "Awwissu",
                         "Settembru",
                         "Ottubru",
                         "Novembru",

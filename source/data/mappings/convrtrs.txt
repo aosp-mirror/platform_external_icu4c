@@ -1,6 +1,6 @@
 # ******************************************************************************
 # *
-# *   Copyright (C) 1995-2008, International Business Machines
+# *   Copyright (C) 1995-2009, International Business Machines
 # *   Corporation and others.  All Rights Reserved.
 # *
 # ******************************************************************************
@@ -157,6 +157,7 @@ UTF-16 { IANA* MIME* JAVA* }    ISO-10646-UCS-2 { IANA }
 # and they are a subset of Unicode. ICU does not support their encoding structures.
 # 1400 1401 1402 1410 1414 1415 1446 1447 1448 1449 64770 64771 65520 5496 5497 5498 9592 13688
 UTF-16BE { IANA* MIME* JAVA* }  x-utf-16be { JAVA }
+                                UnicodeBigUnmarked { JAVA } # java.io name
                                 ibm-1200 { IBM* } # UTF-16 BE with IBM PUA
                                 ibm-1201 { IBM }  # UTF-16 BE
                                 ibm-13488 { IBM } # Unicode 2.0, UTF-16 BE with IBM PUA
@@ -180,6 +181,7 @@ UTF-16BE { IANA* MIME* JAVA* }  x-utf-16be { JAVA }
                                 # ibm-61952 is not a valid CCSID because it's Unicode 1.1
                                 # ibm-61953 is not a valid CCSID because it's Unicode 1.0
 UTF-16LE { IANA* MIME* JAVA* }  x-utf-16le { JAVA }
+                                UnicodeLittleUnmarked { JAVA } # java.io name
                                 ibm-1202 { IBM* } # UTF-16 LE with IBM PUA
                                 ibm-1203 { IBM }  # UTF-16 LE
                                 ibm-13490 { IBM } # Unicode 2.0, UTF-16 LE with IBM PUA
@@ -214,6 +216,64 @@ UTF16_OppositeEndian
 
 UTF32_PlatformEndian
 UTF32_OppositeEndian
+
+
+# Java-specific, non-Unicode-standard UTF-16 variants.
+# These are in the Java "Basic Encoding Set (contained in lib/rt.jar)".
+# See the "Supported Encodings" at
+# http://java.sun.com/javase/6/docs/technotes/guides/intl/encoding.doc.html
+# or a newer version of this document.
+#
+# Aliases marked with { JAVA* } are canonical names for java.io and java.lang APIs.
+# Aliases marked with { JAVA } are canonical names for the java.nio API.
+#
+# "BOM" means the Unicode Byte Order Mark, which is the encoding-scheme-specific
+# byte sequence for U+FEFF.
+# "Reverse BOM" means the BOM for the sibling encoding scheme with the
+# opposite endianness. (LE<->BE)
+
+# "Sixteen-bit Unicode (or UCS) Transformation Format, big-endian byte order,
+# with byte-order mark"
+#
+# From Unicode: Writes BOM.
+# To Unicode: Detects and consumes BOM. 
+#   If there is a "reverse BOM", Java throws
+#   MalformedInputException: Incorrect byte-order mark.
+#   In this case, ICU4C sets a U_ILLEGAL_ESCAPE_SEQUENCE UErrorCode value
+#   and a UCNV_ILLEGAL UConverterCallbackReason.
+UTF-16BE,version=1		UnicodeBig { JAVA* }
+
+# "Sixteen-bit Unicode (or UCS) Transformation Format, little-endian byte order,
+# with byte-order mark"
+#
+# From Unicode: Writes BOM.
+# To Unicode: Detects and consumes BOM. 
+#   If there is a "reverse BOM", Java throws
+#   MalformedInputException: Incorrect byte-order mark.
+#   In this case, ICU4C sets a U_ILLEGAL_ESCAPE_SEQUENCE UErrorCode value
+#   and a UCNV_ILLEGAL UConverterCallbackReason.
+UTF-16LE,version=1		UnicodeLittle { JAVA* }  x-UTF-16LE-BOM { JAVA }
+
+# This one is not mentioned on the "Supported Encodings" page
+# but is available in Java.
+# In Java, this is called "Unicode" but we cannot give it that alias
+# because the standard UTF-16 converter already has a "unicode" alias.
+#
+# From Unicode: Writes BOM.
+# To Unicode: Detects and consumes BOM.
+#   If there is no BOM, rather than defaulting to BE, Java throws
+#   MalformedInputException: Missing byte-order mark.
+#   In this case, ICU4C sets a U_ILLEGAL_ESCAPE_SEQUENCE UErrorCode value
+#   and a UCNV_ILLEGAL UConverterCallbackReason.
+UTF-16,version=1
+
+# Note: ICU does not currently support Java-specific, non-Unicode-standard UTF-32 variants.
+# Presumably, these behave analogously to the UTF-16 variants with similar names.
+# UTF_32BE_BOM  x-UTF-32BE-BOM
+# UTF_32LE_BOM  x-UTF-32LE-BOM
+
+# End of Java-specific, non-Unicode-standard UTF variants.
+
 
 # On UTF-7:
 # RFC 2152 (http://www.imc.org/rfc2152) allows to encode some US-ASCII
@@ -412,6 +472,7 @@ ibm-5012_P100-1999 { UTR22* }
                         ISO-8859-8-E { IANA MIME } # IANA and Windows considers this alias different and BiDi needs to be applied.
                         8859_8 { JAVA }
                         windows-28598 { WINDOWS* } # Hebrew (ISO-Visual). A hybrid between ibm-5012 and ibm-916 with extra PUA mappings.
+                        hebrew8 # Reflect HP-UX code page update
 
 # Unfortunately, the Java aliases are split across ibm-916 and ibm-5012
 # Also many platforms are a combination between ibm-916 and ibm-5012 behaviors
@@ -434,6 +495,8 @@ ibm-920_P100-1995 { UTR22* }
                         920 { JAVA }
                         windows-28599 { WINDOWS* }
                         ECMA-128    # IANA doesn't have this alias 6/24/2002
+                        turkish8    # Reflect HP-UX codepage update 8/1/2008
+                        turkish     # Reflect HP-UX codepage update 8/1/2008
 
 # Nordic languages
 iso-8859_10-1998 { UTR22* } ISO-8859-10 { MIME* IANA* }
@@ -778,7 +841,7 @@ ibm-1257_P100-1995 { UTR22* }   ibm-1257 { IBM* }               # Old Windows Ba
 ibm-5353_P100-1998 { UTR22* }   ibm-5353 { IBM* } windows-1257  # Somewhat old Windows Baltic (w/ euro update)
 ibm-1258_P100-1997 { UTR22* }   ibm-1258 { IBM* } windows-1258  # Old Windows Vietnamese (w/o euro update)
 
-macos-0_2-10.2 { UTR22* }       macintosh { IANA* MIME* WINDOWS } mac { IANA } csMacintosh { IANA } windows-10000 { WINDOWS* } macroman # Apple latin 1
+macos-0_2-10.2 { UTR22* }       macintosh { IANA* MIME* WINDOWS } mac { IANA } csMacintosh { IANA } windows-10000 { WINDOWS* } macroman { JAVA } x-macroman { JAVA* } # Apple latin 1
 macos-6_2-10.4 { UTR22* }       x-mac-greek { MIME* WINDOWS } windows-10006 { WINDOWS* } macgr           # Apple Greek
 macos-7_3-10.2 { UTR22* }       x-mac-cyrillic { MIME* WINDOWS } windows-10007 { WINDOWS* } mac-cyrillic maccy # Apple Cyrillic
 macos-29-10.2 { UTR22* }        x-mac-centraleurroman { MIME* } windows-10029 { WINDOWS* } x-mac-ce { WINDOWS } macce maccentraleurope  # Apple Central Europe

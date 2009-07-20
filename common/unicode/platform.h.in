@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 1997-2007, International Business Machines
+*   Copyright (C) 1997-2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -16,6 +16,9 @@
 ******************************************************************************
 */
 
+#ifndef _PLATFORM_H
+#define _PLATFORM_H
+
 /**
  * \file 
  * \brief Basic types for the platform 
@@ -26,18 +29,25 @@
 #define @platform@
 #endif
 
-/* Define whether inttypes.h is available */
+/**
+ * \def U_HAVE_DIRENT_H
+ * Define whether dirent.h is available */
+#ifndef U_HAVE_DIRENT_H
+#define U_HAVE_DIRENT_H @U_HAVE_DIRENT_H@
+#endif
+
+/** Define whether inttypes.h is available */
 #ifndef U_HAVE_INTTYPES_H
 #define U_HAVE_INTTYPES_H @U_HAVE_INTTYPES_H@
 #endif
 
-/*
+/**
  * Define what support for C++ streams is available.
- *     If U_IOSTREAM_SOURCE is set to 199711, then <iostream> is available
+ *     If U_IOSTREAM_SOURCE is set to 199711, then &lt;iostream&gt; is available
  * (1997711 is the date the ISO/IEC C++ FDIS was published), and then
  * one should qualify streams using the std namespace in ICU header
  * files.
- *     If U_IOSTREAM_SOURCE is set to 198506, then <iostream.h> is
+ *     If U_IOSTREAM_SOURCE is set to 198506, then &lt;iostream.h&gt; is
  * available instead (198506 is the date when Stroustrup published
  * "An Extensible I/O Facility for C++" at the summer USENIX conference).
  *     If U_IOSTREAM_SOURCE is 0, then C++ streams are not available and
@@ -49,7 +59,19 @@
 #define U_IOSTREAM_SOURCE @U_IOSTREAM_SOURCE@
 #endif
 
-/* Determines whether specific types are available */
+/**
+ * \def U_HAVE_STD_STRING
+ * Define whether the standard C++ (STL) <string> header is available.
+ * For platforms that do not use platform.h and do not define this constant
+ * in their platform-specific headers, std_string.h defaults
+ * U_HAVE_STD_STRING to 1.
+ * @draft ICU 4.2
+ */
+#ifndef U_HAVE_STD_STRING
+#define U_HAVE_STD_STRING @U_HAVE_STD_STRING@
+#endif
+
+/** @{ Determines whether specific types are available */
 #ifndef U_HAVE_INT8_T
 #define U_HAVE_INT8_T @HAVE_INT8_T@
 #endif
@@ -82,8 +104,10 @@
 #define U_HAVE_UINT64_T @HAVE_UINT64_T@
 #endif
 
+/** @} */
+
 /*===========================================================================*/
-/* Generic data types                                                        */
+/** @{ Generic data types                                                        */
 /*===========================================================================*/
 
 #include <sys/types.h>
@@ -148,8 +172,10 @@ typedef unsigned int uint32_t;
 
 #endif
 
+/** @} */
+
 /*===========================================================================*/
-/* Compiler and environment features                                         */
+/** @{ Compiler and environment features                                         */
 /*===========================================================================*/
 
 /* Define whether namespace is supported */
@@ -212,24 +238,38 @@ typedef unsigned int uint32_t;
 #define U_LIB_SUFFIX_C_NAME @ICULIBSUFFIXCNAME@
 #define U_LIB_SUFFIX_C_NAME_STRING "@ICULIBSUFFIXCNAME@"
 
+/** @} */
+
 /*===========================================================================*/
-/* Character data types                                                      */
+/** @{ Character data types                                                      */
 /*===========================================================================*/
 
 #if ((defined(OS390) && (!defined(__CHARSET_LIB) || !__CHARSET_LIB))) || defined(OS400)
 #   define U_CHARSET_FAMILY 1
 #endif
 
+/** @} */
+
 /*===========================================================================*/
-/* Information about wchar support                                           */
+/** @{ Information about wchar support                                           */
 /*===========================================================================*/
 
+#ifndef U_HAVE_WCHAR_H
 #define U_HAVE_WCHAR_H      @U_HAVE_WCHAR_H@
-#define U_SIZEOF_WCHAR_T    @U_SIZEOF_WCHAR_T@
+#endif
 
+#ifndef U_SIZEOF_WCHAR_T
+#define U_SIZEOF_WCHAR_T    @U_SIZEOF_WCHAR_T@
+#endif
+
+#ifndef U_HAVE_WCSCPY
 #define U_HAVE_WCSCPY       @U_HAVE_WCSCPY@
+#endif
+
+/** @} */
 
 /**
+ * @{
  * \def U_DECLARE_UTF16
  * Do not use this macro. Use the UNICODE_STRING or U_STRING_DECL macros
  * instead.
@@ -250,12 +290,19 @@ typedef unsigned int uint32_t;
 #endif
 #endif
 
+/** @} */
+
 /*===========================================================================*/
-/* Information about POSIX support                                           */
+/** @{ Information about POSIX support                                           */
 /*===========================================================================*/
 
+#ifndef U_HAVE_NL_LANGINFO_CODESET
 #define U_HAVE_NL_LANGINFO_CODESET  @U_HAVE_NL_LANGINFO_CODESET@
+#endif
+
+#ifndef U_NL_LANGINFO_CODESET
 #define U_NL_LANGINFO_CODESET       @U_NL_LANGINFO_CODESET@
+#endif
 
 #if @U_HAVE_TZSET@
 #define U_TZSET         @U_TZSET@
@@ -270,8 +317,10 @@ typedef unsigned int uint32_t;
 #define U_HAVE_MMAP     @HAVE_MMAP@
 #define U_HAVE_POPEN    @U_HAVE_POPEN@
 
+/** @} */
+
 /*===========================================================================*/
-/* Symbol import-export control                                              */
+/** @{ Symbol import-export control                                              */
 /*===========================================================================*/
 
 #if @U_USE_GCC_VISIBILITY_ATTRIBUTE@
@@ -295,8 +344,10 @@ typedef unsigned int uint32_t;
 #define U_IMPORT 
 #endif
 
+/* @} */
+
 /*===========================================================================*/
-/* Code alignment and C function inlining                                    */
+/** @{ Code alignment and C function inlining                                    */
 /*===========================================================================*/
 
 #ifndef U_INLINE
@@ -307,10 +358,24 @@ typedef unsigned int uint32_t;
 #   endif
 #endif
 
+#ifndef U_ALIGN_CODE
 #define U_ALIGN_CODE(n) 
+#endif
+
+/** @} */
 
 /*===========================================================================*/
-/* Programs used by ICU code                                                 */
+/** @{ Programs used by ICU code                                                 */
 /*===========================================================================*/
 
+/**
+ * \def U_MAKE
+ * What program to execute to run 'make'
+ */
+#ifndef U_MAKE
 #define U_MAKE  "@U_MAKE@"
+#endif
+
+/** @} */
+
+#endif

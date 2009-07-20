@@ -1,6 +1,6 @@
 /*
 ***************************************************************************
-* Copyright (C) 1999-2008, International Business Machines Corporation
+* Copyright (C) 1999-2009, International Business Machines Corporation
 * and others. All Rights Reserved.
 ***************************************************************************
 *   Date        Name        Description
@@ -305,7 +305,7 @@ public:
      *
      * @return TRUE if the set is valid, FALSE otherwise
      * @see setToBogus()
-     * @draft ICU 4.0
+     * @stable ICU 4.0
      */
     inline UBool isBogus(void) const;
     
@@ -323,7 +323,7 @@ public:
      * take a UErrorCode for simplicity.
      *
      * @see isBogus()
-     * @draft ICU 4.0
+     * @stable ICU 4.0
      */
     void setToBogus();
 
@@ -470,6 +470,46 @@ public:
      */
     virtual int32_t hashCode(void) const;
 
+    /**
+     * Get a UnicodeSet pointer from a USet
+     *
+     * @param uset a USet (the ICU plain C type for UnicodeSet)
+     * @return the corresponding UnicodeSet pointer.
+     *
+     * @draft ICU 4.2
+     */
+    inline static UnicodeSet *fromUSet(USet *uset);
+
+    /**
+     * Get a UnicodeSet pointer from a const USet
+     *
+     * @param uset a const USet (the ICU plain C type for UnicodeSet)
+     * @return the corresponding UnicodeSet pointer.
+     *
+     * @draft ICU 4.2
+     */
+    inline static const UnicodeSet *fromUSet(const USet *uset);
+    
+    /**
+     * Produce a USet * pointer for this UnicodeSet.
+     * USet is the plain C type for UnicodeSet
+     *
+     * @return a USet pointer for this UnicodeSet
+     * @draft ICU 4.2
+     */
+    inline USet *toUSet();
+
+
+    /**
+     * Produce a const USet * pointer for this UnicodeSet.
+     * USet is the plain C type for UnicodeSet
+     *
+     * @return a const USet pointer for this UnicodeSet
+     * @draft ICU 4.2
+     */
+    inline const USet * toUSet() const;
+
+
     //----------------------------------------------------------------
     // Freezable API
     //----------------------------------------------------------------
@@ -480,7 +520,7 @@ public:
      * @return TRUE/FALSE for whether the set has been frozen
      * @see freeze
      * @see cloneAsThawed
-     * @stable ICU 4.0
+     * @stable ICU 3.8
      */
     inline UBool isFrozen() const;
 
@@ -495,7 +535,7 @@ public:
      * @return this set.
      * @see isFrozen
      * @see cloneAsThawed
-     * @stable ICU 4.0
+     * @stable ICU 3.8
      */
     UnicodeFunctor *freeze();
 
@@ -505,7 +545,7 @@ public:
      * @return the mutable clone
      * @see freeze
      * @see isFrozen
-     * @stable ICU 4.0
+     * @stable ICU 3.8
      */
     UnicodeFunctor *cloneAsThawed() const;
 
@@ -816,7 +856,7 @@ public:
      * @param spanCondition specifies the containment condition
      * @return the length of the initial substring according to the spanCondition;
      *         0 if the start of the string does not fit the spanCondition
-     * @stable ICU 4.0
+     * @stable ICU 3.8
      * @see USetSpanCondition
      */
     int32_t span(const UChar *s, int32_t length, USetSpanCondition spanCondition) const;
@@ -835,7 +875,7 @@ public:
      * @param spanCondition specifies the containment condition
      * @return the start of the trailing substring according to the spanCondition;
      *         the string length if the end of the string does not fit the spanCondition
-     * @stable ICU 4.0
+     * @stable ICU 3.8
      * @see USetSpanCondition
      */
     int32_t spanBack(const UChar *s, int32_t length, USetSpanCondition spanCondition) const;
@@ -855,7 +895,7 @@ public:
      * @param spanCondition specifies the containment condition
      * @return the length of the initial substring according to the spanCondition;
      *         0 if the start of the string does not fit the spanCondition
-     * @stable ICU 4.0
+     * @stable ICU 3.8
      * @see USetSpanCondition
      */
     int32_t spanUTF8(const char *s, int32_t length, USetSpanCondition spanCondition) const;
@@ -874,7 +914,7 @@ public:
      * @param spanCondition specifies the containment condition
      * @return the start of the trailing substring according to the spanCondition;
      *         the string length if the end of the string does not fit the spanCondition
-     * @stable ICU 4.0
+     * @stable ICU 3.8
      * @see USetSpanCondition
      */
     int32_t spanBackUTF8(const char *s, int32_t length, USetSpanCondition spanCondition) const;
@@ -999,7 +1039,7 @@ public:
     /**
      * @return a code point IF the string consists of a single one.
      * otherwise returns -1.
-     * @param string to test
+     * @param s string to test
      */
     static int32_t getSingleCP(const UnicodeString& s);
 
@@ -1253,7 +1293,7 @@ public:
      * Currently only the USET_CASE bit is supported.  Any undefined bits
      * are ignored.
      * @return a reference to this set.
-     * @internal
+     * @draft ICU 4.2
      */
     UnicodeSet& closeOver(int32_t attribute);
 
@@ -1261,7 +1301,7 @@ public:
      * Remove all strings from this set.
      *
      * @return a reference to this set.
-     * @internal
+     * @draft ICU 4.2
      */
     virtual UnicodeSet &removeAllStrings();
 
@@ -1537,6 +1577,8 @@ private:
     friend class UnicodeSetIterator;
 };
 
+
+
 inline UBool UnicodeSet::operator!=(const UnicodeSet& o) const {
     return !operator==(o);
 }
@@ -1559,6 +1601,22 @@ inline UBool UnicodeSet::containsSome(const UnicodeString& s) const {
 
 inline UBool UnicodeSet::isBogus() const {
     return (UBool)(fFlags & kIsBogus);
+}
+
+inline UnicodeSet *UnicodeSet::fromUSet(USet *uset) {
+    return reinterpret_cast<UnicodeSet *>(uset);
+}
+
+inline const UnicodeSet *UnicodeSet::fromUSet(const USet *uset) {
+    return reinterpret_cast<const UnicodeSet *>(uset);
+}
+
+inline USet *UnicodeSet::toUSet() {
+    return reinterpret_cast<USet *>(this);
+}
+
+inline const USet *UnicodeSet::toUSet() const {
+    return reinterpret_cast<const USet *>(this);
 }
 
 U_NAMESPACE_END

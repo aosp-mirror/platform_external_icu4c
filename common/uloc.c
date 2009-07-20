@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 1997-2008, International Business Machines
+*   Copyright (C) 1997-2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *
@@ -165,7 +165,7 @@ static const char * const LANGUAGES[] = {
     "srn", "srr", "ss",  "ssa", "st",  "su",  "suk", "sus", "sux",
     "sv",  "sw",  "syc", "syr", "ta",  "tai", "te",  "tem", "ter",
     "tet", "tg",  "th",  "ti",  "tig", "tiv", "tk",  "tkl",
-    "tl",  "tlh", "tli", "tmh", "tn",  "to",  "tog", "tpi", "tr",
+    "tl",  "tlh", "tli", "tmh", "tn",  "to",  "tog", "tpi", "tr", "trv",
     "ts",  "tsi", "tt",  "tum", "tup", "tut", "tvl", "tw",
     "ty",  "tyv", "udm", "ug",  "uga", "uk",  "umb", "und", "ur",
     "uz",  "vai", "ve",  "vi",  "vo",  "vot", "wa",  "wak",
@@ -300,8 +300,8 @@ static const char * const LANGUAGES_3[] = {
     "swe", "swa", "syc", "syr", "tam", "tai", "tel", "tem", "ter",
 /*  "tet", "tg",  "th",  "ti",  "tig", "tiv", "tk",  "tkl",    */
     "tet", "tgk", "tha", "tir", "tig", "tiv", "tuk", "tkl",
-/*  "tl",  "tlh", "tli", "tmh", "tn",  "to",  "tog", "tpi", "tr",     */
-    "tgl", "tlh", "tli", "tmh", "tsn", "ton", "tog", "tpi", "tur",
+/*  "tl",  "tlh", "tli", "tmh", "tn",  "to",  "tog", "tpi", "tr", "trv",    */
+    "tgl", "tlh", "tli", "tmh", "tsn", "ton", "tog", "tpi", "tur", "trv",
 /*  "ts",  "tsi", "tt",  "tum", "tup", "tut", "tvl", "tw",     */
     "tso", "tsi", "tat", "tum", "tup", "tut", "tvl", "twi",
 /*  "ty",  "tyv", "udm", "ug",  "uga", "uk",  "umb", "und", "ur",     */
@@ -2215,13 +2215,18 @@ _getStringOrCopyKey(const char *path, const char *locale,
             ures_close(rb);
         }
     } else {
-        /* second-level item, use special fallback */
-        s=_res_getTableStringWithFallback(path, locale,
-                                           tableKey, 
-                                           subTableKey,
-                                           itemKey,
-                                           &length,
-                                           pErrorCode);
+        /* Language code should not be a number. If it is, set the error code. */
+        if (!uprv_strncmp(tableKey, "Languages", 9) && uprv_strtol(itemKey, NULL, 10)) {
+            *pErrorCode = U_MISSING_RESOURCE_ERROR;
+        } else {
+            /* second-level item, use special fallback */
+            s=_res_getTableStringWithFallback(path, locale,
+                                               tableKey, 
+                                               subTableKey,
+                                               itemKey,
+                                               &length,
+                                               pErrorCode);
+        }
     }
     if(U_SUCCESS(*pErrorCode)) {
         int32_t copyLength=uprv_min(length, destCapacity);
@@ -2672,7 +2677,7 @@ static void _load_installedLocales()
     UMTX_CHECK(NULL, _installedLocales != NULL, localesLoaded);
     
     if (localesLoaded == FALSE) {
-        UResourceBundle *index = NULL;
+        UResourceBundle *indexLocale = NULL;
         UResourceBundle installed;
         UErrorCode status = U_ZERO_ERROR;
         char ** temp;
@@ -2680,8 +2685,8 @@ static void _load_installedLocales()
         int32_t localeCount;
         
         ures_initStackObject(&installed);
-        index = ures_openDirect(NULL, _kIndexLocaleName, &status);
-        ures_getByKey(index, _kIndexTag, &installed, &status);
+        indexLocale = ures_openDirect(NULL, _kIndexLocaleName, &status);
+        ures_getByKey(indexLocale, _kIndexTag, &installed, &status);
         
         if(U_SUCCESS(status)) {
             localeCount = ures_getSize(&installed);
@@ -2697,8 +2702,8 @@ static void _load_installedLocales()
                 umtx_lock(NULL);
                 if (_installedLocales == NULL)
                 {
-                    _installedLocales = temp;
                     _installedLocalesCount = localeCount;
+                    _installedLocales = temp;
                     temp = NULL;
                     ucln_common_registerCleanup(UCLN_COMMON_ULOC, uloc_cleanup);
                 } 
@@ -2708,7 +2713,7 @@ static void _load_installedLocales()
             }
         }
         ures_close(&installed);
-        ures_close(index);
+        ures_close(indexLocale);
     }
 }
 
@@ -2892,7 +2897,7 @@ uloc_getCharacterOrientation(const char* localeId,
  * @param localeID locale name
  * @param status Error status
  * @return an enum indicating the layout orientation for lines.
- * @draft ICU 4.0
+ * @stable ICU 4.0
  */
 U_DRAFT ULayoutType U_EXPORT2
 uloc_getLineOrientation(const char* localeId,
@@ -3174,17 +3179,18 @@ findLikelySubtags(const char* localeID,
     if (!U_FAILURE(*err)) {
         int32_t resLen = 0;
         const UChar* s = NULL;
-        UResourceBundle* subtags = ures_openDirect(NULL, "likelySubtags", err);
-        if (!U_FAILURE(*err)) {
-            s = ures_getStringByKey(subtags, localeID, &resLen, err);
+        UErrorCode tmpErr = U_ZERO_ERROR;
+        UResourceBundle* subtags = ures_openDirect(NULL, "likelySubtags", &tmpErr);
+        if (U_SUCCESS(tmpErr)) {
+            s = ures_getStringByKey(subtags, localeID, &resLen, &tmpErr);
 
-            if (U_FAILURE(*err)) {
+            if (U_FAILURE(tmpErr)) {
                 /*
                  * If a resource is missing, it's not really an error, it's
                  * just that we don't have any data for that particular locale ID.
                  */
-                if (*err == U_MISSING_RESOURCE_ERROR) {
-                    *err = U_ZERO_ERROR;
+                if (tmpErr != U_MISSING_RESOURCE_ERROR) {
+                    *err = tmpErr;
                 }
             }
             else if (resLen >= bufferLength) {
@@ -3197,6 +3203,8 @@ findLikelySubtags(const char* localeID,
             }
 
             ures_close(subtags);
+        } else {
+            *err = tmpErr;
         }
     }
 
@@ -3612,7 +3620,7 @@ parseTagString(
      * to be an error, because it indicates the user-supplied tag is
      * not well-formed.
      */
-    if(*err != U_ZERO_ERROR) {
+    if(U_FAILURE(*err)) {
         goto error;
     }
 
@@ -3635,7 +3643,7 @@ parseTagString(
     subtagLength = _getScript(position, script, *scriptLength, &position);
     u_terminateChars(script, *scriptLength, subtagLength, err);
 
-    if(*err != U_ZERO_ERROR) {
+    if(U_FAILURE(*err)) {
         goto error;
     }
 
@@ -3660,7 +3668,7 @@ parseTagString(
     subtagLength = _getCountry(position, region, *regionLength, &position);
     u_terminateChars(region, *regionLength, subtagLength, err);
 
-    if(*err != U_ZERO_ERROR) {
+    if(U_FAILURE(*err)) {
         goto error;
     }
 

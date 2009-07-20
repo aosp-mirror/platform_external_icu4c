@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2007-2008, International Business Machines Corporation and others. All Rights Reserved.
+* Copyright (C) 2007-2009, International Business Machines Corporation and others. All Rights Reserved.
 ********************************************************************************
 *
 * File MSGFMT.H
@@ -83,10 +83,10 @@ class DateFormat;
  * identify positions in an array using a name.  UErrorCode is set to
  * U_ARGUMENT_TYPE_MISMATCH if there is a status/success field in the method.
  * These methods are 
- * {@link #adoptFormats(Format** newFormats, int32_t count)},
+ * {@link #adoptFormats(Format** formatsToAdopt, int32_t count)},
  * {@link #setFormats(const Format** newFormats,int32_t count)},
  * {@link #adoptFormat(int32_t n, Format *newFormat)},
- * {@link #getFormats(int32_t& cnt)},
+ * {@link #getFormats(int32_t& count)},
  * {@link #format(const Formattable* source,int32_t cnt,UnicodeString& appendTo, FieldPosition& ignore, UErrorCode& success)},
  * {@link #format(const UnicodeString& pattern,const Formattable* arguments,int32_t cnt,UnicodeString& appendTo,UErrorCode& success)},
  * {@link #format(const Formattable& source, UnicodeString& appendTo,FieldPosition& ignore, UErrorCode& success)},
@@ -498,7 +498,7 @@ public:
      * array from current MessageFormat to another.  It is caller's resposibility 
      * to delete the returned formatNames.
      * @param status  output param set to success/failure code.
-     * @draft ICU 4.0
+     * @stable ICU 4.0
      */
     virtual StringEnumeration* getFormatNames(UErrorCode& status);
     
@@ -513,7 +513,7 @@ public:
      * of this class is made with this object. 
      * @param formatName the name or number specifying a format
      * @param status  output param set to success/failure code.
-     * @draft ICU 4.0
+     * @stable ICU 4.0
      */
     virtual Format* getFormat(const UnicodeString& formatName, UErrorCode& status);
     
@@ -528,7 +528,7 @@ public:
      * @param formatName  Name of the subformat.
      * @param format      the format to be set.
      * @param status  output param set to success/failure code.
-     * @draft ICU 4.0
+     * @stable ICU 4.0
      */
     virtual void setFormat(const UnicodeString& formatName, const Format& format, UErrorCode& status);
     
@@ -544,7 +544,7 @@ public:
      * @param formatName  Name of the subformat.
      * @param formatToAdopt  Format to be adopted.
      * @param status      output param set to success/failure code.
-     * @draft ICU 4.0
+     * @stable ICU 4.0
      */
     virtual void adoptFormat(const UnicodeString& formatName, Format* formatToAdopt, UErrorCode& status);
 
@@ -744,10 +744,23 @@ public:
      * and false otherwise.  See class description.
      *
      * @return true if named arguments are used.
-     * @draft ICU 4.0
+     * @stable ICU 4.0
      */
     UBool usesNamedArguments() const;
     
+
+    /**
+     * This API is for ICU internal use only.
+     * Please do not use it.
+     *
+     * Returns argument types count in the parsed pattern.
+     * Used to distinguish pattern "{0} d" and "d".
+     *
+     * @return           The number of formattable types in the pattern
+     * @internal
+     */
+    int32_t getArgTypeCount() const;
+
     /**
      * Returns a unique class ID POLYMORPHICALLY.  Pure virtual override.
      * This method is to implement a simple version of RTTI, since not all

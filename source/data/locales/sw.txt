@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2008 International Business Machines
+// * Copyright (C) 2009 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/sw.xml
@@ -92,16 +92,6 @@ sw{
         YE{"Yemeni"}
         ZA{"Afrika ya Kusini"}
     }
-    Currencies{
-        KES{
-            "KSh",
-            "KES",
-        }
-        TZS{
-            "TSh",
-            "TZS",
-        }
-    }
     ExemplarCharacters{"[a-d {dh} e-n {ng} {ng'} {ny} o p r s {sh} t {th} u-w y z]"}
     Languages{
         de{"kijerumani"}
@@ -124,7 +114,7 @@ sw{
         "#,##0%",
         "#E0",
     }
-    Version{"1.64"}
+    Version{"1.73"}
     calendar{
         gregorian{
             dayNames{

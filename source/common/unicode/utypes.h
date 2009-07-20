@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 1996-2008, International Business Machines
+*   Copyright (C) 1996-2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *
@@ -38,6 +38,10 @@
 #include "unicode/uversion.h"
 #include "unicode/uconfig.h"
 
+/**
+ * \def U_HIDE_DRAFT_API
+ * Define this to 1 to request that draft API be "hidden"
+ */
 #if !U_DEFAULT_SHOW_DRAFT && !defined(U_SHOW_DRAFT_API)
 #define U_HIDE_DRAFT_API 1
 #endif
@@ -133,6 +137,30 @@
 
 #ifndef U_CHARSET_FAMILY
 #   define U_CHARSET_FAMILY 0
+#endif
+
+/**
+ * \def U_CHARSET_IS_UTF8
+ *
+ * Hardcode the default charset to UTF-8.
+ *
+ * If this is set to 1, then
+ * - ICU will assume that all non-invariant char*, StringPiece, std::string etc.
+ *   contain UTF-8 text, regardless of what the system API uses
+ * - some ICU code will use fast functions like u_strFromUTF8()
+ *   rather than the more general and more heavy-weight conversion API (ucnv.h)
+ * - ucnv_getDefaultName() always returns "UTF-8"
+ * - ucnv_setDefaultName() is disabled and will not change the default charset
+ * - static builds of ICU are smaller
+ * - more functionality is available with the UCONFIG_NO_CONVERSION build-time
+ *   configuration option (see unicode/uconfig.h)
+ * - the UCONFIG_NO_CONVERSION build option in uconfig.h is more usable
+ *
+ * @draft ICU 4.2
+ * @see UCONFIG_NO_CONVERSION
+ */
+#ifndef U_CHARSET_IS_UTF8
+#   define U_CHARSET_IS_UTF8 0
 #endif
 
 /*===========================================================================*/

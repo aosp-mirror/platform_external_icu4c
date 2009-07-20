@@ -1,6 +1,6 @@
 /*
  *******************************************************************************
- * Copyright (C) 1996-2008, International Business Machines
+ * Copyright (C) 1996-2009, International Business Machines
  * Corporation and others. All Rights Reserved.
  *******************************************************************************
 */
@@ -173,6 +173,7 @@ typedef enum UDateFormatStyle {
 
 
 /**
+ * @{
  * Below are a set of pre-defined skeletons.
  *
  * <P>
@@ -199,7 +200,7 @@ typedef enum UDateFormatStyle {
  * </li>
  * </ol>
  *
- * @draft ICU 4.0
+ * @stable ICU 4.0
  */
 
 #define UDAT_MINUTE_SECOND              "ms"
@@ -210,7 +211,11 @@ typedef enum UDateFormatStyle {
 #define UDAT_ABBR_STANDALONE_MONTH      "LLL"
 #define UDAT_YEAR_QUARTER               "yQQQ"
 #define UDAT_YEAR_ABBR_QUARTER          "yQ"
+
+/** @} */
+
 /**
+ * @{
  * Below are a set of pre-defined skeletons that 
  * have pre-defined interval patterns in resource files.
  * Users are encouraged to use them in date interval format factory methods.
@@ -242,6 +247,8 @@ typedef enum UDateFormatStyle {
 #define UDAT_HOUR                       "h"
 #define UDAT_HOUR_GENERIC_TZ            "hv"
 #define UDAT_HOUR_TZ                    "hz"
+
+/** @} */
 
 
 /**
@@ -492,9 +499,11 @@ typedef enum UDateFormatField {
  * A UDateFormat may be used to format dates in calls to {@link #udat_format },
  * and to parse dates in calls to {@link #udat_parse }.
  * @param timeStyle The style used to format times; one of UDAT_FULL, UDAT_LONG,
- * UDAT_MEDIUM, UDAT_SHORT, or UDAT_DEFAULT
+ * UDAT_MEDIUM, UDAT_SHORT, UDAT_DEFAULT, or UDAT_NONE (relative time styles
+ * are not currently supported)
  * @param dateStyle The style used to format dates; one of UDAT_FULL, UDAT_LONG,
- * UDAT_MEDIUM, UDAT_SHORT, or UDAT_DEFAULT
+ * UDAT_MEDIUM, UDAT_SHORT, UDAT_DEFAULT, UDAT_FULL_RELATIVE, UDAT_LONG_RELATIVE,
+ * UDAT_MEDIUM_RELATIVE, UDAT_SHORT_RELATIVE, or UDAT_NONE
  * @param locale The locale specifying the formatting conventions
  * @param tzID A timezone ID specifying the timezone to use.  If 0, use
  * the default timezone.
@@ -684,13 +693,13 @@ udat_setNumberFormat(            UDateFormat*    fmt,
 * Get a locale for which date/time formatting patterns are available.
 * A UDateFormat in a locale returned by this function will perform the correct
 * formatting and parsing for the locale.
-* @param index The index of the desired locale.
+* @param localeIndex The index of the desired locale.
 * @return A locale for which date/time formatting patterns are available, or 0 if none.
 * @see udat_countAvailable
 * @stable ICU 2.0
 */
 U_STABLE const char* U_EXPORT2 
-udat_getAvailable(int32_t index);
+udat_getAvailable(int32_t localeIndex);
 
 /**
 * Determine how many locales have date/time  formatting patterns available.
@@ -824,7 +833,7 @@ typedef struct UDateFormatSymbols UDateFormatSymbols;
 * @param fmt The formatter to query.
 * @param type The type of symbols to get.  One of UDAT_ERAS, UDAT_MONTHS, UDAT_SHORT_MONTHS,
 * UDAT_WEEKDAYS, UDAT_SHORT_WEEKDAYS, UDAT_AM_PMS, or UDAT_LOCALIZED_CHARS
-* @param index The desired symbol of type type.
+* @param symbolIndex The desired symbol of type type.
 * @param result A pointer to a buffer to receive the pattern.
 * @param resultLength The maximum size of result.
 * @param status A pointer to an UErrorCode to receive any errors
@@ -836,7 +845,7 @@ typedef struct UDateFormatSymbols UDateFormatSymbols;
 U_STABLE int32_t U_EXPORT2 
 udat_getSymbols(const   UDateFormat             *fmt,
                         UDateFormatSymbolType   type,
-                        int32_t                 index,
+                        int32_t                 symbolIndex,
                         UChar                   *result,
                         int32_t                 resultLength,
                         UErrorCode              *status);
@@ -864,7 +873,7 @@ udat_countSymbols(    const    UDateFormat                *fmt,
 * @param format The formatter to set
 * @param type The type of symbols to set.  One of UDAT_ERAS, UDAT_MONTHS, UDAT_SHORT_MONTHS,
 * UDAT_WEEKDAYS, UDAT_SHORT_WEEKDAYS, UDAT_AM_PMS, or UDAT_LOCALIZED_CHARS
-* @param index The index of the symbol to set of type type.
+* @param symbolIndex The index of the symbol to set of type type.
 * @param value The new value
 * @param valueLength The length of value, or -1 if null-terminated
 * @param status A pointer to an UErrorCode to receive any errors
@@ -875,7 +884,7 @@ udat_countSymbols(    const    UDateFormat                *fmt,
 U_STABLE void U_EXPORT2 
 udat_setSymbols(    UDateFormat             *format,
                     UDateFormatSymbolType   type,
-                    int32_t                 index,
+                    int32_t                 symbolIndex,
                     UChar                   *value,
                     int32_t                 valueLength,
                     UErrorCode              *status);
@@ -893,6 +902,60 @@ U_STABLE const char* U_EXPORT2
 udat_getLocaleByType(const UDateFormat *fmt,
                      ULocDataLocaleType type,
                      UErrorCode* status); 
+
+/**
+* Extract the date pattern from a UDateFormat set for relative date formatting.
+* The pattern will follow the pattern syntax rules.
+* @param fmt The formatter to query.
+* @param result A pointer to a buffer to receive the pattern.
+* @param resultLength The maximum size of result.
+* @param status A pointer to a UErrorCode to receive any errors
+* @return The total buffer size needed; if greater than resultLength, the output was truncated.
+* @see udat_applyPatternRelative
+* @internal ICU 4.2 technology preview
+*/
+U_INTERNAL int32_t U_EXPORT2 
+udat_toPatternRelativeDate(const UDateFormat *fmt,
+                           UChar             *result,
+                           int32_t           resultLength,
+                           UErrorCode        *status);
+
+/**
+* Extract the time pattern from a UDateFormat set for relative date formatting.
+* The pattern will follow the pattern syntax rules.
+* @param fmt The formatter to query.
+* @param result A pointer to a buffer to receive the pattern.
+* @param resultLength The maximum size of result.
+* @param status A pointer to a UErrorCode to receive any errors
+* @return The total buffer size needed; if greater than resultLength, the output was truncated.
+* @see udat_applyPatternRelative
+* @internal ICU 4.2 technology preview
+*/
+U_INTERNAL int32_t U_EXPORT2 
+udat_toPatternRelativeTime(const UDateFormat *fmt,
+                           UChar             *result,
+                           int32_t           resultLength,
+                           UErrorCode        *status);
+
+/**
+* Set the date & time patterns used by a UDateFormat set for relative date formatting.
+* The patterns should follow the pattern syntax rules.
+* @param format The formatter to set.
+* @param datePattern The new date pattern
+* @param datePatternLength The length of datePattern, or -1 if null-terminated.
+* @param timePattern The new time pattern
+* @param timePatternLength The length of timePattern, or -1 if null-terminated.
+* @param status A pointer to a UErrorCode to receive any errors
+* @see udat_toPatternRelativeDate, udat_toPatternRelativeTime
+* @internal ICU 4.2 technology preview
+*/
+U_INTERNAL void U_EXPORT2 
+udat_applyPatternRelative(UDateFormat *format,
+                          const UChar *datePattern,
+                          int32_t     datePatternLength,
+                          const UChar *timePattern,
+                          int32_t     timePatternLength,
+                          UErrorCode  *status);
 
 #endif /* #if !UCONFIG_NO_FORMATTING */
 

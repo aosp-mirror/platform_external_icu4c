@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 1997-2008, International Business Machines Corporation and others. All Rights Reserved.
+* Copyright (C) 1997-2009, International Business Machines Corporation and others. All Rights Reserved.
 *******************************************************************************
 *
 * File SMPDTFMT.H
@@ -238,6 +238,31 @@ public:
                      UErrorCode& status);
 
     /**
+     * Construct a SimpleDateFormat using the given pattern, numbering system override, and the default locale.
+     * The locale is used to obtain the symbols used in formatting (e.g., the
+     * names of the months), but not to provide the pattern.
+     * <P>
+     * A numbering system override is a string containing either the name of a known numbering system,
+     * or a set of field and numbering system pairs that specify which fields are to be formattied with
+     * the alternate numbering system.  For example, to specify that all numeric fields in the specified
+     * date or time pattern are to be rendered using Thai digits, simply specify the numbering system override
+     * as "thai".  To specify that just the year portion of the date be formatted using Hebrew numbering,
+     * use the override string "y=hebrew".  Numbering system overrides can be combined using a semi-colon
+     * character in the override string, such as "d=decimal;M=arabic;y=hebrew", etc.
+     *
+     * <P>
+     * [Note:] Not all locales support SimpleDateFormat; for full generality,
+     * use the factory methods in the DateFormat class.
+     * @param pattern    the pattern for the format.
+     * @param override   the override string.
+     * @param status     Output param set to success/failure code.
+     * @draft ICU 4.2
+     */
+    SimpleDateFormat(const UnicodeString& pattern,
+                     const UnicodeString& override,
+                     UErrorCode& status);
+
+    /**
      * Construct a SimpleDateFormat using the given pattern and locale.
      * The locale is used to obtain the symbols used in formatting (e.g., the
      * names of the months), but not to provide the pattern.
@@ -250,6 +275,32 @@ public:
      * @stable ICU 2.0
      */
     SimpleDateFormat(const UnicodeString& pattern,
+                     const Locale& locale,
+                     UErrorCode& status);
+
+    /**
+     * Construct a SimpleDateFormat using the given pattern, numbering system override, and locale.
+     * The locale is used to obtain the symbols used in formatting (e.g., the
+     * names of the months), but not to provide the pattern.
+     * <P>
+     * A numbering system override is a string containing either the name of a known numbering system,
+     * or a set of field and numbering system pairs that specify which fields are to be formattied with
+     * the alternate numbering system.  For example, to specify that all numeric fields in the specified
+     * date or time pattern are to be rendered using Thai digits, simply specify the numbering system override
+     * as "thai".  To specify that just the year portion of the date be formatted using Hebrew numbering,
+     * use the override string "y=hebrew".  Numbering system overrides can be combined using a semi-colon
+     * character in the override string, such as "d=decimal;M=arabic;y=hebrew", etc.
+     * <P>
+     * [Note:] Not all locales support SimpleDateFormat; for full generality,
+     * use the factory methods in the DateFormat class.
+     * @param pattern    the pattern for the format.
+     * @param override   the numbering system override.
+     * @param locale     the given locale.
+     * @param status     Output param set to success/failure code.
+     * @draft ICU 4.2
+     */
+    SimpleDateFormat(const UnicodeString& pattern,
+                     const UnicodeString& override,
                      const Locale& locale,
                      UErrorCode& status);
 
@@ -708,7 +759,8 @@ private:
      * @param minDigits Minimum number of digits the result should have
      * @param maxDigits Maximum number of digits the result should have
      */
-    void zeroPaddingNumber(          UnicodeString &appendTo,
+    void zeroPaddingNumber(          NumberFormat *currentNumberFormat,
+                                     UnicodeString &appendTo,
                                      int32_t value,
                                      int32_t minDigits,
                                      int32_t maxDigits) const;
@@ -800,18 +852,24 @@ private:
      * indicating matching failure, otherwise.
      */
     int32_t subParse(const UnicodeString& text, int32_t& start, UChar ch, int32_t count,
-                     UBool obeyCount, UBool allowNegative, UBool ambiguousYear[], Calendar& cal) const;
+                     UBool obeyCount, UBool allowNegative, UBool ambiguousYear[], Calendar& cal,
+                     int32_t patLoc) const;
 
     void parseInt(const UnicodeString& text,
                   Formattable& number,
                   ParsePosition& pos,
-                  UBool allowNegative) const;
+                  UBool allowNegative,
+                  NumberFormat *fmt) const;
 
     void parseInt(const UnicodeString& text,
                   Formattable& number,
                   int32_t maxDigits,
                   ParsePosition& pos,
-                  UBool allowNegative) const;
+                  UBool allowNegative,
+                  NumberFormat *fmt) const;
+
+    int32_t checkIntSuffix(const UnicodeString& text, int32_t start,
+                           int32_t patLoc, UBool isNegative) const;
 
     /**
      * Translate a pattern, mapping each character in the from string to the
@@ -839,12 +897,37 @@ private:
      *                  if the operation succeeds.
      */
     void         parseAmbiguousDatesAsAfter(UDate startDate, UErrorCode& status);
-    
+
+    /**
+     * Return the length matched by the given affix, or -1 if none.
+     * Runs of white space in the affix, match runs of white space in
+     * the input.
+     * @param affix pattern string, taken as a literal
+     * @param input input text
+     * @param pos offset into input at which to begin matching
+     * @return length of input that matches, or -1 if match failure
+     */
+    int32_t compareSimpleAffix(const UnicodeString& affix, 
+                   const UnicodeString& input, 
+                   int32_t pos) const;
+
+    /**
+     * Skip over a run of zero or more isRuleWhiteSpace() characters at
+     * pos in text.
+     */
+    int32_t skipRuleWhiteSpace(const UnicodeString& text, int32_t pos) const;
+
+    /**
+     * Skip over a run of zero or more isUWhiteSpace() characters at pos
+     * in text.
+     */
+    int32_t skipUWhiteSpace(const UnicodeString& text, int32_t pos) const;
+
     /**
      * Private methods for formatting/parsing GMT string
      */
-    void appendGMT(UnicodeString &appendTo, Calendar& cal, UErrorCode& status) const;
-    void formatGMTDefault(UnicodeString &appendTo, int32_t offset) const;
+    void appendGMT(NumberFormat *currentNumberFormat,UnicodeString &appendTo, Calendar& cal, UErrorCode& status) const;
+    void formatGMTDefault(NumberFormat *currentNumberFormat,UnicodeString &appendTo, int32_t offset) const;
     int32_t parseGMT(const UnicodeString &text, ParsePosition &pos) const;
     int32_t parseGMTDefault(const UnicodeString &text, ParsePosition &pos) const;
     UBool isDefaultGMTFormat() const;
@@ -855,6 +938,21 @@ private:
      * Initialize MessageFormat instances used for GMT formatting/parsing
      */
     void initGMTFormatters(UErrorCode &status);
+
+    /**
+     * Initialize NumberFormat instances used for numbering system overrides.
+     */
+    void initNumberFormatters(const Locale &locale,UErrorCode &status);
+
+    /**
+     * Get the numbering system to be used for a particular field.
+     */
+    NumberFormat * getNumberFormat(UDateFormatField index) const;
+
+    /**
+     * Parse the given override string and set up structures for number formats
+     */
+    void processOverrideString(const Locale &locale, const UnicodeString &str, int8_t type, UErrorCode &status);
 
     /**
      * Used to map pattern characters to Calendar field identifiers.
@@ -880,6 +978,17 @@ private:
      */
     UnicodeString       fPattern;
 
+    /**
+     * The numbering system override for dates.
+     */
+    UnicodeString       fDateOverride;
+
+    /**
+     * The numbering system override for times.
+     */
+    UnicodeString       fTimeOverride;
+
+   
     /**
      * The original locale used (for reloading symbols)
      */
@@ -914,11 +1023,44 @@ private:
 
     ParsedTZType tztype; // here to avoid api change
 
+    typedef struct NSOverride {
+        NumberFormat *nf;
+        int32_t hash;
+        NSOverride *next;
+    } NSOverride;
+
     /*
      * MessageFormat instances used for localized GMT format
      */
-    MessageFormat   **fGMTFormatters;
+    enum {
+        kGMTNegativeHMS = 0,
+        kGMTNegativeHM,
+        kGMTPositiveHMS,
+        kGMTPositiveHM,
 
+        kNumGMTFormatters
+    };
+    enum {
+        kGMTNegativeHMSMinLenIdx = 0,
+        kGMTPositiveHMSMinLenIdx,
+
+        kNumGMTFormatMinLengths
+    };
+
+    MessageFormat   **fGMTFormatters;
+    // If a GMT hour format has a second field, we need to make sure
+    // the length of input localized GMT string must match the expected
+    // length.  Otherwise, sub DateForamt handling offset format may
+    // unexpectedly success parsing input GMT string without second field.
+    // See #6880 about this issue.
+    // TODO: SimpleDateFormat should provide an option to invalidate
+    // 
+    int32_t         fGMTFormatHmsMinLen[kNumGMTFormatMinLengths];
+
+    NumberFormat    **fNumberFormatters;
+
+    NSOverride      *fOverrideList;
+    
     UBool fHaveDefaultCentury;
 };
 

@@ -1,6 +1,6 @@
 /*
  ******************************************************************************
- * Copyright (C) 1996-2008, International Business Machines Corporation and   *
+ * Copyright (C) 1996-2009, International Business Machines Corporation and   *
  * others. All Rights Reserved.                                               *
  ******************************************************************************
  */
@@ -281,8 +281,8 @@ static UBool isAvailableLocaleListInitialized(UErrorCode &status) {
                 umtx_lock(NULL);
                 if (availableLocaleList == NULL)
                 {
-                    availableLocaleList = temp;
                     availableLocaleListCount = localeCount;
+                    availableLocaleList = temp;
                     temp = NULL;
                     ucln_i18n_registerCleanup(UCLN_I18N_COLLATOR, collator_cleanup);
                 } 
@@ -428,6 +428,28 @@ Collator::EComparisonResult Collator::compare(const UChar* source, int32_t sourc
 {
     UErrorCode ec = U_ZERO_ERROR;
     return (Collator::EComparisonResult)compare(source, sourceLength, target, targetLength, ec);
+}
+
+UCollationResult Collator::compare(UCharIterator &/*sIter*/,
+                                   UCharIterator &/*tIter*/,
+                                   UErrorCode &status) const {
+    if(U_SUCCESS(status)) {
+        // Not implemented in the base class.
+        status = U_UNSUPPORTED_ERROR;
+    }
+    return UCOL_EQUAL;
+}
+
+UCollationResult Collator::compareUTF8(const StringPiece &source,
+                                       const StringPiece &target,
+                                       UErrorCode &status) const {
+    if(U_FAILURE(status)) {
+        return UCOL_EQUAL;
+    }
+    UCharIterator sIter, tIter;
+    uiter_setUTF8(&sIter, source.data(), source.length());
+    uiter_setUTF8(&tIter, target.data(), target.length());
+    return compare(sIter, tIter, status);
 }
 
 UBool Collator::equals(const UnicodeString& source, 
@@ -778,6 +800,19 @@ StringEnumeration* U_EXPORT2
 Collator::getKeywordValues(const char *keyword, UErrorCode& status) {
     // This is a wrapper over ucol_getKeywordValues
     UEnumeration* uenum = ucol_getKeywordValues(keyword, &status);
+    if (U_FAILURE(status)) {
+        uenum_close(uenum);
+        return NULL;
+    }
+    return new UStringEnumeration(uenum);
+}
+
+StringEnumeration* U_EXPORT2
+Collator::getKeywordValuesForLocale(const char* key, const Locale& locale,
+                                    UBool commonlyUsed, UErrorCode& status) {
+    // This is a wrapper over ucol_getKeywordValuesForLocale
+    UEnumeration *uenum = ucol_getKeywordValuesForLocale(key, locale.getName(),
+                                                        commonlyUsed, &status);
     if (U_FAILURE(status)) {
         uenum_close(uenum);
         return NULL;

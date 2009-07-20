@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 2001-2008, International Business Machines Corporation and
+ * Copyright (c) 2001-2009, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /*******************************************************************************
@@ -396,7 +396,7 @@ static void BillFairmanTest(void) {
     if (lr) {
         cr = ures_getByKey(lr,"collations",0,&lec);
         if (cr) {
-            lp = ures_getLocale(cr,&lec);
+            lp = ures_getLocaleByType(cr, ULOC_ACTUAL_LOCALE, &lec);
             if (lp) {
                 if (U_SUCCESS(lec)) {
                     if(strcmp(lp, "fr") != 0) {
@@ -550,6 +550,7 @@ static void testCollator(UCollator *coll, UErrorCode *status) {
   uint32_t tempLen;
   UChar *rulesCopy = NULL;
   UParseError parseError;
+
   src.opts = &opts;
 
   rules = ucol_getRules(coll, &ruleLen);
@@ -1096,10 +1097,17 @@ static void testCEs(UCollator *coll, UErrorCode *status) {
     UCAConstants *consts = NULL;
     uint32_t UCOL_RESET_TOP_VALUE, /*UCOL_RESET_TOP_CONT, */
         UCOL_NEXT_TOP_VALUE, UCOL_NEXT_TOP_CONT;
+    const char *colLoc;
     UCollator *UCA = ucol_open("root", status);
 
     if (U_FAILURE(*status)) {
         log_err("Could not open root collator %s\n", u_errorName(*status));
+        return;
+    }
+
+    colLoc = ucol_getLocaleByType(coll, ULOC_ACTUAL_LOCALE, status);
+    if (U_FAILURE(*status)) {
+        log_err("Could not get collator name: %s\n", u_errorName(*status));
         return;
     }
 
@@ -1217,7 +1225,7 @@ static void testCEs(UCollator *coll, UErrorCode *status) {
                             log_verbose("Reset is tailored codepoint %04X, don't know how to continue, taking next test\n", *(rulesCopy+oldOffset));
                             return;
                         } else {
-                            log_err("couldn't find the CE\n");
+                            log_err("%s: couldn't find the CE\n", colLoc);
                             return;
                         }
                     }
@@ -1228,28 +1236,28 @@ static void testCEs(UCollator *coll, UErrorCode *status) {
 
                 if(maxStrength == UCOL_IDENTICAL) {
                     if(baseCE != currCE || baseContCE != currContCE) {
-                        log_err("current CE  (initial strength UCOL_EQUAL)\n");
+                        log_err("%s: current CE  (initial strength UCOL_EQUAL)\n", colLoc);
                     }
                 } else {
                     if(strength == UCOL_IDENTICAL) {
                         if(lastCE != currCE || lastContCE != currContCE) {
-                            log_err("current CE  (initial strength UCOL_EQUAL)\n");
+                            log_err("%s: current CE  (initial strength UCOL_EQUAL)\n", colLoc);
                         }
                     } else {
                         if(compareCEs(currCE, currContCE, nextCE, nextContCE) > 0) {
                             /*if(currCE > nextCE || (currCE == nextCE && currContCE >= nextContCE)) {*/
-                            log_err("current CE is not less than base CE\n");
+                            log_err("%s: current CE is not less than base CE\n", colLoc);
                         }
                         if(!before) {
                             if(compareCEs(currCE, currContCE, lastCE, lastContCE) < 0) {
                                 /*if(currCE < lastCE || (currCE == lastCE && currContCE <= lastContCE)) {*/
-                                log_err("sequence of generated CEs is broken\n");
+                                log_err("%s: sequence of generated CEs is broken\n", colLoc);
                             }
                         } else {
                             before = FALSE;
                             if(compareCEs(currCE, currContCE, lastCE, lastContCE) > 0) {
                                 /*if(currCE < lastCE || (currCE == lastCE && currContCE <= lastContCE)) {*/
-                                log_err("sequence of generated CEs is broken\n");
+                                log_err("%s: sequence of generated CEs is broken\n", colLoc);
                             }
                         }
                     }
@@ -1369,6 +1377,8 @@ static void RamsRulesTest(void) {
             }
             if (uprv_strcmp("km", locName)==0 ||
                 uprv_strcmp("km_KH", locName)==0 ||
+                uprv_strcmp("si", locName)==0 ||
+                uprv_strcmp("si_LK", locName)==0 ||
                 uprv_strcmp("zh", locName)==0 ||
                 uprv_strcmp("zh_Hant", locName)==0 ) {
                     continue;  /* TODO: enable these locale tests after trac#6040 is fixed. */
@@ -3945,7 +3955,7 @@ static int32_t TestEqualsForCollator(const char* locName, UCollator *source, UCo
         errorNo++;
     }
     ucol_close(target);
-    if(uprv_strcmp(ucol_getLocale(source, ULOC_REQUESTED_LOCALE, &status), ucol_getLocale(source, ULOC_ACTUAL_LOCALE, &status)) == 0) {
+    if(uprv_strcmp(ucol_getLocaleByType(source, ULOC_REQUESTED_LOCALE, &status), ucol_getLocaleByType(source, ULOC_ACTUAL_LOCALE, &status)) == 0) {
         /* currently, safeClone is implemented through getRules/openRules
         * so it is the same as the test below - I will comment that test out.
         */
@@ -4151,6 +4161,22 @@ static void TestNumericCollation(void)
     "avery429496729610"
     };
 
+     const static char *longNumericStrings[]={
+     /* Some of these sort out of the order that would expected if digits-as-numbers handled arbitrarily-long digit strings.
+        In fact, a single collation element can represent a maximum of 254 digits as a number. Digit strings longer than that
+        are treated as multiple collation elements. */
+    "num9234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123z", /*253digits, num + 9.23E252 + z */
+    "num10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", /*254digits, num + 1.00E253 */
+    "num100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", /*255digits, num + 1.00E253 + 0, out of numeric order but expected */
+    "num12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234", /*254digits, num + 1.23E253 */
+    "num123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345", /*255digits, num + 1.23E253 + 5 */
+    "num1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456", /*256digits, num + 1.23E253 + 56 */
+    "num12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567", /*257digits, num + 1.23E253 + 567 */
+    "num12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234a", /*254digits, num + 1.23E253 + a, out of numeric order but expected */
+    "num92345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234", /*254digits, num + 9.23E253, out of numeric order but expected */
+    "num92345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234a", /*254digits, num + 9.23E253 + a, out of numeric order but expected */
+    };
+
     const static char *supplementaryDigits[] = {
       "\\uD835\\uDFCE", /* 0 */
       "\\uD835\\uDFCF", /* 1 */
@@ -4198,6 +4224,7 @@ static void TestNumericCollation(void)
     }
     genericLocaleStarterWithOptions("root", basicTestStrings, sizeof(basicTestStrings)/sizeof(basicTestStrings[0]), &att, &val, 1);
     genericLocaleStarterWithOptions("root", thirtyTwoBitNumericStrings, sizeof(thirtyTwoBitNumericStrings)/sizeof(thirtyTwoBitNumericStrings[0]), &att, &val, 1);
+    genericLocaleStarterWithOptions("root", longNumericStrings, sizeof(longNumericStrings)/sizeof(longNumericStrings[0]), &att, &val, 1);
     genericLocaleStarterWithOptions("en_US", foreignDigits, sizeof(foreignDigits)/sizeof(foreignDigits[0]), &att, &val, 1);
     genericLocaleStarterWithOptions("root", supplementaryDigits, sizeof(supplementaryDigits)/sizeof(supplementaryDigits[0]), &att, &val, 1);
     genericLocaleStarterWithOptions("root", evenZeroes, sizeof(evenZeroes)/sizeof(evenZeroes[0]), &att, &val, 1);
@@ -4694,7 +4721,7 @@ TestThaiSortKey(void)
   /* UCA 4.1 uint8_t expectedKey[256] = { 0x01, 0xdb, 0x3a, 0x01, 0x05, 0x00 }; */
   /* UCA 5.0 uint8_t expectedKey[256] = { 0x01, 0xdc, 0xce, 0x01, 0x05, 0x00 }; */
   /* UCA 5.1 moves Yammakan */
-  uint8_t expectedKey[256] = { 0x01, 0xe0, 0x4e, 0x01, 0x05, 0x00 }; 
+  uint8_t expectedKey[256] = { 0x01, 0xe0, 0x4e, 0x01, 0x05, 0x00 };
   UCollator *coll = ucol_open("th", &status);
   if(U_FAILURE(status)) {
     log_err("Could not open a collator, exiting (%s)\n", u_errorName(status));
@@ -4759,7 +4786,7 @@ TestJ5223(void)
   if (U_FAILURE(status)) {
     log_err("Failed setting atributes\n");
     return;
-  } 
+  }
   sortkey_length = ucol_getSortKey(coll, ustr, ustr_length, NULL, 0);
   if (sortkey_length > 256) return;
 
@@ -4798,7 +4825,7 @@ TestJ5232(void)
         "\\u0e40\\u0e01\\u0e47\\u0e1a\\u0e40\\u0e25\\u0e47\\u0e21",
         "\\u0e40\\u0e01\\u0e47\\u0e1a\\u0e40\\u0e25\\u0e48\\u0e21"
     };
-    
+
     genericLocaleStarter("th", test, sizeof(test)/sizeof(test[0]));
 }
 
@@ -5018,7 +5045,7 @@ TestTailor6179(void)
     uint8_t lastSecondaryIgnCE[6]={1, 1, 0x05, 0};
 
     /* Test [Last Primary ignorable] */
-    
+
     log_verbose("\n\nTailoring test: &[last primary ignorable]<<a  &[first primary ignorable]<<b ");
     ruleLen = u_strlen(rule1);
     coll = ucol_openRules(rule1, ruleLen, UCOL_OFF, UCOL_TERTIARY, NULL,&status);
@@ -5043,7 +5070,7 @@ TestTailor6179(void)
         }
     }
     ucol_close(coll);
-    
+
 
     /* Test [Last Secondary ignorable] */
     log_verbose("\n\nTailoring test: &[last secondary ignorable]<<<a  &[first secondary ignorable]<<<b ");
@@ -5089,15 +5116,15 @@ TestUCAPrecontext(void)
     uint8_t  resColl[100], prevColl[100];
     int32_t  rLen, tLen, ruleLen;
     UChar rule1[256]= {0x26, 0xb7, 0x3c, 0x61, 0}; /* & middle-dot < a */
-    UChar rule2[256]= {0x26, 0x4C, 0xb7, 0x3c, 0x3c, 0x61, 0}; 
+    UChar rule2[256]= {0x26, 0x4C, 0xb7, 0x3c, 0x3c, 0x61, 0};
     /* & l middle-dot << a  a is an expansion. */
-    
+
     UChar tData1[][20]={
             { 0xb7, 0},  /* standalone middle dot(0xb7) */
             { 0x387, 0}, /* standalone middle dot(0x387) */
             { 0x61, 0},  /* a */
             { 0x6C, 0},  /* l */
-            { 0x4C, 0x0332, 0},  /* l with [first primary ignorable] */       
+            { 0x4C, 0x0332, 0},  /* l with [first primary ignorable] */
             { 0x6C, 0xb7, 0},  /* l with middle dot(0xb7) */
             { 0x6C, 0x387, 0}, /* l with middle dot(0x387) */
             { 0x4C, 0xb7, 0},  /* L with middle dot(0xb7) */
@@ -5105,7 +5132,7 @@ TestUCAPrecontext(void)
             { 0x6C, 0x61, 0x387, 0}, /* la  with middle dot(0x387) */
             { 0x4C, 0x61, 0xb7, 0},  /* La with middle dot(0xb7) */
      };
-    
+
     log_verbose("\n\nEN collation:");
     coll = ucol_open("en", &status);
     if (U_FAILURE(status)) {
@@ -5116,7 +5143,7 @@ TestUCAPrecontext(void)
         tLen = u_strlen(tData1[j]);
         rLen = ucol_getSortKey(coll, tData1[j], tLen, resColl, 100);
         if ((j>0) && (strcmp((char *)resColl, (char *)prevColl)<0)) {
-            log_err("\n Expecting greater key than previous test case: Data[%d] :%s.", 
+            log_err("\n Expecting greater key than previous test case: Data[%d] :%s.",
                     j, tData1[j]);
         }
         log_verbose("\n Data[%d] :%s  \tlen: %d key: ", j, tData1[j], rLen);
@@ -5126,8 +5153,8 @@ TestUCAPrecontext(void)
         uprv_memcpy(prevColl, resColl, sizeof(uint8_t)*(rLen+1));
      }
      ucol_close(coll);
-     
-     
+
+
      log_verbose("\n\nJA collation:");
      coll = ucol_open("ja", &status);
      if (U_FAILURE(status)) {
@@ -5138,7 +5165,7 @@ TestUCAPrecontext(void)
          tLen = u_strlen(tData1[j]);
          rLen = ucol_getSortKey(coll, tData1[j], tLen, resColl, 100);
          if ((j>0) && (strcmp((char *)resColl, (char *)prevColl)<0)) {
-             log_err("\n Expecting greater key than previous test case: Data[%d] :%s.", 
+             log_err("\n Expecting greater key than previous test case: Data[%d] :%s.",
                      j, tData1[j]);
          }
          log_verbose("\n Data[%d] :%s  \tlen: %d key: ", j, tData1[j], rLen);
@@ -5148,7 +5175,7 @@ TestUCAPrecontext(void)
          uprv_memcpy(prevColl, resColl, sizeof(uint8_t)*(rLen+1));
       }
       ucol_close(coll);
-      
+
 
       log_verbose("\n\nTailoring test: & middle dot < a ");
       ruleLen = u_strlen(rule1);
@@ -5161,7 +5188,7 @@ TestUCAPrecontext(void)
           tLen = u_strlen(tData1[j]);
           rLen = ucol_getSortKey(coll, tData1[j], tLen, resColl, 100);
           if ((j>0) && (strcmp((char *)resColl, (char *)prevColl)<0)) {
-              log_err("\n Expecting greater key than previous test case: Data[%d] :%s.", 
+              log_err("\n Expecting greater key than previous test case: Data[%d] :%s.",
                       j, tData1[j]);
           }
           log_verbose("\n Data[%d] :%s  \tlen: %d key: ", j, tData1[j], rLen);
@@ -5171,7 +5198,7 @@ TestUCAPrecontext(void)
           uprv_memcpy(prevColl, resColl, sizeof(uint8_t)*(rLen+1));
        }
        ucol_close(coll);
-       
+
 
        log_verbose("\n\nTailoring test: & l middle-dot << a ");
        ruleLen = u_strlen(rule2);
@@ -5184,11 +5211,11 @@ TestUCAPrecontext(void)
            tLen = u_strlen(tData1[j]);
            rLen = ucol_getSortKey(coll, tData1[j], tLen, resColl, 100);
            if ((j>0) && (j!=3) && (strcmp((char *)resColl, (char *)prevColl)<0)) {
-               log_err("\n Expecting greater key than previous test case: Data[%d] :%s.", 
+               log_err("\n Expecting greater key than previous test case: Data[%d] :%s.",
                        j, tData1[j]);
            }
            if ((j==3)&&(strcmp((char *)resColl, (char *)prevColl)>0)) {
-               log_err("\n Expecting smaller key than previous test case: Data[%d] :%s.", 
+               log_err("\n Expecting smaller key than previous test case: Data[%d] :%s.",
                        j, tData1[j]);
            }
            log_verbose("\n Data[%d] :%s  \tlen: %d key: ", j, tData1[j], rLen);
@@ -5210,7 +5237,7 @@ TestOutOfBuffer5468(void)
     int32_t sortkey_length;
     UErrorCode status = U_ZERO_ERROR;
     static UCollator *coll = NULL;
-    
+
     coll = ucol_open("root", &status);
     if(U_FAILURE(status)) {
       log_err("Couldn't open UCA\n");
@@ -5222,8 +5249,8 @@ TestOutOfBuffer5468(void)
     if (U_FAILURE(status)) {
       log_err("Failed setting atributes\n");
       return;
-    } 
-    
+    }
+
     sortkey_length = ucol_getSortKey(coll, ustr, ustr_length, shortKeyBuf, sizeof(shortKeyBuf));
     if (sortkey_length != 4) {
         log_err("expecting length of sortKey is 4  got:%d ", sortkey_length);
@@ -5333,7 +5360,7 @@ static void TestCroatianSortKey(void) {
 
 /* ticket: 6140 */
 /* This test ensures that codepoints such as 0x3099 are flagged correctly by the collator since
- * they are both Hiragana and Katakana 
+ * they are both Hiragana and Katakana
  */
 #define SORTKEYLEN 50
 static void TestHiragana(void) {
@@ -5402,7 +5429,7 @@ static void TestHiragana(void) {
     if (strcollresult != UCOL_EQUAL) {
         log_err("Result from ucol_strcoll() should be UCOL_EQUAL.");
     }
-    
+
     ucol_close(ucol);
 }
 

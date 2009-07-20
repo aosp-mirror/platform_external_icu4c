@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2002-2007, International Business Machines
+*   Copyright (C) 2002-2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -12,9 +12,6 @@
 *
 *   created on: 2002mar07
 *   created by: Markus W. Scherer
-*
-*   The serialized structure, the array of range limits, is
-*   the same as in UnicodeSet, except that the HIGH value is not stored.
 *
 *   There are functions to efficiently serialize a USet into an array of uint16_t
 *   and functions to use such a serialized form efficiently without
@@ -30,6 +27,11 @@
 #include "unicode/parsepos.h"
 
 U_NAMESPACE_USE
+
+U_CAPI USet* U_EXPORT2
+uset_openEmpty() {
+    return (USet*) new UnicodeSet();
+}
 
 U_CAPI USet* U_EXPORT2
 uset_open(UChar32 start, UChar32 end) {
@@ -145,6 +147,16 @@ uset_complementAll(USet* set, const USet* complement) {
 U_CAPI void U_EXPORT2
 uset_clear(USet* set) {
     ((UnicodeSet*) set)->UnicodeSet::clear();
+}
+
+U_CAPI void U_EXPORT2
+uset_closeOver(USet* set, int32_t attributes) {
+    ((UnicodeSet*) set)->UnicodeSet::closeOver(attributes);
+}
+
+U_CAPI void U_EXPORT2
+uset_removeAllStrings(USet* set) {
+    ((UnicodeSet*) set)->UnicodeSet::removeAllStrings();
 }
 
 U_CAPI UBool U_EXPORT2
