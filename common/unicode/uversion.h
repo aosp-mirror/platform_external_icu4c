@@ -74,7 +74,7 @@
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.4
  */
-#define U_ICU_VERSION_PATCHLEVEL_NUM 0
+#define U_ICU_VERSION_PATCHLEVEL_NUM 1
 
 /** The current ICU build level version as an integer.  
  *  This value is for use by ICU clients. It defaults to 0.
@@ -90,12 +90,12 @@
  */
 #define U_ICU_VERSION_SUFFIX _4_2
 
-/** The current ICU library version as a dotted-decimal string. The patchlevel
+/** The current ICU library version as a dotted-decimal string. The patchlevel and buildlevel
  *  only appears in this string if it non-zero. 
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.4
  */
-#define U_ICU_VERSION "4.2"
+#define U_ICU_VERSION "4.2.1"
 
 /** The current ICU library major/minor version as a string without dots, for library name suffixes. 
  *  This value will change in the subsequent releases of ICU
