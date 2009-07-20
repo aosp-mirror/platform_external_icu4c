@@ -6,7 +6,7 @@
 
     <title>ReadMe for ICU</title>
     <meta name="COPYRIGHT" content=
-    "Copyright (c) 1997-2007 IBM Corporation and others. All Rights Reserved." />
+    "Copyright (c) 1997-2008 IBM Corporation and others. All Rights Reserved." />
     <meta name="KEYWORDS" content=
     "ICU; International Components for Unicode; ICU4C; what's new; readme; read me; introduction; downloads; downloading; building; installation;" />
     <meta name="DESCRIPTION" content=
@@ -30,11 +30,10 @@
 
   <body>
     <h1>International Components for Unicode<br />
-     <abbr title="International Components for Unicode">ICU</abbr> 3.8
-    ReadMe</h1>
+     <abbr title="International Components for Unicode">ICU</abbr> 4.0 ReadMe</h1>
 
-    <p>Version: 2007 September 16<br />
-     Copyright &copy; 1997-2007 International Business Machines Corporation and
+    <p>Version: 2008 June 30th<br />
+     Copyright &copy; 1997-2008 International Business Machines Corporation and
     others. All Rights Reserved.</p>
     <!-- Remember that there is a copyright at the end too -->
     <hr />
@@ -66,7 +65,7 @@
 
           <li><a href="#HowToBuildZOS">z/OS (os/390)</a></li>
 
-          <li><a href="#HowToBuildOS400">i5/OS (OS/400 iSeries)</a></li>
+          <li><a href="#HowToBuildOS400">IBM i family (IBM i, i5/OS, OS/400)</a></li>
         </ul>
       </li>
 
@@ -212,18 +211,13 @@
     <h2><a name="News" href="#News" id="News">What is new in this
     release?</a></h2>
 
-    <p>The following list concentrates on <em>changes that affect existing
-    applications migrating from previous ICU releases</em>. For more news about
-    this release, see the <a href="http://www.icu-project.org/download/">ICU 3.8
+    <p>To see which APIs are new or changed in this release, view the <a href="APIChangeReport.html">ICU4C API Change Report</a>. </p>
+
+
+    <p><!-- The following list concentrates on <em>changes that affect existing
+    applications migrating from previous ICU releases</em>. --> For more news about
+    this release, see the <a href="http://www.icu-project.org/download/">ICU 4.0
     download page</a>.</p>
-
-    <h3><a name="News_timezone" id="News_timezone">Changes to timezone formatting
-    and parsing</a></h3>
-
-    <p>In ICU 3.8, the behavior of date formatting and parsing has changed
-    significantly, perhaps requiring recoding on your part depending on your
-    usage. For more information, see <a href="http://icu-project.org/userguide/formatDateTime.html">
-	Formatting Dates and Times</a> in the User Guide.</p>
 
     <h2><a name="Download" href="#Download" id="Download">How To Download the
     Source Code</a></h2>
@@ -523,7 +517,14 @@
       </tr>
 
       <tr>
-        <td>Windows XP</td>
+        <td>Windows Vista SP1 (32 bit)</td>
+
+        <td>Microsoft Visual C++ 2005 (8.0)</td>
+
+        <td>Reference platform</td>
+      </tr>
+      <tr>
+        <td>Windows Server 2003 (64 bit)</td>
 
         <td>Microsoft Visual C++ 2005 (8.0)</td>
 
@@ -531,35 +532,49 @@
       </tr>
 
       <tr>
-        <td>Red Hat Enterprise Linux 5</td>
+        <td>Red Hat Enterprise Linux 5 (x86, 32 bit)</td>
 
-        <td>gcc 4.1.1</td>
+        <td>gcc 4.1.2</td>
 
         <td>Reference platform</td>
       </tr>
 
+      <tr>
+        <td>AIX 6.1 (Power, 64-bit)</td>
+
+        <td>IBM VisualAge 9</td>
+
+        <td>Reference platform</td>
+      </tr>
+
+      <tr>
+        <td>Solaris 10 (Sparc, 32-bit, SunOS 5.10)</td>
+
+        <td>Sun Studio 12 <!--(Sun C++ 5.8)--></td>
+
+        <td>Reference platform</td>
+      </tr>
+
+      <tr>
+        <td>HP-UX IIiv3 (Itanium, 64-bit)</td>
+
+        <td>aCC A.6.14</td>
+
+        <td>Reference platform</td>
+      </tr>
       <tr>
         <td>AIX 5.3</td>
 
-        <td>Visual Age C++ 8.0</td>
+        <td>IBM XL C/C++ 8.0</td>
 
-        <td>Reference platform</td>
+        <td>Regularly tested</td>
       </tr>
-
       <tr>
-        <td>Solaris 10 (SunOS 5.10)</td>
+        <td>Windows XP</td>
 
-        <td>Sun Studio 11 (Sun C++ 5.8)</td>
+        <td>Microsoft Visual C++ 2005 (8.0)</td>
 
-        <td>Reference platform</td>
-      </tr>
-
-      <tr>
-        <td>HP-UX 11.23 (IA64)</td>
-
-        <td>aCC A.06.10</td>
-
-        <td>Reference platform</td>
+        <td>Regularly tested</td>
       </tr>
 
       <tr>
@@ -604,7 +619,7 @@
       </tr>
 
       <tr>
-        <td>Windows Vista x86</td>
+        <td>Windows Server 2008 x64</td>
 
         <td>Microsoft Visual C++ 2005 (8.0)</td>
 
@@ -652,7 +667,7 @@
       </tr>
 
       <tr>
-        <td>i5/OS (OS/400 iSeries) V5R3</td>
+        <td>IBM i family (IBM i, i5/OS, OS/400)</td>
 
         <td>iCC</td>
 
@@ -686,7 +701,7 @@
       <tr>
         <td>SUSE Linux Enterprise Server 9 (PowerPC)</td>
 
-        <td>Visual Age 8.0</td>
+        <td>IBM XL C/C++ 8.0</td>
 
         <td>Rarely tested</td>
       </tr>
@@ -1168,7 +1183,7 @@ Data set name type  : PDS</samp>
 </pre>
 
     <h3><a name="HowToBuildOS400" href="#HowToBuildOS400" id=
-    "HowToBuildOS400">How To Build And Install On i5/OS (OS/400 iSeries)</a></h3>
+    "HowToBuildOS400">How To Build And Install On The IBM i Family (IBM i, i5/OS OS/400)</a></h3>
 
     <p>Before you start building ICU, ICU requires the following:</p>
 
@@ -1176,9 +1191,9 @@ Data set name type  : PDS</samp>
       <li>QSHELL interpreter installed (install base option 30, operating system)
       <!--li>QShell Utilities, PRPQ 5799-XEH (not required for V4R5)</li--></li>
 
-      <li>ILE C/C++ Compiler for iSeries, LPP 5722-WDS</li>
+      <li>ILE C/C++ Compiler installed on the system
 
-      <li>The latest GNU facilities (You can get the GNU facilities for i5/OS
+      <li>The latest GNU facilities (You can get the GNU facilities 
       from <a href=
       "http://www.ibm.com/servers/enable/site/porting/iseries/overview/gnu_utilities.html">
       http://www.ibm.com/servers/enable/site/porting/iseries/overview/gnu_utilities.html</a>).
@@ -1191,7 +1206,7 @@ Data set name type  : PDS</samp>
 
     <ol>
       <li>
-        Create i5/OS target library. This library will be the target for the
+        Create target library. This library will be the target for the
         resulting modules, programs and service programs. You will specify this
         library on the OUTPUTDIR environment variable.
 <pre>
@@ -1216,7 +1231,7 @@ CHGJOB CCSID(37)</samp>
 
       <li>Change your current directory to icu/source.</li>
 
-      <li>Run <tt>'./runConfigureICU i5OS'</tt>  (See <a href="#HowToConfigureICU">configuration
+      <li>Run <tt>'./runConfigureICU IBMi'</tt>  (See <a href="#HowToConfigureICU">configuration
       note</a> for details).</li></li>
 
       <li>Run <tt>'gmake'</tt> to build ICU.</li>
@@ -1225,7 +1240,7 @@ CHGJOB CCSID(37)</samp>
       You can look at the <a href=
       "http://publib.boulder.ibm.com/infocenter/iseries/v5r3/index.jsp?topic=/apis/concept4.htm">
       iSeries Information Center</a> for more details regarding the running of multiple threads
-      on i5/OS.</li>
+      on IBM i.</li>
     </ol>
     <!-- end build environment -->
 
@@ -1668,7 +1683,7 @@ CHGJOB CCSID(37)</samp>
     </ul>
     <hr />
 
-    <p>Copyright &copy; 1997-2007 International Business Machines Corporation and
+    <p>Copyright &copy; 1997-2008 International Business Machines Corporation and
     others. All Rights Reserved.<br />
      IBM Globalization Center of Competency - San Jos&eacute;<br />
      4400 North First Street<br />

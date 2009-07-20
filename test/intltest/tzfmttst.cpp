@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 2007, International Business Machines Corporation and         *
+* Copyright (C) 2007-2008, International Business Machines Corporation and    *
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 */
@@ -18,7 +18,6 @@
 #include "unicode/uchar.h"
 #include "unicode/basictz.h"
 #include "cstring.h"
-#include "zonemeta.h"
 
 #define DEBUG_ALL 0
 
@@ -186,7 +185,7 @@ TimeZoneFormatTest::TestTimeZoneRoundTrip(void) {
                             numDigits++;
                         }
                     }
-                    if (numDigits >= 4) {
+                    if (numDigits >= 3) {
                         // Localized GMT or RFC: total offset (raw + dst) must be preserved.
                         int32_t inOffset = inRaw + inDst;
                         int32_t outOffset = outRaw + outDst;
@@ -209,8 +208,12 @@ TimeZoneFormatTest::TestTimeZoneRoundTrip(void) {
                     } else { // "VVVV"
                         // Location: time zone rule must be preserved.
                         UnicodeString canonical;
-                        ZoneMeta::getCanonicalID(*tzid, canonical);
-                        if (outtzid != canonical) {
+                        TimeZone::getCanonicalID(*tzid, canonical, status);
+                        if (U_FAILURE(status)) {
+                            // Uknown ID - we should not get here
+                            errln((UnicodeString)"Unknown ID " + *tzid);
+                            status = U_ZERO_ERROR;
+                        } else if (outtzid != canonical) {
                             // Canonical ID did not match - check the rules
                             if (!((BasicTimeZone*)&outtz)->hasEquivalentTransitions((BasicTimeZone&)*tz, low, high, TRUE, status)) {
                                 errln("Canonical round trip failed; tz=" + *tzid
@@ -266,7 +269,9 @@ TimeZoneFormatTest::TestTimeRoundTrip(void) {
     // Whether each pattern is ambiguous at STD->STD/DST->DST local time overlap
     UBool AMBIGUOUS_NEGATIVE_SHIFT[] = {TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE};
 
-    UnicodeString BASEPATTERN("yyyy-MM-dd'T'HH:mm:ss.SSS");
+    // Workaround for #6338
+    //UnicodeString BASEPATTERN("yyyy-MM-dd'T'HH:mm:ss.SSS");
+    UnicodeString BASEPATTERN("yyyy.MM.dd HH:mm:ss.SSS");
 
     // timer for performance analysis
     UDate timer;
@@ -345,7 +350,12 @@ TimeZoneFormatTest::TestTimeRoundTrip(void) {
 
             while ((tzid = tzids->snext(status))) {
                 UnicodeString canonical;
-                ZoneMeta::getCanonicalID(*tzid, canonical);
+                TimeZone::getCanonicalID(*tzid, canonical, status);
+                if (U_FAILURE(status)) {
+                    // Unknown ID - we should not get here
+                    status = U_ZERO_ERROR;
+                    continue;
+                }
                 if (*tzid != canonical) {
                     // Skip aliases
                     continue;

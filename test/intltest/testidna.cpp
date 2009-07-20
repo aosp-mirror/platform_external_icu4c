@@ -1,7 +1,7 @@
 /*
  *******************************************************************************
  *
- *   Copyright (C) 2003-2007, International Business Machines
+ *   Copyright (C) 2003-2008, International Business Machines
  *   Corporation and others.  All Rights Reserved.
  *
  *******************************************************************************
@@ -1460,7 +1460,11 @@ void TestIDNA::TestIDNAMonkeyTest(){
 
     getInstance(status);    // Init prep
     if (U_FAILURE(status)) {
-        errln("Test could not initialize. Got %s", u_errorName(status));
+        if (status == U_FILE_ACCESS_ERROR) {
+            dataerrln("[DATA] Test could not initialize.");
+        } else {
+            errln("Test could not initialize. Got %s", u_errorName(status));
+        }
         return;
     }
 
@@ -1476,7 +1480,7 @@ void TestIDNA::TestIDNAMonkeyTest(){
     /* for debugging */
     for (i=0; i<(int)(sizeof(failures)/sizeof(failures[0])); i++){
         source.truncate(0);
-        source.append( failures[i] );
+        source.append( UnicodeString(failures[i], -1, US_INV) );
         source = source.unescape();
         source.append((UChar)0x0000);
         const UChar *src = source.getBuffer();
@@ -1486,13 +1490,13 @@ void TestIDNA::TestIDNAMonkeyTest(){
 
     
     source.truncate(0);
-    source.append("\\uCF18\\U00021161\\U000EEF11\\U0002BB82\\U0001D63C");
+    source.append(UNICODE_STRING_SIMPLE("\\uCF18\\U00021161\\U000EEF11\\U0002BB82\\U0001D63C"));
     debug(source.getBuffer(),source.length(),UIDNA_ALLOW_UNASSIGNED);
     
     { // test deletion of code points
-        UnicodeString source("\\u043f\\u00AD\\u034f\\u043e\\u0447\\u0435\\u043c\\u0443\\u0436\\u0435\\u043e\\u043d\\u0438\\u043d\\u0435\\u0433\\u043e\\u0432\\u043e\\u0440\\u044f\\u0442\\u043f\\u043e\\u0440\\u0443\\u0441\\u0441\\u043a\\u0438\\u0000");
+        UnicodeString source("\\u043f\\u00AD\\u034f\\u043e\\u0447\\u0435\\u043c\\u0443\\u0436\\u0435\\u043e\\u043d\\u0438\\u043d\\u0435\\u0433\\u043e\\u0432\\u043e\\u0440\\u044f\\u0442\\u043f\\u043e\\u0440\\u0443\\u0441\\u0441\\u043a\\u0438\\u0000", -1, US_INV);
         source = source.unescape();
-        UnicodeString expected("\\u043f\\u043e\\u0447\\u0435\\u043c\\u0443\\u0436\\u0435\\u043e\\u043d\\u0438\\u043d\\u0435\\u0433\\u043e\\u0432\\u043e\\u0440\\u044f\\u0442\\u043f\\u043e\\u0440\\u0443\\u0441\\u0441\\u043a\\u0438\\u0000");
+        UnicodeString expected("\\u043f\\u043e\\u0447\\u0435\\u043c\\u0443\\u0436\\u0435\\u043e\\u043d\\u0438\\u043d\\u0435\\u0433\\u043e\\u0432\\u043e\\u0440\\u044f\\u0442\\u043f\\u043e\\u0440\\u0443\\u0441\\u0441\\u043a\\u0438\\u0000", -1, US_INV);
         expected = expected.unescape();
         UnicodeString ascii("xn--b1abfaaepdrnnbgefbadotcwatmq2g4l");
         ascii.append((UChar)0x0000);
@@ -1535,7 +1539,11 @@ void TestIDNA::TestRefIDNA(){
     UErrorCode status = U_ZERO_ERROR;
     getInstance(status);    // Init prep
     if (U_FAILURE(status)) {
-        errln("Test could not initialize. Got %s", u_errorName(status));
+        if (status == U_FILE_ACCESS_ERROR) {
+            dataerrln("[DATA] Test could not initialize.");
+        } else {
+            errln("Test could not initialize. Got %s", u_errorName(status));
+        }
         return;
     }
 

@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2007 International Business Machines
+// * Copyright (C) 2008 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/mt.xml
@@ -224,6 +224,7 @@ mt{
         PW{"Palau"}
         PY{"Paragwaj"}
         QA{"Qatar"}
+        QU{"Unjoni Ewropea"}
         RE{"Réunion"}
         RO{"Rumanija"}
         RU{"Russja"}
@@ -840,7 +841,7 @@ mt{
     Variants{
         REVISED{"Ortografija Irriveda"}
     }
-    Version{"1.71"}
+    Version{"1.77"}
     calendar{
         gregorian{
             AmPmMarkers{
@@ -1004,6 +1005,11 @@ mt{
             }
         }
     }
+    codePatterns{
+        language{"Lingwa: {0}"}
+        script{"Skritt: {0}"}
+        territory{"Reġjun: {0}"}
+    }
     measurementSystemNames{
         metric{"Metriku"}
     }
@@ -1021,8 +1027,6 @@ mt{
             cu:int{1}
             ld{"Ħin Ċentrali Ewropew tas-Sajf"}
             ls{"Ħin Ċentrali Ewropew"}
-            sd{"CEST"}
-            ss{"CET"}
         }
         gmtFormat{"GMT{0}"}
         hourFormat{"+HH:mm;-HH:mm"}

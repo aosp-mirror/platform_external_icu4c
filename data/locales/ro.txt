@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2007 International Business Machines
+// * Copyright (C) 2008 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/ro.xml
@@ -10,7 +10,7 @@
  *  ICU <specials> source: <path>/xml/main/ro.xml
  */
 ro{
-    AuxExemplarCharacters{"[]"}
+    AuxExemplarCharacters{"[q w y]"}
     Countries{
         001{"Lume"}
         002{"Africa"}
@@ -1108,9 +1108,17 @@ ro{
             "dolar Zimbabwe",
         }
     }
-    ExemplarCharacters{"[a ă â b-i î j-s ș t ț u-z]"}
+    CurrencyPlurals{
+        TRL{
+            other{"lire turcești"}
+        }
+        TRY{
+            other{"lire turcești noi"}
+        }
+    }
+    ExemplarCharacters{"[a ă â b-i î j-p r s ș t ț u v x z]"}
     Keys{
-        collation{"colaționare"}
+        collation{"sortare"}
         currency{"monedă"}
     }
     Languages{
@@ -1139,7 +1147,7 @@ ro{
         ber{"berberă"}
         bg{"bulgară"}
         bh{"bihari"}
-        bn{"bengali"}
+        bn{"bengaleză"}
         bnt{"bantu"}
         bo{"tibetană"}
         br{"bretonă"}
@@ -1170,7 +1178,7 @@ ro{
         en_US{"engleză americană"}
         eo{"esperanto"}
         es{"spaniolă"}
-        es_419{"spaniolă latinoamericană"}
+        es_419{"spaniolă latino-americană"}
         es_ES{"spaniolă iberică"}
         et{"estonă"}
         eu{"bască"}
@@ -1179,7 +1187,7 @@ ro{
         fil{"filipineză"}
         fiu{"limbă fino-ugrică"}
         fj{"fijiană"}
-        fo{"feroeză"}
+        fo{"faroeză"}
         fr{"franceză"}
         fr_CA{"franceză canadiană"}
         fr_CH{"franceză elvețiană"}
@@ -1196,6 +1204,7 @@ ro{
         gu{"gujarati"}
         haw{"hawaiană"}
         he{"ebraică"}
+        hi{"hindi"}
         hit{"hitită"}
         hr{"croată"}
         ht{"haitiană"}
@@ -1239,10 +1248,11 @@ ro{
         mnc{"manciuriană"}
         mo{"moldovenească"}
         mr{"marathi"}
-        ms{"malaieză"}
+        ms{"malaeziană"}
         mt{"malteză"}
         mul{"limbi multiple"}
         mun{"limbă munda"}
+        my{"birmaneză"}
         myn{"limbă maya"}
         nai{"limbă nord-amerindiană"}
         nap{"napolitană"}
@@ -1286,7 +1296,7 @@ ro{
         sem{"limbă semitică"}
         sga{"irlandeză veche"}
         sgn{"limbaj mimico-gestual"}
-        sh{"sârbocroată"}
+        sh{"sârbo-croată"}
         si{"singaleză"}
         sit{"limbă sino-tibetană"}
         sk{"slovacă"}
@@ -1334,7 +1344,7 @@ ro{
         zh{"chineză"}
         zh_Hans{"chineză simplificată"}
         zh_Hant{"chineză tradițională"}
-        zu{"zulușă"}
+        zu{"zulu"}
         zxx{"fară conținut lingvistic"}
     }
     LocaleScript{
@@ -1356,7 +1366,7 @@ ro{
     }
     NumberPatterns{
         "#,##0.###",
-        "#,##0.00 ¤",
+        "#,##0.00 ¤",
         "#,##0%",
         "#E0",
     }
@@ -1443,7 +1453,7 @@ ro{
             traditional{"sortare tradițională"}
         }
     }
-    Version{"1.86"}
+    Version{"1.96"}
     calendar{
         buddhist{
             DateTimePatterns{
@@ -1455,7 +1465,7 @@ ro{
                 "MMMM d, yyyy G",
                 "MMM d, yyyy G",
                 "M/d/yyyy",
-                "{1} {0}",
+                "{1}, {0}",
             }
             eras{
                 abbreviated{
@@ -1476,17 +1486,25 @@ ro{
                 "HH:mm:ss z",
                 "HH:mm:ss",
                 "HH:mm",
-                "d MMMM yyyy",
+                "EEEE, d MMMM yyyy",
                 "d MMMM yyyy",
                 "dd.MM.yyyy",
                 "dd.MM.yyyy",
-                "{1} {0}",
+                "{1}, {0}",
             }
             availableFormats{
+                Hm{"H:mm"}
+                MEd{"E, d MMM"}
                 MMMMd{"d MMMM"}
+                MMMd{"d MMM"}
                 MMdd{"dd.MM"}
                 Md{"d.M"}
-                yyMM{"MM yy"}
+                d{"d"}
+                y{"yyyy"}
+                yM{"M.yyyy"}
+                yMMM{"MMM yyyy"}
+                yMMMM{"MMMM yyyy"}
+                yyMM{"MM.yy"}
                 yyMMM{"MMM yy"}
                 yyQ{"Q yy"}
                 yyyyMM{"MM.yyyy"}
@@ -1591,18 +1609,18 @@ ro{
             monthNames{
                 format{
                     abbreviated{
-                        "Ian",
-                        "Feb",
-                        "Mar",
-                        "Apr",
-                        "Mai",
-                        "Iun",
-                        "Iul",
-                        "Aug",
-                        "Sep",
-                        "Oct",
-                        "Nov",
-                        "Dec",
+                        "ian.",
+                        "feb.",
+                        "mar.",
+                        "apr.",
+                        "mai",
+                        "iun.",
+                        "iul.",
+                        "aug.",
+                        "sept.",
+                        "oct.",
+                        "nov.",
+                        "dec.",
                     }
                     wide{
                         "ianuarie",
@@ -1644,6 +1662,12 @@ ro{
                         "T3",
                         "T4",
                     }
+                    narrow{
+                        "I",
+                        "II",
+                        "3",
+                        "IV",
+                    }
                     wide{
                         "trimestrul 1",
                         "trimestrul 2",
@@ -1658,9 +1682,20 @@ ro{
                         "3",
                         "4",
                     }
+                    wide{
+                        "trimestrul al I-lea",
+                        "trimestrul al II-lea",
+                        "trimestrul al III-lea",
+                        "trimestrul al IV-lea",
+                    }
                 }
             }
         }
+    }
+    codePatterns{
+        language{"Limbă: {0}"}
+        script{"Scriere: {0}"}
+        territory{"Regiune: {0}"}
     }
     delimiters{
         alternateQuotationEnd{"»"}

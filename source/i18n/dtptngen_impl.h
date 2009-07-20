@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 2007, International Business Machines Corporation and
+* Copyright (C) 2007-2008, International Business Machines Corporation and
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 *
@@ -78,10 +78,10 @@
 #define LOW_W             ((UChar)0x0077)
 #define LOW_Y             ((UChar)0x0079)
 #define LOW_Z             ((UChar)0x007A)
-#define DT_SHORT          -0x101
-#define DT_LONG           -0x102
+#define DT_SHORT          -0x102
+#define DT_LONG           -0x103
 #define DT_NUMERIC         0x100
-#define DT_NARROW         -0x100
+#define DT_NARROW         -0x101
 #define DT_DELTA           0x10
 
 U_NAMESPACE_BEGIN
@@ -98,9 +98,9 @@ typedef enum dtStrEnum {
 typedef struct dtTypeElem {
     UChar                  patternChar;
     UDateTimePatternField  field;
-    int32_t                type;
-    int32_t                minLen;
-    int32_t                weight;
+    int16_t                type;
+    int16_t                minLen;
+    int16_t                weight;
 }dtTypeElem;
 
 class PtnSkeleton : public UMemory {
@@ -194,7 +194,6 @@ public:
     PatternMap();
     virtual  ~PatternMap();
     void  add(const UnicodeString& basePattern, const PtnSkeleton& skeleton, const UnicodeString& value, UErrorCode& status);
-    UErrorCode status;
     const UnicodeString* getPatternFromBasePattern(UnicodeString& basePattern);
     const UnicodeString* getPatternFromSkeleton(PtnSkeleton& skeleton);
     void copyFrom(const PatternMap& other, UErrorCode& status);
@@ -220,7 +219,7 @@ private:
     PatternMap *patternMap;
 };
 
-class U_I18N_API DTSkeletonEnumeration : public StringEnumeration {
+class DTSkeletonEnumeration : public StringEnumeration {
 public:
     DTSkeletonEnumeration(PatternMap &patternMap, dtStrEnum type, UErrorCode& status);
     virtual ~DTSkeletonEnumeration();
@@ -235,7 +234,7 @@ private:
     UVector *fSkeletons;
 };
 
-class U_I18N_API DTRedundantEnumeration : public StringEnumeration {
+class DTRedundantEnumeration : public StringEnumeration {
 public:
     DTRedundantEnumeration();
     virtual ~DTRedundantEnumeration();

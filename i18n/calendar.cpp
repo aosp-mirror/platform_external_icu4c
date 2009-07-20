@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 1997-2007, International Business Machines Corporation and    *
+* Copyright (C) 1997-2008, International Business Machines Corporation and    *
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 *
@@ -37,7 +37,9 @@
 #include "hebrwcal.h"
 #include "persncal.h"
 #include "indiancal.h"
-//#include "chnsecal.h"
+#include "chnsecal.h"
+#include "coptccal.h"
+#include "ethpccal.h"
 #include "unicode/calendar.h"
 #include "cpputils.h"
 #include "servloc.h"
@@ -73,8 +75,14 @@ U_CDECL_END
 //
 
 #if defined( U_DEBUG_CALSVC ) || defined (U_DEBUG_CAL)
-#include <stdio.h>
 
+/** 
+ * fldName was removed as a duplicate implementation. 
+ * use  udbg_ services instead, 
+ * which depend on include files and library from ../tools/ctestfw
+ */
+#include "unicode/udbgutil.h"
+#include <stdio.h>
 
 /**
 * convert a UCalendarDateFields into a string - for debugging
@@ -82,14 +90,10 @@ U_CDECL_END
 * @return static string to the field name
 * @internal
 */
-#error fldName() has been removed. Please use udbg_ucal_fieldName()  from libctestfw instead. The following code might work.
 
-static const char* fldName(UCalendarDateFields f) {
-	const char *udbg_ucal_fieldName(int32_t fld);
-	return udbg_ucal_fieldName((int32_t)f);
+const char* fldName(UCalendarDateFields f) {
+	return udbg_enumName(UDBG_UCalendarDateFields, (int32_t)f);
 }
-
-
 
 #if UCAL_DEBUG_DUMP
 // from CalendarTest::calToStr - but doesn't modify contents.
@@ -135,13 +139,16 @@ static const char * const gCalendarKeywords[] = {
     "gregorian",
         "japanese",
         "buddhist",
-        "taiwan",
+        "roc",
         "persian",
         "islamic-civil",
         "islamic",
         "hebrew",
         "chinese",
         "indian",
+        "coptic",
+        "ethiopic",
+        "ethiopic-amete-alem",
         NULL
 };
 
@@ -186,7 +193,7 @@ static Calendar *createStandardCalendar(char *calType, const Locale &canLoc, UEr
         return new JapaneseCalendar(canLoc, status);
     } else if(!uprv_strcmp(calType, "buddhist")) {
         return new BuddhistCalendar(canLoc, status);
-    } else if(!uprv_strcmp(calType, "taiwan")) {
+    } else if(!uprv_strcmp(calType, "roc")) {
         return new TaiwanCalendar(canLoc, status);
     } else if(!uprv_strcmp(calType, "islamic-civil")) {
         return new IslamicCalendar(canLoc, status, IslamicCalendar::CIVIL);
@@ -196,10 +203,16 @@ static Calendar *createStandardCalendar(char *calType, const Locale &canLoc, UEr
         return new HebrewCalendar(canLoc, status);
     } else if(!uprv_strcmp(calType, "persian")) {
         return new PersianCalendar(canLoc, status);
-        //} else if(!uprv_strcmp(calType, "chinese")) {
-        //return new ChineseCalendar(canLoc, status);
+    } else if(!uprv_strcmp(calType, "chinese")) {
+        return new ChineseCalendar(canLoc, status);
     } else if(!uprv_strcmp(calType, "indian")) {
         return new IndianCalendar(canLoc, status);
+    } else if(!uprv_strcmp(calType, "coptic")) {
+        return new CopticCalendar(canLoc, status);
+    } else if(!uprv_strcmp(calType, "ethiopic")) {
+        return new EthiopicCalendar(canLoc, status, EthiopicCalendar::AMETE_MIHRET_ERA);
+    } else if(!uprv_strcmp(calType, "ethiopic-amete-alem")) {
+        return new EthiopicCalendar(canLoc, status, EthiopicCalendar::AMETE_ALEM_ERA);
     } else { 
         status = U_UNSUPPORTED_ERROR;
         return NULL;
@@ -323,9 +336,13 @@ protected:
             return NULL; 
         } else {
             UnicodeString *ret = new UnicodeString();
-            ret->append((UChar)0x40); // '@' is a variant character
-            ret->append(UNICODE_STRING("calendar=", 9));
-            (*ret) += UnicodeString(keyword,-1,US_INV);
+            if (ret == NULL) {
+                status = U_MEMORY_ALLOCATION_ERROR;
+            } else {
+                ret->append((UChar)0x40); // '@' is a variant character
+                ret->append(UNICODE_STRING("calendar=", 9));
+                (*ret) += UnicodeString(keyword,-1,US_INV);
+            }
             return ret;
         }
     }
@@ -400,6 +417,10 @@ getCalendarService(UErrorCode &status)
         fprintf(stderr, "Spinning up Calendar Service\n");
 #endif
         ICULocaleService * newservice = new CalendarService();
+        if (newservice == NULL) {
+            status = U_MEMORY_ALLOCATION_ERROR;
+            return newservice;
+        }
 #ifdef U_DEBUG_CALSVC
         fprintf(stderr, "Registering classes..\n");
 #endif
@@ -472,7 +493,8 @@ static const int32_t kCalendarLimits[UCAL_FIELD_COUNT][4] = {
     {           1,            1,             7,             7  }, // DOW_LOCAL
     {/*N/A*/-1,       /*N/A*/-1,     /*N/A*/-1,       /*N/A*/-1}, // EXTENDED_YEAR
     { -0x7F000000,  -0x7F000000,    0x7F000000,    0x7F000000  }, // JULIAN_DAY
-    {           0,            0, 24*kOneHour-1, 24*kOneHour-1  } // MILLISECONDS_IN_DAY
+    {           0,            0, 24*kOneHour-1, 24*kOneHour-1  },  // MILLISECONDS_IN_DAY
+    {           0,            0,             1,             1  },  // IS_LEAP_MONTH
 };
 
 // Resource bundle tags read by this class
@@ -543,6 +565,9 @@ fZone(0)
 {
     clear();
     fZone = TimeZone::createDefault();
+    if (fZone == NULL) {
+        success = U_MEMORY_ALLOCATION_ERROR;
+    }
     setWeekCountData(Locale::getDefault(), NULL, success);
 }
 
@@ -589,6 +614,9 @@ fZone(0)
 {
     clear();
     fZone = zone.clone();
+    if (fZone == NULL) {
+    	success = U_MEMORY_ALLOCATION_ERROR;
+    }
     setWeekCountData(aLocale, NULL, success);
 }
 
@@ -623,8 +651,12 @@ Calendar::operator=(const Calendar &right)
         fAreFieldsSet            = right.fAreFieldsSet;
         fAreFieldsVirtuallySet   = right.fAreFieldsVirtuallySet;
         fLenient                 = right.fLenient;
-        delete fZone;
-        fZone                    = right.fZone->clone();
+        if (fZone != NULL) {
+            delete fZone;
+        }
+        if (right.fZone != NULL) {
+            fZone                = right.fZone->clone();
+        }
         fFirstDayOfWeek          = right.fFirstDayOfWeek;
         fMinimalDaysInFirstWeek  = right.fMinimalDaysInFirstWeek;
         fNextStamp               = right.fNextStamp;
@@ -1236,7 +1268,6 @@ void Calendar::computeWeekFields(UErrorCode &ec) {
         return;
     }
     int32_t eyear = fFields[UCAL_EXTENDED_YEAR];
-    int32_t year = fFields[UCAL_YEAR];
     int32_t dayOfWeek = fFields[UCAL_DAY_OF_WEEK];
     int32_t dayOfYear = fFields[UCAL_DAY_OF_YEAR];
 
@@ -1249,7 +1280,7 @@ void Calendar::computeWeekFields(UErrorCode &ec) {
     // the previous year; days at the end of the year may fall into the
     // first week of the next year.  ASSUME that the year length is less than
     // 7000 days.
-    int32_t yearOfWeekOfYear = year;
+    int32_t yearOfWeekOfYear = eyear;
     int32_t relDow = (dayOfWeek + 7 - getFirstDayOfWeek()) % 7; // 0..6
     int32_t relDowJan1 = (dayOfWeek - dayOfYear + 7001 - getFirstDayOfWeek()) % 7; // 0..6
     int32_t woy = (dayOfYear - 1 + relDowJan1) / 7; // 0..53
@@ -2062,7 +2093,27 @@ int32_t Calendar::getLimit(UCalendarDateFields field, ELimitType limitType) cons
     case UCAL_DOW_LOCAL:
     case UCAL_JULIAN_DAY:
     case UCAL_MILLISECONDS_IN_DAY:
+    case UCAL_IS_LEAP_MONTH:
         return kCalendarLimits[field][limitType];
+
+    case UCAL_WEEK_OF_MONTH:
+        {
+            int32_t limit;
+            if (limitType == UCAL_LIMIT_MINIMUM) {
+                limit = getMinimalDaysInFirstWeek() == 1 ? 1 : 0;
+            } else if (limitType == UCAL_LIMIT_GREATEST_MINIMUM) {
+                limit = 1;
+            } else {
+                int32_t minDaysInFirst = getMinimalDaysInFirstWeek();
+                int32_t daysInMonth = handleGetLimit(UCAL_DAY_OF_MONTH, limitType);
+                if (limitType == UCAL_LIMIT_LEAST_MAXIMUM) {
+                    limit = (daysInMonth + (7 - minDaysInFirst)) / 7;
+                } else { // limitType == UCAL_LIMIT_MAXIMUM
+                    limit = (daysInMonth + 6 + (7 - minDaysInFirst)) / 7;
+                }
+            }
+            return limit;
+        }
     default:
         return handleGetLimit(field, limitType);
     }
@@ -2083,6 +2134,10 @@ Calendar::getActualMinimum(UCalendarDateFields field, UErrorCode& status) const
     // clone the calendar so we don't mess with the real one, and set it to
     // accept anything for the field values
     Calendar *work = (Calendar*)this->clone();
+    if (work == NULL) {
+        status = U_MEMORY_ALLOCATION_ERROR;
+        return 0;
+    }
     work->setLenient(TRUE);
 
     // now try each value from getLeastMaximum() to getMaximum() one by one until
@@ -2867,10 +2922,12 @@ void Calendar::prepareGetActual(UCalendarDateFields field, UBool isMinimum, UErr
 
     switch (field) {
     case UCAL_YEAR:
-    case UCAL_YEAR_WOY:
     case UCAL_EXTENDED_YEAR:
         set(UCAL_DAY_OF_YEAR, getGreatestMinimum(UCAL_DAY_OF_YEAR));
         break;
+
+    case UCAL_YEAR_WOY:
+        set(UCAL_WEEK_OF_YEAR, getGreatestMinimum(UCAL_WEEK_OF_YEAR));
 
     case UCAL_MONTH:
         set(UCAL_DATE, getGreatestMinimum(UCAL_DATE));
@@ -2904,7 +2961,7 @@ void Calendar::prepareGetActual(UCalendarDateFields field, UBool isMinimum, UErr
         }
         break;
     default:
-        ;
+        break;
     }
 
     // Do this last to give it the newest time stamp
@@ -2929,39 +2986,37 @@ int32_t Calendar::getActualHelper(UCalendarDateFields field, int32_t startValue,
     Calendar *work = clone();
     if(!work) { status = U_MEMORY_ALLOCATION_ERROR; return startValue; }
     work->setLenient(TRUE);
-#if defined (U_DEBUG_CAL) 
-    fprintf(stderr, "%s:%d - getActualHelper - %s\n", __FILE__, __LINE__, u_errorName(status));
-#endif 
     work->prepareGetActual(field, delta < 0, status);
-#if defined (U_DEBUG_CAL) 
-    fprintf(stderr, "%s:%d - getActualHelper - %s\n", __FILE__, __LINE__, u_errorName(status));
-#endif
 
     // now try each value from the start to the end one by one until
     // we get a value that normalizes to another value.  The last value that
     // normalizes to itself is the actual maximum for the current date
+    work->set(field, startValue);
+
+    // prepareGetActual sets the first day of week in the same week with
+    // the first day of a month.  Unlike WEEK_OF_YEAR, week number for the
+    // week which contains days from both previous and current month is
+    // not unique.  For example, last several days in the previous month
+    // is week 5, and the rest of week is week 1.
     int32_t result = startValue;
-    do {
+    if (work->get(field, status) != startValue
+        && field != UCAL_WEEK_OF_MONTH && delta > 0 || U_FAILURE(status)) {
 #if defined (U_DEBUG_CAL) 
-        fprintf(stderr, "%s:%d - getActualHelper - %s\n", __FILE__, __LINE__, u_errorName(status));
+        fprintf(stderr, "getActualHelper(fld %d) - got  %d (not %d) - %s\n", field, work->get(field,status), startValue, u_errorName(status));
 #endif
-        work->set(field, startValue);
-#if defined (U_DEBUG_CAL) 
-        fprintf(stderr, "%s:%d - getActualHelper - %s (set to %d)\n", __FILE__, __LINE__, u_errorName(status), startValue);
-#endif
-        if (work->get(field, status) != startValue) {
-#if defined (U_DEBUG_CAL) 
-            fprintf(stderr, "getActualHelper(fld %d) - got  %d (not %d), BREAK - %s\n", field, work->get(field,status), startValue, u_errorName(status));
-#endif
-            break;
-        } else {
-            result = startValue;
+    } else {
+        do {
             startValue += delta;
-#if defined (U_DEBUG_CAL) 
-            fprintf(stderr, "getActualHelper(%d)  result=%d (start), start += %d to %d\n", field, result, delta, startValue);
+            work->add(field, delta, status);
+            if (work->get(field, status) != startValue || U_FAILURE(status)) {
+#if defined (U_DEBUG_CAL)
+                fprintf(stderr, "getActualHelper(fld %d) - got  %d (not %d), BREAK - %s\n", field, work->get(field,status), startValue, u_errorName(status));
 #endif
-        }
-    } while (result != endValue && U_SUCCESS(status));
+                break;
+            }
+            result = startValue;
+        } while (startValue != endValue);
+    }
     delete work;
 #if defined (U_DEBUG_CAL) 
     fprintf(stderr, "getActualHelper(%d) = %d\n", field, result);

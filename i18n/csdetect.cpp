@@ -1,6 +1,6 @@
 /*
  **********************************************************************
- *   Copyright (C) 2005-2007, International Business Machines
+ *   Copyright (C) 2005-2008, International Business Machines
  *   Corporation and others.  All Rights Reserved.
  **********************************************************************
  */
@@ -129,6 +129,7 @@ void CharsetDetector::setRecognizers(UErrorCode &status)
 
         if (recognizers == NULL) {
             status = U_MEMORY_ALLOCATION_ERROR;
+            return;
         } else {
             for (r = 0; r < rCount; r += 1) {
                 recognizers[r] = tempArray[r];
@@ -164,7 +165,8 @@ void CharsetDetector::setRecognizers(UErrorCode &status)
 }
 
 CharsetDetector::CharsetDetector(UErrorCode &status)
-  : textIn(new InputText()), resultCount(0), fStripTags(FALSE), fFreshTextSet(FALSE)
+  : textIn(new InputText(status)), resultArray(NULL),
+    resultCount(0), fStripTags(FALSE), fFreshTextSet(FALSE)
 {
     if (U_FAILURE(status)) {
         return;

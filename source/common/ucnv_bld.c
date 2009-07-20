@@ -1,7 +1,7 @@
 /*
  ********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1996-2007, International Business Machines Corporation and
+ * Copyright (c) 1996-2008, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************
  *
@@ -176,6 +176,17 @@ static UBool gDefaultConverterContainsOption;
 
 static const char DATA_TYPE[] = "cnv";
 
+static void
+ucnv_flushAvailableConverterCache() {
+    if (gAvailableConverters) {
+        umtx_lock(&cnvCacheMutex);
+        gAvailableConverterCount = 0;
+        uprv_free((char **)gAvailableConverters);
+        gAvailableConverters = NULL;
+        umtx_unlock(&cnvCacheMutex);
+    }
+}
+
 /* ucnv_cleanup - delete all storage held by the converter cache, except any  */
 /*                in use by open converters.                                  */
 /*                Not thread safe.                                            */
@@ -187,8 +198,8 @@ static UBool U_CALLCONV ucnv_cleanup(void) {
         SHARED_DATA_HASHTABLE = NULL;
     }
 
-    /* Called from ucnv_flushCache because it allocates the hashtable */
-    /*ucnv_flushAvailableConverterCache();*/
+    /* Isn't called from flushCache because other threads may have preexisting references to the table. */
+    ucnv_flushAvailableConverterCache();
 
     gDefaultConverterName = NULL;
     gDefaultConverterNameBuffer[0] = 0;
@@ -796,9 +807,14 @@ ucnv_createConverter(UConverter *myUConverter, const char *converterName, UError
             if(U_SUCCESS(*err)) {
                 UTRACE_EXIT_PTR_STATUS(myUConverter, *err);
                 return myUConverter;
-            } else {
-                ucnv_unloadSharedDataIfReady(mySharedConverterData);
             }
+            /*
+            else mySharedConverterData was already cleaned up by
+            ucnv_createConverterFromSharedData.
+            */
+            /*else {
+                ucnv_unloadSharedDataIfReady(mySharedConverterData);
+            }*/
         }
     }
 
@@ -932,6 +948,7 @@ ucnv_createConverterFromSharedData(UConverter *myUConverter,
     myUConverter->subCharLen = mySharedConverterData->staticData->subCharLen;
     myUConverter->subChars = (uint8_t *)myUConverter->subUChars;
     uprv_memcpy(myUConverter->subChars, mySharedConverterData->staticData->subChar, myUConverter->subCharLen);
+    myUConverter->toUCallbackReason = UCNV_ILLEGAL; /* default reason to invoke (*fromCharErrorBehaviour) */
 
     if(mySharedConverterData->impl->open != NULL) {
         mySharedConverterData->impl->open(myUConverter, realName, locale, options, err);
@@ -942,17 +959,6 @@ ucnv_createConverterFromSharedData(UConverter *myUConverter,
     }
 
     return myUConverter;
-}
-
-static void
-ucnv_flushAvailableConverterCache() {
-    if (gAvailableConverters) {
-        umtx_lock(&cnvCacheMutex);
-        gAvailableConverterCount = 0;
-        uprv_free((char **)gAvailableConverters);
-        gAvailableConverters = NULL;
-        umtx_unlock(&cnvCacheMutex);
-    }
 }
 
 /*Frees all shared immutable objects that aren't referred to (reference count = 0)
@@ -1023,8 +1029,6 @@ ucnv_flushCache ()
     umtx_unlock(&cnvCacheMutex);
 
     UTRACE_DATA1(UTRACE_INFO, "ucnv_flushCache() exits with %d converters remaining", remaining);
-
-    ucnv_flushAvailableConverterCache();
 
     UTRACE_EXIT_VALUE(tableDeletedNum);
     return tableDeletedNum;
@@ -1261,6 +1265,9 @@ ucnv_swap(const UDataSwapper *ds,
     const _MBCSHeader *inMBCSHeader;
     _MBCSHeader *outMBCSHeader;
     _MBCSHeader mbcsHeader;
+    uint32_t mbcsHeaderLength;
+    UBool noFromU=FALSE;
+
     uint8_t outputType;
 
     int32_t maxFastUChar, mbcsIndexLength;
@@ -1350,7 +1357,15 @@ ucnv_swap(const UDataSwapper *ds,
             *pErrorCode=U_INDEX_OUTOFBOUNDS_ERROR;
             return 0;
         }
-        if(!(inMBCSHeader->version[0]==4 && inMBCSHeader->version[1]>=1)) {
+        if(inMBCSHeader->version[0]==4 && inMBCSHeader->version[1]>=1) {
+            mbcsHeaderLength=MBCS_HEADER_V4_LENGTH;
+        } else if(inMBCSHeader->version[0]==5 && inMBCSHeader->version[1]>=3 &&
+                  ((mbcsHeader.options=ds->readUInt32(inMBCSHeader->options))&
+                   MBCS_OPT_UNKNOWN_INCOMPATIBLE_MASK)==0
+        ) {
+            mbcsHeaderLength=mbcsHeader.options&MBCS_OPT_LENGTH_MASK;
+            noFromU=(UBool)((mbcsHeader.options&MBCS_OPT_NO_FROM_U)!=0);
+        } else {
             udata_printError(ds, "ucnv_swap(): unsupported _MBCSHeader.version %d.%d\n",
                              inMBCSHeader->version[0], inMBCSHeader->version[1]);
             *pErrorCode=U_UNSUPPORTED_ERROR;
@@ -1365,9 +1380,15 @@ ucnv_swap(const UDataSwapper *ds,
         mbcsHeader.offsetFromUBytes=    ds->readUInt32(inMBCSHeader->offsetFromUBytes);
         mbcsHeader.flags=               ds->readUInt32(inMBCSHeader->flags);
         mbcsHeader.fromUBytesLength=    ds->readUInt32(inMBCSHeader->fromUBytesLength);
+        /* mbcsHeader.options have been read above */
 
         extOffset=(int32_t)(mbcsHeader.flags>>8);
         outputType=(uint8_t)mbcsHeader.flags;
+        if(noFromU && outputType==MBCS_OUTPUT_1) {
+            udata_printError(ds, "ucnv_swap(): unsupported combination of makeconv --small with SBCS\n");
+            *pErrorCode=U_UNSUPPORTED_ERROR;
+            return 0;
+        }
 
         /* make sure that the output type is known */
         switch(outputType) {
@@ -1406,7 +1427,10 @@ ucnv_swap(const UDataSwapper *ds,
         }
 
         if(extOffset==0) {
-            size=(int32_t)(mbcsHeader.offsetFromUBytes+mbcsHeader.fromUBytesLength+mbcsIndexLength);
+            size=(int32_t)(mbcsHeader.offsetFromUBytes+mbcsIndexLength);
+            if(!noFromU) {
+                size+=(int32_t)mbcsHeader.fromUBytesLength;
+            }
 
             /* avoid compiler warnings - not otherwise necessary, and the value does not matter */
             inExtIndexes=NULL;
@@ -1436,8 +1460,9 @@ ucnv_swap(const UDataSwapper *ds,
                 uprv_memcpy(outBytes, inBytes, size);
             }
 
-            /* swap the MBCSHeader */
-            ds->swapArray32(ds, &inMBCSHeader->countStates, 7*4,
+            /* swap the MBCSHeader, except for the version field */
+            count=mbcsHeaderLength*4;
+            ds->swapArray32(ds, &inMBCSHeader->countStates, count-4,
                                &outMBCSHeader->countStates, pErrorCode);
 
             if(outputType==MBCS_OUTPUT_EXT_ONLY) {
@@ -1447,18 +1472,23 @@ ucnv_swap(const UDataSwapper *ds,
                  */
 
                 /* swap the base name, between the header and the extension data */
-                ds->swapInvChars(ds, inMBCSHeader+1, (int32_t)uprv_strlen((const char *)(inMBCSHeader+1)),
-                                    outMBCSHeader+1, pErrorCode);
+                const char *inBaseName=(const char *)inBytes+count;
+                char *outBaseName=(char *)outBytes+count;
+                ds->swapInvChars(ds, inBaseName, (int32_t)uprv_strlen(inBaseName),
+                                    outBaseName, pErrorCode);
             } else {
                 /* normal file with base table data */
 
                 /* swap the state table, 1kB per state */
-                ds->swapArray32(ds, inMBCSHeader+1, (int32_t)(mbcsHeader.countStates*1024),
-                                   outMBCSHeader+1, pErrorCode);
+                offset=count;
+                count=mbcsHeader.countStates*1024;
+                ds->swapArray32(ds, inBytes+offset, (int32_t)count,
+                                   outBytes+offset, pErrorCode);
 
                 /* swap the toUFallbacks[] */
-                offset=sizeof(_MBCSHeader)+mbcsHeader.countStates*1024;
-                ds->swapArray32(ds, inBytes+offset, (int32_t)(mbcsHeader.countToUFallbacks*8),
+                offset+=count;
+                count=mbcsHeader.countToUFallbacks*8;
+                ds->swapArray32(ds, inBytes+offset, (int32_t)count,
                                    outBytes+offset, pErrorCode);
 
                 /* swap the unicodeCodeUnits[] */
@@ -1495,7 +1525,7 @@ ucnv_swap(const UDataSwapper *ds,
 
                     /* stage 3/result bytes: sometimes uint16_t[] or uint32_t[] */
                     offset=mbcsHeader.offsetFromUBytes;
-                    count=mbcsHeader.fromUBytesLength;
+                    count= noFromU ? 0 : mbcsHeader.fromUBytesLength;
                     switch(outputType) {
                     case MBCS_OUTPUT_2:
                     case MBCS_OUTPUT_3_EUC:

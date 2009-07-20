@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 1997-2007, International Business Machines Corporation and    *
+* Copyright (C) 1997-2008, International Business Machines Corporation and    *
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 *
@@ -79,6 +79,7 @@ static char gStrBuf[256];
 #include "cmemory.h"
 #include "unicode/strenum.h"
 #include "uassert.h"
+#include "zonemeta.h"
 
 #define kZONEINFO "zoneinfo"
 #define kREGIONS  "Regions"
@@ -105,7 +106,7 @@ static UMTX                             TZSET_LOCK;
 static U_NAMESPACE_QUALIFIER TimeZone*  DEFAULT_ZONE = NULL;
 static U_NAMESPACE_QUALIFIER TimeZone*  _GMT = NULL; // cf. TimeZone::GMT
 
-static char TZDATA_VERSION[16] = "";
+static char TZDATA_VERSION[16];
 
 #ifdef U_USE_TIMEZONE_OBSOLETE_2_8
 static U_NAMESPACE_QUALIFIER UnicodeString* OLSON_IDS = 0;
@@ -149,7 +150,6 @@ U_NAMESPACE_BEGIN
  * which has 3 integers: The number of zones, rules, and countries,
  * respectively.  The country count includes the non-country 'Default'.
  */
-static int32_t OLSON_ZONE_START = -1; // starting index of zones
 static int32_t OLSON_ZONE_COUNT = 0;  // count of zones
 
 /**
@@ -157,34 +157,33 @@ static int32_t OLSON_ZONE_COUNT = 0;  // count of zones
  * meta-data. Return TRUE if successful.
  */
 static UBool getOlsonMeta(const UResourceBundle* top) {
-    if (OLSON_ZONE_START < 0) {
+    if (OLSON_ZONE_COUNT == 0) {
         UErrorCode ec = U_ZERO_ERROR;
         UResourceBundle res;
         ures_initStackObject(&res);
         ures_getByKey(top, kZONES, &res, &ec);
         if(U_SUCCESS(ec)) {
-          OLSON_ZONE_COUNT = ures_getSize(&res);
-          OLSON_ZONE_START = 0;
-          U_DEBUG_TZ_MSG(("OZC%d OZS%d\n",OLSON_ZONE_COUNT, OLSON_ZONE_START));
+            OLSON_ZONE_COUNT = ures_getSize(&res);
+            U_DEBUG_TZ_MSG(("OZC%d\n",OLSON_ZONE_COUNT));
         }
         ures_close(&res);
     }
-    return (OLSON_ZONE_START >= 0);
+    return (OLSON_ZONE_COUNT > 0);
 }
 
 /**
  * Load up the Olson meta-data. Return TRUE if successful.
  */
 static UBool getOlsonMeta() {
-    if (OLSON_ZONE_START < 0) {
+    if (OLSON_ZONE_COUNT == 0) {
         UErrorCode ec = U_ZERO_ERROR;
         UResourceBundle *top = ures_openDirect(0, kZONEINFO, &ec);
         if (U_SUCCESS(ec)) {
-          getOlsonMeta(top);
+            getOlsonMeta(top);
         }
         ures_close(top);
     }
-    return (OLSON_ZONE_START >= 0);
+    return (OLSON_ZONE_COUNT > 0);
 }
 
 static int32_t findInStringArray(UResourceBundle* array, const UnicodeString& id, UErrorCode &status)
@@ -333,13 +332,18 @@ static UBool loadOlsonIDs() {
         int32_t start = 0;
         count = ures_getSize(nres);
         ids = new UnicodeString[(count > 0) ? count : 1];
-        for (int32_t i=0; i<count; ++i) {
-            int32_t idLen = 0;
-            const UChar* id = ures_getStringByIndex(nres, i, &idLen, &ec);
-            ids[i].fastCopyFrom(UnicodeString(TRUE, id, idLen));
-            if (U_FAILURE(ec)) {
-                break;
+        // Null pointer check
+        if (ids != NULL) {
+            for (int32_t i=0; i<count; ++i) {
+                int32_t idLen = 0;
+                const UChar* id = ures_getStringByIndex(nres, i, &idLen, &ec);
+                ids[i].fastCopyFrom(UnicodeString(TRUE, id, idLen));
+                if (U_FAILURE(ec)) {
+                    break;
+                }
             }
+        } else {
+            ec = U_MEMORY_ALLOCATION_ERROR;
         }
     }
     ures_close(nres);
@@ -459,7 +463,12 @@ TimeZone::createTimeZone(const UnicodeString& ID)
     }
     if (result == 0) {
         U_DEBUG_TZ_MSG(("failed to load time zone with id - falling to GMT"));
-        result = getGMT()->clone();
+        const TimeZone* temptz = getGMT();
+        if (temptz == NULL) {
+            result = NULL;
+        } else {
+            result = temptz->clone();
+        }
     }
     return result;
 }
@@ -615,7 +624,12 @@ TimeZone::initDefault()
 
     // If we _still_ don't have a time zone, use GMT.
     if (default_zone == NULL) {
-        default_zone = getGMT()->clone();
+        const TimeZone* temptz = getGMT();
+        // If we can't use GMT, get out.
+        if (temptz == NULL) {
+            return;
+        }
+        default_zone = temptz->clone();
     }
 
     // If DEFAULT_ZONE is still NULL, set it up.
@@ -1099,11 +1113,11 @@ TimeZone::getEquivalentID(const UnicodeString& id, int32_t index) {
 // ---------------------------------------
 
 UnicodeString&
-TimeZone::getOlsonCanonicalID(const UnicodeString &id, UnicodeString &canonical) {
+TimeZone::dereferOlsonLink(const UnicodeString& linkTo, UnicodeString& linkFrom) {
     UErrorCode ec = U_ZERO_ERROR;
-    canonical.remove();
+    linkFrom.remove();
     UResourceBundle *top = ures_openDirect(0, kZONEINFO, &ec);
-    UResourceBundle *res = getZoneByName(top, id, NULL, ec);
+    UResourceBundle *res = getZoneByName(top, linkTo, NULL, ec);
     if (U_SUCCESS(ec)) {
         if (ures_getSize(res) == 1) {
             int32_t deref = ures_getInt(res, &ec);
@@ -1111,16 +1125,16 @@ TimeZone::getOlsonCanonicalID(const UnicodeString &id, UnicodeString &canonical)
             int32_t len;
             const UChar* tmp = ures_getStringByIndex(nres, deref, &len, &ec);
             if (U_SUCCESS(ec)) {
-                canonical.setTo(tmp, len);
+                linkFrom.setTo(tmp, len);
             }
             ures_close(nres);
         } else {
-            canonical.setTo(id);
+            linkFrom.setTo(linkTo);
         }
     }
     ures_close(res);
     ures_close(top);
-    return canonical;
+    return linkFrom;
 }
 
 // ---------------------------------------
@@ -1161,7 +1175,7 @@ TimeZone::getDisplayName(UBool daylight, EDisplayType style, const Locale& local
     char buf[128];
     fID.extract(0, sizeof(buf)-1, buf, sizeof(buf), "");
 #endif
-    SimpleDateFormat format(style == LONG ? ZZZZ_STR : Z_STR,locale,status);
+    SimpleDateFormat format(style == LONG ? ZZZZ_STR : Z_STR, locale, status);
     U_DEBUG_TZ_MSG(("getDisplayName(%s)\n", buf));
     if(!U_SUCCESS(status))
     {
@@ -1173,30 +1187,69 @@ TimeZone::getDisplayName(UBool daylight, EDisplayType style, const Locale& local
       return result.remove();
     }
 
+    UDate d = Calendar::getNow();
+    int32_t  rawOffset;
+    int32_t  dstOffset;
+    this->getOffset(d, FALSE, rawOffset, dstOffset, status);
+    if (U_FAILURE(status)) {
+        return result.remove();
+    }
+    
+    if ((daylight && dstOffset != 0) || (!daylight && dstOffset == 0)) {
+        // Current time and the request (daylight / not daylight) agree.
+        format.setTimeZone(*this);
+        return format.format(d, result);
+    }
+    
     // Create a new SimpleTimeZone as a stand-in for this zone; the
-    // stand-in will have no DST, or all DST, but the same ID and offset,
+    // stand-in will have no DST, or DST during July, but the same ID and offset,
     // and hence the same display name.
     // We don't cache these because they're small and cheap to create.
     UnicodeString tempID;
+    getID(tempID);
     SimpleTimeZone *tz = NULL;
-    if(daylight  && useDaylightTime()){
-        // For the pure-DST zone, we use JANUARY and DECEMBER        
-        int savings = getDSTSavings();
-        tz = new SimpleTimeZone(getRawOffset(), getID(tempID),
-                                UCAL_JANUARY, 1, 0, 0,
-                                UCAL_FEBRUARY, 1, 0, 0,
-                                savings, status);
-    }else{
-        tz = new SimpleTimeZone(getRawOffset(), getID(tempID));
+    if(daylight && useDaylightTime()){
+        // The display name for daylight saving time was requested, but currently not in DST
+        // Set a fixed date (July 1) in this Gregorian year
+        GregorianCalendar cal(*this, status);
+        if (U_FAILURE(status)) {
+            return result.remove();
+        }
+        cal.set(UCAL_MONTH, UCAL_JULY);
+        cal.set(UCAL_DATE, 1);
+        
+        // Get July 1 date
+        d = cal.getTime(status);
+        
+        // Check if it is in DST
+        if (cal.get(UCAL_DST_OFFSET, status) == 0) {
+            // We need to create a fake time zone
+            tz = new SimpleTimeZone(rawOffset, tempID,
+                                UCAL_JUNE, 1, 0, 0,
+                                UCAL_AUGUST, 1, 0, 0,
+                                getDSTSavings(), status);
+            if (U_FAILURE(status) || tz == NULL) {
+                if (U_SUCCESS(status)) {
+                    status = U_MEMORY_ALLOCATION_ERROR;
+                }
+                return result.remove();
+            }
+            format.adoptTimeZone(tz);
+        }
+    } else {
+        // The display name for standard time was requested, but currently in DST
+        tz = new SimpleTimeZone(rawOffset, tempID);
+        if (U_FAILURE(status) || tz == NULL) {
+            if (U_SUCCESS(status)) {
+                status = U_MEMORY_ALLOCATION_ERROR;
+            }
+            return result.remove();
+        }
+        format.adoptTimeZone(tz);
     }
-    format.applyPattern(style == LONG ? ZZZZ_STR : Z_STR);
-    Calendar *myCalendar = (Calendar*)format.getCalendar();
-    myCalendar->setTimeZone(*tz); // copy
-    
-    delete tz;
 
-    FieldPosition pos(FieldPosition::DONT_CARE);
-    return format.format(UDate(864000000L), result, pos); // Must use a valid date here.
+    format.format(d, result, status);
+    return  result;
 }
 
 
@@ -1210,10 +1263,35 @@ TimeZone::getDisplayName(UBool daylight, EDisplayType style, const Locale& local
 TimeZone*
 TimeZone::createCustomTimeZone(const UnicodeString& id)
 {
+    int32_t sign, hour, min, sec;
+    if (parseCustomID(id, sign, hour, min, sec)) {
+        UnicodeString customID;
+        formatCustomID(hour, min, sec, (sign < 0), customID);
+        int32_t offset = sign * ((hour * 60 + min) * 60 + sec) * 1000;
+        return new SimpleTimeZone(offset, customID);
+    }
+    return NULL;
+}
+
+UnicodeString&
+TimeZone::getCustomID(const UnicodeString& id, UnicodeString& normalized, UErrorCode& status) {
+    normalized.remove();
+    if (U_FAILURE(status)) {
+        return normalized;
+    }
+    int32_t sign, hour, min, sec;
+    if (parseCustomID(id, sign, hour, min, sec)) {
+        formatCustomID(hour, min, sec, (sign < 0), normalized);
+    }
+    return normalized;
+}
+
+UBool
+TimeZone::parseCustomID(const UnicodeString& id, int32_t& sign,
+                        int32_t& hour, int32_t& min, int32_t& sec) {
     static const int32_t         kParseFailed = -99999;
 
     NumberFormat* numberFormat = 0;
-    
     UnicodeString idUppercase = id;
     idUppercase.toUpper();
 
@@ -1221,34 +1299,32 @@ TimeZone::createCustomTimeZone(const UnicodeString& id)
         idUppercase.startsWith(GMT_ID))
     {
         ParsePosition pos(GMT_ID_LENGTH);
-        UBool negative = FALSE;
-        int32_t hour = 0;
-        int32_t min = 0;
-        int32_t sec = 0;
+        sign = 1;
+        hour = 0;
+        min = 0;
+        sec = 0;
 
-        if (id[pos.getIndex()] == MINUS /*'-'*/)
-            negative = TRUE;
-        else if (id[pos.getIndex()] != PLUS /*'+'*/)
-            return NULL;
+        if (id[pos.getIndex()] == MINUS /*'-'*/) {
+            sign = -1;
+        } else if (id[pos.getIndex()] != PLUS /*'+'*/) {
+            return FALSE;
+        }
         pos.setIndex(pos.getIndex() + 1);
 
         UErrorCode success = U_ZERO_ERROR;
         numberFormat = NumberFormat::createInstance(success);
         if(U_FAILURE(success)){
-            return NULL;
+            return FALSE;
         }
         numberFormat->setParseIntegerOnly(TRUE);
 
-    
         // Look for either hh:mm, hhmm, or hh
         int32_t start = pos.getIndex();
-        
         Formattable n(kParseFailed);
-
         numberFormat->parse(id, n, pos);
         if (pos.getIndex() == start) {
             delete numberFormat;
-            return NULL;
+            return FALSE;
         }
         hour = n.getLong();
 
@@ -1256,7 +1332,7 @@ TimeZone::createCustomTimeZone(const UnicodeString& id)
             if (pos.getIndex() - start > 2
                 || id[pos.getIndex()] != 0x003A /*':'*/) {
                 delete numberFormat;
-                return NULL;
+                return FALSE;
             }
             // hh:mm
             pos.setIndex(pos.getIndex() + 1);
@@ -1266,13 +1342,13 @@ TimeZone::createCustomTimeZone(const UnicodeString& id)
             if ((pos.getIndex() - oldPos) != 2) {
                 // must be 2 digits
                 delete numberFormat;
-                return NULL;
+                return FALSE;
             }
             min = n.getLong();
             if (pos.getIndex() < id.length()) {
                 if (id[pos.getIndex()] != 0x003A /*':'*/) {
                     delete numberFormat;
-                    return NULL;
+                    return FALSE;
                 }
                 // [:ss]
                 pos.setIndex(pos.getIndex() + 1);
@@ -1282,7 +1358,7 @@ TimeZone::createCustomTimeZone(const UnicodeString& id)
                 if (pos.getIndex() != id.length()
                         || (pos.getIndex() - oldPos) != 2) {
                     delete numberFormat;
-                    return NULL;
+                    return FALSE;
                 }
                 sec = n.getLong();
             }
@@ -1300,7 +1376,7 @@ TimeZone::createCustomTimeZone(const UnicodeString& id)
             if (length <= 0 || 6 < length) {
                 // invalid length
                 delete numberFormat;
-                return NULL;
+                return FALSE;
             }
             switch (length) {
                 case 1:
@@ -1324,49 +1400,49 @@ TimeZone::createCustomTimeZone(const UnicodeString& id)
         delete numberFormat;
 
         if (hour > kMAX_CUSTOM_HOUR || min > kMAX_CUSTOM_MIN || sec > kMAX_CUSTOM_SEC) {
-            return 0;
+            return FALSE;
         }
-
-        // Create time zone ID - GMT[+|-]hhmm[ss]
-        UnicodeString tzID(GMT_ID);
-        if (hour | min | sec) {
-            if (negative) {
-                tzID += (UChar)MINUS;
-            } else {
-                tzID += (UChar)PLUS;
-            }
-
-            if (hour < 10) {
-                tzID += (UChar)ZERO_DIGIT;
-            } else {
-                tzID += (UChar)(ZERO_DIGIT + hour/10);
-            }
-            tzID += (UChar)(ZERO_DIGIT + hour%10);
-
-            if (min < 10) {
-                tzID += (UChar)ZERO_DIGIT;
-            } else {
-                tzID += (UChar)(ZERO_DIGIT + min/10);
-            }
-            tzID += (UChar)(ZERO_DIGIT + min%10);
-
-            if (sec) {
-                if (sec < 10) {
-                    tzID += (UChar)ZERO_DIGIT;
-                } else {
-                    tzID += (UChar)(ZERO_DIGIT + sec/10);
-                }
-                tzID += (UChar)(ZERO_DIGIT + sec%10);
-            }
-        }
-
-        int32_t offset = ((hour * 60 + min) * 60 + sec) * 1000;
-        if (negative) {
-            offset = -offset;
-        }
-        return new SimpleTimeZone(offset, tzID);
+        return TRUE;
     }
-    return NULL;
+    return FALSE;
+}
+
+UnicodeString&
+TimeZone::formatCustomID(int32_t hour, int32_t min, int32_t sec,
+                         UBool negative, UnicodeString& id) {
+    // Create time zone ID - GMT[+|-]hhmm[ss]
+    id.setTo(GMT_ID);
+    if (hour | min | sec) {
+        if (negative) {
+            id += (UChar)MINUS;
+        } else {
+            id += (UChar)PLUS;
+        }
+
+        if (hour < 10) {
+            id += (UChar)ZERO_DIGIT;
+        } else {
+            id += (UChar)(ZERO_DIGIT + hour/10);
+        }
+        id += (UChar)(ZERO_DIGIT + hour%10);
+
+        if (min < 10) {
+            id += (UChar)ZERO_DIGIT;
+        } else {
+            id += (UChar)(ZERO_DIGIT + min/10);
+        }
+        id += (UChar)(ZERO_DIGIT + min%10);
+
+        if (sec) {
+            if (sec < 10) {
+                id += (UChar)ZERO_DIGIT;
+            } else {
+                id += (UChar)(ZERO_DIGIT + sec/10);
+            }
+            id += (UChar)(ZERO_DIGIT + sec%10);
+        }
+    }
+    return id;
 }
 
 
@@ -1402,6 +1478,33 @@ TimeZone::getTZDataVersion(UErrorCode& status)
         return NULL;
     }
     return (const char*)TZDATA_VERSION;
+}
+
+UnicodeString&
+TimeZone::getCanonicalID(const UnicodeString& id, UnicodeString& canonicalID, UErrorCode& status)
+{
+    UBool isSystemID = FALSE;
+    return getCanonicalID(id, canonicalID, isSystemID, status);
+}
+
+UnicodeString&
+TimeZone::getCanonicalID(const UnicodeString& id, UnicodeString& canonicalID, UBool& isSystemID,
+                         UErrorCode& status)
+{
+    canonicalID.remove();
+    isSystemID = FALSE;
+    if (U_FAILURE(status)) {
+        return canonicalID;
+    }
+    ZoneMeta::getCanonicalSystemID(id, canonicalID, status);
+    if (U_SUCCESS(status)) {
+        isSystemID = TRUE;
+    } else {
+        // Not a system ID
+        status = U_ZERO_ERROR;
+        getCustomID(id, canonicalID, status);
+    }
+    return canonicalID;
 }
 
 U_NAMESPACE_END

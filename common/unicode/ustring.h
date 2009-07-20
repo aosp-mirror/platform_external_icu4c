@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 1998-2007, International Business Machines
+*   Copyright (C) 1998-2008, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *
@@ -71,7 +71,8 @@
  */
 
 /**
-* \defgroup ustring_ustrlen
+ * \defgroup ustring_ustrlen String Length
+ * \ingroup ustring_strlen
  */
 /*@{*/
 /**

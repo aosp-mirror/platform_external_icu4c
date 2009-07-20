@@ -1,6 +1,6 @@
 /*
 ******************************************************************************
-* Copyright (C) 2003-2006, International Business Machines Corporation
+* Copyright (C) 2003-2008, International Business Machines Corporation
 * and others. All Rights Reserved.
 ******************************************************************************
 *
@@ -138,18 +138,21 @@ UBool IslamicCalendar::isCivil() {
 // Minimum / Maximum access functions
 //-------------------------------------------------------------------------
 
+// Note: Current IslamicCalendar implementation does not work
+// well with negative years.
+
 static const int32_t LIMITS[UCAL_FIELD_COUNT][4] = {
     // Minimum  Greatest    Least  Maximum
     //           Minimum  Maximum
-    {        0,        0,       0,       0 }, // ERA
-    {        1,        1, 5000000, 5000000 }, // YEAR
-    {        0,        0,      11,      11 }, // MONTH
-    {        1,        1,      50,      51 }, // WEEK_OF_YEAR
-    {        0,        0,       4,       6 }, // WEEK_OF_MONTH
-    {        1,        1,      29,      30 }, // DAY_OF_MONTH
-    {        1,        1,     354,     355 }, // DAY_OF_YEAR
+    {        0,        0,        0,        0}, // ERA
+    {        1,        1,  5000000,  5000000}, // YEAR
+    {        0,        0,       11,       11}, // MONTH
+    {        1,        1,       50,       51}, // WEEK_OF_YEAR
+    {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1}, // WEEK_OF_MONTH
+    {        1,        1,       29,       30}, // DAY_OF_MONTH
+    {        1,        1,      354,      355}, // DAY_OF_YEAR
     {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1}, // DAY_OF_WEEK
-    {       -1,       -1,       5,       5 }, // DAY_OF_WEEK_IN_MONTH
+    {       -1,       -1,        5,        5}, // DAY_OF_WEEK_IN_MONTH
     {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1}, // AM_PM
     {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1}, // HOUR
     {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1}, // HOUR_OF_DAY
@@ -158,11 +161,12 @@ static const int32_t LIMITS[UCAL_FIELD_COUNT][4] = {
     {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1}, // MILLISECOND
     {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1}, // ZONE_OFFSET
     {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1}, // DST_OFFSET
-    { 1, 1, 5000001, 5000001 }, // YEAR_WOY
+    {        1,        1,  5000000,  5000000}, // YEAR_WOY
     {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1}, // DOW_LOCAL
-    { 1, 1, 5000000, 5000000 }, // EXTENDED_YEAR
+    {        1,        1,  5000000,  5000000}, // EXTENDED_YEAR
     {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1}, // JULIAN_DAY
-    {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1} // MILLISECONDS_IN_DAY
+    {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1}, // MILLISECONDS_IN_DAY
+    {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1}, // IS_LEAP_MONTH
 };
 
 /**
@@ -230,25 +234,36 @@ int32_t IslamicCalendar::trueMonthStart(int32_t month) const
         UDate origin = HIJRA_MILLIS 
             + uprv_floor(month * CalendarAstronomer::SYNODIC_MONTH - 1) * kOneDay;
 
-        double age = moonAge(origin);
+        // moonAge will fail due to memory allocation error
+        double age = moonAge(origin, status);
+        if (U_FAILURE(status)) {
+            goto trueMonthStartEnd;
+        }
 
-        if (moonAge(origin) >= 0) {
+        if (age >= 0) {
             // The month has already started
             do {
                 origin -= kOneDay;
-                age = moonAge(origin);
+                age = moonAge(origin, status);
+                if (U_FAILURE(status)) {
+                    goto trueMonthStartEnd;
+                }
             } while (age >= 0);
         }
         else {
             // Preceding month has not ended yet.
             do {
                 origin += kOneDay;
-                age = moonAge(origin);
+                age = moonAge(origin, status);
+                if (U_FAILURE(status)) {
+                    goto trueMonthStartEnd;
+                }
             } while (age < 0);
         }
         start = (int32_t)Math::floorDivide((origin - HIJRA_MILLIS), (double)kOneDay) + 1;
         CalendarCache::put(&gMonthCache, month, start, status);
     }
+trueMonthStartEnd :
     if(U_FAILURE(status)) {
         start = 0;
     }
@@ -264,17 +279,21 @@ int32_t IslamicCalendar::trueMonthStart(int32_t month) const
 * @param time  The time at which the moon's age is desired,
 *              in millis since 1/1/1970.
 */
-double IslamicCalendar::moonAge(UDate time)
+double IslamicCalendar::moonAge(UDate time, UErrorCode &status)
 {
     double age = 0;
 
     umtx_lock(&astroLock);
     if(gIslamicCalendarAstro == NULL) {
         gIslamicCalendarAstro = new CalendarAstronomer();
+        if (gIslamicCalendarAstro == NULL) {
+            status = U_MEMORY_ALLOCATION_ERROR;
+            return age;
+        }
+        ucln_i18n_registerCleanup(UCLN_I18N_ISLAMIC_CALENDAR, calendar_islamic_cleanup);
     }
     gIslamicCalendarAstro->setTime(time);
     age = gIslamicCalendarAstro->getMoonAge();
-    ucln_i18n_registerCleanup(UCLN_I18N_ISLAMIC_CALENDAR, calendar_islamic_cleanup);
     umtx_unlock(&astroLock);
 
     // Convert to degrees and normalize...
@@ -371,7 +390,7 @@ int32_t IslamicCalendar::handleGetExtendedYear() {
 * calendar equivalents for the given Julian day.
 * @draft ICU 2.4
 */
-void IslamicCalendar::handleComputeFields(int32_t julianDay, UErrorCode &/*status*/) {
+void IslamicCalendar::handleComputeFields(int32_t julianDay, UErrorCode &status) {
     int32_t year, month, dayOfMonth, dayOfYear;
     UDate startDate;
     int32_t days = julianDay - 1948440;
@@ -388,7 +407,12 @@ void IslamicCalendar::handleComputeFields(int32_t julianDay, UErrorCode &/*statu
 
         startDate = uprv_floor(months * CalendarAstronomer::SYNODIC_MONTH - 1);
 
-        if ( days - startDate >= 28 && moonAge(internalGetTime()) > 0) {
+        double age = moonAge(internalGetTime(), status);
+        if (U_FAILURE(status)) {
+        	status = U_MEMORY_ALLOCATION_ERROR;
+        	return;
+        }
+        if ( days - startDate >= 28 && age > 0) {
             // If we're near the end of the month, assume next month and search backwards
             months++;
         }
@@ -421,7 +445,7 @@ UBool
 IslamicCalendar::inDaylightTime(UErrorCode& status) const
 {
     // copied from GregorianCalendar
-    if (U_FAILURE(status) || !getTimeZone().useDaylightTime()) 
+    if (U_FAILURE(status) || (&(getTimeZone()) == NULL && !getTimeZone().useDaylightTime())) 
         return FALSE;
 
     // Force an update of the state of the Calendar.

@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1997-2007, International Business Machines Corporation and
+ * Copyright (c) 1997-2008, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 //===============================================================================
@@ -1103,11 +1103,17 @@ void CollationAPITest::TestSortKey()
     col->setAttribute(UCOL_STRENGTH, UCOL_IDENTICAL, status);
 
     uint8_t key2compat[] = {
+        /* 3.9 key, from UCA 5.1 */
+        0x2c, 0x2e, 0x30, 0x32, 0x2c, 0x01, 
+        0x09, 0x01, 0x09, 0x01, 0x2b, 0x01, 
+        0x92, 0x93, 0x94, 0x95, 0x92, 0x0
+
         /* 3.6 key, from UCA 5.0 */
+	/*
         0x29, 0x2b, 0x2d, 0x2f, 0x29, 0x01, 
         0x09, 0x01, 0x09, 0x01, 0x28, 0x01, 
         0x92, 0x93, 0x94, 0x95, 0x92, 0x00
-        
+        */
         /* 3.4 key, from UCA 4.1 */
         /*
         0x28, 0x2a, 0x2c, 0x2e, 0x28, 0x01, 
@@ -1956,7 +1962,7 @@ public:
                              uint8_t*result, int32_t resultLength) const;
     virtual UnicodeSet *getTailoredSet(UErrorCode &status) const;
     virtual UBool operator!=(const Collator& other) const;
-    virtual void setLocales(const Locale& requestedLocale, const Locale& validLocale);
+    virtual void setLocales(const Locale& requestedLocale, const Locale& validLocale, const Locale& actualLocale);
     TestCollator() : Collator() {};
     TestCollator(UCollationStrength collationStrength, 
            UNormalizationMode decompositionMode) : Collator(collationStrength, decompositionMode) {};
@@ -2155,9 +2161,9 @@ UnicodeSet * TestCollator::getTailoredSet(UErrorCode &status) const
     return Collator::getTailoredSet(status);
 }
 
-void TestCollator::setLocales(const Locale& requestedLocale, const Locale& validLocale) 
+void TestCollator::setLocales(const Locale& requestedLocale, const Locale& validLocale, const Locale& actualLocale) 
 {
-    Collator::setLocales(requestedLocale, validLocale);
+    Collator::setLocales(requestedLocale, validLocale, actualLocale);
 }
 
 
@@ -2196,7 +2202,7 @@ void CollationAPITest::TestSubclass()
     // use base class implementation
     Locale loc1 = Locale::getGermany();
     Locale loc2 = Locale::getFrance();
-    col1.setLocales(loc1, loc2); // default implementation has no effect
+    col1.setLocales(loc1, loc2, loc2); // default implementation has no effect
 
     UnicodeString displayName;
     col1.getDisplayName(loc1, loc2, displayName); // de_DE collator in fr_FR locale

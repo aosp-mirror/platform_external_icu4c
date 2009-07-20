@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2007 International Business Machines
+// * Copyright (C) 2008 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/supplementalData.xml
@@ -105,6 +105,17 @@ supplementalData:table(nofallback){
             {
                 id{"ALL"}
                 from:intvector{ /** 1965-08-16  */
+                    -37,
+                    -1851097344,
+                }
+            }
+            {
+                id{"ALK"}
+                from:intvector{ /** 1946-11-01  */
+                    -177,
+                    -1467495904,
+                }
+                to:intvector{ /** 1965-08-16  */
                     -37,
                     -1851097344,
                 }
@@ -486,6 +497,17 @@ supplementalData:table(nofallback){
                 to:intvector{ /** 1999-07-05  */
                     213,
                     666785952,
+                }
+            }
+            {
+                id{"BGM"}
+                from:intvector{ /** 1952-05-12  */
+                    -133,
+                    -193616928,
+                }
+                to:intvector{ /** 1962-01-01  */
+                    -59,
+                    942330464,
                 }
             }
         }
@@ -4028,6 +4050,18 @@ supplementalData:table(nofallback){
             0,
             0,
         }
+        AFN:intvector{
+            0,
+            0,
+        }
+        ALL:intvector{
+            0,
+            0,
+        }
+        AMD:intvector{
+            0,
+            0,
+        }
         BHD:intvector{
             3,
             0,
@@ -4052,6 +4086,14 @@ supplementalData:table(nofallback){
             0,
             0,
         }
+        COP:intvector{
+            0,
+            0,
+        }
+        CRC:intvector{
+            0,
+            0,
+        }
         DEFAULT:intvector{
             2,
             0,
@@ -4068,8 +4110,28 @@ supplementalData:table(nofallback){
             0,
             0,
         }
+        GYD:intvector{
+            0,
+            0,
+        }
+        HUF:intvector{
+            0,
+            0,
+        }
+        IDR:intvector{
+            0,
+            0,
+        }
         IQD:intvector{
-            3,
+            0,
+            0,
+        }
+        IRR:intvector{
+            0,
+            0,
+        }
+        ISK:intvector{
+            0,
             0,
         }
         ITL:intvector{
@@ -4088,12 +4150,24 @@ supplementalData:table(nofallback){
             0,
             0,
         }
+        KPW:intvector{
+            0,
+            0,
+        }
         KRW:intvector{
             0,
             0,
         }
         KWD:intvector{
             3,
+            0,
+        }
+        LAK:intvector{
+            0,
+            0,
+        }
+        LBP:intvector{
+            0,
             0,
         }
         LUF:intvector{
@@ -4112,15 +4186,59 @@ supplementalData:table(nofallback){
             0,
             0,
         }
+        MMK:intvector{
+            0,
+            0,
+        }
+        MNT:intvector{
+            0,
+            0,
+        }
+        MRO:intvector{
+            0,
+            0,
+        }
+        MUR:intvector{
+            0,
+            0,
+        }
         OMR:intvector{
             3,
+            0,
+        }
+        PKR:intvector{
+            0,
             0,
         }
         PYG:intvector{
             0,
             0,
         }
+        RSD:intvector{
+            0,
+            0,
+        }
         RWF:intvector{
+            0,
+            0,
+        }
+        SLL:intvector{
+            0,
+            0,
+        }
+        SOS:intvector{
+            0,
+            0,
+        }
+        STD:intvector{
+            0,
+            0,
+        }
+        SYP:intvector{
+            0,
+            0,
+        }
+        TMM:intvector{
             0,
             0,
         }
@@ -4129,6 +4247,26 @@ supplementalData:table(nofallback){
             0,
         }
         TRL:intvector{
+            0,
+            0,
+        }
+        TWD:intvector{
+            0,
+            0,
+        }
+        TZS:intvector{
+            0,
+            0,
+        }
+        UGX:intvector{
+            0,
+            0,
+        }
+        UZS:intvector{
+            0,
+            0,
+        }
+        VND:intvector{
             0,
             0,
         }
@@ -4145,6 +4283,18 @@ supplementalData:table(nofallback){
             0,
         }
         XPF:intvector{
+            0,
+            0,
+        }
+        YER:intvector{
+            0,
+            0,
+        }
+        ZMK:intvector{
+            0,
+            0,
+        }
+        ZWD:intvector{
             0,
             0,
         }
@@ -4172,6 +4322,9 @@ supplementalData:table(nofallback){
         }
         hebrew{
             "IL",
+        }
+        indian{
+            "IN",
         }
         islamic{
             "AE",
@@ -4238,7 +4391,11 @@ supplementalData:table(nofallback){
             "AF",
             "IR",
         }
+        roc{
+            "TW",
+        }
     }
+    cldrVersion{"1.6"}
     languageData{
         aa{
             primary{
@@ -4501,6 +4658,7 @@ supplementalData:table(nofallback){
             }
             secondary{
                 territories{
+                    "IR",
                     "PK",
                 }
             }
@@ -4698,7 +4856,7 @@ supplementalData:table(nofallback){
             }
         }
         bku{
-            primary{
+            secondary{
                 scripts{
                     "Buhd",
                 }
@@ -4937,9 +5095,13 @@ supplementalData:table(nofallback){
             }
         }
         cja{
-            secondary{
+            primary{
                 scripts{
                     "Cham",
+                }
+            }
+            secondary{
+                scripts{
                     "Deva",
                 }
             }
@@ -5237,7 +5399,7 @@ supplementalData:table(nofallback){
         emk{
             primary{
                 scripts{
-                    "Deva",
+                    "Nkoo",
                 }
             }
             secondary{
@@ -5658,6 +5820,11 @@ supplementalData:table(nofallback){
         }
         gag{
             primary{
+                scripts{
+                    "Latn",
+                }
+            }
+            secondary{
                 scripts{
                     "Cyrl",
                 }
@@ -6331,6 +6498,11 @@ supplementalData:table(nofallback){
             }
         }
         kg{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
             secondary{
                 territories{
                     "CD",
@@ -6732,7 +6904,7 @@ supplementalData:table(nofallback){
             }
         }
         lep{
-            secondary{
+            primary{
                 scripts{
                     "Lepc",
                 }
@@ -7222,12 +7394,6 @@ supplementalData:table(nofallback){
             }
         }
         muw{
-            primary{
-                scripts{
-                    "Beng",
-                    "Deva",
-                }
-            }
             secondary{
                 territories{
                     "IN",
@@ -8175,11 +8341,11 @@ supplementalData:table(nofallback){
                 }
                 territories{
                     "AL",
+                    "MK",
                 }
             }
             secondary{
                 territories{
-                    "MK",
                     "RS",
                 }
             }
@@ -9061,7 +9227,7 @@ supplementalData:table(nofallback){
         za{
             primary{
                 scripts{
-                    "Hani",
+                    "Hans",
                 }
             }
             secondary{
@@ -9133,7 +9299,6 @@ supplementalData:table(nofallback){
             "meta:Africa_Eastern_ET"{"Africa/Addis_Ababa"}
             "meta:Africa_Eastern_KM"{"Indian/Comoro"}
             "meta:Africa_Eastern_MG"{"Indian/Antananarivo"}
-            "meta:Africa_Eastern_SD"{"Africa/Khartoum"}
             "meta:Africa_Eastern_SO"{"Africa/Mogadishu"}
             "meta:Africa_Eastern_TZ"{"Africa/Dar_es_Salaam"}
             "meta:Africa_Eastern_UG"{"Africa/Kampala"}
@@ -9166,7 +9331,6 @@ supplementalData:table(nofallback){
             "meta:America_Central_GT"{"America/Guatemala"}
             "meta:America_Central_HN"{"America/Tegucigalpa"}
             "meta:America_Central_MX"{"America/Mexico_City"}
-            "meta:America_Central_NI"{"America/Managua"}
             "meta:America_Central_SV"{"America/El_Salvador"}
             "meta:America_Eastern_001"{"America/New_York"}
             "meta:America_Eastern_BS"{"America/Nassau"}
@@ -9203,7 +9367,6 @@ supplementalData:table(nofallback){
             "meta:Atlantic_BB"{"America/Barbados"}
             "meta:Atlantic_BM"{"America/Bermuda"}
             "meta:Atlantic_DM"{"America/Dominica"}
-            "meta:Atlantic_DO"{"America/Santo_Domingo"}
             "meta:Atlantic_GD"{"America/Grenada"}
             "meta:Atlantic_GL"{"America/Thule"}
             "meta:Atlantic_GP"{"America/Guadaloupe"}
@@ -9266,7 +9429,6 @@ supplementalData:table(nofallback){
             "meta:Europe_Central_CZ"{"Europe/Prague"}
             "meta:Europe_Central_DE"{"Europe/Berlin"}
             "meta:Europe_Central_DK"{"Europe/Copenhagen"}
-            "meta:Europe_Central_DZ"{"Africa/Algiers"}
             "meta:Europe_Central_ES"{"Europe/Madrid"}
             "meta:Europe_Central_GI"{"Europe/Gibraltar"}
             "meta:Europe_Central_HR"{"Europe/Zagreb"}
@@ -9288,26 +9450,15 @@ supplementalData:table(nofallback){
             "meta:Europe_Central_TN"{"Africa/Tunis"}
             "meta:Europe_Eastern_001"{"Europe/Bucharest"}
             "meta:Europe_Eastern_BG"{"Europe/Sofia"}
-            "meta:Europe_Eastern_BY"{"Europe/Minsk"}
             "meta:Europe_Eastern_CY"{"Asia/Nicosia"}
-            "meta:Europe_Eastern_EE"{"Europe/Tallinn"}
             "meta:Europe_Eastern_EG"{"Africa/Cairo"}
             "meta:Europe_Eastern_FI"{"Europe/Helsinki"}
             "meta:Europe_Eastern_GR"{"Europe/Athens"}
             "meta:Europe_Eastern_JO"{"Asia/Amman"}
             "meta:Europe_Eastern_LB"{"Asia/Beirut"}
-            "meta:Europe_Eastern_LT"{"Europe/Vilnius"}
-            "meta:Europe_Eastern_LV"{"Europe/Riga"}
-            "meta:Europe_Eastern_LY"{"Africa/Tripoli"}
-            "meta:Europe_Eastern_MD"{"Europe/Chisinau"}
-            "meta:Europe_Eastern_PS"{"Asia/Gaza"}
-            "meta:Europe_Eastern_RU"{"Europe/Kaliningrad"}
             "meta:Europe_Eastern_SY"{"Asia/Damascus"}
-            "meta:Europe_Eastern_UA"{"Europe/Kiev"}
             "meta:Europe_Western_001"{"Atlantic/Canary"}
-            "meta:Europe_Western_EH"{"Africa/El_Aaiun"}
             "meta:Europe_Western_FO"{"Atlantic/Faeroe"}
-            "meta:Europe_Western_MA"{"Africa/Casablanca"}
             "meta:Falkland_001"{"Atlantic/Stanley"}
             "meta:Fiji_001"{"Pacific/Fiji"}
             "meta:French_Guiana_001"{"America/Cayenne"}
@@ -9318,7 +9469,6 @@ supplementalData:table(nofallback){
             "meta:GMT_CI"{"Africa/Abidjan"}
             "meta:GMT_GB"{"Europe/London"}
             "meta:GMT_GH"{"Africa/Accra"}
-            "meta:GMT_GL"{"America/Danmarkshavn"}
             "meta:GMT_GM"{"Africa/Banjul"}
             "meta:GMT_GN"{"Africa/Conakry"}
             "meta:GMT_GW"{"Africa/Bissau"}
@@ -9456,89 +9606,1351 @@ supplementalData:table(nofallback){
             "meta:Yukon_001"{"America/Yakutat"}
         }
         windows{
-            "Africa:Cairo"{"Egypt"}
-            "Africa:Casablanca"{"Greenwich"}
-            "Africa:Johannesburg"{"South Africa"}
-            "Africa:Lagos"{"W. Central Africa"}
-            "Africa:Nairobi"{"E. Africa"}
-            "Africa:Windhoek"{"Namibia"}
-            "America:Anchorage"{"Alaskan"}
-            "America:Bogota"{"SA Pacific"}
-            "America:Buenos_Aires"{"SA Eastern"}
-            "America:Caracas"{"SA Western"}
-            "America:Chicago"{"Central"}
-            "America:Chihuahua"{"Mexico Standard Time 2"}
-            "America:Denver"{"Mountain"}
-            "America:Godthab"{"Greenland"}
-            "America:Guatemala"{"Central America"}
-            "America:Halifax"{"Atlantic"}
-            "America:Indianapolis"{"US Eastern"}
-            "America:Los_Angeles"{"Pacific"}
-            "America:Manaus"{"Central Brazilian"}
-            "America:Mexico_City"{"Mexico"}
-            "America:Montevideo"{"Montevideo"}
-            "America:New_York"{"Eastern"}
-            "America:Noronha"{"Mid-Atlantic"}
-            "America:Phoenix"{"US Mountain"}
-            "America:Regina"{"Canada Central"}
-            "America:Santiago"{"Pacific SA"}
-            "America:Sao_Paulo"{"E. South America"}
-            "America:St_Johns"{"Newfoundland"}
-            "America:Tijuana"{"Pacific Standard Time (Mexico)"}
-            "Asia:Amman"{"Jordan"}
-            "Asia:Baghdad"{"Arabic"}
-            "Asia:Baku"{"Azerbaijan"}
-            "Asia:Bangkok"{"SE Asia"}
-            "Asia:Beirut"{"Middle East"}
-            "Asia:Calcutta"{"India"}
-            "Asia:Colombo"{"Sri Lanka"}
-            "Asia:Dhaka"{"Central Asia"}
-            "Asia:Jerusalem"{"Israel"}
-            "Asia:Kabul"{"Afghanistan"}
-            "Asia:Karachi"{"West Asia"}
-            "Asia:Katmandu"{"Nepal"}
-            "Asia:Krasnoyarsk"{"North Asia"}
-            "Asia:Muscat"{"Arabian"}
-            "Asia:Novosibirsk"{"N. Central Asia"}
-            "Asia:Rangoon"{"Myanmar"}
-            "Asia:Riyadh"{"Arab"}
-            "Asia:Seoul"{"Korea"}
-            "Asia:Shanghai"{"China"}
-            "Asia:Singapore"{"Singapore"}
-            "Asia:Taipei"{"Taipei"}
-            "Asia:Tbilisi"{"Georgian"}
-            "Asia:Tehran"{"Iran"}
-            "Asia:Tokyo"{"Tokyo"}
-            "Asia:Ulaanbaatar"{"North Asia East"}
-            "Asia:Vladivostok"{"Vladivostok"}
-            "Asia:Yakutsk"{"Yakutsk"}
-            "Asia:Yekaterinburg"{"Ekaterinburg"}
-            "Asia:Yerevan"{"Caucasus"}
-            "Atlantic:Azores"{"Azores"}
-            "Atlantic:Cape_Verde"{"Cape Verde"}
-            "Australia:Adelaide"{"Cen. Australia"}
-            "Australia:Brisbane"{"E. Australia"}
-            "Australia:Darwin"{"AUS Central"}
-            "Australia:Hobart"{"Tasmania"}
-            "Australia:Perth"{"W. Australia"}
-            "Australia:Sydney"{"AUS Eastern"}
-            "Europe:Berlin"{"W. Europe"}
-            "Europe:Helsinki"{"FLE"}
-            "Europe:Istanbul"{"GTB"}
-            "Europe:London"{"GMT"}
-            "Europe:Minsk"{"E. Europe"}
-            "Europe:Moscow"{"Russian"}
-            "Europe:Paris"{"Romance"}
-            "Europe:Prague"{"Central Europe"}
-            "Europe:Warsaw"{"Central European"}
-            "Pacific:Apia"{"Samoa"}
-            "Pacific:Auckland"{"New Zealand"}
-            "Pacific:Fiji"{"Fiji"}
-            "Pacific:Guadalcanal"{"Central Pacific"}
-            "Pacific:Guam"{"West Pacific"}
-            "Pacific:Honolulu"{"Hawaiian"}
-            "Pacific:Kwajalein"{"Dateline"}
-            "Pacific:Tongatapu"{"Tonga"}
+            "AUS Central Standard Time"{"Australia/Darwin"}
+            "AUS Eastern Standard Time"{"Australia/Sydney"}
+            "Afghanistan Standard Time"{"Asia/Kabul"}
+            "Alaskan Standard Time"{"America/Anchorage"}
+            "Arab Standard Time"{"Asia/Riyadh"}
+            "Arabian Standard Time"{"Asia/Dubai"}
+            "Arabic Standard Time"{"Asia/Baghdad"}
+            "Argentina Standard Time"{"America/Buenos_Aires"}
+            "Armenian Standard Time"{"Asia/Yerevan"}
+            "Atlantic Standard Time"{"America/Halifax"}
+            "Azerbaijan Standard Time"{"Asia/Baku"}
+            "Azores Standard Time"{"Atlantic/Azores"}
+            "Canada Central Standard Time"{"America/Regina"}
+            "Cape Verde Standard Time"{"Atlantic/Cape_Verde"}
+            "Caucasus Standard Time"{"Asia/Tbilisi"}
+            "Cen. Australia Standard Time"{"Australia/Adelaide"}
+            "Central America Standard Time"{"America/Guatemala"}
+            "Central Asia Standard Time"{"Asia/Dhaka"}
+            "Central Brazilian Standard Time"{"America/Manaus"}
+            "Central Europe Standard Time"{"Europe/Budapest"}
+            "Central European Standard Time"{"Europe/Warsaw"}
+            "Central Pacific Standard Time"{"Pacific/Guadalcanal"}
+            "Central Standard Time (Mexico)"{"America/Mexico_City"}
+            "Central Standard Time"{"America/Chicago"}
+            "China Standard Time"{"Asia/Shanghai"}
+            "Dateline Standard Time"{"Etc/GMT+12"}
+            "E. Africa Standard Time"{"Africa/Nairobi"}
+            "E. Australia Standard Time"{"Australia/Brisbane"}
+            "E. Europe Standard Time"{"Europe/Minsk"}
+            "E. South America Standard Time"{"America/Sao_Paulo"}
+            "Eastern Standard Time"{"America/New_York"}
+            "Egypt Standard Time"{"Africa/Cairo"}
+            "Ekaterinburg Standard Time"{"Asia/Yekaterinburg"}
+            "FLE Standard Time"{"Europe/Kiev"}
+            "Fiji Standard Time"{"Pacific/Fiji"}
+            "GMT Standard Time"{"Europe/London"}
+            "GTB Standard Time"{"Europe/Istanbul"}
+            "Georgian Standard Time"{"Etc/GMT-3"}
+            "Greenland Standard Time"{"America/Godthab"}
+            "Greenwich Standard Time"{"Africa/Casablanca"}
+            "Hawaiian Standard Time"{"Pacific/Honolulu"}
+            "India Standard Time"{"Asia/Calcutta"}
+            "Iran Standard Time"{"Asia/Tehran"}
+            "Israel Standard Time"{"Asia/Jerusalem"}
+            "Jordan Standard Time"{"Asia/Amman"}
+            "Korea Standard Time"{"Asia/Seoul"}
+            "Mexico Standard Time 2"{"America/Chihuahua"}
+            "Mexico Standard Time"{"America/Mexico_City"}
+            "Mid-Atlantic Standard Time"{"Atlantic/South_Georgia"}
+            "Middle East Standard Time"{"Asia/Beirut"}
+            "Montevideo Standard Time"{"America/Montevideo"}
+            "Mountain Standard Time (Mexico)"{"America/Chihuahua"}
+            "Mountain Standard Time"{"America/Denver"}
+            "Myanmar Standard Time"{"Asia/Rangoon"}
+            "N. Central Asia Standard Time"{"Asia/Novosibirsk"}
+            "Namibia Standard Time"{"Africa/Windhoek"}
+            "Nepal Standard Time"{"Asia/Katmandu"}
+            "New Zealand Standard Time"{"Pacific/Auckland"}
+            "Newfoundland Standard Time"{"America/St_Johns"}
+            "North Asia East Standard Time"{"Asia/Irkutsk"}
+            "North Asia Standard Time"{"Asia/Krasnoyarsk"}
+            "Pacific SA Standard Time"{"America/Santiago"}
+            "Pacific Standard Time (Mexico)"{"America/Tijuana"}
+            "Pacific Standard Time"{"America/Los_Angeles"}
+            "Romance Standard Time"{"Europe/Paris"}
+            "Russian Standard Time"{"Europe/Moscow"}
+            "SA Eastern Standard Time"{"Etc/GMT+3"}
+            "SA Pacific Standard Time"{"America/Bogota"}
+            "SA Western Standard Time"{"America/La_Paz"}
+            "SE Asia Standard Time"{"Asia/Bangkok"}
+            "Samoa Standard Time"{"Pacific/Apia"}
+            "Singapore Standard Time"{"Asia/Singapore"}
+            "South Africa Standard Time"{"Africa/Johannesburg"}
+            "Sri Lanka Standard Time"{"Asia/Colombo"}
+            "Taipei Standard Time"{"Asia/Taipei"}
+            "Tasmania Standard Time"{"Australia/Hobart"}
+            "Tokyo Standard Time"{"Asia/Tokyo"}
+            "Tonga Standard Time"{"Pacific/Tongatapu"}
+            "US Eastern Standard Time"{"Etc/GMT+5"}
+            "US Mountain Standard Time"{"America/Phoenix"}
+            "Venezuela Standard Time"{"America/Caracas"}
+            "Vladivostok Standard Time"{"Asia/Vladivostok"}
+            "W. Australia Standard Time"{"Australia/Perth"}
+            "W. Central Africa Standard Time"{"Africa/Lagos"}
+            "W. Europe Standard Time"{"Europe/Berlin"}
+            "West Asia Standard Time"{"Asia/Karachi"}
+            "West Pacific Standard Time"{"Pacific/Port_Moresby"}
+            "Yakutsk Standard Time"{"Asia/Yakutsk"}
+        }
+    }
+    /**
+     * Map from territory codes to ITU telephone codes.
+     * NOTE: This is not true locale data; it exists only in ROOT
+     */
+    telephoneCodeData{
+        001{
+            {
+                code{"388"}
+            }
+            {
+                code{"800"}
+            }
+            {
+                code{"808"}
+            }
+            {
+                code{"870"}
+            }
+            {
+                code{"871"}
+            }
+            {
+                code{"872"}
+            }
+            {
+                code{"873"}
+            }
+            {
+                code{"874"}
+            }
+            {
+                code{"878"}
+            }
+            {
+                code{"881"}
+            }
+            {
+                code{"882"}
+            }
+            {
+                code{"883"}
+            }
+            {
+                code{"888"}
+            }
+            {
+                code{"979"}
+            }
+            {
+                code{"991"}
+            }
+        }
+        AC{
+            {
+                code{"247"}
+            }
+        }
+        AD{
+            {
+                code{"376"}
+            }
+        }
+        AE{
+            {
+                code{"971"}
+            }
+        }
+        AF{
+            {
+                code{"93"}
+            }
+        }
+        AG{
+            {
+                code{"1"}
+            }
+        }
+        AI{
+            {
+                code{"1"}
+            }
+        }
+        AL{
+            {
+                code{"355"}
+            }
+        }
+        AM{
+            {
+                code{"374"}
+            }
+        }
+        AN{
+            {
+                code{"599"}
+            }
+        }
+        AO{
+            {
+                code{"244"}
+            }
+        }
+        AQ{
+            {
+                code{"672"}
+            }
+        }
+        AR{
+            {
+                code{"54"}
+            }
+        }
+        AS{
+            {
+                code{"1"}
+            }
+        }
+        AT{
+            {
+                code{"43"}
+            }
+        }
+        AU{
+            {
+                code{"61"}
+            }
+        }
+        AW{
+            {
+                code{"297"}
+            }
+        }
+        AX{
+            {
+                code{"358"}
+            }
+        }
+        AZ{
+            {
+                code{"994"}
+            }
+        }
+        BA{
+            {
+                code{"387"}
+            }
+        }
+        BB{
+            {
+                code{"1"}
+            }
+        }
+        BD{
+            {
+                code{"880"}
+            }
+        }
+        BE{
+            {
+                code{"32"}
+            }
+        }
+        BF{
+            {
+                code{"226"}
+            }
+        }
+        BG{
+            {
+                code{"359"}
+            }
+        }
+        BH{
+            {
+                code{"973"}
+            }
+        }
+        BI{
+            {
+                code{"257"}
+            }
+        }
+        BJ{
+            {
+                code{"229"}
+            }
+        }
+        BL{
+            {
+                code{"590"}
+            }
+        }
+        BM{
+            {
+                code{"1"}
+            }
+        }
+        BN{
+            {
+                code{"673"}
+            }
+        }
+        BO{
+            {
+                code{"591"}
+            }
+        }
+        BR{
+            {
+                code{"55"}
+            }
+        }
+        BS{
+            {
+                code{"1"}
+            }
+        }
+        BT{
+            {
+                code{"975"}
+            }
+        }
+        BW{
+            {
+                code{"267"}
+            }
+        }
+        BY{
+            {
+                code{"375"}
+            }
+        }
+        BZ{
+            {
+                code{"501"}
+            }
+        }
+        CA{
+            {
+                code{"1"}
+            }
+        }
+        CC{
+            {
+                code{"61"}
+            }
+        }
+        CD{
+            {
+                code{"243"}
+            }
+        }
+        CF{
+            {
+                code{"236"}
+            }
+        }
+        CG{
+            {
+                code{"242"}
+            }
+        }
+        CH{
+            {
+                code{"41"}
+            }
+        }
+        CI{
+            {
+                code{"225"}
+            }
+        }
+        CK{
+            {
+                code{"682"}
+            }
+        }
+        CL{
+            {
+                code{"56"}
+            }
+        }
+        CM{
+            {
+                code{"237"}
+            }
+        }
+        CN{
+            {
+                code{"86"}
+            }
+        }
+        CO{
+            {
+                code{"57"}
+            }
+        }
+        CR{
+            {
+                code{"506"}
+            }
+        }
+        CU{
+            {
+                code{"53"}
+            }
+        }
+        CV{
+            {
+                code{"238"}
+            }
+        }
+        CX{
+            {
+                code{"61"}
+            }
+        }
+        CY{
+            {
+                code{"357"}
+            }
+        }
+        CZ{
+            {
+                code{"420"}
+            }
+        }
+        DE{
+            {
+                code{"49"}
+            }
+        }
+        DJ{
+            {
+                code{"253"}
+            }
+        }
+        DK{
+            {
+                code{"45"}
+            }
+        }
+        DM{
+            {
+                code{"1"}
+            }
+        }
+        DO{
+            {
+                code{"1"}
+            }
+        }
+        DZ{
+            {
+                code{"213"}
+            }
+        }
+        EC{
+            {
+                code{"593"}
+            }
+        }
+        EE{
+            {
+                code{"372"}
+            }
+        }
+        EG{
+            {
+                code{"20"}
+            }
+        }
+        ER{
+            {
+                code{"291"}
+            }
+        }
+        ES{
+            {
+                code{"34"}
+            }
+        }
+        ET{
+            {
+                code{"251"}
+            }
+        }
+        FI{
+            {
+                code{"358"}
+            }
+        }
+        FJ{
+            {
+                code{"679"}
+            }
+        }
+        FK{
+            {
+                code{"500"}
+            }
+        }
+        FM{
+            {
+                code{"691"}
+            }
+        }
+        FO{
+            {
+                code{"298"}
+            }
+        }
+        FR{
+            {
+                code{"33"}
+            }
+        }
+        GA{
+            {
+                code{"241"}
+            }
+        }
+        GB{
+            {
+                code{"44"}
+            }
+        }
+        GD{
+            {
+                code{"1"}
+            }
+        }
+        GE{
+            {
+                code{"995"}
+            }
+        }
+        GF{
+            {
+                code{"594"}
+            }
+        }
+        GG{
+            {
+                code{"44"}
+            }
+        }
+        GH{
+            {
+                code{"233"}
+            }
+        }
+        GI{
+            {
+                code{"350"}
+            }
+        }
+        GL{
+            {
+                code{"299"}
+            }
+        }
+        GM{
+            {
+                code{"220"}
+            }
+        }
+        GN{
+            {
+                code{"224"}
+            }
+        }
+        GP{
+            {
+                code{"590"}
+            }
+        }
+        GQ{
+            {
+                code{"240"}
+            }
+        }
+        GR{
+            {
+                code{"30"}
+            }
+        }
+        GT{
+            {
+                code{"502"}
+            }
+        }
+        GU{
+            {
+                code{"1"}
+            }
+        }
+        GW{
+            {
+                code{"245"}
+            }
+        }
+        GY{
+            {
+                code{"592"}
+            }
+        }
+        HK{
+            {
+                code{"852"}
+            }
+        }
+        HN{
+            {
+                code{"504"}
+            }
+        }
+        HR{
+            {
+                code{"385"}
+            }
+        }
+        HT{
+            {
+                code{"509"}
+            }
+        }
+        HU{
+            {
+                code{"36"}
+            }
+        }
+        ID{
+            {
+                code{"62"}
+            }
+        }
+        IE{
+            {
+                code{"353"}
+            }
+        }
+        IL{
+            {
+                code{"972"}
+            }
+        }
+        IM{
+            {
+                code{"44"}
+            }
+        }
+        IN{
+            {
+                code{"91"}
+            }
+        }
+        IO{
+            {
+                code{"246"}
+            }
+        }
+        IQ{
+            {
+                code{"964"}
+            }
+        }
+        IR{
+            {
+                code{"98"}
+            }
+        }
+        IS{
+            {
+                code{"354"}
+            }
+        }
+        IT{
+            {
+                code{"39"}
+            }
+        }
+        JE{
+            {
+                code{"44"}
+            }
+        }
+        JM{
+            {
+                code{"1"}
+            }
+        }
+        JO{
+            {
+                code{"962"}
+            }
+        }
+        JP{
+            {
+                code{"81"}
+            }
+        }
+        KE{
+            {
+                code{"254"}
+            }
+        }
+        KG{
+            {
+                code{"996"}
+            }
+        }
+        KH{
+            {
+                code{"855"}
+            }
+        }
+        KI{
+            {
+                code{"686"}
+            }
+        }
+        KM{
+            {
+                code{"269"}
+            }
+        }
+        KN{
+            {
+                code{"1"}
+            }
+        }
+        KP{
+            {
+                code{"850"}
+            }
+        }
+        KR{
+            {
+                code{"82"}
+            }
+        }
+        KW{
+            {
+                code{"965"}
+            }
+        }
+        KY{
+            {
+                code{"1"}
+            }
+        }
+        KZ{
+            {
+                code{"7"}
+            }
+        }
+        LA{
+            {
+                code{"856"}
+            }
+        }
+        LB{
+            {
+                code{"961"}
+            }
+        }
+        LC{
+            {
+                code{"1"}
+            }
+        }
+        LI{
+            {
+                code{"423"}
+            }
+        }
+        LK{
+            {
+                code{"94"}
+            }
+        }
+        LR{
+            {
+                code{"231"}
+            }
+        }
+        LS{
+            {
+                code{"266"}
+            }
+        }
+        LT{
+            {
+                code{"370"}
+            }
+        }
+        LU{
+            {
+                code{"352"}
+            }
+        }
+        LV{
+            {
+                code{"371"}
+            }
+        }
+        LY{
+            {
+                code{"218"}
+            }
+        }
+        MA{
+            {
+                code{"212"}
+            }
+        }
+        MC{
+            {
+                code{"377"}
+            }
+        }
+        MD{
+            {
+                code{"373"}
+            }
+        }
+        ME{
+            {
+                code{"382"}
+            }
+        }
+        MG{
+            {
+                code{"261"}
+            }
+        }
+        MH{
+            {
+                code{"692"}
+            }
+        }
+        MK{
+            {
+                code{"389"}
+            }
+        }
+        ML{
+            {
+                code{"223"}
+            }
+        }
+        MM{
+            {
+                code{"95"}
+            }
+        }
+        MN{
+            {
+                code{"976"}
+            }
+        }
+        MO{
+            {
+                code{"853"}
+            }
+        }
+        MP{
+            {
+                code{"1"}
+            }
+        }
+        MQ{
+            {
+                code{"596"}
+            }
+        }
+        MR{
+            {
+                code{"222"}
+            }
+        }
+        MS{
+            {
+                code{"1"}
+            }
+        }
+        MT{
+            {
+                code{"356"}
+            }
+        }
+        MU{
+            {
+                code{"230"}
+            }
+        }
+        MV{
+            {
+                code{"960"}
+            }
+        }
+        MW{
+            {
+                code{"265"}
+            }
+        }
+        MX{
+            {
+                code{"52"}
+            }
+        }
+        MY{
+            {
+                code{"60"}
+            }
+        }
+        MZ{
+            {
+                code{"258"}
+            }
+        }
+        NA{
+            {
+                code{"264"}
+            }
+        }
+        NC{
+            {
+                code{"687"}
+            }
+        }
+        NE{
+            {
+                code{"227"}
+            }
+        }
+        NF{
+            {
+                code{"672"}
+            }
+        }
+        NG{
+            {
+                code{"234"}
+            }
+        }
+        NI{
+            {
+                code{"505"}
+            }
+        }
+        NL{
+            {
+                code{"31"}
+            }
+        }
+        NO{
+            {
+                code{"47"}
+            }
+        }
+        NP{
+            {
+                code{"977"}
+            }
+        }
+        NR{
+            {
+                code{"674"}
+            }
+        }
+        NU{
+            {
+                code{"683"}
+            }
+        }
+        NZ{
+            {
+                code{"64"}
+            }
+        }
+        OM{
+            {
+                code{"968"}
+            }
+        }
+        PA{
+            {
+                code{"507"}
+            }
+        }
+        PE{
+            {
+                code{"51"}
+            }
+        }
+        PF{
+            {
+                code{"689"}
+            }
+        }
+        PG{
+            {
+                code{"675"}
+            }
+        }
+        PH{
+            {
+                code{"63"}
+            }
+        }
+        PK{
+            {
+                code{"92"}
+            }
+        }
+        PL{
+            {
+                code{"48"}
+            }
+        }
+        PM{
+            {
+                code{"508"}
+            }
+        }
+        PR{
+            {
+                code{"1"}
+            }
+        }
+        PS{
+            {
+                code{"972"}
+            }
+            {
+                alt{"limitedAvailability"}
+                code{"970"}
+            }
+        }
+        PT{
+            {
+                code{"351"}
+            }
+        }
+        PW{
+            {
+                code{"680"}
+            }
+        }
+        PY{
+            {
+                code{"595"}
+            }
+        }
+        QA{
+            {
+                code{"974"}
+            }
+        }
+        RE{
+            {
+                code{"262"}
+            }
+        }
+        RO{
+            {
+                code{"40"}
+            }
+        }
+        RS{
+            {
+                code{"381"}
+            }
+        }
+        RU{
+            {
+                code{"7"}
+            }
+        }
+        RW{
+            {
+                code{"250"}
+            }
+        }
+        SA{
+            {
+                code{"966"}
+            }
+        }
+        SB{
+            {
+                code{"677"}
+            }
+        }
+        SC{
+            {
+                code{"248"}
+            }
+        }
+        SD{
+            {
+                code{"249"}
+            }
+        }
+        SE{
+            {
+                code{"46"}
+            }
+        }
+        SG{
+            {
+                code{"65"}
+            }
+        }
+        SH{
+            {
+                code{"290"}
+            }
+        }
+        SI{
+            {
+                code{"386"}
+            }
+        }
+        SJ{
+            {
+                code{"47"}
+            }
+        }
+        SK{
+            {
+                code{"421"}
+            }
+        }
+        SL{
+            {
+                code{"232"}
+            }
+        }
+        SM{
+            {
+                code{"378"}
+            }
+        }
+        SN{
+            {
+                code{"221"}
+            }
+        }
+        SO{
+            {
+                code{"252"}
+            }
+        }
+        SR{
+            {
+                code{"597"}
+            }
+        }
+        ST{
+            {
+                code{"239"}
+            }
+        }
+        SV{
+            {
+                code{"503"}
+            }
+        }
+        SY{
+            {
+                code{"963"}
+            }
+        }
+        SZ{
+            {
+                code{"268"}
+            }
+        }
+        TC{
+            {
+                code{"1"}
+            }
+        }
+        TD{
+            {
+                code{"235"}
+            }
+        }
+        TF{
+            {
+                code{"262"}
+            }
+        }
+        TG{
+            {
+                code{"228"}
+            }
+        }
+        TH{
+            {
+                code{"66"}
+            }
+        }
+        TJ{
+            {
+                code{"992"}
+            }
+        }
+        TK{
+            {
+                code{"690"}
+            }
+        }
+        TL{
+            {
+                code{"670"}
+            }
+        }
+        TM{
+            {
+                code{"993"}
+            }
+        }
+        TN{
+            {
+                code{"216"}
+            }
+        }
+        TO{
+            {
+                code{"676"}
+            }
+        }
+        TR{
+            {
+                code{"90"}
+            }
+        }
+        TT{
+            {
+                code{"1"}
+            }
+        }
+        TV{
+            {
+                code{"688"}
+            }
+        }
+        TW{
+            {
+                code{"886"}
+            }
+        }
+        TZ{
+            {
+                code{"255"}
+            }
+        }
+        UA{
+            {
+                code{"380"}
+            }
+        }
+        UG{
+            {
+                code{"256"}
+            }
+        }
+        US{
+            {
+                code{"1"}
+            }
+        }
+        UY{
+            {
+                code{"598"}
+            }
+        }
+        UZ{
+            {
+                code{"998"}
+            }
+        }
+        VA{
+            {
+                code{"39"}
+            }
+        }
+        VC{
+            {
+                code{"1"}
+            }
+        }
+        VE{
+            {
+                code{"58"}
+            }
+        }
+        VG{
+            {
+                code{"1"}
+            }
+        }
+        VI{
+            {
+                code{"1"}
+            }
+        }
+        VN{
+            {
+                code{"84"}
+            }
+        }
+        VU{
+            {
+                code{"678"}
+            }
+        }
+        WF{
+            {
+                code{"681"}
+            }
+        }
+        WS{
+            {
+                code{"685"}
+            }
+        }
+        YE{
+            {
+                code{"967"}
+            }
+        }
+        YT{
+            {
+                code{"262"}
+            }
+        }
+        ZA{
+            {
+                code{"27"}
+            }
+        }
+        ZM{
+            {
+                code{"260"}
+            }
+        }
+        ZW{
+            {
+                code{"263"}
+            }
         }
     }
     territoryContainment{
@@ -10157,6 +11569,9 @@ supplementalData:table(nofallback){
         "America:Argentina:San_Juan"{
             territory{"AR"}
         }
+        "America:Argentina:San_Luis"{
+            territory{"AR"}
+        }
         "America:Argentina:Tucuman"{
             territory{"AR"}
         }
@@ -10434,6 +11849,9 @@ supplementalData:table(nofallback){
                 "Brazil/West",
             }
         }
+        "America:Marigot"{
+            territory{"MF"}
+        }
         "America:Martinique"{
             territory{"MQ"}
         }
@@ -10590,6 +12008,9 @@ supplementalData:table(nofallback){
                 "Navajo",
             }
         }
+        "America:St_Barthelemy"{
+            territory{"BL"}
+        }
         "America:St_Johns"{
             territory{"CA"}
             aliases{
@@ -10696,6 +12117,9 @@ supplementalData:table(nofallback){
         }
         "Arctic:Longyearbyen"{
             territory{"SJ"}
+            aliases{
+                "Atlantic/Jan_Mayen",
+            }
         }
         "Asia:Aden"{
             territory{"YE"}
@@ -10745,6 +12169,7 @@ supplementalData:table(nofallback){
         "Asia:Calcutta"{
             territory{"IN"}
             aliases{
+                "Asia/Kolkata",
                 "IST",
             }
         }
@@ -10900,6 +12325,7 @@ supplementalData:table(nofallback){
         "Asia:Saigon"{
             territory{"VN"}
             aliases{
+                "Asia/Ho_Chi_Minh",
                 "VST",
             }
         }
@@ -11003,9 +12429,6 @@ supplementalData:table(nofallback){
             aliases{
                 "Atlantic/Faroe",
             }
-        }
-        "Atlantic:Jan_Mayen"{
-            territory{"SJ"}
         }
         "Atlantic:Madeira"{
             territory{"PT"}
@@ -11612,7 +13035,6 @@ supplementalData:table(nofallback){
             "PF",
             "PT",
             "RU",
-            "SJ",
             "UA",
             "UM",
             "US",

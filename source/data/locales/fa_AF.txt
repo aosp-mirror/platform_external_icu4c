@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2007 International Business Machines
+// * Copyright (C) 2008 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/fa_AF.xml
@@ -103,10 +103,14 @@ fa_AF{
         UY{"یوروگوای"}
         VC{"سنت وینسنت و گرینادین"}
         VE{"ونزویلا"}
-        WS{"ساموآی غربی"}
+        WS{"ساموآ"}
         ZW{"زیمبابوی"}
     }
     Currencies{
+        AFN{
+            "؋",
+            "افغانی",
+        }
         AUD{
             "AUD",
             "دالر آسترالیا",
@@ -201,14 +205,14 @@ fa_AF{
     }
     NumberPatterns{
         "#,##0.###;'‪'-#,##0.###'‬'",
-        "#,##0.00 ¤;'‪'-#,##0.00'‬' ¤",
+        "#,##0.00 ¤;'‪'-#,##0.00'‬' ¤",
         "'‪'#,##0%'‬'",
         "#E0",
     }
     Scripts{
         Mong{"مغلی"}
     }
-    Version{"1.55"}
+    Version{"1.59"}
     calendar{
         gregorian{
             DateTimeElements:intvector{
@@ -219,16 +223,16 @@ fa_AF{
                 format{
                     abbreviated{
                         "جنو",
-                        "فبروری",
-                        "مارچ",
-                        "اپریل",
+                        "فوریهٔ",
+                        "مارس",
+                        "آوریل",
                         "مـی",
                         "جون",
                         "جول",
-                        "اگست",
-                        "سپتمبر",
-                        "اکتوبر",
-                        "نومبر",
+                        "اوت",
+                        "سپتامبر",
+                        "اکتبر",
+                        "نوامبر",
                         "دسم",
                     }
                     wide{
@@ -271,6 +275,14 @@ fa_AF{
             }
         }
         persian{
+            eras{
+                abbreviated{
+                    "ه‍. ش.",
+                }
+                wide{
+                    "هجری شمسی",
+                }
+            }
             monthNames{
                 format{
                     wide{
@@ -302,6 +314,20 @@ fa_AF{
                         "ج",
                         "د",
                         "ح",
+                    }
+                    wide{
+                        "حمل",
+                        "ثور",
+                        "جوزا",
+                        "سرطان",
+                        "اسد",
+                        "سنبله",
+                        "میزان",
+                        "عقرب",
+                        "قوس",
+                        "جدی",
+                        "دلو",
+                        "حوت",
                     }
                 }
             }

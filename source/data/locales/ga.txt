@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2007 International Business Machines
+// * Copyright (C) 2008 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/ga.xml
@@ -1026,7 +1026,7 @@ ga{
             "Leone Shiarra Leon",
         }
         SOS{
-            "So. Sh.",
+            "Sh.",
             "Scilling na Sómáile",
         }
         SRG{
@@ -1407,7 +1407,7 @@ ga{
         "#,##0%",
         "#E0",
     }
-    Version{"1.61"}
+    Version{"1.65"}
     calendar{
         gregorian{
             AmPmMarkers{

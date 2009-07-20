@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 2007, International Business Machines Corporation and         *
+* Copyright (C) 2007-2008, International Business Machines Corporation and    *
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 */
@@ -23,7 +23,7 @@ U_NAMESPACE_BEGIN
  */
 class CharacterNode : public UMemory {
 public:
-    CharacterNode(UChar32 c, UObjectDeleter *fn, UErrorCode &status);
+    CharacterNode(UChar32 c, UErrorCode &status);
     virtual ~CharacterNode();
 
     inline UChar32 getCharacter(void) const;
@@ -37,7 +37,6 @@ public:
 private:
     UVector fChildren;
     UVector fValues;
-    UObjectDeleter  *fValueDeleter;
     UChar32 fCharacter;
 };
 
@@ -56,10 +55,11 @@ inline const UVector* CharacterNode::getChildNodes(void) const {
 /*
  * Search result handler callback interface used by TextTrieMap search.
  */
-class TextTrieMapSearchResultHandler {
+class TextTrieMapSearchResultHandler : public UMemory {
 public:
     virtual UBool handleMatch(int32_t matchLength,
         const UVector *values, UErrorCode& status) = 0;
+    virtual ~TextTrieMapSearchResultHandler(); //added to avoid warning
 };
 
 /**
@@ -68,7 +68,7 @@ public:
  */
 class TextTrieMap : public UMemory {
 public:
-    TextTrieMap(UBool ignoreCase, UObjectDeleter *valueDeleterFunc);
+    TextTrieMap(UBool ignoreCase);
     virtual ~TextTrieMap();
 
     void put(const UnicodeString &key, void *value, UErrorCode &status);
@@ -78,7 +78,6 @@ public:
 
 private:
     UBool           fIgnoreCase;
-    UObjectDeleter  *fValueDeleter;
     CharacterNode   *fRoot;
 
     void search(CharacterNode *node, const UnicodeString &text, int32_t start,
@@ -373,7 +372,7 @@ ZoneStrings::isShortFormatCommonlyUsed(void) const {
  * TextTrieMapSearchHandler.  This class is used by ZoneStringFormat
  * for collecting search results for localized zone strings.
  */
-class ZoneStringSearchResultHandler : public UMemory, TextTrieMapSearchResultHandler {
+class ZoneStringSearchResultHandler : public TextTrieMapSearchResultHandler {
 public:
     ZoneStringSearchResultHandler(UErrorCode &status);
     virtual ~ZoneStringSearchResultHandler();

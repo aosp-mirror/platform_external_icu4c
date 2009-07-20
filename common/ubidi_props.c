@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2004-2007, International Business Machines
+*   Copyright (C) 2004-2008, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -39,8 +39,6 @@ struct UBiDiProps {
 };
 
 /* data loading etc. -------------------------------------------------------- */
-
-#define UBIDI_HARDCODE_DATA 1
 
 #if UBIDI_HARDCODE_DATA
 
@@ -200,25 +198,23 @@ ubidi_closeProps(UBiDiProps *bdp) {
 
 /* UBiDiProps singleton ----------------------------------------------------- */
 
-static UBiDiProps *gBdpDummy=NULL;
 #if !UBIDI_HARDCODE_DATA
+static UBiDiProps *gBdpDummy=NULL;
 static UBiDiProps *gBdp=NULL;
 static UErrorCode gErrorCode=U_ZERO_ERROR;
 static int8_t gHaveData=0;
-#endif
 
 static UBool U_CALLCONV
 ubidi_cleanup(void) {
     ubidi_closeProps(gBdpDummy);
     gBdpDummy=NULL;
-#if !UBIDI_HARDCODE_DATA
     ubidi_closeProps(gBdp);
     gBdp=NULL;
     gErrorCode=U_ZERO_ERROR;
     gHaveData=0;
-#endif
     return TRUE;
 }
+#endif
 
 U_CFUNC const UBiDiProps *
 ubidi_getSingleton(UErrorCode *pErrorCode) {
@@ -268,6 +264,7 @@ ubidi_getSingleton(UErrorCode *pErrorCode) {
 #endif
 }
 
+#if !UBIDI_HARDCODE_DATA
 U_CAPI const UBiDiProps *
 ubidi_getDummy(UErrorCode *pErrorCode) {
     UBiDiProps *bdp;
@@ -319,6 +316,7 @@ ubidi_getDummy(UErrorCode *pErrorCode) {
         return gBdpDummy;
     }
 }
+#endif
 
 /* set of property starts for UnicodeSet ------------------------------------ */
 

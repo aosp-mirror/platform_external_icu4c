@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 1997-2007, International Business Machines
+*   Copyright (C) 1997-2008, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -33,6 +33,7 @@
 *   11/15/99    helena      Integrated S/390 IEEE support.
 *   04/26/01    Barry N.    OS/400 support for uprv_getDefaultLocaleID
 *   08/15/01    Steven H.   OS/400 support for uprv_getDefaultCodepage
+*   01/03/08    Steven L.   Fake Time Support
 ******************************************************************************
 */
 
@@ -185,6 +186,41 @@ u_bottomNBytesOfDouble(double* d, int n)
 #endif
 }
 
+#if defined (U_DEBUG_FAKETIME)
+/* Override the clock to test things without having to move the system clock. 
+ * Assumes POSIX gettimeofday() will function
+ */
+UDate fakeClock_t0 = 0; /** Time to start the clock from **/
+UDate fakeClock_dt = 0; /** Offset (fake time - real time) **/
+UBool fakeClock_set = FALSE; /** True if fake clock has spun up **/
+static UMTX fakeClockMutex = NULL;
+
+static UDate getUTCtime_real() {
+    struct timeval posixTime;
+    gettimeofday(&posixTime, NULL);
+    return (UDate)(((int64_t)posixTime.tv_sec * U_MILLIS_PER_SECOND) + (posixTime.tv_usec/1000));
+}
+
+static UDate getUTCtime_fake() {
+    umtx_lock(&fakeClockMutex);
+    if(!fakeClock_set) {
+        UDate real = getUTCtime_real();
+        const char *fake_start = getenv("U_FAKETIME_START");
+        if(fake_start!=NULL) {
+            sscanf(fake_start,"%lf",&fakeClock_t0);
+        }
+        fakeClock_dt = fakeClock_t0 - real;
+        fprintf(stderr,"U_DEBUG_FAKETIME was set at compile time, so the ICU clock will start at a preset value\n"
+                       "U_FAKETIME_START=%.0f (%s) for an offset of %.0f ms from the current time %.0f\n",
+                            fakeClock_t0, fake_start, fakeClock_dt, real);
+        fakeClock_set = TRUE;
+    }
+    umtx_unlock(&fakeClockMutex);
+    
+    return getUTCtime_real() + fakeClock_dt;
+}
+#endif
+
 #if defined(U_WINDOWS)
 typedef union {
     int64_t int64;
@@ -208,7 +244,9 @@ typedef union {
 U_CAPI UDate U_EXPORT2
 uprv_getUTCtime()
 {
-#ifdef XP_MAC
+#if defined(U_DEBUG_FAKETIME)
+    return getUTCtime_fake(); /* Hook for overriding the clock */
+#elif defined(XP_MAC)
     time_t t, t1, t2;
     struct tm tmrec;
 
@@ -576,12 +614,12 @@ extern U_IMPORT char *U_TZNAME[];
 #if !UCONFIG_NO_FILE_IO && (defined(U_DARWIN) || defined(U_LINUX) || defined(U_BSD))
 /* These platforms are likely to use Olson timezone IDs. */
 #define CHECK_LOCALTIME_LINK 1
-#if defined(U_LINUX)
-#define TZDEFAULT       "/etc/localtime"
-#define TZZONEINFO      "/usr/share/zoneinfo/"
-#else
+#if defined(U_DARWIN)
 #include <tzfile.h>
 #define TZZONEINFO      (TZDIR "/")
+#else
+#define TZDEFAULT       "/etc/localtime"
+#define TZZONEINFO      "/usr/share/zoneinfo/"
 #endif
 static char gTimeZoneBuffer[PATH_MAX];
 static char *gTimeZoneBufferPtr = NULL;
@@ -851,6 +889,10 @@ u_setDataDirectory(const char *directory) {
     else {
         length=(int32_t)uprv_strlen(directory);
         newDataDir = (char *)uprv_malloc(length + 2);
+        /* Exit out if newDataDir could not be created. */
+        if (newDataDir == NULL) {
+            return;
+        }
         uprv_strcpy(newDataDir, directory);
 
 #if (U_FILE_SEP_CHAR != U_FILE_ALT_SEP_CHAR)
@@ -1152,6 +1194,10 @@ The leftmost codepage (.xxx) wins.
     if ((p = uprv_strchr(posixID, '.')) != NULL) {
         /* assume new locale can't be larger than old one? */
         correctedPOSIXLocale = uprv_malloc(uprv_strlen(posixID)+1);
+        /* Exit on memory allocation error. */
+        if (correctedPOSIXLocale == NULL) {
+            return NULL;
+        }
         uprv_strncpy(correctedPOSIXLocale, posixID, p-posixID);
         correctedPOSIXLocale[p-posixID] = 0;
 
@@ -1165,6 +1211,10 @@ The leftmost codepage (.xxx) wins.
     if ((p = uprv_strrchr(posixID, '@')) != NULL) {
         if (correctedPOSIXLocale == NULL) {
             correctedPOSIXLocale = uprv_malloc(uprv_strlen(posixID)+1);
+            /* Exit on memory allocation error. */
+            if (correctedPOSIXLocale == NULL) {
+                return NULL;
+            }
             uprv_strncpy(correctedPOSIXLocale, posixID, p-posixID);
             correctedPOSIXLocale[p-posixID] = 0;
         }
@@ -1208,6 +1258,10 @@ The leftmost codepage (.xxx) wins.
     else {
         /* copy it, just in case the original pointer goes away.  See j2395 */
         correctedPOSIXLocale = (char *)uprv_malloc(uprv_strlen(posixID) + 1);
+        /* Exit on memory allocation error. */
+        if (correctedPOSIXLocale == NULL) {
+            return NULL;
+        }
         posixID = uprv_strcpy(correctedPOSIXLocale, posixID);
     }
 
@@ -1409,6 +1463,13 @@ remapPlatformDependentCodepage(const char *locale, const char *name) {
         */
         name = "eucjis";
     }
+    else if (uprv_strcmp(name, "646") == 0) {
+        /*
+         * The default codepage given by Solaris is 646 but the C library routines treat it as if it was 
+         * ISO-8859-1 instead of US-ASCII(646).
+         */
+        name = "ISO-8859-1";
+    }
 #elif defined(U_DARWIN)
     if (locale == NULL && *name == 0) {
         /*
@@ -1419,7 +1480,12 @@ remapPlatformDependentCodepage(const char *locale, const char *name) {
         name = "UTF-8";
     }
 #elif defined(U_HPUX)
-    if (uprv_strcmp(name, "eucJP") == 0) {
+    if (locale != NULL && uprv_strcmp(locale, "zh_HK") == 0 && uprv_strcmp(name, "big5") == 0) {
+        /* HP decided to extend big5 as hkbig5 even though it's not compatible :-( */
+        /* zh_TW.big5 is not the same charset as zh_HK.big5! */
+        name = "hkbig5";
+    }
+    else if (uprv_strcmp(name, "eucJP") == 0) {
         /*
         ibm-1350 is the best match, but unavailable.
         ibm-954 is mostly a superset of ibm-1350.

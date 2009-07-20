@@ -75,7 +75,6 @@
 				SuppressStartupBanner="true"
 				ProgramDatabaseFile=".\Release/genrb.pdb"
 				SubSystem="1"
-				OptimizeForWindows98="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -245,7 +244,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\wrtxml.c"
+				RelativePath=".\wrtxml.cpp"
 				>
 			</File>
 		</Filter>

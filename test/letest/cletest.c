@@ -1,7 +1,7 @@
 /*
  *******************************************************************************
  *
- *   Copyright (C) 1999-2007, International Business Machines
+ *   Copyright (C) 1999-2008, International Business Machines
  *   Corporation and others.  All Rights Reserved.
  *
  *******************************************************************************
@@ -340,13 +340,25 @@ static void checkFontVersion(le_font *font, const char *testVersionString,
     if (fontChecksum != testChecksum) {
         const char *fontVersionString = le_getNameString(font, NAME_VERSION_STRING,
             PLATFORM_MACINTOSH, MACINTOSH_ROMAN, MACINTOSH_ENGLISH);
+        const LEUnicode16 *uFontVersionString = NULL;
+
+        if (fontVersionString == NULL) {
+            uFontVersionString = le_getUnicodeNameString(font, NAME_VERSION_STRING,
+                PLATFORM_MICROSOFT, MICROSOFT_UNICODE_BMP, MICROSOFT_ENGLISH);
+        }
 
         log_info("Test %s: this may not be the same font used to generate the test data.\n", testID);
-        log_info("Your font's version string is \"%s\"\n", fontVersionString);
+
+        if (uFontVersionString != NULL) {
+            log_info("Your font's version string is \"%S\"\n", uFontVersionString);
+            le_deleteUnicodeNameString(font, uFontVersionString);
+        } else {
+            log_info("Your font's version string is \"%s\"\n", fontVersionString);
+            le_deleteNameString(font, fontVersionString);
+        }
+
         log_info("The expected version string is \"%s\"\n", testVersionString);
         log_info("If you see errors, they may be due to the version of the font you're using.\n");
-
-        le_deleteNameString(font, fontVersionString);
     }
 }
 
@@ -408,15 +420,19 @@ static le_font *openFont(const char *fontName, const char *checksum, const char 
 
 static le_bool getRTL(const LEUnicode *text, le_int32 charCount)
 {
-    UBiDiLevel paraLevel;
+    UBiDiLevel level;
+    le_int32 limit = -1;
     UErrorCode status = U_ZERO_ERROR;
     UBiDi *ubidi = ubidi_openSized(charCount, 0, &status);
 
     ubidi_setPara(ubidi, text, charCount, UBIDI_DEFAULT_LTR, NULL, &status);
-    paraLevel = ubidi_getParaLevel(ubidi);
+    
+    /* TODO: Should check that there's only a single logical run... */
+    ubidi_getLogicalRun(ubidi, 0, &limit, &level);
+
     ubidi_close(ubidi);
 
-    return paraLevel & 1;
+    return level & 1;
 }
 
 static void doTestCase (const char *testID,

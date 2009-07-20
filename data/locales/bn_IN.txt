@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2007 International Business Machines
+// * Copyright (C) 2008 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/bn_IN.xml
@@ -30,6 +30,7 @@ bn_IN{
         am{"am"}
         an{"an"}
         ang{"ang"}
+        anp{"আঙ্গিকা"}
         apa{"apa"}
         ar{"ar"}
         arc{"arc"}
@@ -81,14 +82,29 @@ bn_IN{
         ce{"ce"}
         ceb{"ceb"}
         cel{"cel"}
+        ch{"চামোরো"}
+        chn{"চিনুক জার্গন"}
+        cho{"চকটোও"}
+        chp{"চিপেওয়াইয়ান"}
+        chy{"চেয়েনি"}
+        cu{"চার্চ স্লাভিক"}
         de{"de"}
+        de_AT{"অস্ট্রিয়ান জারমান"}
         en{"en"}
+        en_AU{"অস্ট্রেলিয়ান ইংরাজী"}
+        en_CA{"ক্যানাডিয়ান ইংরেজি"}
+        en_GB{"ব্রিটিশ ইংরেজী"}
         es{"es"}
         fr{"fr"}
+        fr_CA{"ক্যানাডিয়ান ফরাসী"}
         it{"it"}
         ja{"ja"}
+        map{"অস্ট্রোনেসিয়ান"}
         pt{"pt"}
         ru{"ru"}
+        rup{"আরমেনিয়ান"}
+        tut{"আলটাইক"}
+        zbl{"ব্লিসসিম্বলস"}
         zh{"zh"}
     }
     Scripts{
@@ -173,7 +189,7 @@ bn_IN{
         Sinh{"Sinh"}
         Sylo{"Sylo"}
     }
-    Version{"1.52"}
+    Version{"1.56"}
     calendar{
         gregorian{
             weekend:intvector{

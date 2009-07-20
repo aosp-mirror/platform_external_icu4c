@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2007 International Business Machines
+// * Copyright (C) 2008 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/ur.xml
@@ -208,7 +208,10 @@ ur{
             "جنوبی افریقی رانڈ",
         }
     }
-    ExemplarCharacters{"[ء-ؤ ئ-ب ٻ پ ة-ث ٹ ٺ ټ ٽ ج چ ح-ذ ڈ ر ز ڑ ژ س-غ ف ق ک گ ل-ن ں ه ھ ہ و ي ی ے]"}
+    ExemplarCharacters{
+        "[أ ؤ ا آ ب پ ت ٹ ث ج چ ح-د ڈ ذ ر ڑ ز ژ س-غ ف ق ک گ ل-ن ں و ہ ی ء ئ ے ٻ ة ٺ ټ"
+        " ٽ ه ھ ي]"
+    }
     Languages{
         af{"ايفريکانز"}
         am{"امہاری"}
@@ -227,6 +230,7 @@ ur{
         de{"جرمن"}
         el{"يونانی"}
         en{"انگريزی"}
+        en_GB{"برطانوی انگریزی"}
         eo{"ايسپرانٹو"}
         et{"اسٹونين"}
         eu{"باسکی"}
@@ -292,20 +296,73 @@ ur{
     LocaleScript{
         "Arab",
     }
-    Version{"1.46"}
+    NumberElements{
+        ".",
+        ",",
+        ";",
+        "%",
+        "0",
+        "#",
+        "-",
+        "E",
+        "‰",
+        "∞",
+        "NaN",
+        "+",
+    }
+    NumberPatterns{
+        "#,##0.###",
+        "¤#,##0.00",
+        "#,##0%",
+        "#E0",
+    }
+    Version{"1.54"}
     calendar{
         gregorian{
+            DateTimePatterns{
+                "h:mm:ss a v",
+                "h:mm:ss a z",
+                "h:mm:ss a",
+                "h:mm a",
+                "EEEE, d, MMMM yyyy",
+                "d, MMMM yyyy",
+                "d, MMM yyyy",
+                "d/M/yy",
+                "{1} {0}",
+            }
             dayNames{
                 format{
                     wide{
                         "اتوار",
                         "پير",
                         "منگل",
-                        "بدھ",
+                        "بده",
                         "جمعرات",
                         "جمعہ",
                         "ہفتہ",
                     }
+                }
+            }
+            eras{
+                abbreviated{
+                    "ق م",
+                    "عيسوی سن",
+                }
+                wide{
+                    "قبل مسيح",
+                    "عيسوی سن",
+                }
+            }
+            fields{
+                day{
+                    relative{
+                        "-1"{"کل"}
+                        "0"{"آج"}
+                        "1"{"کل"}
+                    }
+                }
+                dayperiod{
+                    dn{"رات/صبح"}
                 }
             }
             monthNames{
@@ -315,14 +372,44 @@ ur{
                         "فروری",
                         "مار چ",
                         "اپريل",
-                        "مئی",
+                        "مئ",
                         "جون",
-                        "جولائی",
+                        "جولائ",
                         "اگست",
                         "ستمبر",
                         "اکتوبر",
                         "نومبر",
                         "دسمبر",
+                    }
+                }
+            }
+            quarters{
+                format{
+                    wide{
+                        "پہلی سہ ماہی",
+                        "دوسری سہ ماہی",
+                        "تيسری سہ ماہی",
+                        "چوتهی سہ ماہی",
+                    }
+                }
+            }
+        }
+        islamic{
+            monthNames{
+                format{
+                    wide{
+                        "محرم",
+                        "صفر",
+                        "ر بيع الاول",
+                        "ر بيع الثانی",
+                        "جمادی الاول",
+                        "جمادی الثانی",
+                        "رجب",
+                        "شعبان",
+                        "رمضان",
+                        "شوال",
+                        "Dhuʻl-Qiʻdah",
+                        "Dhuʻl-Hijjah",
                     }
                 }
             }

@@ -1,6 +1,6 @@
 /*
  ******************************************************************************
- * Copyright (C) 1996-2007, International Business Machines Corporation and   *
+ * Copyright (C) 1996-2008, International Business Machines Corporation and   *
  * others. All Rights Reserved.                                               *
  ******************************************************************************
  */
@@ -49,6 +49,7 @@
 #include "umutex.h"
 #include "servloc.h"
 #include "ustrenum.h"
+#include "uresimp.h"
 #include "ucln_in.h"
 
 static U_NAMESPACE_QUALIFIER Locale* availableLocaleList = NULL;
@@ -176,8 +177,8 @@ public:
             Locale canonicalLocale("");
             Locale currentLocale("");
             
-            result->setLocales(lkey.canonicalLocale(canonicalLocale), 
-                LocaleUtility::initLocaleFromName(*actualReturn, currentLocale));
+            LocaleUtility::initLocaleFromName(*actualReturn, currentLocale);
+            result->setLocales(lkey.canonicalLocale(canonicalLocale), currentLocale, currentLocale);
         }
         return result;
     }
@@ -325,7 +326,7 @@ Collator* U_EXPORT2 Collator::createInstance(const Locale& desiredLocale,
         // correctly already, and we don't want to overwrite it. (TODO
         // remove in 3.0) [aliu]
         if (*actualLoc.getName() != 0) {
-            result->setLocales(desiredLocale, actualLoc);
+            result->setLocales(desiredLocale, actualLoc, actualLoc);
         }
         return result;
     }
@@ -348,7 +349,7 @@ Collator* Collator::makeInstance(const Locale&  desiredLocale,
     // non-table-based Collator in some other way, when it sees that it needs 
     // to.
     // The specific caution is this: RuleBasedCollator(Locale&) will ALWAYS 
-    // return a valid collation object, if the system if functioning properly.  
+    // return a valid collation object, if the system is functioning properly.  
     // The reason is that it will fall back, use the default locale, and even 
     // use the built-in default collation rules. THEREFORE, createInstance() 
     // should in general ONLY CALL RuleBasedCollator(Locale&) IF IT KNOWS IN 
@@ -552,7 +553,7 @@ int32_t U_EXPORT2 Collator::getBound(const uint8_t       *source,
 }
 
 void
-Collator::setLocales(const Locale& /* requestedLocale */, const Locale& /* validLocale */) {
+Collator::setLocales(const Locale& /* requestedLocale */, const Locale& /* validLocale */, const Locale& /*actualLocale*/) {
 }
 
 UnicodeSet *Collator::getTailoredSet(UErrorCode &status) const
@@ -705,7 +706,9 @@ public:
     virtual StringEnumeration * clone() const
     {
         CollationLocaleListEnumeration *result = new CollationLocaleListEnumeration();
-        result->index = index;
+        if (result) {
+            result->index = index;
+        }
         return result;
     }
 

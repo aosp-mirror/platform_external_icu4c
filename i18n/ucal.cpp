@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-*   Copyright (C) 1996-2007, International Business Machines
+*   Copyright (C) 1996-2008, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *******************************************************************************
 */
@@ -137,6 +137,22 @@ ucal_close(UCalendar *cal)
 {
 
   delete (Calendar*) cal;
+}
+
+U_CAPI UCalendar* U_EXPORT2 
+ucal_clone(const UCalendar* cal,
+           UErrorCode*      status)
+{
+  if(U_FAILURE(*status)) return 0;
+  
+  Calendar* res = ((Calendar*)cal)->clone();
+
+  if(res == 0) {
+    *status = U_MEMORY_ALLOCATION_ERROR;
+    return 0;
+  }
+
+  return (UCalendar*) res;
 }
 
 U_CAPI void  U_EXPORT2
@@ -467,6 +483,32 @@ U_CAPI const char * U_EXPORT2
 ucal_getTZDataVersion(UErrorCode* status)
 {
     return TimeZone::getTZDataVersion(*status);
+}
+
+U_CAPI int32_t U_EXPORT2
+ucal_getCanonicalTimeZoneID(const UChar* id, int32_t len,
+                            UChar* result, int32_t resultCapacity, UBool *isSystemID, UErrorCode* status) {
+    if(status == 0 || U_FAILURE(*status)) {
+        return 0;
+    }
+    if (isSystemID) {
+        *isSystemID = FALSE;
+    }
+    if (id == 0 || len == 0 || result == 0 || resultCapacity <= 0) {
+        *status = U_ILLEGAL_ARGUMENT_ERROR;
+        return 0;
+    }
+    int32_t reslen = 0;
+    UnicodeString canonical;
+    UBool systemID = FALSE;
+    TimeZone::getCanonicalID(UnicodeString(id, len), canonical, systemID, *status);
+    if (U_SUCCESS(*status)) {
+        if (isSystemID) {
+            *isSystemID = systemID;
+        }
+        reslen = canonical.extract(result, resultCapacity, *status);
+    }
+    return reslen;
 }
 
 #endif /* #if !UCONFIG_NO_FORMATTING */

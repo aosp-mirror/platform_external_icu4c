@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2004-2007, International Business Machines
+*   Copyright (C) 2004-2008, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -44,6 +44,9 @@ ucase_close(UCaseProps *csp);
 U_CAPI const UCaseProps * U_EXPORT2
 ucase_getSingleton(UErrorCode *pErrorCode);
 
+#define UCASE_HARDCODE_DATA 1
+
+#if !UCASE_HARDCODE_DATA
 /**
  * Get a singleton dummy object, one that works with no real data.
  * This can be used when the real data is not available.
@@ -51,6 +54,7 @@ ucase_getSingleton(UErrorCode *pErrorCode);
  */
 U_CAPI const UCaseProps * U_EXPORT2
 ucase_getDummy(UErrorCode *pErrorCode);
+#endif
 
 
 U_CAPI int32_t U_EXPORT2
@@ -68,6 +72,15 @@ ucase_addPropertyStarts(const UCaseProps *csp, const USetAdder *sa, UErrorCode *
  */
 U_CFUNC int32_t
 ucase_getCaseLocale(const char *locale, int32_t *locCache);
+
+/* Casing locale types for ucase_getCaseLocale */
+enum {
+    UCASE_LOC_UNKNOWN,
+    UCASE_LOC_ROOT,
+    UCASE_LOC_TURKISH,
+    UCASE_LOC_LITHUANIAN,
+    UCASE_LOC_DUTCH
+};
 
 /**
  * Bit mask for getting just the options from a string compare options word

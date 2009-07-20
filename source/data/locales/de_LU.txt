@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2007 International Business Machines
+// * Copyright (C) 2008 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/de_LU.xml
@@ -15,13 +15,13 @@ de_LU{
                 /**
                  * Duplicated from NumberPatterns resource
                  */
-                "#,##0.00 ¤",
+                "#,##0.00 ¤",
                 ".",
                 ",",
             }
         }
     }
-    Version{"1.49"}
+    Version{"1.51"}
     calendar{
         gregorian{
             DateTimeElements:intvector{

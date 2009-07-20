@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 2007, International Business Machines Corporation and         *
+* Copyright (C) 2007-2008, International Business Machines Corporation and    *
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 */
@@ -37,16 +37,16 @@ class UVector;
 class U_I18N_API ZoneMeta {
 public:
     /**
-     * Return the canonical id for this tzid, which might be the id itself.
-     * If there is no canonical id for it, return the passed-in id.
+     * Return the canonical id for this system tzid, which might be the id itself.
+     * If the given system tzid is not know, U_ILLEGAL_ARGUMENT_ERROR is set in the status.
      */
-    static UnicodeString& getCanonicalID(const UnicodeString &tzid, UnicodeString &canonicalID);
+    static UnicodeString& U_EXPORT2 getCanonicalSystemID(const UnicodeString &tzid, UnicodeString &systemID, UErrorCode& status);
 
     /**
      * Return the canonical country code for this tzid.  If we have none, or if the time zone
      * is not associated with a country, return null.
      */
-    static UnicodeString& getCanonicalCountry(const UnicodeString &tzid, UnicodeString &canonicalCountry);
+    static UnicodeString& U_EXPORT2 getCanonicalCountry(const UnicodeString &tzid, UnicodeString &canonicalCountry);
 
     /**
      * Return the country code if this is a 'single' time zone that can fallback to just
@@ -54,26 +54,25 @@ public:
      * to see that there is a localization for the country in order to implement
      * tr#35 appendix J step 5.)
      */
-    static UnicodeString& getSingleCountry(const UnicodeString &tzid, UnicodeString &country);
+    static UnicodeString& U_EXPORT2 getSingleCountry(const UnicodeString &tzid, UnicodeString &country);
 
     /**
      * Returns a CLDR metazone ID for the given Olson tzid and time.
      */
-    static UnicodeString& getMetazoneID(const UnicodeString &tzid, UDate date, UnicodeString &result);
+    static UnicodeString& U_EXPORT2 getMetazoneID(const UnicodeString &tzid, UDate date, UnicodeString &result);
     /**
      * Returns an Olson ID for the ginve metazone and region
      */
-    static UnicodeString& getZoneIdByMetazone(const UnicodeString &mzid, const UnicodeString &region, UnicodeString &result);
+    static UnicodeString& U_EXPORT2 getZoneIdByMetazone(const UnicodeString &mzid, const UnicodeString &region, UnicodeString &result);
 
-    static const UVector* getMetazoneMappings(const UnicodeString &tzid);
+    static const UVector* U_EXPORT2 getMetazoneMappings(const UnicodeString &tzid);
 
 private:
+    ZoneMeta(); // Prevent construction.
+    static const CanonicalMapEntry* U_EXPORT2 getCanonicalInfo(const UnicodeString &tzid);
+
     static void initialize(void);
-
-    static const CanonicalMapEntry* getCanonicalInfo(const UnicodeString &tzid);
-
     static Hashtable* createCanonicalMap(void);
-    static Hashtable* createOlsonToMetaMapOld(void);
     static Hashtable* createOlsonToMetaMap(void);
     static Hashtable* createMetaToOlsonMap(void);
 };

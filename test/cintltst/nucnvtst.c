@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1997-2007, International Business Machines Corporation and
+ * Copyright (c) 1997-2008, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /*******************************************************************************
@@ -81,6 +81,7 @@ static void TestJitterbug2346(void);
 static void TestJitterbug2411(void);
 static void TestJB5275(void);
 static void TestJB5275_1(void);
+static void TestJitterbug6175(void);
 #endif
 
 static void TestRoundTrippingAllUTF(void);
@@ -297,6 +298,7 @@ void addTestNewConvert(TestNode** root)
 #if !UCONFIG_NO_LEGACY_CONVERSION
    addTest(root, &TestJitterbug2346, "tsconv/nucnvtst/TestJitterbug2346");
    addTest(root, &TestJitterbug2411, "tsconv/nucnvtst/TestJitterbug2411");
+   addTest(root, &TestJitterbug6175, "tsconv/nucnvtst/TestJitterbug6175");
 #endif
 
 }
@@ -3202,7 +3204,7 @@ TestISO_2022_JP() {
         0x0043, 0x0044, 0x0045, 0x0046, 0x0047, 0x0048, 0x0049, 0x004A, 0x000D, 0x000A,
         0x004B, 0x004C, 0x004D, 0x004E, 0x004F, 0x0050, 0x0051, 0x0052, 0x000D, 0x000A,
         0x3005, 0x3006, 0x3007, 0x30FC, 0x2015, 0x2010, 0xFF0F, 0x005C, 0x000D, 0x000A,
-        0x301C, 0x2016, 0x2026, 0x2025, 0x2018, 0x2019, 0x201C, 0x000D, 0x000A,
+        0x3013, 0x2018, 0x2026, 0x2025, 0x2018, 0x2019, 0x201C, 0x000D, 0x000A,
         0x201D, 0x3014, 0x000D, 0x000A,
         0x0053, 0x0054, 0x0055, 0x0056, 0x0057, 0x0058, 0x0059, 0x005A, 0x000D, 0x000A,
         0x0053, 0x0054, 0x0055, 0x0056, 0x0057, 0x0058, 0x0059, 0x005A, 0x000D, 0x000A,
@@ -3730,7 +3732,7 @@ TestISO_2022_JP_1() {
         0x52C8, 0x52CC, 0x52CF, 0x52D1, 0x52D4, 0x52D6, 0x52DB, 0x52DC, 0x000D, 0x000A,
         0x004B, 0x004C, 0x004D, 0x004E, 0x004F, 0x0050, 0x0051, 0x0052, 0x000D, 0x000A,
         0x3005, 0x3006, 0x3007, 0x30FC, 0x2015, 0x2010, 0xFF0F, 0x005C, 0x000D, 0x000A,
-        0x301C, 0x2016, 0x2026, 0x2025, 0x2018, 0x2019, 0x201C, 0x000D, 0x000A,
+        0x3013, 0x2018, 0x2026, 0x2025, 0x2018, 0x2019, 0x201C, 0x000D, 0x000A,
         0x201D, 0x000D, 0x000A,
         0x0053, 0x0054, 0x0055, 0x0056, 0x0057, 0x0058, 0x0059, 0x005A, 0x000D, 0x000A,
         0x4F94, 0x4F97, 0x52BA, 0x52BB, 0x52BD, 0x52C0, 0x52C4, 0x52C6, 0x000D, 0x000A,
@@ -4454,6 +4456,70 @@ TestISO_2022_CN() {
     free(uBuf);
     free(cBuf);
     free(offsets);
+}
+
+/* Tests for empty segments in ISO-2022-JP/KR/CN, HZ, check that UConverterCallbackReason is UCNV_IRREGULAR */
+typedef struct {
+    const char *    converterName;
+    const char *    inputText;
+    int             inputTextLength;
+} EmptySegmentTest;
+
+/* Callback for TestJitterbug6175, should only get called for empty segment errors */
+static void UCNV_TO_U_CALLBACK_EMPTYSEGMENT( const void *context, UConverterToUnicodeArgs *toArgs, const char* codeUnits,
+                                             int32_t length, UConverterCallbackReason reason, UErrorCode * err ) {
+    if (reason > UCNV_IRREGULAR) {
+        return;
+    }
+    if (reason != UCNV_IRREGULAR) {
+        log_err("toUnicode callback invoked for empty segment but reason is not UCNV_IRREGULAR\n");
+    }
+    /* Standard stuff below from UCNV_TO_U_CALLBACK_SUBSTITUTE */
+    *err = U_ZERO_ERROR;
+    ucnv_cbToUWriteSub(toArgs,0,err);
+}
+
+enum { kEmptySegmentToUCharsMax = 64 };
+static void TestJitterbug6175(void) {
+    static const char  iso2022jp_a[] = { 0x61, 0x62, 0x1B,0x24,0x42, 0x1B,0x28,0x42, 0x63, 0x64, 0x0D, 0x0A };
+    static const char  iso2022kr_a[] = { 0x1B,0x24,0x29,0x43, 0x61, 0x0E, 0x0F, 0x62, 0x0D, 0x0A };
+    static const char  iso2022cn_a[] = { 0x61, 0x1B,0x24,0x29,0x41, 0x62, 0x0E, 0x0F, 0x1B,0x24,0x2A,0x48, 0x1B,0x4E, 0x6A,0x65, 0x63, 0x0D, 0x0A };
+    static const char  iso2022cn_b[] = { 0x61, 0x1B,0x24,0x29,0x41, 0x62, 0x0E, 0x1B,0x24,0x29,0x47, 0x68,0x64, 0x0F, 0x63, 0x0D, 0x0A };
+    static const char  hzGB2312_a[]  = { 0x61, 0x62, 0x7E,0x7B, 0x7E,0x7D, 0x63, 0x64 };
+    static const EmptySegmentTest emptySegmentTests[] = {
+        /* converterName inputText    inputTextLength */
+        { "ISO-2022-JP", iso2022jp_a, sizeof(iso2022jp_a) },
+        { "ISO-2022-KR", iso2022kr_a, sizeof(iso2022kr_a) },
+        { "ISO-2022-CN", iso2022cn_a, sizeof(iso2022cn_a) },
+        { "ISO-2022-CN", iso2022cn_b, sizeof(iso2022cn_b) },
+        { "HZ-GB-2312",  hzGB2312_a,  sizeof(hzGB2312_a)  },
+        /* terminator: */
+        { NULL,          NULL,        0,                  }
+    };
+    const EmptySegmentTest * testPtr;
+    for (testPtr = emptySegmentTests; testPtr->converterName != NULL; ++testPtr) {
+        UErrorCode   err = U_ZERO_ERROR;
+        UConverter * cnv = ucnv_open(testPtr->converterName, &err);
+        if (U_FAILURE(err)) {
+            log_data_err("Unable to open %s converter: %s\n", testPtr->converterName, u_errorName(err));
+            return;
+        }
+        ucnv_setToUCallBack(cnv, UCNV_TO_U_CALLBACK_EMPTYSEGMENT, NULL, NULL, NULL, &err);
+        if (U_FAILURE(err)) {
+            log_data_err("Unable to setToUCallBack for %s converter: %s\n", testPtr->converterName, u_errorName(err));
+            ucnv_close(cnv);
+            return;
+        }
+        {
+            UChar         toUChars[kEmptySegmentToUCharsMax];
+            UChar *       toUCharsPtr = toUChars;
+            const UChar * toUCharsLimit = toUCharsPtr + kEmptySegmentToUCharsMax;
+            const char *  inCharsPtr = testPtr->inputText;
+            const char *  inCharsLimit = inCharsPtr + testPtr->inputTextLength;
+            ucnv_toUnicode(cnv, &toUCharsPtr, toUCharsLimit, &inCharsPtr, inCharsLimit, NULL, TRUE, &err);
+        }
+        ucnv_close(cnv);
+    }
 }
 
 static void
@@ -5214,12 +5280,13 @@ static void TestJitterbug981(){
     int numNeeded=0;
     utf8cnv = ucnv_open ("utf8", &status);
     if(U_FAILURE(status)){
-        log_err("Could not open UTF-8 converter. Error: %s", u_errorName(status));
+        log_err("Could not open UTF-8 converter. Error: %s\n", u_errorName(status));
         return;
     }
     myCollator = ucol_open("zh", &status);
     if(U_FAILURE(status)){
-        log_err("Could not open collator for zh locale. Error: %s", u_errorName(status));
+        log_err("Could not open collator for zh locale. Error: %s\n", u_errorName(status));
+        ucnv_close(utf8cnv);
         return;
     }
 

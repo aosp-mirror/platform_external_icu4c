@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1997-2007, International Business Machines Corporation and
+ * Copyright (c) 1997-2008, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /********************************************************************************
@@ -35,6 +35,7 @@
 
 void addNumForTest(TestNode** root);
 static void TestTextAttributeCrash(void);
+static void TestNBSPInPattern(void);
 
 #define TESTCASE(x) addTest(root, &x, "tsformat/cnumtst/" #x)
 
@@ -48,6 +49,7 @@ void addNumForTest(TestNode** root)
     TESTCASE(TestCurrencyRegression);
     TESTCASE(TestTextAttributeCrash);
     TESTCASE(TestRBNFFormat);
+    TESTCASE(TestNBSPInPattern);
 }
 
 /** copy src to dst with unicode-escapes for values < 0x20 and > 0x7e, null terminate if possible */
@@ -775,6 +777,7 @@ static void TestSignificantDigits()
     fmt=unum_open(UNUM_IGNORE, temp, -1, NULL, NULL,&status);
     if (U_FAILURE(status)) {
         log_err("got unexpected error for unum_open: '%s'\n", u_errorName(status));
+        return;
     }
     unum_setAttribute(fmt, UNUM_SIGNIFICANT_DIGITS_USED, TRUE);
     unum_setAttribute(fmt, UNUM_MAX_SIGNIFICANT_DIGITS, 6);
@@ -1224,25 +1227,25 @@ static void TestRBNFFormat() {
     u_uastrcpy(pat, "#,##0.0#;(#,##0.0#)");
     formats[0] = unum_open(UNUM_PATTERN_DECIMAL, pat, -1, "en_US", &perr, &status);
     if (U_FAILURE(status)) {
-        log_err("unable to open decimal pattern");
+        log_err("unable to open decimal pattern\n");
     }
 
     status = U_ZERO_ERROR;
     formats[1] = unum_open(UNUM_SPELLOUT, NULL, 0, "en_US", &perr, &status);
     if (U_FAILURE(status)) {
-        log_err("unable to open spellout");
+        log_err("unable to open spellout\n");
     }
 
     status = U_ZERO_ERROR;
     formats[2] = unum_open(UNUM_ORDINAL, NULL, 0, "en_US", &perr, &status);
     if (U_FAILURE(status)) {
-        log_err("unable to open ordinal");
+        log_err("unable to open ordinal\n");
     }
 
     status = U_ZERO_ERROR;
     formats[3] = unum_open(UNUM_DURATION, NULL, 0, "en_US", &perr, &status);
     if (U_FAILURE(status)) {
-        log_err("unable to open duration");
+        log_err("unable to open duration\n");
     }
 
     status = U_ZERO_ERROR;
@@ -1285,7 +1288,11 @@ static void TestRBNFFormat() {
     u_strcat(pat, tempUChars);
     formats[4] = unum_open(UNUM_PATTERN_RULEBASED, pat, -1, "en_US", &perr, &status);
     if (U_FAILURE(status)) {
-        log_err("unable to open rulebased pattern");
+        log_err("unable to open rulebased pattern\n");
+    }
+    if (U_FAILURE(status)) {
+        log_err("Something failed with %s\n", u_errorName(status));
+        return;
     }
 
     for (i = 0; i < COUNT; ++i) {
@@ -1394,6 +1401,84 @@ static void TestTextAttributeCrash(void) {
         log_err("Didn't get expected positive result\n");
     }
     unum_close(nf);
+}
+
+static void TestNBSPPatternRtNum(const char *testcase, UNumberFormat *nf, double myNumber) {
+    UErrorCode status = U_ZERO_ERROR;
+    UChar myString[20];
+    char tmpbuf[200];
+    double aNumber = -1.0;
+    unum_formatDouble(nf, myNumber, myString, 20, NULL, &status);
+    log_verbose("%s: formatted %.2f into %s\n", testcase, myNumber, u_austrcpy(tmpbuf, myString));    
+    if(U_FAILURE(status)) {
+        log_err("%s: failed format of %.2g with %s\n", testcase, myNumber, u_errorName(status));
+        return;
+    }
+    aNumber = unum_parse(nf, myString, -1, NULL, &status);
+    if(U_FAILURE(status)) {
+        log_err("%s: failed parse with %s\n", testcase, u_errorName(status));
+        return;
+    }
+    if(uprv_fabs(aNumber-myNumber)>.001) {
+        log_err("FAIL: %s: formatted %.2f, parsed into %.2f\n", testcase, myNumber, aNumber);
+    } else {
+        log_verbose("PASS: %s: formatted %.2f, parsed into %.2f\n", testcase, myNumber, aNumber);
+    }
+}
+
+static void TestNBSPPatternRT(const char *testcase, UNumberFormat *nf) {
+    TestNBSPPatternRtNum(testcase, nf, 12345.);
+    TestNBSPPatternRtNum(testcase, nf, -12345.);
+}
+
+static void TestNBSPInPattern(void) {
+    UErrorCode status = U_ZERO_ERROR;
+    UNumberFormat* nf = NULL;
+    const char *testcase;
+    
+    
+    testcase="ar_AE UNUM_CURRENCY";
+    nf  = unum_open(UNUM_CURRENCY, NULL, -1, "ar_AE", NULL, &status);
+    if(U_FAILURE(status)) {
+        log_err("%s: unum_open failed with %s\n", testcase, u_errorName(status));
+    }
+    TestNBSPPatternRT(testcase, nf);
+    
+    /* if we don't have CLDR 1.6 data, bring out the problem anyways */
+    {
+#define SPECIAL_PATTERN "\\u00A4\\u00A4'\\u062f.\\u0625.\\u200f\\u00a0'###0.00"
+        UChar pat[200];
+        char testcase2[200];
+        testcase = "ar_AE special pattern: " SPECIAL_PATTERN;
+        u_unescape(SPECIAL_PATTERN, pat, sizeof(pat)/sizeof(pat[0]));
+        unum_applyPattern(nf, FALSE, pat, -1, NULL, &status);
+        if(U_FAILURE(status)) { 
+            log_err("%s: unum_applyPattern failed with %s\n", testcase, u_errorName(status));
+        } else {
+            TestNBSPPatternRT(testcase, nf);
+        }
+#undef SPECIAL_PATTERN
+    }
+    unum_close(nf); status = U_ZERO_ERROR;
+    
+    testcase="ar_AE UNUM_DECIMAL";
+    nf  = unum_open(UNUM_DECIMAL, NULL, -1, "ar_AE", NULL, &status);
+    if(U_FAILURE(status)) {
+        log_err("%s: unum_open failed with %s\n", testcase, u_errorName(status));
+    }
+    TestNBSPPatternRT(testcase, nf);
+    unum_close(nf); status = U_ZERO_ERROR;
+    
+    testcase="ar_AE UNUM_PERCENT";
+    nf  = unum_open(UNUM_PERCENT, NULL, -1, "ar_AE", NULL, &status);
+    if(U_FAILURE(status)) {
+        log_err("%s: unum_open failed with %s\n", testcase, u_errorName(status));
+    }    
+    TestNBSPPatternRT(testcase, nf);    
+    unum_close(nf); status = U_ZERO_ERROR;
+    
+    
+    
 }
 
 #endif /* #if !UCONFIG_NO_FORMATTING */

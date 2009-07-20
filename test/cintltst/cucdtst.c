@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1997-2007, International Business Machines Corporation and
+ * Copyright (c) 1997-2008, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /*******************************************************************************
@@ -51,7 +51,6 @@ static void TestCodePoint(void);
 static void TestCharLength(void);
 static void TestCharNames(void);
 static void TestMirroring(void);
-/*       void TestUScriptCodeAPI(void);*/    /* defined in cucdapi.h */
 static void TestUScriptRunAPI(void);
 static void TestAdditionalProperties(void);
 static void TestNumericProperties(void);
@@ -167,10 +166,11 @@ void addUnicodeTest(TestNode** root);
 
 void addUnicodeTest(TestNode** root)
 {
-    addTest(root, &TestUnicodeData, "tsutil/cucdtst/TestUnicodeData");
     addTest(root, &TestCodeUnit, "tsutil/cucdtst/TestCodeUnit");
     addTest(root, &TestCodePoint, "tsutil/cucdtst/TestCodePoint");
     addTest(root, &TestCharLength, "tsutil/cucdtst/TestCharLength");
+    addTest(root, &TestBinaryValues, "tsutil/cucdtst/TestBinaryValues");
+    addTest(root, &TestUnicodeData, "tsutil/cucdtst/TestUnicodeData");
     addTest(root, &TestAdditionalProperties, "tsutil/cucdtst/TestAdditionalProperties");
     addTest(root, &TestNumericProperties, "tsutil/cucdtst/TestNumericProperties");
     addTest(root, &TestUpperLower, "tsutil/cucdtst/TestUpperLower");
@@ -2214,14 +2214,17 @@ TestAdditionalProperties() {
         { 0x1801, UCHAR_DEFAULT_IGNORABLE_CODE_POINT, FALSE },
 
         { 0x0341, UCHAR_DEPRECATED, TRUE },
-        { 0xe0041, UCHAR_DEPRECATED, FALSE },
+        { 0xe0041, UCHAR_DEPRECATED, TRUE },        /* changed from Unicode 5 to 5.1 */
+        { 0xe0100, UCHAR_DEPRECATED, FALSE },
 
         { 0x00a0, UCHAR_GRAPHEME_BASE, TRUE },
         { 0x0a4d, UCHAR_GRAPHEME_BASE, FALSE },
-        { 0xff9f, UCHAR_GRAPHEME_BASE, TRUE },      /* changed from Unicode 3.2 to 4 */
+        { 0xff9d, UCHAR_GRAPHEME_BASE, TRUE },
+        { 0xff9f, UCHAR_GRAPHEME_BASE, FALSE },     /* changed from Unicode 3.2 to 4 and again from 5 to 5.1 */
 
         { 0x0300, UCHAR_GRAPHEME_EXTEND, TRUE },
-        { 0xff9f, UCHAR_GRAPHEME_EXTEND, FALSE },   /* changed from Unicode 3.2 to 4 */
+        { 0xff9d, UCHAR_GRAPHEME_EXTEND, FALSE },
+        { 0xff9f, UCHAR_GRAPHEME_EXTEND, TRUE },    /* changed from Unicode 3.2 to 4 and again from 5 to 5.1 */
         { 0x0603, UCHAR_GRAPHEME_EXTEND, FALSE },
 
         { 0x0a4d, UCHAR_GRAPHEME_LINK, TRUE },
@@ -2271,7 +2274,7 @@ TestAdditionalProperties() {
         { 0x10909, UCHAR_BIDI_CLASS, U_RIGHT_TO_LEFT },
         { 0x10fe4, UCHAR_BIDI_CLASS, U_RIGHT_TO_LEFT },
 
-        { 0x0606, UCHAR_BIDI_CLASS, U_RIGHT_TO_LEFT_ARABIC },
+        { 0x0605, UCHAR_BIDI_CLASS, U_RIGHT_TO_LEFT_ARABIC },
         { 0x061c, UCHAR_BIDI_CLASS, U_RIGHT_TO_LEFT_ARABIC },
         { 0x063f, UCHAR_BIDI_CLASS, U_RIGHT_TO_LEFT_ARABIC },
         { 0x070e, UCHAR_BIDI_CLASS, U_RIGHT_TO_LEFT_ARABIC },
@@ -2729,7 +2732,7 @@ TestPropertyNames(void) {
                         sawValue = TRUE;
 
                         /* test reverse mapping */
-                        rev = u_getPropertyValueEnum(p, vname);
+                        rev = u_getPropertyValueEnum(propEnum, vname);
                         if (rev != v) {
                             log_err("Value round-trip failure (%s): %d -> %s -> %d\n",
                                     pname, v, vname, rev);
@@ -3054,11 +3057,9 @@ static void TestUCase() {
 #if !HARDCODED_DATA_4497
     UDataMemory *pData;
     UCaseProps *csp;
-#endif
     const UCaseProps *ccsp;
     UErrorCode errorCode;
 
-#if !HARDCODED_DATA_4497
     /* coverage for ucase_openBinary() */
     errorCode=U_ZERO_ERROR;
     pData=udata_open(NULL, UCASE_DATA_TYPE, UCASE_DATA_NAME, &errorCode);
@@ -3082,7 +3083,6 @@ static void TestUCase() {
 
     ucase_close(csp);
     udata_close(pData);
-#endif
 
     /* coverage for ucase_getDummy() */
     errorCode=U_ZERO_ERROR;
@@ -3090,6 +3090,7 @@ static void TestUCase() {
     if(ucase_tolower(ccsp, 0x41)!=0x41) {
         log_err("ucase_tolower(dummy, A)!=A\n");
     }
+#endif
 }
 
 /* API coverage for ubidi_props.c */
@@ -3097,11 +3098,9 @@ static void TestUBiDiProps() {
 #if !HARDCODED_DATA_4497
     UDataMemory *pData;
     UBiDiProps *bdp;
-#endif
     const UBiDiProps *cbdp;
     UErrorCode errorCode;
 
-#if !HARDCODED_DATA_4497
     /* coverage for ubidi_openBinary() */
     errorCode=U_ZERO_ERROR;
     pData=udata_open(NULL, UBIDI_DATA_TYPE, UBIDI_DATA_NAME, &errorCode);
@@ -3125,7 +3124,6 @@ static void TestUBiDiProps() {
 
     ubidi_closeProps(bdp);
     udata_close(pData);
-#endif
 
     /* coverage for ubidi_getDummy() */
     errorCode=U_ZERO_ERROR;
@@ -3133,6 +3131,7 @@ static void TestUBiDiProps() {
     if(ubidi_getClass(cbdp, 0x20)!=0) {
         log_err("ubidi_getClass(dummy, space)!=0\n");
     }
+#endif
 }
 
 /* test case folding, compare return values with CaseFolding.txt ------------ */

@@ -1,6 +1,6 @@
 //*******************************************************************************
 //
-//   Copyright (C) 2003-2007, International Business Machines
+//   Copyright (C) 2003-2008, International Business Machines
 //   Corporation and others.  All Rights Reserved.
 //
 //   file name:  conversion.txt
@@ -48,6 +48,47 @@ conversion:table(nofallback) {
     toUnicode {
       Headers { "charset", "bytes", "unicode", "offsets", "flush", "fallbacks", "errorCode", "callback", "invalidChars" }
       Cases {
+        // Test bug 6071 (2:1 Unicode:charset SBCS mapping).
+        {
+          "*test1bmp",
+          :bin{ 050008 },
+          "e@uv",
+          :intvector{ 0,1,2,2 },
+          :int{1}, :int{1}, "", "?", :bin{""}
+        }
+        // test that HZ limits its byte values to lead bytes 21..7d and trail bytes 21..7e
+        {
+          "HZ",
+          :bin{ 7e7b21212120217e217f772100007e217e7d207e7e807e0a2b },
+          "\u3000\ufffd\u3013\ufffd\u9ccc\ufffd\ufffd ~\ufffd+",
+          :intvector{ 2,4,6,8,10,12,14,18,19,21,24 },
+          :int{1}, :int{1}, "", "?", :bin{""}
+        }
+        // improve coverage of ISO-2022-JP converter with hardcoded JIS X 0201 and
+        // using the Shift-JIS table for JIS X 0208 (ticket #5797)
+        {
+          "ISO-2022-JP",
+          :bin{ 1b284a7d7e801b2442306c20217f7e21202160217f22202225227f5f211b2842 },
+          "}\u203e\ufffd\u4e00\ufffd\ufffd\ufffd\xf7\ufffd\ufffd\u25b2\ufffd\u6f3e",
+          :intvector{ 3,4,5,9,11,13,15,17,19,21,23,25,27 },
+          :int{1}, :int{1}, "", "?", :bin{""}
+        }
+        // improve coverage of ISO-2022-JP converter by simulating erroneous input
+        {
+          "ISO-2022-JP-2",
+          :bin{ 0f0ed11b2e41461b244141411b4e411b2e4147451b4ed31b2e4641411b4ed2 },
+          "\u0046\u4eae\u00c1\u6865\u4eae",
+          :intvector{ 6, 10, 14, 18, 26 },
+          :int{1}, :int{0}, "", "0", :bin{""}
+        }
+        // improve coverage of JIS7 converter by simulating incomplete shifted input
+        {
+          "JIS7",
+          :bin{ 0e11 },
+          "",
+          :intvector{},
+          :int{1}, :int{0}, "", "0", :bin{""}
+        }
         // improve coverage of unrolled loops in ucnvmbcs.c/ucnv_MBCSSingleToBMPWithOffsets()
         {
           "ISO-8859-3",
@@ -182,6 +223,21 @@ conversion:table(nofallback) {
           :intvector{ 0, 5, 7, 9, 9, 9, 9, 9, 9, 9, 9, 12 },
           :int{1}, :int{1}, "", "&", :bin{""}
         }
+        // empty segment (using substitution and stop)
+        {
+          "ISO-2022-KR",
+          :bin{ 1b242943610e0f620d0a },
+          "a\uFFFDb\u000D\u000A",
+          :intvector{ 4, 6, 7, 8, 9 },
+          :int{1}, :int{1}, "", "?", :bin{""}
+        }
+        {
+          "ISO-2022-KR",
+          :bin{ 1b242943610e0f620d0a },
+          "a",
+          :intvector{ 4 },
+          :int{1}, :int{1}, "illesc", ".", :bin{"0f"}
+        }
 
         // ISO-2022-JP
 
@@ -231,6 +287,21 @@ conversion:table(nofallback) {
           "JIS8",
           :bin{ 41c15c1b284a5cc242 }, "A\uff81\\\xa5\uff82B", :intvector{ 0, 1, 2, 6, 7, 8 },
           :int{1}, :int{1}, "", ".", :bin{""}
+        }
+        // empty segment (using substitution and stop)
+        {
+          "ISO-2022-JP",
+          :bin{ 61621b24421b284263640d0a },
+          "ab\uFFFDcd\u000D\u000A",
+          :intvector{ 0, 1, 5, 8, 9, 10, 11 },
+          :int{1}, :int{1}, "", "?", :bin{""}
+        }
+        {
+          "ISO-2022-JP",
+          :bin{ 61621b24421b284263640d0a },
+          "ab",
+          :intvector{ 0, 1 },
+          :int{1}, :int{1}, "illesc", ".", :bin{"1b2842"}
         }
 
         // ISO-2022-CN
@@ -302,6 +373,36 @@ conversion:table(nofallback) {
           :bin{ 411b242b491b4f2121 }, "\x41", :intvector{ 0 },
           :int{1}, :int{1}, "unsuppesc", ".", :bin{ 1b242b49 }
         }
+        // empty segment 1 (using substitution and stop)
+        {
+          "ISO-2022-CN",
+          :bin{ 611b242941620e0f1b242a481b4e6a65630d0a },
+          "ab\uFFFD\u994Cc\u000D\u000A",
+          :intvector{ 0, 5, 7, 14, 16, 17, 18 },
+          :int{1}, :int{1}, "", "?", :bin{""}
+        }
+        {
+          "ISO-2022-CN",
+          :bin{ 611b242941620e0f1b242a481b4e6a65630d0a },
+          "ab",
+          :intvector{ 0, 5 },
+          :int{1}, :int{1}, "illesc", ".", :bin{"0f"}
+        }
+        // empty segment 2 (using substitution and stop)
+        {
+          "ISO-2022-CN",
+          :bin{ 611b242941620e1b24294768640f630d0a },
+          "ab\uFFFD\u5F70c\u000D\u000A",
+          :intvector{ 0, 5, 7, 11, 14, 15, 16 },
+          :int{1}, :int{1}, "", "?", :bin{""}
+        }
+        {
+          "ISO-2022-CN",
+          :bin{ 611b242941620e1b24294768640f630d0a },
+          "ab",
+          :intvector{ 0, 5 },
+          :int{1}, :int{1}, "illesc", ".", :bin{"1b242947"}
+        }
 
         // ISO-2022 SBCS
         // [U_ENABLE_GENERIC_ISO_2022]
@@ -315,6 +416,39 @@ conversion:table(nofallback) {
         //  :intvector{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 },
         //  :int{1}, :int{1}, "", ".", :bin{""}
         //}
+
+        // HZ-GB-2312
+
+        // empty segment 1 (using substitution and stop)
+        {
+          "HZ-GB-2312",
+          :bin{ 61627e7b7e7d6364 },
+          "ab\uFFFDcd",
+          :intvector{ 0, 1, 4, 6, 7 },
+          :int{1}, :int{1}, "", "?", :bin{""}
+        }
+        {
+          "HZ-GB-2312",
+          :bin{ 61627e7b7e7d63640d0a },
+          "ab",
+          :intvector{ 0, 1 },
+          :int{1}, :int{1}, "illesc", ".", :bin{"7e7d"}
+        }
+        // empty segment 2 & legal redundant switches (using substitution and stop)
+        {
+          "HZ-GB-2312",
+          :bin{ 61627e7b323b3f557e7b7e7b523b7e7d63647e7d65667e7d7e7d },
+          "ab\u4E0D\u7A7A\uFFFD\u4E00cdef\uFFFD",
+          :intvector{ 0, 1, 4, 6, 10, 12, 16, 17, 20, 21, 24 },
+          :int{1}, :int{1}, "", "?", :bin{""}
+        }
+        {
+          "HZ-GB-2312",
+          :bin{ 61627e7b323b3f557e7b7e7b523b7e7d63647e7d65667e7d7e7d },
+          "ab\u4E0D\u7A7A",
+          :intvector{ 0, 1, 4, 6 },
+          :int{1}, :int{1}, "illesc", ".", :bin{"7e7b"}
+        }
 
         // DBCS-only extensions
         {
@@ -487,6 +621,22 @@ conversion:table(nofallback) {
           :intvector{ 0, 4, 8, 12 },
           :int{1}, :int{0}, "", "?", :bin{""}
         }
+        // Improve coverage of ISCII
+        {
+          "iscii-bng",
+          :bin{ f0a0f0b0b8 },
+          "",
+          :intvector{},
+          :int{1}, :int{0}, "", "0", :bin{""} 
+        }
+        // Test iso-2022-jp-2 miscellaneous symbols
+        {
+          "iso-2022-jp-2",
+          :bin{ 1b242843224f224e1b2842 },
+          "\u260E\u260F",
+          :intvector{ 4, 6 },
+          :int{1}, :int{0}, "", ".", :bin{""}
+        }
       }
     }
 
@@ -495,6 +645,23 @@ conversion:table(nofallback) {
     fromUnicode {
       Headers { "charset", "unicode", "bytes", "offsets", "flush", "fallbacks", "errorCode", "callback", "invalidUChars" }
       Cases {
+        // Test bug 6071 (1:2 Unicode:charset SBCS mapping).
+        {
+          "*test1bmp",
+          "e@t",
+          :bin{       05000709 },
+          :intvector{ 0,1,2,2 },
+          :int{1}, :int{0}, "", "?", ""
+        }
+        // improve coverage of ISO-2022-JP converter with hardcoded JIS X 0201 and
+        // using the Shift-JIS table for JIS X 0208 (ticket #5797)
+        {
+          "ISO-2022-JP",
+          "\u203e\xa5\u4e00\ufa10\u6f3e\u0391",
+          :bin{       1b284a7e5c1b2442306c222e5f2126211b2842 },
+          :intvector{ 0,0,0,0,1,2,2,2,2,2,3,3,4,4,5,5,5,5,5 },
+          :int{1}, :int{0}, "", "?=\u3013", ""  // U+3013 Geta Mark converts to 222e
+        }
         // Verify that mappings that would result in byte values outside 20..7F (for SBCS)
         // or 21..7E (for DBCS) are not used.
         // ibm-9005_X110-2007.ucm (ISO 8859-7, <ESC>.F=1b2e46):
@@ -890,6 +1057,14 @@ conversion:table(nofallback) {
           :bin{           1b24294341420e41412f7e306a0f },
           :intvector{ -1,-1,-1,-1,0,1,2,2,2,3,3,5,5,5 },
           :int{1}, :int{1}, "", "?\x00\x2f\x7e", ""
+        }
+        // ISO-2022-KR
+        {
+          "ibm-25546",
+          "AB\uc88b\U00050005\uacccC",
+          :bin{           1b24294341420e41410f5c3530303035200e306a0f43 },
+          :intvector{ -1,-1,-1,-1,0,1,2,2,2,3,3,3,3,3,3,3,3,5,5,5,6,6 },
+          :int{1}, :int{1}, "", "&S", ""
         }
 
         // ISO-2022-JP-2 with G2 designator & SS2 shift
@@ -1293,15 +1468,28 @@ conversion:table(nofallback) {
         // versions of ISO-2022-JP
         {
           "ISO-2022-JP",
-          "[\x00-\x0d\x10-\x1a\x1c-\x7f\u0391-\u03a1\uff61-\uff9f\u4e00\u4e01\uffe5]",
-          "[\x0e\x0f\x1b\u0100-\u0113\u0385-\u038a\u4e02\u4e27-\u4e29\uffe6-\U0010ffff]",
+          "[\x00-\x0d\x10-\x1a\x1c-\x7f\xa5\u0391-\u03a1\u2015\u203e\u4e00\u4e01\uffe5]",
+          "[\x0e\x0f\x1b\u0100-\u0113\u0385-\u038a\u2014\u301c\u4e02\u4e27-\u4e29\u4fe0\u663b\u9eb5\ufa0e-\ufa2d\uff61-\uff9f\uffe4\uffe6-\U0010ffff]",
           :int{0}
-        }   
+        }
         {
           "ISO-2022-JP-2",
-          "[\x00-\x0d\x10-\x1a\x1c-\u0113\u0384-\u0386\u0388-\u038a\u0390-\u03a1\uff61-\uff9f\u4e00-\u4e05\uffe6]",
-          "[\x0e\x0f\x1b\uffe7-\U0010ffff]",
+          "[\x00-\x0d\x10-\x1a\x1c-\x7f\xa0-\u0113\u0384-\u0386\u0388-\u038a\u0390-\u03a1\u203e\u4e00-\u4e05\u4fe0\u663b\uffe6]",
+          "[\x0e\x0f\x1b\uff61-\uff9f\uffe4\uffe7-\U0010ffff]",
           :int{0}
+        }
+        {
+          "JIS7",
+          "[\x00-\x0d\x10-\x1a\x1c-\x7f\xa0-\u0113\u0384-\u0386\u0388-\u038a\u0390-\u03a1\u203e\u4e00-\u4e05\u4fe0\u663b\uff61-\uff9f\uffe6]",
+          "[\x0e\x0f\x1b\uffe4\uffe7-\U0010ffff]",
+          :int{0}
+        }
+        // with fallbacks
+        {
+          "ISO-2022-JP",
+          "[\x00-\x0d\x10-\x1a\x1c-\x7f\xa5\u0391-\u03a1\u2014\u2015\u203e\u301c\u4e00\u4e01\u4fe0\u9eb5\uff61-\uff9f\uffe5]",
+          "[\x0e\x0f\x1b\xa6\u0100-\u0113\u0385-\u038a\u4e02\u4e27-\u4e29\u663b\ufa0e-\ufa2d\uffe4\uffe6-\U0010ffff]",
+          :int{1}
         }
 
         // versions of ISO-2022-CN
@@ -1318,6 +1506,43 @@ conversion:table(nofallback) {
           :int{0}
         }
 
+        // HZ
+        {
+          "HZ",
+          "[\u0410-\u044f\u4e00\u4e01\u4e03]",
+          "[\u4e02\u4e04-\u4e06\uac00-\ud7ff]",
+          :int{0}
+        }
+        
+        // LMBCS
+        {
+          "LMBCS",
+          "[\x00-\U0010ffff]",
+          "[]",
+          :int{0}
+        }
+        
+        // ISCII,version=0 (note: all versions of ISCII generates the same Unicodeset)
+        {
+          "iscii-dev",
+          "[\x00-\xa0\u0909-\u0939\u0993-\u09a8\u0a13-\u0a28\u0a93-\u0aa8\u0ae6-\u0aef\u0b05-\u0b0c\u0b13-\u0b28\u0bae-\u0bb5\u0c12-\u0c28\u0c92-\u0ca8\u0d12-\u0d28]",
+          "[\u0971-\u0975\u09e4\u0a4e-\u0a58\u0a80\u0b72-\u0b7a\u0bfb-\u0bff\u0c70-\u0c7f\u0c80\u0d00]",
+          :int{0}
+        }
+        
+        {
+          "iso-8859-1",
+          "[\x00-\xff]",
+          "[\u0100-\u01ff]",
+          :int{0}
+        }
+        
+        {
+          "us-ascii",
+          "[\x00-\x7f]",
+          "[\u0100-\u01ff]",
+          :int{0}
+        }
         // DBCS-only
         {
           "ibm-971",
