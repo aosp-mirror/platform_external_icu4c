@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 export TOOLS=$ANDROID_EABI_TOOLCHAIN/../../../icu-3.8
 export WHICH=$1
 
