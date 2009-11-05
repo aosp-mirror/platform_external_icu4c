@@ -17,5 +17,7 @@ res_index:table(nofallback) {
         nl {""}
         
         pl {""}
+
+        ja {""}
     }
 }

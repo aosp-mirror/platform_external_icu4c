@@ -35,8 +35,8 @@ LOCAL_PATH:= $(call my-dir)
 
 # Build configuration:
 #
-# Japanese wins if required.
-# "Large" includes most other languages.
+# "Large" includes all the supported locales.
+# Japanese includes US and Japan.
 # US-Euro is needed for IT or PL builds
 # Default is suitable for CS, DE, EN, ES, FR, NL
 # US has only EN and ES
