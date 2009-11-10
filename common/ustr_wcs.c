@@ -26,8 +26,10 @@
 #include "ustr_cnv.h"
 
 #ifdef ARM_FLAG
-#define MB_CUR_MAX      (__ctype_get_mb_cur_max ())
-extern size_t __ctype_get_mb_cur_max (void);
+// BEGIN android-changed
+// Android has stubbed out wchar support, where sizeof(wchar_t) == 1.
+#define MB_CUR_MAX (1)
+// END android-changed
 #endif
 
 #if defined(U_WCHAR_IS_UTF16) || defined(U_WCHAR_IS_UTF32) || !UCONFIG_NO_CONVERSION

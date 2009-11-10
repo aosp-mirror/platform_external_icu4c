@@ -41,11 +41,6 @@ LOCAL_SRC_FILES:= \
 	utrace.c           utrie.c            \
 	utypes.c           wintz.c
 
-ifneq ($(TARGET_SIMULATOR),true)
-LOCAL_SRC_FILES += \
-	noser.c
-endif
-
 LOCAL_SRC_FILES += \
         bmpset.cpp      unisetspan.cpp   \
 	brkeng.cpp      brkiter.cpp      \
