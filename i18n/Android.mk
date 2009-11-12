@@ -53,10 +53,6 @@ LOCAL_C_INCLUDES =       \
 LOCAL_CFLAGS += -D_REENTRANT -DPIC -DU_I18N_IMPLEMENTATION -fPIC 
 LOCAL_CFLAGS += -O3
 
-ifneq ($(TARGET_SIMULATOR),true)
-LOCAL_CFLAGS += -DARM_FLAG
-endif
-
 LOCAL_SHARED_LIBRARIES +=  libicuuc libicudata
 LOCAL_LDLIBS           += -lpthread -lm
 

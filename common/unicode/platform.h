@@ -224,7 +224,13 @@ typedef unsigned int uint32_t;
 /* Information about wchar support                                           */
 /*===========================================================================*/
 
-#ifdef ARM_FLAG
+// BEGIN android-note
+// We changed "ARM_FLAG" to "HAVE_ANDROID_OS" immediately below.
+// Consensus seems to be that the intent of ARM_FLAG is actually that
+// it represent whether we are compiling for Android, and if that's
+// the case then we might as well use the standard definition instead.
+// END android-note
+#if HAVE_ANDROID_OS
 #define U_HAVE_WCHAR_H      0
 #define U_SIZEOF_WCHAR_T    1
 
@@ -261,13 +267,16 @@ typedef unsigned int uint32_t;
 /* Information about POSIX support                                           */
 /*===========================================================================*/
 
-#ifndef ARM_FLAG
+// BEGIN android-note
+// See Android comment above.
+// END android-note
+#if !HAVE_ANDROID_OS
 #define U_HAVE_NL_LANGINFO          1
 #define U_HAVE_NL_LANGINFO_CODESET  1
 #endif
 #define U_NL_LANGINFO_CODESET       CODESET
 
-#ifndef ARM_FLAG
+#if !HAVE_ANDROID_OS
 #if 1
 #define U_TZSET         tzset
 #endif

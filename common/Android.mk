@@ -80,13 +80,6 @@ LOCAL_C_INCLUDES +=       \
 LOCAL_CFLAGS  += -D_REENTRANT -DPIC -DU_COMMON_IMPLEMENTATION -fPIC 
 LOCAL_CFLAGS  +=  -O3
 
-ifneq ($(TARGET_SIMULATOR),true)
-# TODO: Rename ARM_FLAG to something else. Even better, based on
-# the usage of this in the files, it should probably be replaced with
-# HAVE_ANDROID_OS
-LOCAL_CFLAGS += -DARM_FLAG
-endif
-
 LOCAL_SHARED_LIBRARIES += libicudata
 LOCAL_LDLIBS           += -lpthread -lm
 
