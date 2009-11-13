@@ -1,13 +1,31 @@
+# Copyright (C) 2008 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
 LOCAL_PATH:= $(call my-dir)
+
+#
+# Common definitions.
+#
+
 include $(CLEAR_VARS)
 
-# LOCAL_ARM_MODE := arm
-
-LOCAL_SRC_FILES := \
+src_files := \
 	bocsu.c     ucln_in.c  ucol_wgt.c \
 	ulocdata.c  utmscale.c
 
-LOCAL_SRC_FILES += \
+src_files += \
         indiancal.cpp   dtptngen.cpp dtrule.cpp   \
         persncal.cpp    rbtz.cpp     reldtfmt.cpp \
         taiwncal.cpp    tzrule.cpp   tztrans.cpp  \
@@ -46,16 +64,47 @@ LOCAL_SRC_FILES += \
 	usearch.cpp     utrans.cpp   windtfmt.cpp \
 	winnmfmt.cpp    zonemeta.cpp zstrfmt.cpp
 
-LOCAL_C_INCLUDES =       \
-	$(LOCAL_PATH)         \
+c_includes = \
+	$(LOCAL_PATH) \
 	$(LOCAL_PATH)/../common
+
+
+#
+# Build for the target (device).
+#
+
+include $(CLEAR_VARS)
+
+LOCAL_SRC_FILES := $(src_files)
+LOCAL_C_INCLUDES := $(c_includes)
 
 LOCAL_CFLAGS += -D_REENTRANT -DPIC -DU_I18N_IMPLEMENTATION -fPIC 
 LOCAL_CFLAGS += -O3
 
 LOCAL_SHARED_LIBRARIES +=  libicuuc libicudata
-LOCAL_LDLIBS           += -lpthread -lm
+LOCAL_LDLIBS += -lpthread -lm
 
 LOCAL_MODULE := libicui18n
 
 include $(BUILD_SHARED_LIBRARY)
+
+
+#
+# Build for the host.
+#
+
+ifeq ($(WITH_HOST_DALVIK),true)
+
+    LOCAL_SRC_FILES := $(src_files)
+    LOCAL_C_INCLUDES := $(c_includes)
+
+    LOCAL_CFLAGS += -D_REENTRANT -DU_I18N_IMPLEMENTATION
+
+    LOCAL_SHARED_LIBRARIES +=  libicuuc libicudata
+    LOCAL_LDLIBS += -lpthread -lm
+
+    LOCAL_MODULE := libicui18n
+
+    include $(BUILD_HOST_SHARED_LIBRARY)
+
+endif
