@@ -52,5 +52,18 @@ res_index:table(nofallback) {
         
         pl {""}
         pl_PL {""}
+
+        ja {""}
+        ja_JP {""}
+
+        zh {""}
+        zh_Hans {""}
+        zh_Hans_CN {""}
+        zh_CN {""}
+        zh_Hant {""}
+        zh_Hant_HK {""}
+        zh_HK {""}
+        zh_Hant_TW {""}
+        zh_TW {""}
     }
 }
