@@ -120,6 +120,8 @@ include $(BUILD_SHARED_LIBRARY)
 
 ifeq ($(WITH_HOST_DALVIK),true)
 
+    include $(CLEAR_VARS)
+
     LOCAL_SRC_FILES := $(src_files)
     LOCAL_C_INCLUDES := $(c_includes)
 

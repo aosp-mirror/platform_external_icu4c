@@ -75,7 +75,7 @@ icu_var_name := icudt38_dat
 
 
 #
-# Japanese
+# Japanese (for target)
 #
 
 include $(CLEAR_VARS)
@@ -91,7 +91,7 @@ include $(BUILD_SHARED_LIBRARY)
 
 
 #
-# Large
+# Large (for target)
 #
 
 include $(CLEAR_VARS)
@@ -106,7 +106,7 @@ include $(BUILD_SHARED_LIBRARY)
 
 
 #
-# Euro
+# Euro (for target)
 #
 
 include $(CLEAR_VARS)
@@ -121,7 +121,7 @@ include $(BUILD_SHARED_LIBRARY)
 
 
 #
-# Default
+# Default (for target)
 #
 
 include $(CLEAR_VARS)
@@ -136,7 +136,7 @@ include $(BUILD_SHARED_LIBRARY)
 
 
 #
-# US
+# US (for target)
 #
 
 include $(CLEAR_VARS)
@@ -148,3 +148,25 @@ output_file_name := icu_data_us.S
 
 include $(LOCAL_PATH)/IcuData.mk
 include $(BUILD_SHARED_LIBRARY)
+
+
+#
+# Large (for host). This is the only config we support on the host,
+# and you can see the "config" variable being set below for that
+# reason.
+#
+
+ifeq ($(WITH_HOST_DALVIK),true)
+
+    include $(CLEAR_VARS)
+    LOCAL_MODULE := libicudata-large
+
+    config := large
+    required_config := large
+    data_file_name := icudt38l-large.dat
+    output_file_name := icu_data_large.S
+
+    include $(LOCAL_PATH)/IcuData.mk
+    include $(BUILD_HOST_SHARED_LIBRARY)
+
+endif
