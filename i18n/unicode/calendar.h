@@ -1,6 +1,6 @@
 /*
 ********************************************************************************
-*   Copyright (C) 1997-2006, International Business Machines
+*   Copyright (C) 1997-2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 ********************************************************************************
 *
@@ -192,6 +192,11 @@ public:
         DST_OFFSET,           // Example: 0 or U_MILLIS_PER_HOUR
         YEAR_WOY,             // 'Y' Example: 1..big number - Year of Week of Year
         DOW_LOCAL,            // 'e' Example: 1..7 - Day of Week / Localized
+		
+		EXTENDED_YEAR,
+		JULIAN_DAY,
+		MILLISECONDS_IN_DAY,
+		IS_LEAP_MONTH,
 
         FIELD_COUNT = UCAL_FIELD_COUNT // See ucal.h for other fields.
 #endif /* U_HIDE_DEPRECATED_API */
@@ -353,6 +358,26 @@ public:
      * @stable ICU 2.0
      */
     static const Locale* U_EXPORT2 getAvailableLocales(int32_t& count);
+
+
+    /**
+     * Given a key and a locale, returns an array of string values in a preferred
+     * order that would make a difference. These are all and only those values where
+     * the open (creation) of the service with the locale formed from the input locale
+     * plus input keyword and that value has different behavior than creation with the
+     * input locale alone.
+     * @param key           one of the keys supported by this service.  For now, only
+     *                      "calendar" is supported.
+     * @param locale        the locale
+     * @param commonlyUsed  if set to true it will return only commonly used values
+     *                      with the given locale in preferred order.  Otherwise,
+     *                      it will return all the available values for the locale.
+     * @param status        ICU Error Code
+     * @return a string enumeration over keyword values for the given key and the locale.
+     * @draft ICU 4.2
+     */
+    static StringEnumeration* U_EXPORT2 getKeywordValuesForLocale(const char* key,
+                    const Locale& locale, UBool commonlyUsed, UErrorCode& status);
 
     /**
      * Returns the current UTC (GMT) time measured in milliseconds since 0:00:00 on 1/1/70
@@ -957,7 +982,7 @@ public:
      * @return         the minimum of the given field for the current date of this Calendar
      * @stable ICU 2.6.
      */
-    int32_t getActualMinimum(UCalendarDateFields field, UErrorCode& status) const;
+    virtual int32_t getActualMinimum(UCalendarDateFields field, UErrorCode& status) const;
 
     /**
      * Return the maximum value that this field could have, given the current date.
@@ -993,7 +1018,7 @@ public:
      * @return         the maximum of the given field for the current date of this Calendar
      * @stable ICU 2.6.
      */
-    int32_t getActualMaximum(UCalendarDateFields field, UErrorCode& status) const;
+    virtual int32_t getActualMaximum(UCalendarDateFields field, UErrorCode& status) const;
 
     /**
      * Gets the value for a given time field. Recalculate the current time field values
@@ -1710,18 +1735,20 @@ protected:
     /**
      * Called by computeJulianDay.  Returns the default month (0-based) for the year,
      * taking year and era into account.  Defaults to 0 for Gregorian, which doesn't care.
-     * @internal
+     * @param eyear The extended year
      * @internal
      */
-    virtual int32_t getDefaultMonthInYear() ;
+    virtual int32_t getDefaultMonthInYear(int32_t eyear) ;
 
 
     /**
      * Called by computeJulianDay.  Returns the default day (1-based) for the month,
      * taking currently-set year and era into account.  Defaults to 1 for Gregorian.
+     * @param eyear the extended year
+     * @param month the month in the year
      * @internal
      */
-    virtual int32_t getDefaultDayInMonth(int32_t /*month*/);
+    virtual int32_t getDefaultDayInMonth(int32_t eyear, int32_t month);
 
     //-------------------------------------------------------------------------
     // Protected utility methods for use by subclasses.  These are very handy
@@ -1938,17 +1965,18 @@ private:
      */
     void computeGregorianAndDOWFields(int32_t julianDay, UErrorCode &ec);
 
+	protected:
+
     /**
      * Compute the Gregorian calendar year, month, and day of month from the
      * Julian day.  These values are not stored in fields, but in member
      * variables gregorianXxx.  They are used for time zone computations and by
      * subclasses that are Gregorian derivatives.  Subclasses may call this
      * method to perform a Gregorian calendar millis->fields computation.
-     * To perform a Gregorian calendar fields->millis computation, call
-     * computeGregorianMonthStart().
-     * @see #computeGregorianMonthStart
      */
     void computeGregorianFields(int32_t julianDay, UErrorCode &ec);
+
+	private:
 
     /**
      * Compute the fields WEEK_OF_YEAR, YEAR_WOY, WEEK_OF_MONTH,

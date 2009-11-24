@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 1998-2007, International Business Machines
+*   Copyright (C) 1998-2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -536,9 +536,9 @@ endloop:
 U_CAPI UChar * U_EXPORT2
 u_strpbrk(const UChar *string, const UChar *matchSet)
 {
-    int32_t index = _matchFromSet(string, matchSet, TRUE);
-    if(index >= 0) {
-        return (UChar *)string + index;
+    int32_t idx = _matchFromSet(string, matchSet, TRUE);
+    if(idx >= 0) {
+        return (UChar *)string + idx;
     } else {
         return NULL;
     }
@@ -548,11 +548,11 @@ u_strpbrk(const UChar *string, const UChar *matchSet)
 U_CAPI int32_t U_EXPORT2
 u_strcspn(const UChar *string, const UChar *matchSet)
 {
-    int32_t index = _matchFromSet(string, matchSet, TRUE);
-    if(index >= 0) {
-        return index;
+    int32_t idx = _matchFromSet(string, matchSet, TRUE);
+    if(idx >= 0) {
+        return idx;
     } else {
-        return -index - 1; /* == u_strlen(string) */
+        return -idx - 1; /* == u_strlen(string) */
     }
 }
 
@@ -560,11 +560,11 @@ u_strcspn(const UChar *string, const UChar *matchSet)
 U_CAPI int32_t U_EXPORT2
 u_strspn(const UChar *string, const UChar *matchSet)
 {
-    int32_t index = _matchFromSet(string, matchSet, FALSE);
-    if(index >= 0) {
-        return index;
+    int32_t idx = _matchFromSet(string, matchSet, FALSE);
+    if(idx >= 0) {
+        return idx;
     } else {
-        return -index - 1; /* == u_strlen(string) */
+        return -idx - 1; /* == u_strlen(string) */
     }
 }
 
@@ -679,7 +679,7 @@ u_strcmp(const UChar *s1,
     return (int32_t)c1 - (int32_t)c2;
 }
 
-U_CAPI int32_t U_EXPORT2
+U_CFUNC int32_t U_EXPORT2
 uprv_strCompare(const UChar *s1, int32_t length1,
                 const UChar *s2, int32_t length2,
                 UBool strncmpStyle, UBool codePointOrder) {
@@ -902,14 +902,14 @@ void fragment {
                 c1-=0x2800;
             }
         } else if(c1<=0xdfff) {
-            int32_t index=iter1->getIndex(iter1, UITER_CURRENT);
+            int32_t idx=iter1->getIndex(iter1, UITER_CURRENT);
             iter1->previous(iter1); /* ==c1 */
             if(!UTF_IS_LEAD(iter1->previous(iter1))) {
                 /* trail surrogate code point - make <d800 */
                 c1-=0x2800;
             }
             /* go back to behind where the difference is */
-            iter1->move(iter1, index, UITER_ZERO);
+            iter1->move(iter1, idx, UITER_ZERO);
         } else /* 0xe000<=c1<=0xffff */ {
             /* BMP code point - make <d800 */
             c1-=0x2800;

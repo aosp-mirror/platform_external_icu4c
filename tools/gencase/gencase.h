@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2004-2005, International Business Machines
+*   Copyright (C) 2004-2008, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -19,6 +19,7 @@
 
 #include "unicode/utypes.h"
 #include "utrie.h"
+#include "propsvec.h"
 #include "ucase.h"
 
 U_CDECL_BEGIN
@@ -62,7 +63,7 @@ enum {
 
 /* Values for additional data stored in pv column 1 */
 enum {
-    UGENCASE_IS_MID_LETTER_SHIFT        /* bit 0 */
+    UGENCASE_IS_MID_LETTER_SHIFT        /* bit 0  WB=MidLetter or WB=MidNumLet */
 };
 
 /* special casing data */
@@ -92,7 +93,7 @@ typedef struct {
 extern UBool beVerbose, haveCopyright;
 
 /* properties vectors in gencase.c */
-extern uint32_t *pv;
+extern UPropsVectors *pv;
 
 /* prototypes */
 U_CFUNC void

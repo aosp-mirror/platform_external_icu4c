@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 1996-2007, International Business Machines
+*   Copyright (C) 1996-2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *
@@ -38,6 +38,10 @@
 #include "unicode/uversion.h"
 #include "unicode/uconfig.h"
 
+/**
+ * \def U_HIDE_DRAFT_API
+ * Define this to 1 to request that draft API be "hidden"
+ */
 #if !U_DEFAULT_SHOW_DRAFT && !defined(U_SHOW_DRAFT_API)
 #define U_HIDE_DRAFT_API 1
 #endif
@@ -133,6 +137,30 @@
 
 #ifndef U_CHARSET_FAMILY
 #   define U_CHARSET_FAMILY 0
+#endif
+
+/**
+ * \def U_CHARSET_IS_UTF8
+ *
+ * Hardcode the default charset to UTF-8.
+ *
+ * If this is set to 1, then
+ * - ICU will assume that all non-invariant char*, StringPiece, std::string etc.
+ *   contain UTF-8 text, regardless of what the system API uses
+ * - some ICU code will use fast functions like u_strFromUTF8()
+ *   rather than the more general and more heavy-weight conversion API (ucnv.h)
+ * - ucnv_getDefaultName() always returns "UTF-8"
+ * - ucnv_setDefaultName() is disabled and will not change the default charset
+ * - static builds of ICU are smaller
+ * - more functionality is available with the UCONFIG_NO_CONVERSION build-time
+ *   configuration option (see unicode/uconfig.h)
+ * - the UCONFIG_NO_CONVERSION build option in uconfig.h is more usable
+ *
+ * @draft ICU 4.2
+ * @see UCONFIG_NO_CONVERSION
+ */
+#ifndef U_CHARSET_IS_UTF8
+#   define U_CHARSET_IS_UTF8 0
 #endif
 
 /*===========================================================================*/
@@ -503,6 +531,10 @@ operator new(size_t /*size*/) {
     return q;
 }
 
+#ifdef _Ret_bytecap_
+/* This is only needed to suppress a Visual C++ 2008 warning for operator new[]. */
+_Ret_bytecap_(_Size)
+#endif
 /**
  * Global operator new[], defined only inside ICU4C, must not be used.
  * Crashes intentionally.
@@ -678,6 +710,10 @@ typedef enum UErrorCode {
     U_UNMATCHED_BRACES,               /**< Braces do not match in message pattern */
     U_UNSUPPORTED_PROPERTY,           /**< UNUSED as of ICU 2.4 */
     U_UNSUPPORTED_ATTRIBUTE,          /**< UNUSED as of ICU 2.4 */
+    U_ARGUMENT_TYPE_MISMATCH,         /**< Argument name and argument index mismatch in MessageFormat functions */
+    U_DUPLICATE_KEYWORD,              /**< Duplicate keyword in PluralFormat */
+    U_UNDEFINED_KEYWORD,              /**< Undefined Pluarl keyword */
+    U_DEFAULT_KEYWORD_MISSING,        /**< Missing DEFAULT rule in plural rules */
     U_FMT_PARSE_ERROR_LIMIT,          /**< The limit for format library errors */
 
     /*
@@ -721,6 +757,9 @@ typedef enum UErrorCode {
     U_REGEX_OCTAL_TOO_BIG,                /**< Octal character constants must be <= 0377.         */
     U_REGEX_MISSING_CLOSE_BRACKET,        /**< Missing closing bracket on a bracket expression.   */
     U_REGEX_INVALID_RANGE,                /**< In a character range [x-y], x is greater than y.   */
+    U_REGEX_STACK_OVERFLOW,               /**< Regular expression backtrack stack overflow.       */
+    U_REGEX_TIME_OUT,                     /**< Maximum allowed match time exceeded                */
+    U_REGEX_STOPPED_BY_CALLER,            /**< Matching operation aborted by user callback fn.    */
     U_REGEX_ERROR_LIMIT,                  /**< This must always be the last value to indicate the limit for regexp errors */
 
     /*

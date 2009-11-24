@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2007 International Business Machines
+// * Copyright (C) 2009 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/es_CL.xml
@@ -14,7 +14,7 @@ es_CL{
     Currencies{
         CLP{
             "$",
-            "Peso Chileno",
+            "peso chileno",
         }
     }
     NumberPatterns{
@@ -22,6 +22,10 @@ es_CL{
         "¤#,##0.00;¤-#,##0.00",
         "#,##0%",
         "#E0",
+    }
+    PaperSize:intvector{
+        279,
+        216,
     }
     Scripts{
         Bali{"balinés"}
@@ -31,21 +35,22 @@ es_CL{
             phonebook{"orden de directorio telefónico"}
         }
     }
-    Variants{
-        1996{"Ortografía alemana de 1996"}
-    }
-    Version{"1.53"}
+    Version{"1.64"}
     calendar{
         gregorian{
             DateTimePatterns{
-                "HH:mm:ss v",
+                "HH:mm:ss zzzz",
                 "H:mm:ss z",
                 "H:mm:ss",
                 "H:mm",
-                "EEEE d 'de' MMMM 'de' yyyy",
-                "d 'de' MMMM 'de' yyyy",
+                "EEEE d 'de' MMMM 'de' y",
+                "d 'de' MMMM 'de' y",
                 "dd-MM-yyyy",
                 "dd-MM-yy",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
                 "{1} {0}",
             }
         }

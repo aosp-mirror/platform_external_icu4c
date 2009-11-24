@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2004-2005, International Business Machines
+*   Copyright (C) 2004-2008, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -40,7 +40,7 @@
 
 /* data --------------------------------------------------------------------- */
 
-uint32_t *pv;
+UPropsVectors *pv;
 
 UBool beVerbose=FALSE, haveCopyright=TRUE;
 
@@ -104,10 +104,15 @@ derCorePropsBinaries={
     "DerivedCoreProperties", derCorePropsNames, LENGTHOF(derCorePropsNames)
 };
 
-/* treat Word_Break=MidLetter as a binary property (we ignore all other Word_Break values) */
+/*
+ * Treat Word_Break=MidLetter and MidNumLet as a single binary property.
+ * We need not distinguish between them because both add to case-ignorable.
+ * We ignore all other Word_Break values.
+ */
 static const Binary
 wordBreakNames[]={
-    { "MidLetter",                          1, U_MASK(UGENCASE_IS_MID_LETTER_SHIFT), U_MASK(UGENCASE_IS_MID_LETTER_SHIFT) }
+    { "MidLetter",                          1, U_MASK(UGENCASE_IS_MID_LETTER_SHIFT), U_MASK(UGENCASE_IS_MID_LETTER_SHIFT) },
+    { "MidNumLet",                          1, U_MASK(UGENCASE_IS_MID_LETTER_SHIFT), U_MASK(UGENCASE_IS_MID_LETTER_SHIFT) }
 };
 
 static const Binaries
@@ -121,17 +126,16 @@ binariesLineFn(void *context,
                UErrorCode *pErrorCode) {
     const Binaries *bin;
     char *s;
-    uint32_t start, limit;
+    uint32_t start, end;
     int32_t i;
 
     bin=(const Binaries *)context;
 
-    u_parseCodePointRange(fields[0][0], &start, &limit, pErrorCode);
+    u_parseCodePointRange(fields[0][0], &start, &end, pErrorCode);
     if(U_FAILURE(*pErrorCode)) {
         fprintf(stderr, "gencase: syntax error in %s.txt field 0 at %s\n", bin->ucdFile, fields[0][0]);
         exit(*pErrorCode);
     }
-    ++limit;
 
     /* parse binary property name */
     s=(char *)u_skipWhitespace(fields[1][0]);
@@ -151,7 +155,8 @@ binariesLineFn(void *context,
         exit(U_INTERNAL_PROGRAM_ERROR);
     }
 
-    if(!upvec_setValue(pv, start, limit, bin->binaries[i].vecWord, bin->binaries[i].vecValue, bin->binaries[i].vecMask, pErrorCode)) {
+    upvec_setValue(pv, start, end, bin->binaries[i].vecWord, bin->binaries[i].vecValue, bin->binaries[i].vecMask, pErrorCode);
+    if(U_FAILURE(*pErrorCode)) {
         fprintf(stderr, "gencase error: unable to set %s, code: %s\n",
                         bin->binaries[i].propName, u_errorName(*pErrorCode));
         exit(*pErrorCode);
@@ -286,7 +291,7 @@ main(int argc, char* argv[]) {
     }
 
     /* initialize */
-    pv=upvec_open(2, 10000);
+    pv=upvec_open(2, &errorCode);
     caseSensitive=uset_open(1, 0); /* empty set (start>end) */
 
     /* process SpecialCasing.txt */

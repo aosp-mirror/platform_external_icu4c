@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 1997-2006, International Business Machines Corporation and    *
+* Copyright (C) 1997-2009, International Business Machines Corporation and    *
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 *
@@ -16,7 +16,7 @@
 *   07/20/98    stephen     Slightly modified initialization of monetarySeparator
 ********************************************************************************
 */
- 
+
 #include "unicode/utypes.h"
 
 #if !UCONFIG_NO_FORMATTING
@@ -26,6 +26,8 @@
 #include "unicode/decimfmt.h"
 #include "unicode/ucurr.h"
 #include "unicode/choicfmt.h"
+#include "unicode/unistr.h"
+#include "unicode/numsys.h"
 #include "ucurrimp.h"
 #include "cstring.h"
 #include "locbased.h"
@@ -33,35 +35,41 @@
 // *****************************************************************************
 // class DecimalFormatSymbols
 // *****************************************************************************
- 
+
 U_NAMESPACE_BEGIN
 
 UOBJECT_DEFINE_RTTI_IMPLEMENTATION(DecimalFormatSymbols)
 
 static const char gNumberElements[] = "NumberElements";
+static const char gCurrencySpacingTag[] = "currencySpacing";
+static const char gBeforeCurrencyTag[] = "beforeCurrency";
+static const char gAfterCurrencyTag[] = "afterCurrency";
+static const char gCurrencyMatchTag[] = "currencyMatch";
+static const char gCurrencySudMatchTag[] = "surroundingMatch";
+static const char gCurrencyInsertBtnTag[] = "insertBetween";
 
 static const UChar INTL_CURRENCY_SYMBOL_STR[] = {0xa4, 0xa4, 0};
 
 // -------------------------------------
 // Initializes this with the decimal format symbols in the default locale.
- 
+
 DecimalFormatSymbols::DecimalFormatSymbols(UErrorCode& status)
     : UObject(),
     locale()
 {
     initialize(locale, status, TRUE);
 }
- 
+
 // -------------------------------------
 // Initializes this with the decimal format symbols in the desired locale.
- 
+
 DecimalFormatSymbols::DecimalFormatSymbols(const Locale& loc, UErrorCode& status)
     : UObject(),
     locale(loc)
 {
     initialize(locale, status);
 }
- 
+
 // -------------------------------------
 
 DecimalFormatSymbols::~DecimalFormatSymbols()
@@ -88,6 +96,10 @@ DecimalFormatSymbols::operator=(const DecimalFormatSymbols& rhs)
             // fastCopyFrom is safe, see docs on fSymbols
             fSymbols[(ENumberFormatSymbol)i].fastCopyFrom(rhs.fSymbols[(ENumberFormatSymbol)i]);
         }
+        for(int32_t i = 0; i < (int32_t)kCurrencySpacingCount; ++i) {
+            currencySpcBeforeSym[i].fastCopyFrom(rhs.currencySpcBeforeSym[i]);
+            currencySpcAfterSym[i].fastCopyFrom(rhs.currencySpcAfterSym[i]);
+        }
         locale = rhs.locale;
         uprv_strcpy(validLocale, rhs.validLocale);
         uprv_strcpy(actualLocale, rhs.actualLocale);
@@ -108,13 +120,21 @@ DecimalFormatSymbols::operator==(const DecimalFormatSymbols& that) const
             return FALSE;
         }
     }
+    for(int32_t i = 0; i < (int32_t)kCurrencySpacingCount; ++i) {
+        if(currencySpcBeforeSym[i] != that.currencySpcBeforeSym[i]) {
+            return FALSE;
+        }
+        if(currencySpcAfterSym[i] != that.currencySpcAfterSym[i]) {
+            return FALSE;
+        }
+    }
     return locale == that.locale &&
         uprv_strcmp(validLocale, that.validLocale) == 0 &&
         uprv_strcmp(actualLocale, that.actualLocale) == 0;
 }
- 
+
 // -------------------------------------
- 
+
 void
 DecimalFormatSymbols::initialize(const Locale& loc, UErrorCode& status,
                                  UBool useLastResortData)
@@ -123,7 +143,7 @@ DecimalFormatSymbols::initialize(const Locale& loc, UErrorCode& status,
     currPattern = NULL;
     if (U_FAILURE(status))
         return;
-    
+
     const char* locStr = loc.getName();
     UResourceBundle *resource = ures_open((char *)0, locStr, &status);
     UResourceBundle *numberElementsRes = ures_getByKey(resource, gNumberElements, NULL, &status);
@@ -160,6 +180,17 @@ DecimalFormatSymbols::initialize(const Locale& loc, UErrorCode& status,
             if (U_SUCCESS(status)) {
                 initialize(numberElements, numberElementsStrLen, numberElementsLength);
 
+                // Attempt to set the zero digit based on the numbering system for the locale requested
+                //
+                NumberingSystem* ns = NumberingSystem::createInstance(loc,status);
+                if (U_SUCCESS(status) && ns->getRadix() == 10 && !ns->isAlgorithmic()) {
+                    UnicodeString zeroDigit(ns->getDescription(),0,1);
+                    setSymbol(kZeroDigitSymbol,zeroDigit);
+                }
+                if (ns) {
+                    delete ns;
+                }
+
                 // Obtain currency data from the currency API.  This is strictly
                 // for backward compatibility; we don't use DecimalFormatSymbols
                 // for currency data anymore.
@@ -184,15 +215,15 @@ DecimalFormatSymbols::initialize(const Locale& loc, UErrorCode& status,
                                        ULOC_ACTUAL_LOCALE, &status));
         }
         //load the currency data
-        UChar ucc[4]={0}; //Currency Codes are always 3 chars long 
+        UChar ucc[4]={0}; //Currency Codes are always 3 chars long
         int32_t uccLen = 4;
         const char* locName = loc.getName();
-        uccLen = ucurr_forLocale(locName, ucc, uccLen, &status);
-        if(U_SUCCESS(status) && uccLen > 0) {
+        UErrorCode localStatus = U_ZERO_ERROR;
+        uccLen = ucurr_forLocale(locName, ucc, uccLen, &localStatus);
+        if(U_SUCCESS(localStatus) && uccLen > 0) {
             char cc[4]={0};
             u_UCharsToChars(ucc, cc, uccLen);
             /* An explicit currency was requested */
-            UErrorCode localStatus = U_ZERO_ERROR;
             UResourceBundle *currency = ures_getByKeyWithFallback(resource, "Currencies", NULL, &localStatus);
             currency = ures_getByKeyWithFallback(currency, cc, currency, &localStatus);
             if(U_SUCCESS(localStatus) && ures_getSize(currency)>2) { // the length is 3 if more data is present
@@ -211,13 +242,44 @@ DecimalFormatSymbols::initialize(const Locale& loc, UErrorCode& status,
             ures_close(currency);
             /* else An explicit currency was requested and is unknown or locale data is malformed. */
             /* ucurr_* API will get the correct value later on. */
-        }else{
-            // ignore the error if no currency
-            status = U_ZERO_ERROR;
         }
+        // else ignore the error if no currency
+    }
+    ures_close(numberElementsRes);
+
+    // Currency Spacing.
+    UErrorCode localStatus = U_ZERO_ERROR;
+    UResourceBundle *currencySpcRes = ures_getByKeyWithFallback(resource,
+                                       gCurrencySpacingTag, NULL, &localStatus);
+
+    if (localStatus == U_USING_FALLBACK_WARNING || U_SUCCESS(localStatus)) {
+        const char* keywords[kCurrencySpacingCount] = {
+            gCurrencyMatchTag, gCurrencySudMatchTag, gCurrencyInsertBtnTag
+        };
+        localStatus = U_ZERO_ERROR;
+        UResourceBundle *dataRes = ures_getByKeyWithFallback(currencySpcRes,
+                                   gBeforeCurrencyTag, NULL, &localStatus);
+        if (localStatus == U_USING_FALLBACK_WARNING || U_SUCCESS(localStatus)) {
+            localStatus = U_ZERO_ERROR;
+            for (int32_t i = 0; i < kCurrencySpacingCount; i++) {
+              currencySpcBeforeSym[i] = ures_getStringByKey(dataRes, keywords[i],
+                                                        NULL, &localStatus);
+            }
+            ures_close(dataRes);
+        }
+        dataRes = ures_getByKeyWithFallback(currencySpcRes,
+                                  gAfterCurrencyTag, NULL, &localStatus);
+        if (localStatus == U_USING_FALLBACK_WARNING || U_SUCCESS(localStatus)) {
+            localStatus = U_ZERO_ERROR;
+            for (int32_t i = 0; i < kCurrencySpacingCount; i++) {
+              currencySpcAfterSym[i] = ures_getStringByKey(dataRes, keywords[i],
+                                                            NULL, &localStatus);
+            }
+            ures_close(dataRes);
+        }
+        ures_close(currencySpcRes);
     }
     ures_close(resource);
-    ures_close(numberElementsRes);
 }
 
 // Initializes the DecimalFormatSymbol instance with the data obtained
@@ -226,7 +288,7 @@ DecimalFormatSymbols::initialize(const Locale& loc, UErrorCode& status,
 void
 DecimalFormatSymbols::initialize(const UChar** numberElements, int32_t *numberElementsStrLen, int32_t numberElementsLength)
 {
-    static const int32_t TYPE_MAPPING[][2] = {
+    static const int8_t TYPE_MAPPING[][2] = {
         {kDecimalSeparatorSymbol, 0},
         {kGroupingSeparatorSymbol, 1},
         {kPatternSeparatorSymbol, 2},
@@ -285,12 +347,36 @@ DecimalFormatSymbols::initialize() {
     fSymbols[kSignificantDigitSymbol] = (UChar)0x0040;  // '@' significant digit
 }
 
-Locale 
+Locale
 DecimalFormatSymbols::getLocale(ULocDataLocaleType type, UErrorCode& status) const {
     U_LOCALE_BASED(locBased, *this);
     return locBased.getLocale(type, status);
 }
 
+const UnicodeString&
+DecimalFormatSymbols::getPatternForCurrencySpacing(ECurrencySpacing type,
+                                                 UBool beforeCurrency,
+                                                 UErrorCode& status) const {
+    if (U_FAILURE(status)) {
+      return fNoSymbol;  // always empty.
+    }
+    if (beforeCurrency) {
+      return currencySpcBeforeSym[(int32_t)type];
+    } else {
+      return currencySpcAfterSym[(int32_t)type];
+    }
+}
+
+void
+DecimalFormatSymbols::setPatternForCurrencySpacing(ECurrencySpacing type,
+                                                   UBool beforeCurrency,
+                                             const UnicodeString& pattern) {
+  if (beforeCurrency) {
+    currencySpcBeforeSym[(int32_t)type] = pattern;
+  } else {
+    currencySpcAfterSym[(int32_t)type] =  pattern;
+  }
+}
 U_NAMESPACE_END
 
 #endif /* #if !UCONFIG_NO_FORMATTING */

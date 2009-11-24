@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 2004-2007, International Business Machines Corporation and
+ * Copyright (c) 2004-2009, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /********************************************************************************
@@ -29,10 +29,10 @@
 #include "cintltst.h"
 
 #define TEST_ASSERT_SUCCESS(status) {if (U_FAILURE(status)) { \
-log_err("Failure at file %s, line %d, error = %s\n", __FILE__, __LINE__, u_errorName(status));}}
+log_data_err("Failure at file %s, line %d, error = %s (Are you missing data?)\n", __FILE__, __LINE__, u_errorName(status));}}
 
 #define TEST_ASSERT(expr) {if ((expr)==FALSE) { \
-log_err("Test Failure at file %s, line %d\n", __FILE__, __LINE__);}}
+log_data_err("Test Failure at file %s, line %d (Are you missing data?)\n", __FILE__, __LINE__);}}
 
 /*
  *   TEST_SETUP and TEST_TEARDOWN
@@ -100,7 +100,31 @@ void addURegexTest(TestNode** root)
     addTest(root, &TestBug4315,   "regex/TestBug4315");
 }
 
+/*
+ * Call back function and context struct used for testing
+ *    regular expression user callbacks.  This test is mostly the same as
+ *   the corresponding C++ test in intltest. 
+ */
+typedef struct callBackContext {
+    int32_t          maxCalls;
+    int32_t          numCalls;
+    int32_t          lastSteps;
+} callBackContext;
 
+static UBool U_EXPORT2 U_CALLCONV
+TestCallbackFn(const void *context, int32_t steps) {
+  callBackContext  *info = (callBackContext *)context;
+  if (info->lastSteps+1 != steps) {
+      log_err("incorrect steps in callback.  Expected %d, got %d\n", info->lastSteps+1, steps);
+  }
+  info->lastSteps = steps;
+  info->numCalls++;
+  return (info->numCalls < info->maxCalls);
+}
+
+/*
+ *   Regular Expression C API Tests
+ */
 static void TestRegexCAPI(void) {
     UErrorCode           status = U_ZERO_ERROR;
     URegularExpression  *re;
@@ -112,7 +136,10 @@ static void TestRegexCAPI(void) {
     /* Mimimalist open/close */
     u_uastrncpy(pat, "abc*", sizeof(pat)/2);
     re = uregex_open(pat, -1, 0, 0, &status);
-    TEST_ASSERT_SUCCESS(status);
+    if (U_FAILURE(status)) {
+         log_data_err("Failed to open regular expression, line %d, error is \"%s\" (Are you missing data?)\n", __LINE__, u_errorName(status));
+         return;
+    }
     uregex_close(re);
 
     /* Open with all flag values set */
@@ -780,64 +807,71 @@ static void TestRegexCAPI(void) {
      *  replaceAll()
      */
     {
-        UChar    text1[80];
-        UChar    text2[80];
-        UChar    replText[80];
+        UChar    text1[80];          /*  "Replace xaax x1x x...x." */
+        UChar    text2[80];          /*  "No match Here"           */
+        UChar    replText[80];       /*  "<$1>"                    */
+        UChar    replText2[80];      /*  "<<$1>>"                  */
+        const char * pattern = "x(.*?)x";
+        const char * expectedResult = "Replace <aa> <1> <...>.";
+        const char * expectedResult2 = "Replace <<aa>> <<1>> <<...>>.";
         UChar    buf[80];
-        int32_t  resultSz;
+        int32_t  resultSize;
         int32_t  expectedResultSize;
+        int32_t  expectedResultSize2;
         int32_t  i;
 
         u_uastrncpy(text1, "Replace xaax x1x x...x.",  sizeof(text1)/2);
         u_uastrncpy(text2, "No match here.",  sizeof(text2)/2);
         u_uastrncpy(replText, "<$1>", sizeof(replText)/2);
-        expectedResultSize = u_strlen(text1);
+        u_uastrncpy(replText2, "<<$1>>", sizeof(replText2)/2);
+        expectedResultSize = strlen(expectedResult);
+        expectedResultSize2 = strlen(expectedResult2);
 
         status = U_ZERO_ERROR;
-        re = uregex_openC("x(.*?)x", 0, NULL, &status);
+        re = uregex_openC(pattern, 0, NULL, &status);
         TEST_ASSERT_SUCCESS(status);
 
         /*  Normal case, with match */
         uregex_setText(re, text1, -1, &status);
-        resultSz = uregex_replaceAll(re, replText, -1, buf, sizeof(buf)/2, &status);
+        resultSize = uregex_replaceAll(re, replText, -1, buf, sizeof(buf)/2, &status);
         TEST_ASSERT_SUCCESS(status);
-        TEST_ASSERT_STRING("Replace <aa> <1> <...>.", buf, TRUE);
-        TEST_ASSERT(resultSz == (int32_t)strlen("Replace xaax x1x x...x."));
+        TEST_ASSERT_STRING(expectedResult, buf, TRUE);
+        TEST_ASSERT(resultSize == expectedResultSize);
 
         /* No match.  Text should copy to output with no changes.  */
         status = U_ZERO_ERROR;
         uregex_setText(re, text2, -1, &status);
-        resultSz = uregex_replaceAll(re, replText, -1, buf, sizeof(buf)/2, &status);
+        resultSize = uregex_replaceAll(re, replText, -1, buf, sizeof(buf)/2, &status);
         TEST_ASSERT_SUCCESS(status);
         TEST_ASSERT_STRING("No match here.", buf, TRUE);
-        TEST_ASSERT(resultSz == (int32_t)strlen("No match here."));
+        TEST_ASSERT(resultSize == u_strlen(text2));
 
         /*  Match, output just fills buffer, no termination warning. */
         status = U_ZERO_ERROR;
         uregex_setText(re, text1, -1, &status);
         memset(buf, -1, sizeof(buf));
-        resultSz = uregex_replaceAll(re, replText, -1, buf, strlen("Replace xaax x1x x...x."), &status);
+        resultSize = uregex_replaceAll(re, replText, -1, buf, expectedResultSize, &status);
         TEST_ASSERT(status == U_STRING_NOT_TERMINATED_WARNING);
-        TEST_ASSERT_STRING("Replace <aa> <1> <...>.", buf, FALSE);
-        TEST_ASSERT(resultSz == (int32_t)strlen("Replace <aa> <1> <...>."));
-        TEST_ASSERT(buf[resultSz] == (UChar)0xffff);
+        TEST_ASSERT_STRING(expectedResult, buf, FALSE);
+        TEST_ASSERT(resultSize == expectedResultSize);
+        TEST_ASSERT(buf[resultSize] == (UChar)0xffff);
 
         /* Do the replaceFirst again, without first resetting anything.
          *  Should give the same results.
          */
         status = U_ZERO_ERROR;
         memset(buf, -1, sizeof(buf));
-        resultSz = uregex_replaceAll(re, replText, -1, buf, strlen("Replace xaax x1x x...x."), &status);
+        resultSize = uregex_replaceAll(re, replText, -1, buf, strlen("Replace xaax x1x x...x."), &status);
         TEST_ASSERT(status == U_STRING_NOT_TERMINATED_WARNING);
         TEST_ASSERT_STRING("Replace <aa> <1> <...>.", buf, FALSE);
-        TEST_ASSERT(resultSz == (int32_t)strlen("Replace <aa> <1> <...>."));
-        TEST_ASSERT(buf[resultSz] == (UChar)0xffff);
+        TEST_ASSERT(resultSize == (int32_t)strlen("Replace <aa> <1> <...>."));
+        TEST_ASSERT(buf[resultSize] == (UChar)0xffff);
 
         /* NULL buffer, zero buffer length */
         status = U_ZERO_ERROR;
-        resultSz = uregex_replaceAll(re, replText, -1, NULL, 0, &status);
+        resultSize = uregex_replaceAll(re, replText, -1, NULL, 0, &status);
         TEST_ASSERT(status == U_BUFFER_OVERFLOW_ERROR);
-        TEST_ASSERT(resultSz == (int32_t)strlen("Replace <aa> <1> <...>."));
+        TEST_ASSERT(resultSize == (int32_t)strlen("Replace <aa> <1> <...>."));
 
         /* Buffer too small.  Try every size, which will tickle edge cases
          * in uregex_appendReplacement (used by replaceAll)   */
@@ -845,14 +879,32 @@ static void TestRegexCAPI(void) {
             char  expected[80];
             status = U_ZERO_ERROR;
             memset(buf, -1, sizeof(buf));
-            resultSz = uregex_replaceAll(re, replText, -1, buf, i, &status);
+            resultSize = uregex_replaceAll(re, replText, -1, buf, i, &status);
             TEST_ASSERT(status == U_BUFFER_OVERFLOW_ERROR);
-            strcpy(expected, "Replace <aa> <1> <...>.");
+            strcpy(expected, expectedResult);
             expected[i] = 0;
             TEST_ASSERT_STRING(expected, buf, FALSE);
-            TEST_ASSERT(resultSz == expectedResultSize);
+            TEST_ASSERT(resultSize == expectedResultSize);
             TEST_ASSERT(buf[i] == (UChar)0xffff);
         }
+
+        /* Buffer too small.  Same as previous test, except this time the replacement
+         * text is longer than the match capture group, making the length of the complete
+         * replacement longer than the original string.
+         */
+        for (i=0; i<expectedResultSize2; i++) {
+            char  expected[80];
+            status = U_ZERO_ERROR;
+            memset(buf, -1, sizeof(buf));
+            resultSize = uregex_replaceAll(re, replText2, -1, buf, i, &status);
+            TEST_ASSERT(status == U_BUFFER_OVERFLOW_ERROR);
+            strcpy(expected, expectedResult2);
+            expected[i] = 0;
+            TEST_ASSERT_STRING(expected, buf, FALSE);
+            TEST_ASSERT(resultSize == expectedResultSize2);
+            TEST_ASSERT(buf[i] == (UChar)0xffff);
+        }
+
 
         uregex_close(re);
     }
@@ -895,6 +947,15 @@ static void TestRegexCAPI(void) {
         uregex_appendReplacement(re, repl, -1, &bufPtr, &bufCap, &status);
         TEST_ASSERT_SUCCESS(status);
         TEST_ASSERT_STRING("abcAB \\ $ abc", buf, TRUE); 
+
+        /* Bug 6813, parameter check of NULL destCapacity; crashed before fix. */
+        status = U_ZERO_ERROR;
+        uregex_find(re, 0, &status);
+        TEST_ASSERT_SUCCESS(status);
+        bufPtr = buf;
+        status = U_BUFFER_OVERFLOW_ERROR;
+        uregex_appendReplacement(re, repl, -1, &bufPtr, NULL, &status);
+        TEST_ASSERT(status == U_BUFFER_OVERFLOW_ERROR);
 
         uregex_close(re);
     }
@@ -1141,7 +1202,71 @@ static void TestRegexCAPI(void) {
         uregex_close(re);
     }
 
+    /*
+     * set/getTimeLimit
+     */
+     TEST_SETUP("abc$", "abcdef", 0);
+     TEST_ASSERT(uregex_getTimeLimit(re, &status) == 0);
+     uregex_setTimeLimit(re, 1000, &status);
+     TEST_ASSERT(uregex_getTimeLimit(re, &status) == 1000);
+     TEST_ASSERT_SUCCESS(status);
+     uregex_setTimeLimit(re, -1, &status);
+     TEST_ASSERT(status == U_ILLEGAL_ARGUMENT_ERROR);
+     status = U_ZERO_ERROR;
+     TEST_ASSERT(uregex_getTimeLimit(re, &status) == 1000);
+     TEST_TEARDOWN;
+
+     /*
+      * set/get Stack Limit
+      */
+     TEST_SETUP("abc$", "abcdef", 0);
+     TEST_ASSERT(uregex_getStackLimit(re, &status) == 8000000);
+     uregex_setStackLimit(re, 40000, &status);
+     TEST_ASSERT(uregex_getStackLimit(re, &status) == 40000);
+     TEST_ASSERT_SUCCESS(status);
+     uregex_setStackLimit(re, -1, &status);
+     TEST_ASSERT(status == U_ILLEGAL_ARGUMENT_ERROR);
+     status = U_ZERO_ERROR;
+     TEST_ASSERT(uregex_getStackLimit(re, &status) == 40000);
+     TEST_TEARDOWN;
+     
+     
+     /*
+      * Get/Set callback functions
+      *     This test is copied from intltest regex/Callbacks
+      *     The pattern and test data will run long enough to cause the callback
+      *       to be invoked.  The nested '+' operators give exponential time
+      *       behavior with increasing string length.
+      */
+     TEST_SETUP("((.)+\\2)+x", "aaaaaaaaaaaaaaaaaaab", 0)
+     callBackContext cbInfo = {4, 0, 0};
+     const void     *pContext   = &cbInfo;
+     URegexMatchCallback    *returnedFn = &TestCallbackFn;
+     
+     /*  Getting the callback fn when it hasn't been set must return NULL  */
+     uregex_getMatchCallback(re, &returnedFn, &pContext, &status);
+     TEST_ASSERT_SUCCESS(status);
+     TEST_ASSERT(returnedFn == NULL);
+     TEST_ASSERT(pContext == NULL);
+     
+     /* Set thecallback and do a match.                                   */
+     /* The callback function should record that it has been called.      */
+     uregex_setMatchCallback(re, &TestCallbackFn, &cbInfo, &status);
+     TEST_ASSERT_SUCCESS(status);
+     TEST_ASSERT(cbInfo.numCalls == 0);
+     TEST_ASSERT(uregex_matches(re, -1, &status) == FALSE);
+     TEST_ASSERT_SUCCESS(status);
+     TEST_ASSERT(cbInfo.numCalls > 0);
+     
+     /* Getting the callback should return the values that were set above.  */
+     uregex_getMatchCallback(re, &returnedFn, &pContext, &status);
+     TEST_ASSERT(returnedFn == &TestCallbackFn);
+     TEST_ASSERT(pContext == &cbInfo);
+
+     TEST_TEARDOWN;
 }
+
+
 
 static void TestBug4315(void) {
     UErrorCode      theICUError = U_ZERO_ERROR;

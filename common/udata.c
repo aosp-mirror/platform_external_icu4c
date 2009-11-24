@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 1999-2006, International Business Machines
+*   Copyright (C) 1999-2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -216,6 +216,10 @@ static UHashtable *udata_getHashTable() {
     }
 
     tHT = uhash_open(uhash_hashChars, uhash_compareChars, NULL, &err);
+    /* Check for null pointer. */
+    if (tHT == NULL) {
+    	return NULL; /* TODO:  Handle this error better. */
+    }
     uhash_setValueDeleter(tHT, DataCacheElement_deleter);
 
     umtx_lock(NULL);
@@ -477,6 +481,10 @@ static void udata_pathiter_init(UDataPathIterator *iter, const char *path, const
     } else {
       if(uprv_strlen(pkg) + 2 > U_DATA_PATHITER_BUFSIZ) {
           iter->packageStub = uprv_malloc(uprv_strlen(pkg)+2);
+          /* Check for null pointer. */
+          if (iter->packageStub == NULL) {
+        	  return;
+          }
       } else {
           iter->packageStub = iter->packageStubBuf;
       }
@@ -954,7 +962,7 @@ udata_setAppData(const char *path, const void *data, UErrorCode *err)
     }
 
     UDataMemory_init(&udm);
-    udm.pHeader = data;
+    UDataMemory_setData(&udm, data);
     udata_checkCommonData(&udm, err);
     udata_cacheDataItem(path, &udm, err);
 }
@@ -1314,7 +1322,7 @@ doOpenChoice(const char *path, const char *type, const char *name,
 
     /************************ Begin loop looking for ind. files ***************/
 #ifdef UDATA_DEBUG
-    fprintf(stderr, "IND: inBasename = %s, pkg=%s\n", inBasename, packageNameFromPath(path));
+    fprintf(stderr, "IND: inBasename = %s, pkg=%s\n", "(n/a)", packageNameFromPath(path));
 #endif
 
     /* End of dealing with a null basename */

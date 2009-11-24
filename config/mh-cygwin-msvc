@@ -1,5 +1,5 @@
 ## Cygwin with Microsoft Visual C++ compiler specific setup
-## Copyright (c) 2001-2007, International Business Machines Corporation and
+## Copyright (c) 2001-2008, International Business Machines Corporation and
 ## others. All Rights Reserved.
 
 # We install sbin tools into the same bin directory because
@@ -35,14 +35,21 @@ ifeq ($(ENABLE_RELEASE),1)
 CPPFLAGS+=-DU_RELEASE=1#M#
 endif
 
+ifeq ($(ENABLE_DEBUG),1)
+# Pass debugging flag through
+CPPFLAGS+=-D_DEBUG=1#M#
+ICULIBSUFFIX:=$(ICULIBSUFFIX)d#M#
+endif
+
 # /GF pools strings and places them into read-only memory
 # /EHsc enables exception handling
 # /Zc:wchar_t makes wchar_t a native type. Required for C++ ABI compatibility.
 # -D_CRT_SECURE_NO_DEPRECATE is needed to quiet warnings about using standard C functions.
-CFLAGS+=/GF
-CXXFLAGS+=/GF /EHsc /Zc:wchar_t
-CPPFLAGS+=/nologo -D_CRT_SECURE_NO_DEPRECATE
+CFLAGS+=/GF /nologo
+CXXFLAGS+=/GF /nologo /EHsc /Zc:wchar_t
+CPPFLAGS+=-D_CRT_SECURE_NO_DEPRECATE
 DEFS+=-DWIN32
+DEFS+=-DCYGWINMSVC
 LDFLAGS+=/nologo
 
 # Commands to compile
@@ -81,7 +88,7 @@ ARFLAGS := /nologo $(ARFLAGS:r=)#M#
 RANLIB = ls -s#M#
 AR_OUTOPT = /OUT:#M#
 
-## An import library is needed for z/OS and MSVC
+## An import library is needed for z/OS, MSVC and Cygwin
 IMPORT_LIB_EXT = .lib
 
 LIBPREFIX=
@@ -169,7 +176,7 @@ endif
 
 ## Compile a Windows resource file
 %.res : $(srcdir)/%.rc
-	rc.exe /fo$@ $(SOURCE_FILE)
+	rc.exe /fo$@ $(CPPFLAGS) $(SOURCE_FILE)
 
 ## Versioned target for a shared library.
 FINAL_SO_TARGET= $(basename $(SO_TARGET))$(SO_TARGET_VERSION_MAJOR).$(SO)
@@ -177,16 +184,16 @@ MIDDLE_SO_TARGET=$(FINAL_SO_TARGET)
 
 ## Starting in MSVC 2005, manifest files are required. This reduces the obnoxiousness of this feature.
 	POST_SO_BUILD_STEP = @([ -e $<.manifest ] && \
-	( echo Embedding manifest into $< && mt.exe -manifest $<.manifest -outputresource:"$<;2" && rm -rf $<.manifest )) \
+	( echo Embedding manifest into $< && mt.exe -nologo -manifest $<.manifest -outputresource:"$<;2" && rm -rf $<.manifest )) \
 	|| true
-	POST_BUILD_STEP = ([ -e $@.manifest ] && \
-	( echo Embedding manifest into $@ && mt.exe -manifest $@.manifest -outputresource:"$@;1" && rm -rf $@.manifest )) \
+	POST_BUILD_STEP = @([ -e $@.manifest ] && \
+	( echo Embedding manifest into $@ && mt.exe -nologo -manifest $@.manifest -outputresource:"$@;1" && rm -rf $@.manifest )) \
 	|| true
 
 ## Special pkgdata information that is needed
 PKGDATA_VERSIONING = -r $(SO_TARGET_VERSION_MAJOR)
-ICUPKGDATA_INSTALL_DIR = $(shell cygpath -dma $(DESTDIR)$(ICUPKGDATA_DIR))#M#
-ICUPKGDATA_INSTALL_LIBDIR = $(shell cygpath -dma $(DESTDIR)$(libdir))#M#
+ICUPKGDATA_INSTALL_DIR = $(shell mkdir -p  $(DESTDIR)$(ICUPKGDATA_DIR) ;  cygpath -dma $(DESTDIR)$(ICUPKGDATA_DIR))#M#
+ICUPKGDATA_INSTALL_LIBDIR = $(shell mkdir -p  $(DESTDIR)$(libdir) ; cygpath -dma $(DESTDIR)$(libdir))#M#
 
 ## Versioned import library names. The library names are versioned,
 ## but the import libraries do not need versioning.

@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-* Copyright (C) 1999-2007, International Business Machines
+* Copyright (C) 1999-2008, International Business Machines
 * Corporation and others. All Rights Reserved.
 **********************************************************************
 *   Date        Name        Description
@@ -59,7 +59,7 @@ class TransliteratorIDParser;
  * <code>transliterate()</code>.  (However, this does <em>not</em>
  * mean that threads may share transliterators without synchronizing
  * them.  Transliterators are not immutable, so they must be
- * synchronized when shared between threads.)  This1 might seem to
+ * synchronized when shared between threads.)  This might seem to
  * limit the complexity of the transliteration operation.  In
  * practice, subclasses perform complex transliterations by delaying
  * the replacement of text until it is known that no other
@@ -472,13 +472,10 @@ public:
      * Transliterates the portion of the text buffer that can be
      * transliterated unambiguosly after a new character has been
      * inserted, typically as a result of a keyboard event.  This is a
-     * convenience method; see {@link
-     * #transliterate(Replaceable&, UTransPosition&, const UnicodeString&, UErrorCode&) const}
-     * for details.
+     * convenience method.
      * @param text the buffer holding transliterated and
      * untransliterated text
-     * @param index an array of three integers.  See {@link
-     * #transliterate(Replaceable&, UTransPosition&, const UnicodeString&, UErrorCode&) const }.
+     * @param index an array of three integers.
      * @param insertion text to be inserted and possibly
      * transliterated into the translation buffer at
      * <code>index.limit</code>.
@@ -1266,7 +1263,7 @@ public:
     virtual UClassID getDynamicClassID(void) const = 0;
 
 private:
-    static UBool initializeRegistry(void);
+    static UBool initializeRegistry(UErrorCode &status);
 
 public:
     /**

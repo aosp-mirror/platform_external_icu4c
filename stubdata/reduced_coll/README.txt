@@ -1,7 +1,7 @@
 To construct a revised data file, copy it to this directory, changing its
-name to icudt38l.dat, and then run the following command in this directory:
+name to icudt42l.dat, and then run the following command in this directory:
 
-    icupkg --add add.txt icudt38l.dat
+    icupkg --add add.txt icudt42l.dat
 
 Then copy the new data file back to its source location.
 

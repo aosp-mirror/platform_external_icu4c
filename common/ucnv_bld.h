@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 1999-2006, International Business Machines
+*   Copyright (C) 1999-2009 International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *
@@ -41,6 +41,7 @@
 #define UCNV_OPTION_VERSION     0xf
 #define UCNV_OPTION_SWAP_LFNL   0x10
 
+#define UCNV_GET_VERSION(cnv) ((cnv)->options&UCNV_OPTION_VERSION)
 
 U_CDECL_BEGIN /* We must declare the following as 'extern "C"' so that if ucnv
                  itself is compiled under C++, the linkage of the funcptrs will
@@ -226,6 +227,9 @@ struct UConverter {
     char preToU[UCNV_EXT_MAX_BYTES];
     int8_t preFromULength, preToULength;    /* negative: replay */
     int8_t preToUFirstLength;               /* length of first character */
+
+    /* new fields for ICU 4.0 */
+    UConverterCallbackReason toUCallbackReason; /* (*fromCharErrorBehaviour) reason, set when error is detected */
 };
 
 U_CDECL_END /* end of UConverter */

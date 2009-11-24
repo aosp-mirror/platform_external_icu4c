@@ -1,7 +1,7 @@
 //
 //  regexst.h
 //
-//  Copyright (C) 2004-2007, International Business Machines Corporation and others.
+//  Copyright (C) 2004-2008, International Business Machines Corporation and others.
 //  All Rights Reserved.
 //
 //  This file contains class RegexStaticSets
@@ -153,10 +153,6 @@ fRuleDigitsAlias(NULL)
     for (i=0; i<URX_LAST_SET; i++) {
         fPropSets[i] = NULL;
     }
-    for (i=0; i<(int32_t)(sizeof(fRuleSets)/sizeof(fRuleSets[0])); i++) {
-        fRuleSets[i] = NULL;
-    }
-
     // Then init the sets to their correct values.
     fPropSets[URX_ISWORD_SET]  = new UnicodeSet(UnicodeString(TRUE, gIsWordPattern, -1),     *status);
     fPropSets[URX_ISSPACE_SET] = new UnicodeSet(UnicodeString(TRUE, gIsSpacePattern, -1),    *status);
@@ -167,6 +163,13 @@ fRuleDigitsAlias(NULL)
     fPropSets[URX_GC_T]        = new UnicodeSet(UnicodeString(TRUE, gGC_TPattern, -1),       *status);
     fPropSets[URX_GC_LV]       = new UnicodeSet(UnicodeString(TRUE, gGC_LVPattern, -1),      *status);
     fPropSets[URX_GC_LVT]      = new UnicodeSet(UnicodeString(TRUE, gGC_LVTPattern, -1),     *status);
+    
+    // Check for null pointers
+    if (fPropSets[URX_ISWORD_SET] == NULL || fPropSets[URX_ISSPACE_SET] == NULL || fPropSets[URX_GC_EXTEND] == NULL || 
+        fPropSets[URX_GC_CONTROL] == NULL || fPropSets[URX_GC_L] == NULL || fPropSets[URX_GC_V] == NULL || 
+        fPropSets[URX_GC_T] == NULL || fPropSets[URX_GC_LV] == NULL || fPropSets[URX_GC_LVT] == NULL) {
+        goto ExitConstrDeleteAll;
+    }
     if (U_FAILURE(*status)) {
         // Bail out if we were unable to create the above sets.
         // The rest of the initialization needs them, so we cannot proceed.
@@ -185,6 +188,10 @@ fRuleDigitsAlias(NULL)
     //            when finding grapheme cluster boundaries.
     //
     fPropSets[URX_GC_NORMAL] = new UnicodeSet(0, UnicodeSet::MAX_VALUE);
+    // Null pointer check
+    if (fPropSets[URX_GC_NORMAL] == NULL) {
+    	goto ExitConstrDeleteAll;
+    }
     fPropSets[URX_GC_NORMAL]->remove(0xac00, 0xd7a4);
     fPropSets[URX_GC_NORMAL]->removeAll(*fPropSets[URX_GC_CONTROL]);
     fPropSets[URX_GC_NORMAL]->removeAll(*fPropSets[URX_GC_L]);
@@ -201,14 +208,20 @@ fRuleDigitsAlias(NULL)
     }
 
     // Sets used while parsing rules, but not referenced from the parse state table
-    fRuleSets[kRuleSet_rule_char-128]   = new UnicodeSet(UnicodeString(TRUE, gRuleSet_rule_char_pattern, -1),   *status);
-    fRuleSets[kRuleSet_digit_char-128]  = new UnicodeSet(UnicodeString(TRUE, gRuleSet_digit_char_pattern, -1),  *status);
-    fRuleDigitsAlias = fRuleSets[kRuleSet_digit_char-128];
+    fRuleSets[kRuleSet_rule_char-128]   = UnicodeSet(UnicodeString(TRUE, gRuleSet_rule_char_pattern, -1),   *status);
+    fRuleSets[kRuleSet_digit_char-128]  = UnicodeSet(UnicodeString(TRUE, gRuleSet_digit_char_pattern, -1),  *status);
+    fRuleDigitsAlias = &fRuleSets[kRuleSet_digit_char-128];
     for (i=0; i<(int32_t)(sizeof(fRuleSets)/sizeof(fRuleSets[0])); i++) {
-        if (fRuleSets[i]) {
-            fRuleSets[i]->compact();
-        }
+        fRuleSets[i].compact();
     }
+    return; // If we reached this point, everything is fine so just exit
+
+ExitConstrDeleteAll: // Remove fPropSets and fRuleSets and return error
+    for (i=0; i<URX_LAST_SET; i++) {
+        delete fPropSets[i];
+        fPropSets[i] = NULL;
+    }
+    *status = U_MEMORY_ALLOCATION_ERROR;
 }
 
 
@@ -218,10 +231,6 @@ RegexStaticSets::~RegexStaticSets() {
     for (i=0; i<URX_LAST_SET; i++) {
         delete fPropSets[i];
         fPropSets[i] = NULL;
-    }
-    for (i=0; i<(int32_t)(sizeof(fRuleSets)/sizeof(fRuleSets[0])); i++) {
-        delete fRuleSets[i];
-        fRuleSets[i] = NULL;
     }
     fRuleDigitsAlias = NULL;
 }
@@ -252,6 +261,10 @@ void RegexStaticSets::initGlobals(UErrorCode *status) {
     UMTX_CHECK(NULL, gStaticSets, p);
     if (p == NULL) {
         p = new RegexStaticSets(status);
+        if (p == NULL) {
+        	*status = U_MEMORY_ALLOCATION_ERROR;
+        	return;
+        }
         if (U_FAILURE(*status)) {
             delete p;
             return;

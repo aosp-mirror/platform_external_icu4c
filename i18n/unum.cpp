@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-*   Copyright (C) 1996-2007, International Business Machines
+*   Copyright (C) 1996-2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *******************************************************************************
 * Modification History:
@@ -99,6 +99,12 @@ unum_open(  UNumberFormatStyle    style,
             *status = U_MEMORY_ALLOCATION_ERROR;
             return 0;
         }
+        //  BEGIN android-added
+        //  ICU ticket#4216.
+        if (U_FAILURE(*status)) {
+            return 0;
+        }
+        //  END android-added
 
         retVal = (UNumberFormat*)new DecimalFormat(pat, syms, *parseErr, *status);
         if(retVal == 0) {
@@ -129,6 +135,10 @@ unum_open(  UNumberFormatStyle    style,
 
     case UNUM_DURATION:
         retVal = (UNumberFormat*)new RuleBasedNumberFormat(URBNF_DURATION, Locale(locale), *status);
+        break;
+
+    case UNUM_NUMBERING_SYSTEM:
+        retVal = (UNumberFormat*)new RuleBasedNumberFormat(URBNF_NUMBERING_SYSTEM, Locale(locale), *status);
         break;
 #endif
 
@@ -271,8 +281,13 @@ unum_formatDoubleCurrency(const UNumberFormat* fmt,
     if (pos != 0) {
         fp.setField(pos->field);
     }
-
-    Formattable n(new CurrencyAmount(number, currency, *status));
+    CurrencyAmount *tempCurrAmnt = new CurrencyAmount(number, currency, *status);
+    // Check for null pointer.
+    if (tempCurrAmnt == NULL) {
+        *status = U_MEMORY_ALLOCATION_ERROR;
+        return -1;
+    }
+    Formattable n(tempCurrAmnt);
     ((const NumberFormat*)fmt)->format(n, res, fp, *status);
     
     if (pos != 0) {
@@ -308,13 +323,13 @@ parseRes(Formattable& res,
         ((const NumberFormat*)fmt)->parse(src, res, pp);
     }
     
-    if(parsePos != 0) {
-        if(pp.getErrorIndex() == -1)
-            *parsePos = pp.getIndex();
-        else {
+    if(pp.getErrorIndex() != -1) {
+        *status = U_PARSE_ERROR;
+        if(parsePos != 0) {
             *parsePos = pp.getErrorIndex();
-            *status = U_PARSE_ERROR;
         }
+    } else if(parsePos != 0) {
+        *parsePos = pp.getIndex();
     }
 }
 

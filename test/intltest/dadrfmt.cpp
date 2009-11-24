@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2007, International Business Machines Corporation and
+ * Copyright (c) 1997-2009, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -64,7 +64,7 @@ void DataDrivenFormatTest::runIndexedTest(int32_t index, UBool exec,
             name = "";
         }
     } else {
-        errln("format/DataDriven*Test data (format.res) not initialized!");
+        dataerrln("format/DataDriven*Test data (format.res) not initialized!");
         name = "";
     }
 
@@ -93,12 +93,13 @@ void DataDrivenFormatTest::testConvertDate(TestData *testData,
     UnicodeString kPATTERN("PATTERN="); // TODO: static
     UnicodeString kMILLIS("MILLIS="); // TODO: static
     UnicodeString kRELATIVE_MILLIS("RELATIVE_MILLIS="); // TODO: static
+    UnicodeString kRELATIVE_ADD("RELATIVE_ADD:"); // TODO: static
     
     UErrorCode status = U_ZERO_ERROR;
     SimpleDateFormat basicFmt(UnicodeString("EEE MMM dd yyyy / YYYY'-W'ww-ee"),
             status);
     if (U_FAILURE(status)) {
-        errln("FAIL: Couldn't create basic SimpleDateFormat: %s\n",
+        errcheckln(status, "FAIL: Couldn't create basic SimpleDateFormat: %s\n",
                 u_errorName(status));
         return;
     }
@@ -169,25 +170,48 @@ void DataDrivenFormatTest::testConvertDate(TestData *testData,
                 continue;
             }
         }
-        
+
+        Calendar *cal = Calendar::createInstance(loc, status);
+        if(U_FAILURE(status)) {
+            errln("case %d: could not create calendar from %s", n, calLoc);
+        }
+
         // parse 'date'
         if(date.startsWith(kMILLIS)) {
             UnicodeString millis = UnicodeString(date, kMILLIS.length());
             useDate = TRUE;
-            fromDate = udbg_stoi(millis);
+            fromDate = udbg_stod(millis);
         } else if(date.startsWith(kRELATIVE_MILLIS)) {
             UnicodeString millis = UnicodeString(date, kRELATIVE_MILLIS.length());
             useDate = TRUE;
-            fromDate = udbg_stoi(millis) + now;
+            fromDate = udbg_stod(millis) + now;
+        } else if(date.startsWith(kRELATIVE_ADD)) {
+            UnicodeString add = UnicodeString(date, kRELATIVE_ADD.length());  // "add" is a string indicating which fields to add
+            if(fromSet.parseFrom(add, status)<0 || U_FAILURE(status)) {
+                errln("case %d: could not parse date as RELATIVE_ADD calendar fields: %s", n, u_errorName(status));
+                continue;
+            }
+            useDate=TRUE;
+            cal->clear();
+            cal->setTime(now, status);
+            for (int q=0; q<UCAL_FIELD_COUNT; q++) {
+                if (fromSet.isSet((UCalendarDateFields)q)) {
+                    //int32_t oldv = cal->get((UCalendarDateFields)q, status);
+                    cal->add((UCalendarDateFields)q,
+                                fromSet.get((UCalendarDateFields)q), status);
+                    //int32_t newv = cal->get((UCalendarDateFields)q, status);
+                }
+            }
+            fromDate = cal->getTime(status);
+            if(U_FAILURE(status)) {
+                errln("case %d: could not apply date as RELATIVE_ADD calendar fields: %s", n, u_errorName(status));
+                continue;
+            }
         } else if(fromSet.parseFrom(date, status)<0 || U_FAILURE(status)) {
             errln("case %d: could not parse date as calendar fields: %s", n, u_errorName(status));
             continue;
         }
         
-        Calendar *cal = Calendar::createInstance(loc, status);
-        if(U_FAILURE(status)) {
-            errln("case %d: could not create calendar from %s", n, calLoc);
-        }
         // now, do it.
         if (fmt) {
             FieldPosition pos;

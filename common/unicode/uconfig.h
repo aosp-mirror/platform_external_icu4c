@@ -1,6 +1,6 @@
 /*  
 **********************************************************************
-*   Copyright (C) 2002-2007, International Business Machines
+*   Copyright (C) 2002-2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *   file name:  uconfig.h
@@ -14,6 +14,7 @@
 
 #ifndef __UCONFIG_H__
 #define __UCONFIG_H__
+
 
 /*!
  * \file
@@ -33,6 +34,17 @@
  *
  * @stable ICU 2.4
  */
+
+/**
+ * If this switch is defined, ICU will attempt to load a header file named "uconfig_local.h"
+ * prior to determining default settings for uconfig variables.
+ * 
+ * @internal ICU 4.0
+ * 
+ */
+#if defined(UCONFIG_USE_LOCAL)
+#include "uconfig_local.h"
+#endif
 
 /**
  * \def UCONFIG_ONLY_COLLATION
@@ -92,7 +104,11 @@
  * ICU will not completely build with this switch turned on.
  * This switch turns off all converters.
  *
+ * You may want to use this together with U_CHARSET_IS_UTF8 defined to 1
+ * in utypes.h if char* strings in your environment are always in UTF-8.
+ *
  * @stable ICU 3.2
+ * @see U_CHARSET_IS_UTF8
  */
 #ifndef UCONFIG_NO_CONVERSION
 #   define UCONFIG_NO_CONVERSION 0

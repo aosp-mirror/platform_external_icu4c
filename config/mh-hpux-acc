@@ -1,6 +1,6 @@
 ## -*-makefile-*-
 ## HP/UX-specific setup using aCC
-## Copyright (c) 1999-2007, International Business Machines Corporation and
+## Copyright (c) 1999-2009, International Business Machines Corporation and
 ## others. All Rights Reserved.
 
 ## Commands to generate dependency files
@@ -8,8 +8,8 @@ GEN_DEPS.c=	:
 GEN_DEPS.cc= 	:
 
 ## Flags for position independent code
-SHAREDLIBCFLAGS = +z
-SHAREDLIBCXXFLAGS = +z
+SHAREDLIBCFLAGS = +Z
+SHAREDLIBCXXFLAGS = +Z
 
 ## Additional flags when building libraries with threads
 ## We use this instead of -mt, which isn't available in all versions of aCC
@@ -24,8 +24,8 @@ THREADSCPPFLAGS = -D_REENTRANT -D_THREAD_SAFE
 #    823 Redundant preprocessing concatenation operation results in two valid
 #        preprocessing tokens. This comes from INT64_C in <inttypes.h>
 #   4232 conversion to a more strictly aligned type may cause misaligned access.
-CFLAGS += -Ae +ESlit
-CXXFLAGS += +W740 +W749 +W823 +W4232
+CFLAGS += -Ae +Olit=all
+CXXFLAGS += -Wc,-ansi_for_scope,on +W740 +W749 +W823 +W4232
 
 # -Bhidden_def Hides all symbols defined in the module.
 #LIBCFLAGS = -Bhidden_def

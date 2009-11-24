@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 1999-2005, International Business Machines
+*   Copyright (C) 1999-2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -50,12 +50,31 @@ U_CAPI const char * U_EXPORT2
 findBasename(const char *filename);
 
 /*
- * Creates a diretory with pathname.
+ * Return the current year in the Gregorian calendar. Used for copyright generation.
+ */
+U_CAPI int32_t U_EXPORT2
+getCurrentYear(void);
+
+/*
+ * Creates a directory with pathname.
  *
  * @param status Set to an error code when mkdir failed.
  */
 U_CAPI void U_EXPORT2
 uprv_mkdir(const char *pathname, UErrorCode *status);
+
+/**
+ * Return the modification date for the specified file or directory.
+ * Return value is undefined if there was an error.
+ */
+/*U_CAPI UDate U_EXPORT2
+uprv_getModificationDate(const char *pathname, UErrorCode *status);
+*/
+/*
+ * Returns the modification
+ *
+ * @param status Set to an error code when mkdir failed.
+ */
 
 /*
  * UToolMemory is used for generic, custom memory management.

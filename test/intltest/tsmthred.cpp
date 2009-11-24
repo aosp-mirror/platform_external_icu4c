@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1999-2007, International Business Machines Corporation and
+ * Copyright (c) 1999-2009, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -10,10 +10,6 @@
 # endif
 #endif
 
-/* Needed by z/OS to get usleep */
-#if !defined(_XOPEN_SOURCE_EXTENDED)
-#define _XOPEN_SOURCE_EXTENDED 1
-#endif
 
 #include "unicode/utypes.h"
 #include "unicode/ustring.h"
@@ -30,6 +26,17 @@
 #define POSIX 1
 #endif
 
+/* Needed by z/OS to get usleep */
+#if defined(OS390)
+#define __DOT1 1
+#define __UU
+#define _XOPEN_SOURCE_EXTENDED 1
+#ifndef _XPG4_2
+#define _XPG4_2
+#endif
+#include <unistd.h>
+/*#include "platform_xopen_source_extended.h"*/
+#endif
 #if defined(POSIX) || defined(U_SOLARIS) || defined(U_AIX) || defined(U_HPUX)
 
 #define HAVE_IMP
@@ -49,7 +56,13 @@
 #define __EXTENSIONS__
 #endif
 
+#if defined(OS390)
+#include <sys/types.h>
+#endif
+
+#if !defined(OS390)
 #include <signal.h>
+#endif
 
 /* Define _XPG4_2 for Solaris and friends. */
 #ifndef _XPG4_2
@@ -981,13 +994,13 @@ public:
         status = U_ZERO_ERROR;
         formatter = NumberFormat::createInstance(Locale::getEnglish(),status);
         if(U_FAILURE(status)) {
-            error("Error on NumberFormat::createInstance()");
+            error("Error on NumberFormat::createInstance().");
             goto cleanupAndReturn;
         }
         
         percentFormatter = NumberFormat::createPercentInstance(Locale::getFrench(),status);
         if(U_FAILURE(status))             {
-            error("Error on NumberFormat::createPercentInstance()");
+            error("Error on NumberFormat::createPercentInstance().");
             goto cleanupAndReturn;
         }
         
@@ -1049,7 +1062,8 @@ public:
                 messageLocale=                      Locale("de","DE@currency=DEM");
                 countryToCheck=                     Locale("","BF");
                 currencyToCheck=                    2.32;
-                expected=                           "1:A customer in Burkina Faso is receiving a #8 error - U_INDEX_OUTOFBOUNDS_ERROR. Their telephone call is costing 2,32 DM.";
+                expected=                           CharsToUnicodeString(
+                                                    "1:A customer in Burkina Faso is receiving a #8 error - U_INDEX_OUTOFBOUNDS_ERROR. Their telephone call is costing 2,32\\u00A0DM.");
                 break;
             case 2:
                 statusToCheck=                      U_MEMORY_ALLOCATION_ERROR;
@@ -1062,7 +1076,7 @@ public:
                 expected=       CharsToUnicodeString(
                             "2:user in Vereinigte Staaten is receiving a #7 error"
                             " - U_MEMORY_ALLOCATION_ERROR. They insist they just spent"
-                            " \\u00f6S 40.193,12 on memory.");
+                            " \\u00f6S\\u00A040.193,12 on memory.");
                 break;
             }
             
@@ -1148,7 +1162,7 @@ void MultithreadTest::TestThreadedIntl()
             } else if (haveDisplayedInfo[i] == FALSE) {
                 logln("Thread # %d is complete..", i);
                 if(tests[i].getError(theErr)) {
-                    errln(UnicodeString("#") + i + ": " + theErr);
+                    dataerrln(UnicodeString("#") + i + ": " + theErr);
                     SimpleThread::errorFunc();
                 }
                 haveDisplayedInfo[i] = TRUE;
@@ -1303,7 +1317,7 @@ void MultithreadTest::TestCollators()
 
             if (testFile == 0) {
                 *(buffer+bufLen) = 0;
-                errln("ERROR: could not open any of the conformance test files, tried opening base %s", buffer);
+                dataerrln("could not open any of the conformance test files, tried opening base %s", buffer);
                 return;        
             } else {
                 infoln(
@@ -1339,13 +1353,13 @@ void MultithreadTest::TestCollators()
     }
     fclose(testFile);
     if(U_FAILURE(status)) {
-      errln("Couldn't read the test file!");
+      dataerrln("Couldn't read the test file!");
       return;
     }
 
     UCollator *coll = ucol_open("root", &status);
     if(U_FAILURE(status)) {
-        errln("Couldn't open UCA collator");
+        errcheckln(status, "Couldn't open UCA collator");
         return;
     }
     ucol_setAttribute(coll, UCOL_NORMALIZATION_MODE, UCOL_ON, &status);

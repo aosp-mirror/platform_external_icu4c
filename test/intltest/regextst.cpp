@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 2002-2007, International Business Machines Corporation and
+ * Copyright (c) 2002-2009, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -66,7 +66,12 @@ void RegexTest::runIndexedTest( int32_t index, UBool exec, const char* &name, ch
         case 6: name = "PerlTests";
             if (exec) PerlTests();
             break;
-
+        case 7: name = "Callbacks";
+            if (exec) Callbacks();
+            break;
+        case 8: name = "Bug 6149";
+             if (exec) Bug6149();
+             break;
 
         default: name = "";
             break; //needed to end loop
@@ -79,13 +84,13 @@ void RegexTest::runIndexedTest( int32_t index, UBool exec, const char* &name, ch
 //   Error Checking / Reporting macros used in all of the tests.
 //
 //---------------------------------------------------------------------------
-#define REGEX_CHECK_STATUS {if (U_FAILURE(status)) {errln("RegexTest failure at line %d.  status=%s\n", \
+#define REGEX_CHECK_STATUS {if (U_FAILURE(status)) {dataerrln("RegexTest failure at line %d.  status=%s", \
 __LINE__, u_errorName(status)); return;}}
 
 #define REGEX_ASSERT(expr) {if ((expr)==FALSE) {errln("RegexTest failure at line %d.\n", __LINE__);};}
 
 #define REGEX_ASSERT_FAIL(expr, errcode) {UErrorCode status=U_ZERO_ERROR; (expr);\
-if (status!=errcode) {errln("RegexTest failure at line %d.  Expected status=%s, got %s\n", \
+if (status!=errcode) {dataerrln("RegexTest failure at line %d.  Expected status=%s, got %s", \
     __LINE__, u_errorName(errcode), u_errorName(status));};}
 
 #define REGEX_CHECK_STATUS_L(line) {if (U_FAILURE(status)) {errln( \
@@ -113,18 +118,18 @@ if (status!=errcode) {errln("RegexTest failure at line %d.  Expected status=%s, 
 #define REGEX_TESTLM(pat, text, looking, match) doRegexLMTest(pat, text, looking, match, __LINE__);
 
 UBool RegexTest::doRegexLMTest(const char *pat, const char *text, UBool looking, UBool match, int32_t line) {
-    const UnicodeString pattern(pat);
-    const UnicodeString inputText(text);
+    const UnicodeString pattern(pat, -1, US_INV);
+    const UnicodeString inputText(text, -1, US_INV);
     UErrorCode          status  = U_ZERO_ERROR;
     UParseError         pe;
     RegexPattern        *REPattern = NULL;
     RegexMatcher        *REMatcher = NULL;
     UBool               retVal     = TRUE;
 
-    UnicodeString patString(pat);
+    UnicodeString patString(pat, -1, US_INV);
     REPattern = RegexPattern::compile(patString, 0, pe, status);
     if (U_FAILURE(status)) {
-        errln("RegexTest failure in RegexPattern::compile() at line %d.  Status = %s\n",
+        dataerrln("RegexTest failure in RegexPattern::compile() at line %d.  Status = %s",
             line, u_errorName(status));
         return FALSE;
     }
@@ -201,7 +206,7 @@ void RegexTest::regex_err(const char *pat, int32_t errLine, int32_t errCol,
     UnicodeString patString(pat);
     callerPattern = RegexPattern::compile(patString, 0, pe, status);
     if (status != expectedStatus) {
-        errln("Line %d: unexpected error %s compiling pattern.", line, u_errorName(status));
+        dataerrln("Line %d: unexpected error %s compiling pattern.", line, u_errorName(status));
     } else {
         if (status != U_ZERO_ERROR) {
             if (pe.line != errLine || pe.offset != errCol) {
@@ -634,7 +639,7 @@ void RegexTest::API_Match() {
         UParseError         pe;
         UErrorCode          status=U_ZERO_ERROR;
 
-        UnicodeString       re(".*?(?:(\\Gabc)|(abc))");
+        UnicodeString       re(".*?(?:(\\Gabc)|(abc))", -1, US_INV);
         RegexPattern *pat = RegexPattern::compile(re, flags, pe, status);
         REGEX_CHECK_STATUS;
         UnicodeString data = ".abcabc.abc..";
@@ -679,7 +684,7 @@ void RegexTest::API_Match() {
         REGEX_ASSERT(i==5);
 
         // Check that the bump goes over surrogate pairs OK
-        s = "\\U00010001\\U00010002\\U00010003\\U00010004";
+        s = UNICODE_STRING_SIMPLE("\\U00010001\\U00010002\\U00010003\\U00010004");
         s = s.unescape();
         m.reset(s);
         for (i=0; ; i+=2) {
@@ -837,6 +842,90 @@ void RegexTest::API_Match() {
     }
 #endif
 
+    //
+    //  Time Outs.  
+    //       Note:  These tests will need to be changed when the regexp engine is
+    //              able to detect and cut short the exponential time behavior on
+    //              this type of match.
+    //
+    {
+        UErrorCode status = U_ZERO_ERROR;
+        //    Enough 'a's in the string to cause the match to time out.
+        //       (Each on additonal 'a' doubles the time)
+        UnicodeString testString("aaaaaaaaaaaaaaaaaaaaa");
+        RegexMatcher matcher("(a+)+b", testString, 0, status);
+        REGEX_CHECK_STATUS;
+        REGEX_ASSERT(matcher.getTimeLimit() == 0);
+        matcher.setTimeLimit(100, status);
+        REGEX_ASSERT(matcher.getTimeLimit() == 100);
+        REGEX_ASSERT(matcher.lookingAt(status) == FALSE);
+        REGEX_ASSERT(status == U_REGEX_TIME_OUT);
+    }
+    {
+        UErrorCode status = U_ZERO_ERROR;
+        //   Few enough 'a's to slip in under the time limit.
+        UnicodeString testString("aaaaaaaaaaaaaaaaaa");
+        RegexMatcher matcher("(a+)+b", testString, 0, status);
+        REGEX_CHECK_STATUS;
+        matcher.setTimeLimit(100, status);
+        REGEX_ASSERT(matcher.lookingAt(status) == FALSE);
+        REGEX_CHECK_STATUS;
+    }
+    
+    //
+    //  Stack Limits
+    //
+    {
+        UErrorCode status = U_ZERO_ERROR;
+        UnicodeString testString(600000, 0x41, 600000);  // Length 600,000, filled with 'A'
+        
+        // Adding the capturing parentheses to the pattern "(A)+A$" inhibits optimizations
+        //   of the '+', and makes the stack frames larger.
+        RegexMatcher matcher("(A)+A$", testString, 0, status);
+        
+        // With the default stack, this match should fail to run
+        REGEX_ASSERT(matcher.lookingAt(status) == FALSE);
+        REGEX_ASSERT(status == U_REGEX_STACK_OVERFLOW);
+        
+        // With unlimited stack, it should run
+        status = U_ZERO_ERROR;
+        matcher.setStackLimit(0, status);
+        REGEX_CHECK_STATUS;
+        REGEX_ASSERT(matcher.lookingAt(status) == TRUE);
+        REGEX_CHECK_STATUS;
+        REGEX_ASSERT(matcher.getStackLimit() == 0);
+
+        // With a limited stack, it the match should fail
+        status = U_ZERO_ERROR;
+        matcher.setStackLimit(10000, status);
+        REGEX_ASSERT(matcher.lookingAt(status) == FALSE);
+        REGEX_ASSERT(status == U_REGEX_STACK_OVERFLOW);
+        REGEX_ASSERT(matcher.getStackLimit() == 10000);
+    }
+        
+        // A pattern that doesn't save state should work with
+        //   a minimal sized stack
+    {
+        UErrorCode status = U_ZERO_ERROR;
+        UnicodeString testString = "abc";
+        RegexMatcher matcher("abc", testString, 0, status);
+        REGEX_CHECK_STATUS;
+        matcher.setStackLimit(30, status);
+        REGEX_CHECK_STATUS;
+        REGEX_ASSERT(matcher.matches(status) == TRUE);
+        REGEX_CHECK_STATUS;
+        REGEX_ASSERT(matcher.getStackLimit() == 30);
+        
+        // Negative stack sizes should fail
+        status = U_ZERO_ERROR;
+        matcher.setStackLimit(1000, status);
+        REGEX_CHECK_STATUS;
+        matcher.setStackLimit(-1, status);
+        REGEX_ASSERT(status == U_ILLEGAL_ARGUMENT_ERROR);
+        REGEX_ASSERT(matcher.getStackLimit() == 1000);
+    }
+    
+
 }
 
 
@@ -941,7 +1030,7 @@ void RegexTest::API_Replace() {
     REGEX_CHECK_STATUS;
     REGEX_ASSERT(dest == "bcbcdefg");
 
-    dest = matcher2->replaceFirst("The value of \\$1 is $1.", status);
+    dest = matcher2->replaceFirst(UNICODE_STRING_SIMPLE("The value of \\$1 is $1."), status);
     REGEX_CHECK_STATUS;
     REGEX_ASSERT(dest == "The value of $1 is bc.defg");
 
@@ -949,7 +1038,7 @@ void RegexTest::API_Replace() {
     REGEX_CHECK_STATUS;
     REGEX_ASSERT(dest == "$ by itself, no group number $$$defg");
 
-    UnicodeString replacement = "Supplemental Digit 1 $\\U0001D7CF.";
+    UnicodeString replacement = UNICODE_STRING_SIMPLE("Supplemental Digit 1 $\\U0001D7CF.");
     replacement = replacement.unescape();
     dest = matcher2->replaceFirst(replacement, status);
     REGEX_CHECK_STATUS;
@@ -963,7 +1052,7 @@ void RegexTest::API_Replace() {
     //
     {
         UnicodeString  src = "abc 1 abc 2 abc 3";
-        UnicodeString  substitute = "--\\u0043--";
+        UnicodeString  substitute = UNICODE_STRING_SIMPLE("--\\u0043--");
         matcher->reset(src);
         UnicodeString  result = matcher->replaceAll(substitute, status);
         REGEX_CHECK_STATUS;
@@ -971,7 +1060,7 @@ void RegexTest::API_Replace() {
     }
     {
         UnicodeString  src = "abc !";
-        UnicodeString  substitute = "--\\U00010000--";
+        UnicodeString  substitute = UNICODE_STRING_SIMPLE("--\\U00010000--");
         matcher->reset(src);
         UnicodeString  result = matcher->replaceAll(substitute, status);
         REGEX_CHECK_STATUS;
@@ -1100,7 +1189,7 @@ void RegexTest::API_Pattern() {
     //
     {
         UErrorCode     status     = U_ZERO_ERROR;
-        RegexPattern  *pSource    = RegexPattern::compile("\\p{L}+", 0, status);
+        RegexPattern  *pSource    = RegexPattern::compile(UNICODE_STRING_SIMPLE("\\p{L}+"), 0, status);
         RegexPattern  *pClone     = pSource->clone();
         delete         pSource;
         RegexMatcher  *mFromClone = pClone->matcher(status);
@@ -1192,7 +1281,7 @@ void RegexTest::API_Pattern() {
     delete pat1;
 
     //  split, with a pattern with (capture)
-    pat1 = RegexPattern::compile("<(\\w*)>",  pe, status);
+    pat1 = RegexPattern::compile(UNICODE_STRING_SIMPLE("<(\\w*)>"),  pe, status);
     REGEX_CHECK_STATUS;
 
     status = U_ZERO_ERROR;
@@ -1358,11 +1447,11 @@ void RegexTest::Extended() {
     //
     UnicodeString testString(FALSE, testData, len);
 
-    RegexMatcher    quotedStuffMat("\\s*([\\'\\\"/])(.*?)\\1", 0, status);
-    RegexMatcher    commentMat    ("\\s*(#.*)?$", 0, status);
-    RegexMatcher    flagsMat      ("\\s*([ixsmdteDEGLMvabtyYzZ2-9]*)([:letter:]*)", 0, status);
+    RegexMatcher    quotedStuffMat(UNICODE_STRING_SIMPLE("\\s*([\\'\\\"/])(.*?)\\1"), 0, status);
+    RegexMatcher    commentMat    (UNICODE_STRING_SIMPLE("\\s*(#.*)?$"), 0, status);
+    RegexMatcher    flagsMat      (UNICODE_STRING_SIMPLE("\\s*([ixsmdteDEGLMvabtyYzZ2-9]*)([:letter:]*)"), 0, status);
 
-    RegexMatcher    lineMat("(.*?)\\r?\\n", testString, 0, status);
+    RegexMatcher    lineMat(UNICODE_STRING_SIMPLE("(.*?)\\r?\\n"), testString, 0, status);
     UnicodeString   testPattern;   // The pattern for test from the test file.
     UnicodeString   testFlags;     // the flags   for a test.
     UnicodeString   matchString;   // The marked up string to be used as input
@@ -1803,11 +1892,17 @@ void RegexTest::Errors() {
     // Ticket 5389
     REGEX_ERR("*c", 1, 1, U_REGEX_RULE_SYNTAX);
 
+    // Invalid Back Reference \0
+    //    For ICU 3.8 and earlier
+    //    For ICU versions newer than 3.8, \0 introduces an octal escape.
+    //
+    REGEX_ERR("(ab)\\0", 1, 6, U_REGEX_BAD_ESCAPE_SEQUENCE);
+
 }
 
 
 //-------------------------------------------------------------------------------
-//
+//      
 //  Read a text data file, convert it to UChars, and return the data
 //    in one big UChar * buffer, which the caller must delete.
 //
@@ -1829,7 +1924,7 @@ UChar *RegexTest::ReadAndConvertFile(const char *fileName, int32_t &ulen,
     //
     f = fopen(fileName, "rb");
     if (f == 0) {
-        errln("Error opening test data file %s\n", fileName);
+        dataerrln("Error opening test data file %s\n", fileName);
         status = U_FILE_ACCESS_ERROR;
         return NULL;
     }
@@ -1987,7 +2082,7 @@ void RegexTest::PerlTests() {
     //  Regex to break the input file into lines, and strip the new lines.
     //     One line per match, capture group one is the desired data.
     //
-    RegexPattern* linePat = RegexPattern::compile("(.+?)[\\r\\n]+", 0, pe, status);
+    RegexPattern* linePat = RegexPattern::compile(UNICODE_STRING_SIMPLE("(.+?)[\\r\\n]+"), 0, pe, status);
     if (U_FAILURE(status)) {
         dataerrln("RegexPattern::compile() error");
         return;
@@ -1998,7 +2093,7 @@ void RegexTest::PerlTests() {
     //  Regex to split a test file line into fields.
     //    There are six fields, separated by tabs.
     //
-    RegexPattern* fieldPat = RegexPattern::compile("\\t", 0, pe, status);
+    RegexPattern* fieldPat = RegexPattern::compile(UNICODE_STRING_SIMPLE("\\t"), 0, pe, status);
 
     //
     //  Regex to identify test patterns with flag settings, and to separate them.
@@ -2006,7 +2101,7 @@ void RegexTest::PerlTests() {
     //    Test patterns without flags are not quoted:   pattern
     //   Coming out, capture group 2 is the pattern, capture group 3 is the flags.
     //
-    RegexPattern *flagPat = RegexPattern::compile("('?)(.*)\\1(.*)", 0, pe, status);
+    RegexPattern *flagPat = RegexPattern::compile(UNICODE_STRING_SIMPLE("('?)(.*)\\1(.*)"), 0, pe, status);
     RegexMatcher* flagMat = flagPat->matcher(status);
 
     //
@@ -2015,19 +2110,19 @@ void RegexTest::PerlTests() {
     //   are string constants and REs for these constructs.
     //
     UnicodeString nulnulSrc("${nulnul}");
-    UnicodeString nulnul("\\u0000\\u0000");
+    UnicodeString nulnul("\\u0000\\u0000", -1, US_INV);
     nulnul = nulnul.unescape();
 
     UnicodeString ffffSrc("${ffff}");
-    UnicodeString ffff("\\uffff");
+    UnicodeString ffff("\\uffff", -1, US_INV);
     ffff = ffff.unescape();
 
     //  regexp for $-[0], $+[2], etc.
-    RegexPattern *groupsPat = RegexPattern::compile("\\$([+\\-])\\[(\\d+)\\]", 0, pe, status);
+    RegexPattern *groupsPat = RegexPattern::compile(UNICODE_STRING_SIMPLE("\\$([+\\-])\\[(\\d+)\\]"), 0, pe, status);
     RegexMatcher *groupsMat = groupsPat->matcher(status);
 
     //  regexp for $0, $1, $2, etc.
-    RegexPattern *cgPat = RegexPattern::compile("\\$(\\d+)", 0, pe, status);
+    RegexPattern *cgPat = RegexPattern::compile(UNICODE_STRING_SIMPLE("\\$(\\d+)"), 0, pe, status);
     RegexMatcher *cgMat = cgPat->matcher(status);
 
 
@@ -2052,7 +2147,7 @@ void RegexTest::PerlTests() {
         flagMat->matches(status);
         UnicodeString pattern  = flagMat->group(2, status);
         pattern.findAndReplace("${bang}", "!");
-        pattern.findAndReplace(nulnulSrc, "\\u0000\\u0000");
+        pattern.findAndReplace(nulnulSrc, UNICODE_STRING_SIMPLE("\\u0000\\u0000"));
         pattern.findAndReplace(ffffSrc, ffff);
 
         //
@@ -2132,7 +2227,7 @@ void RegexTest::PerlTests() {
         // Replace any \n in the match string with an actual new-line char.
         //  Don't do full unescape, as this unescapes more than Perl does, which
         //  causes other spurious failures in the tests.
-        matchString.findAndReplace("\\n", "\n");
+        matchString.findAndReplace(UNICODE_STRING_SIMPLE("\\n"), "\n");
 
 
 
@@ -2229,7 +2324,7 @@ void RegexTest::PerlTests() {
                 perlExpr.remove(0, 2);
             }
 
-            else if (perlExpr.startsWith("\\")) {    // \Escape.  Take following char as a literal.
+            else if (perlExpr.startsWith(UNICODE_STRING_SIMPLE("\\"))) {    // \Escape.  Take following char as a literal.
                                                      //           or as an escaped sequence (e.g. \n)
                 if (perlExpr.length() > 1) {
                     perlExpr.remove(0, 1);  // Remove the '\', but only if not last char.
@@ -2263,7 +2358,7 @@ void RegexTest::PerlTests() {
         UnicodeString expectedS(fields[4]);
         expectedS.findAndReplace(nulnulSrc, nulnul);
         expectedS.findAndReplace(ffffSrc,   ffff);
-        expectedS.findAndReplace("\\n", "\n");
+        expectedS.findAndReplace(UNICODE_STRING_SIMPLE("\\n"), "\n");
 
 
         if (expectedS.compare(resultString) != 0) {
@@ -2299,6 +2394,120 @@ void RegexTest::PerlTests() {
 }
 
 
+//--------------------------------------------------------------
+//
+//  Bug6149   Verify limits to heap expansion for backtrack stack.
+//             Use this pattern,
+//                 "(a?){1,}"
+//             The zero-length match will repeat forever.
+//                (That this goes into a loop is another bug)
+//
+//---------------------------------------------------------------
+void RegexTest::Bug6149() {
+    UnicodeString pattern("(a?){1,}");
+    UnicodeString s("xyz");
+    uint32_t flags = 0;
+    UErrorCode status = U_ZERO_ERROR;
+
+    RegexMatcher  matcher(pattern, s, flags, status);
+    UBool result = false;
+    REGEX_ASSERT_FAIL(result=matcher.matches(status), U_REGEX_STACK_OVERFLOW);
+    REGEX_ASSERT(result == FALSE);
+ }
+
+
+//
+//   Callbacks()    Test the callback function.
+//                  When set, callbacks occur periodically during matching operations,
+//                  giving the application code the ability to abort the operation
+//                  before it's normal completion.
+//
+
+struct callBackContext {
+    RegexTest        *test;
+    int32_t          maxCalls;
+    int32_t          numCalls;
+    int32_t          lastSteps;
+    void reset(int32_t max) {maxCalls=max; numCalls=0; lastSteps=0;};
+};
+
+U_CDECL_BEGIN
+static UBool U_CALLCONV
+testCallBackFn(const void *context, int32_t steps) {
+    callBackContext  *info = (callBackContext *)context;
+    if (info->lastSteps+1 != steps) {
+        info->test->errln("incorrect steps in callback.  Expected %d, got %d\n", info->lastSteps+1, steps);
+    }
+    info->lastSteps = steps;
+    info->numCalls++;
+    return (info->numCalls < info->maxCalls);
+}
+U_CDECL_END
+
+void RegexTest::Callbacks() {
+   {
+        // Getter returns NULLs if no callback has been set
+        
+        //   The variables that the getter will fill in.
+        //   Init to non-null values so that the action of the getter can be seen.
+        const void          *returnedContext = &returnedContext;
+        URegexMatchCallback *returnedFn = &testCallBackFn;
+        
+        UErrorCode status = U_ZERO_ERROR;
+        RegexMatcher matcher("x", 0, status);
+        REGEX_CHECK_STATUS;
+        matcher.getMatchCallback(returnedFn, returnedContext, status);
+        REGEX_CHECK_STATUS;
+        REGEX_ASSERT(returnedFn == NULL);
+        REGEX_ASSERT(returnedContext == NULL);
+    }
+    
+   {
+        // Set and Get work
+        callBackContext cbInfo = {this, 0, 0, 0};
+        const void          *returnedContext;
+        URegexMatchCallback *returnedFn;
+        UErrorCode status = U_ZERO_ERROR;
+        RegexMatcher matcher(UNICODE_STRING_SIMPLE("((.)+\\2)+x"), 0, status);  // A pattern that can run long.
+        REGEX_CHECK_STATUS;
+        matcher.setMatchCallback(testCallBackFn, &cbInfo, status);
+        REGEX_CHECK_STATUS;
+        matcher.getMatchCallback(returnedFn, returnedContext, status);
+        REGEX_CHECK_STATUS;
+        REGEX_ASSERT(returnedFn == testCallBackFn);
+        REGEX_ASSERT(returnedContext == &cbInfo);
+        
+        // A short-running match shouldn't invoke the callback
+        status = U_ZERO_ERROR;
+        cbInfo.reset(1);
+        UnicodeString s = "xxx";
+        matcher.reset(s);
+        REGEX_ASSERT(matcher.matches(status));
+        REGEX_CHECK_STATUS;
+        REGEX_ASSERT(cbInfo.numCalls == 0);
+        
+        // A medium-length match that runs long enough to invoke the
+        //   callback, but not so long that the callback aborts it.
+        status = U_ZERO_ERROR;
+        cbInfo.reset(4);
+        s = "aaaaaaaaaaaaaaaaaaab";
+        matcher.reset(s);
+        REGEX_ASSERT(matcher.matches(status)==FALSE);
+        REGEX_CHECK_STATUS;
+        REGEX_ASSERT(cbInfo.numCalls > 0);
+        
+        // A longer running match that the callback function will abort.
+        status = U_ZERO_ERROR;
+        cbInfo.reset(4);
+        s = "aaaaaaaaaaaaaaaaaaaaaaab";
+        matcher.reset(s);
+        REGEX_ASSERT(matcher.matches(status)==FALSE);
+        REGEX_ASSERT(status == U_REGEX_STOPPED_BY_CALLER);
+        REGEX_ASSERT(cbInfo.numCalls == 4);
+    }
+ 
+
+}
 
 #endif  /* !UCONFIG_NO_REGULAR_EXPRESSIONS  */
 

@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2007 International Business Machines
+// * Copyright (C) 2009 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/so.xml
@@ -112,16 +112,6 @@ so{
         ZW{"Simbaabwe"}
         ZZ{"Far aan la aqoon amase aan saxnayn"}
     }
-    Currencies{
-        KES{
-            "Ksh",
-            "KES",
-        }
-        SOS{
-            "$",
-            "SOS",
-        }
-    }
     ExemplarCharacters{"[a-z]"}
     Languages{
         ar{"Carabi"}
@@ -160,7 +150,7 @@ so{
         Zxxx{"Aan la qorin"}
         Zzzz{"Far aan la aqoon amase aan saxnayn"}
     }
-    Version{"1.52"}
+    Version{"1.68"}
     calendar{
         gregorian{
             AmPmMarkers{
@@ -168,14 +158,18 @@ so{
                 "gn",
             }
             DateTimePatterns{
-                "h:mm:ss a v",
+                "h:mm:ss a zzzz",
                 "h:mm:ss a z",
                 "h:mm:ss a",
                 "h:mm a",
-                "EEEE, MMMM dd, yyyy",
-                "dd MMMM yyyy",
-                "dd-MMM-yyyy",
+                "EEEE, MMMM dd, y",
+                "dd MMMM y",
+                "dd-MMM-y",
                 "dd/MM/yy",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
                 "{1} {0}",
             }
             dayNames{

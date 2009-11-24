@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-* Copyright (c) 2002-2006, International Business Machines
+* Copyright (c) 2002-2009, International Business Machines
 * Corporation and others.  All Rights Reserved.
 **********************************************************************
 */
@@ -22,7 +22,7 @@
  * This is used for backward compatibility with old currency logic in
  * DecimalFormat and DecimalFormatSymbols.
  */
-U_CAPI void
+U_CFUNC void
 uprv_getStaticCurrencyName(const UChar* iso, const char* loc,
                            U_NAMESPACE_QUALIFIER UnicodeString& result, UErrorCode& ec);
 
@@ -40,15 +40,17 @@ uprv_getStaticCurrencyName(const UChar* iso, const char* loc,
  * text to match; must have 0 <= pos.getIndex() < text.length();
  * on output, the position after the last matched character. If
  * the parse fails, the position in unchanged upon output.
+ * @param type currency type to parse against, LONG_NAME only or not
  * @return the ISO 4217 code, as a string, of the best match, or
  * null if there is no match
  *
  * @internal
  */
-U_CAPI void
+U_CFUNC void
 uprv_parseCurrency(const char* locale,
                    const U_NAMESPACE_QUALIFIER UnicodeString& text,
                    U_NAMESPACE_QUALIFIER ParsePosition& pos,
+                   int8_t type,
                    UChar* result,
                    UErrorCode& ec);
 

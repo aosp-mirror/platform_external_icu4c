@@ -1,8 +1,7 @@
-
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2001-2007, International Business Machines
+*   Copyright (C) 2001-2008, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -34,6 +33,7 @@
 #include "unicode/normlzr.h"
 #include "ucol_elm.h"
 #include "ucol_tok.h"
+#include "ucol_cnt.h"
 #include "unormimp.h"
 #include "unicode/caniter.h"
 #include "cmemory.h"
@@ -148,13 +148,19 @@ uprv_uca_initTempTable(UCATableHeader *image, UColOptionSet *opts, const UCollat
         UCOL_SPECIAL_FLAG | (initTag<<24),
         UCOL_SPECIAL_FLAG | (supplementaryInitTag << 24),
         TRUE); // Do your own mallocs for the structure, array and have linear Latin 1
-    if (t->mapping == NULL) {
+    if (U_FAILURE(*status)) {
         goto allocation_failure;
     }
     t->prefixLookup = uhash_open(prefixLookupHash, prefixLookupComp, NULL, status);
+    if (U_FAILURE(*status)) {
+        goto allocation_failure;
+    }
     uhash_setValueDeleter(t->prefixLookup, uhash_freeBlock);
 
     t->contractions = uprv_cnttab_open(t->mapping, status);
+    if (U_FAILURE(*status)) {
+        goto cleanup;
+    }
 
     /* copy UCA's maxexpansion and merge as we go along */
     if (UCA != NULL) {
@@ -209,12 +215,13 @@ uprv_uca_initTempTable(UCATableHeader *image, UColOptionSet *opts, const UCollat
     return t;
 
 allocation_failure:
-    uprv_uca_closeTempTable(t);
     *status = U_MEMORY_ALLOCATION_ERROR;
+cleanup:
+    uprv_uca_closeTempTable(t);
     return NULL;
 }
 
-U_CAPI tempUCATable* U_EXPORT2
+static tempUCATable* U_EXPORT2
 uprv_uca_cloneTempTable(tempUCATable *t, UErrorCode *status) {
     if(U_FAILURE(*status)) {
         return NULL;
@@ -244,7 +251,7 @@ uprv_uca_cloneTempTable(tempUCATable *t, UErrorCode *status) {
         /* test for NULL */
         if (r->expansions == NULL) {
             *status = U_MEMORY_ALLOCATION_ERROR;
-            return NULL;
+            goto cleanup;
         }
         r->expansions->position = t->expansions->position;
         r->expansions->size = t->expansions->size;
@@ -253,7 +260,7 @@ uprv_uca_cloneTempTable(tempUCATable *t, UErrorCode *status) {
             /* test for NULL */
             if (r->expansions->CEs == NULL) {
                 *status = U_MEMORY_ALLOCATION_ERROR;
-                return NULL;
+                goto cleanup;
             }
             uprv_memcpy(r->expansions->CEs, t->expansions->CEs, sizeof(uint32_t)*t->expansions->position);
         } else {
@@ -263,6 +270,11 @@ uprv_uca_cloneTempTable(tempUCATable *t, UErrorCode *status) {
 
     if(t->contractions != NULL) {
         r->contractions = uprv_cnttab_clone(t->contractions, status);
+        // Check for cloning failure.
+        if (r->contractions == NULL) {
+            *status = U_MEMORY_ALLOCATION_ERROR;
+            goto cleanup;
+        }
         r->contractions->mapping = r->mapping;
     }
 
@@ -271,30 +283,30 @@ uprv_uca_cloneTempTable(tempUCATable *t, UErrorCode *status) {
         /* test for NULL */
         if (r->maxExpansions == NULL) {
             *status = U_MEMORY_ALLOCATION_ERROR;
-            return NULL;
+            goto cleanup;
         }
         r->maxExpansions->size = t->maxExpansions->size;
         r->maxExpansions->position = t->maxExpansions->position;
         if(t->maxExpansions->endExpansionCE != NULL) {
             r->maxExpansions->endExpansionCE = (uint32_t *)uprv_malloc(sizeof(uint32_t)*t->maxExpansions->size);
-            uprv_memset(r->maxExpansions->endExpansionCE, 0xDB, sizeof(uint32_t)*t->maxExpansions->size);
             /* test for NULL */
             if (r->maxExpansions->endExpansionCE == NULL) {
                 *status = U_MEMORY_ALLOCATION_ERROR;
-                return NULL;
+                goto cleanup;
             }
+            uprv_memset(r->maxExpansions->endExpansionCE, 0xDB, sizeof(uint32_t)*t->maxExpansions->size);
             uprv_memcpy(r->maxExpansions->endExpansionCE, t->maxExpansions->endExpansionCE, t->maxExpansions->position*sizeof(uint32_t));
         } else {
             r->maxExpansions->endExpansionCE = NULL;
         }
         if(t->maxExpansions->expansionCESize != NULL) {
             r->maxExpansions->expansionCESize = (uint8_t *)uprv_malloc(sizeof(uint8_t)*t->maxExpansions->size);
-            uprv_memset(r->maxExpansions->expansionCESize, 0xDB, sizeof(uint8_t)*t->maxExpansions->size);
             /* test for NULL */
             if (r->maxExpansions->expansionCESize == NULL) {
                 *status = U_MEMORY_ALLOCATION_ERROR;
-                return NULL;
+                goto cleanup;
             }
+            uprv_memset(r->maxExpansions->expansionCESize, 0xDB, sizeof(uint8_t)*t->maxExpansions->size);
             uprv_memcpy(r->maxExpansions->expansionCESize, t->maxExpansions->expansionCESize, t->maxExpansions->position*sizeof(uint8_t));
         } else {
             r->maxExpansions->expansionCESize = NULL;
@@ -306,7 +318,7 @@ uprv_uca_cloneTempTable(tempUCATable *t, UErrorCode *status) {
         /* test for NULL */
         if (r->maxJamoExpansions == NULL) {
             *status = U_MEMORY_ALLOCATION_ERROR;
-            return NULL;
+            goto cleanup;
         }
         r->maxJamoExpansions->size = t->maxJamoExpansions->size;
         r->maxJamoExpansions->position = t->maxJamoExpansions->position;
@@ -318,14 +330,14 @@ uprv_uca_cloneTempTable(tempUCATable *t, UErrorCode *status) {
             /* test for NULL */
             if (r->maxJamoExpansions->endExpansionCE == NULL) {
                 *status = U_MEMORY_ALLOCATION_ERROR;
-                return NULL;
+                goto cleanup;
             }
             uprv_memcpy(r->maxJamoExpansions->endExpansionCE, t->maxJamoExpansions->endExpansionCE, t->maxJamoExpansions->position*sizeof(uint32_t));
             r->maxJamoExpansions->isV = (UBool *)uprv_malloc(sizeof(UBool)*t->maxJamoExpansions->size);
             /* test for NULL */
             if (r->maxJamoExpansions->isV == NULL) {
                 *status = U_MEMORY_ALLOCATION_ERROR;
-                return NULL;
+                goto cleanup;
             }
             uprv_memcpy(r->maxJamoExpansions->isV, t->maxJamoExpansions->isV, t->maxJamoExpansions->position*sizeof(UBool));
         } else {
@@ -339,7 +351,7 @@ uprv_uca_cloneTempTable(tempUCATable *t, UErrorCode *status) {
         /* test for NULL */
         if (r->unsafeCP == NULL) {
             *status = U_MEMORY_ALLOCATION_ERROR;
-            return NULL;
+            goto cleanup;
         }
         uprv_memcpy(r->unsafeCP, t->unsafeCP, UCOL_UNSAFECP_TABLE_SIZE);
     }
@@ -349,7 +361,7 @@ uprv_uca_cloneTempTable(tempUCATable *t, UErrorCode *status) {
         /* test for NULL */
         if (r->contrEndCP == NULL) {
             *status = U_MEMORY_ALLOCATION_ERROR;
-            return NULL;
+            goto cleanup;
         }
         uprv_memcpy(r->contrEndCP, t->contrEndCP, UCOL_UNSAFECP_TABLE_SIZE);
     }
@@ -359,6 +371,9 @@ uprv_uca_cloneTempTable(tempUCATable *t, UErrorCode *status) {
     r->options = t->options;
 
     return r;
+cleanup:
+    uprv_uca_closeTempTable(t);
+    return NULL;
 }
 
 
@@ -444,16 +459,18 @@ static int uprv_uca_setMaxExpansion(uint32_t           endexpansion,
     if (maxexpansion->position + 1 == maxexpansion->size) {
         uint32_t *neweece = (uint32_t *)uprv_realloc(maxexpansion->endExpansionCE, 
             2 * maxexpansion->size * sizeof(uint32_t));
-        uint8_t  *neweces = (uint8_t *)uprv_realloc(maxexpansion->expansionCESize, 
-            2 * maxexpansion->size * sizeof(uint8_t));
-        if (neweece == NULL || neweces == NULL) {
-#ifdef UCOL_DEBUG
-            fprintf(stderr, "out of memory for maxExpansions\n");
-#endif
+        if (neweece == NULL) {
             *status = U_MEMORY_ALLOCATION_ERROR;
-            return -1;
+            return 0;
         }
         maxexpansion->endExpansionCE  = neweece;
+
+        uint8_t  *neweces = (uint8_t *)uprv_realloc(maxexpansion->expansionCESize, 
+            2 * maxexpansion->size * sizeof(uint8_t));
+        if (neweces == NULL) {
+            *status = U_MEMORY_ALLOCATION_ERROR;
+            return 0;
+        }
         maxexpansion->expansionCESize = neweces;
         maxexpansion->size *= 2;
     }
@@ -465,71 +482,63 @@ static int uprv_uca_setMaxExpansion(uint32_t           endexpansion,
     uint32_t *start = pendexpansionce;
     uint32_t *limit = pendexpansionce + pos;
 
-    /* using binary search to determine if last expansion element is 
+    /* using binary search to determine if last expansion element is
     already in the array */
-    uint32_t *mid;                                                        
+    uint32_t *mid;
     int       result = -1;
-    while (start < limit - 1) {                                                
-        mid = start + ((limit - start) >> 1);                                    
-        if (endexpansion <= *mid) {                                                   
-            limit = mid;                                                           
-        }                                                                        
-        else {                                                                   
-            start = mid;                                                           
-        }                                                                        
-    } 
-
-    if (*start == endexpansion) {                                                     
-        result = start - pendexpansionce;  
-    }                                                                          
-    else                                                                       
-        if (*limit == endexpansion) {                                                     
-            result = limit - pendexpansionce;      
-        }                                            
-
-        if (result > -1) {
-            /* found the ce in expansion, we'll just modify the size if it is 
-            smaller */
-            uint8_t *currentsize = pexpansionsize + result;
-            if (*currentsize < expansionsize) {
-                *currentsize = expansionsize;
-            }
+    while (start < limit - 1) {
+        mid = start + ((limit - start) >> 1);
+        if (endexpansion <= *mid) {
+            limit = mid;
         }
         else {
-            /* we'll need to squeeze the value into the array. 
-            initial implementation. */
-            /* shifting the subarray down by 1 */
-            int      shiftsize     = (pendexpansionce + pos) - start;
-            uint32_t *shiftpos     = start + 1;
-            uint8_t  *sizeshiftpos = pexpansionsize + (shiftpos - pendexpansionce);
+            start = mid;
+        }
+    }
 
-            /* okay need to rearrange the array into sorted order */
-            if (shiftsize == 0 /*|| *(pendexpansionce + pos) < endexpansion*/) { /* the commented part is actually both redundant and dangerous */
-                *(pendexpansionce + pos + 1) = endexpansion;
-                *(pexpansionsize + pos + 1)  = expansionsize;
-            }
-            else {
-                uprv_memmove(shiftpos + 1, shiftpos, shiftsize * sizeof(int32_t));
-                uprv_memmove(sizeshiftpos + 1, sizeshiftpos, 
-                    shiftsize * sizeof(uint8_t));
-                *shiftpos     = endexpansion;
-                *sizeshiftpos = expansionsize;
-            }
-            maxexpansion->position ++;
+    if (*start == endexpansion) {
+        result = start - pendexpansionce;
+    }
+    else if (*limit == endexpansion) {
+        result = limit - pendexpansionce;
+    }
+
+    if (result > -1) {
+        /* found the ce in expansion, we'll just modify the size if it is
+        smaller */
+        uint8_t *currentsize = pexpansionsize + result;
+        if (*currentsize < expansionsize) {
+            *currentsize = expansionsize;
+        }
+    }
+    else {
+        /* we'll need to squeeze the value into the array.
+        initial implementation. */
+        /* shifting the subarray down by 1 */
+        int      shiftsize     = (pendexpansionce + pos) - start;
+        uint32_t *shiftpos     = start + 1;
+        uint8_t  *sizeshiftpos = pexpansionsize + (shiftpos - pendexpansionce);
+
+        /* okay need to rearrange the array into sorted order */
+        if (shiftsize == 0 /*|| *(pendexpansionce + pos) < endexpansion*/) { /* the commented part is actually both redundant and dangerous */
+            *(pendexpansionce + pos + 1) = endexpansion;
+            *(pexpansionsize + pos + 1)  = expansionsize;
+        }
+        else {
+            uprv_memmove(shiftpos + 1, shiftpos, shiftsize * sizeof(int32_t));
+            uprv_memmove(sizeshiftpos + 1, sizeshiftpos, 
+                shiftsize * sizeof(uint8_t));
+            *shiftpos     = endexpansion;
+            *sizeshiftpos = expansionsize;
+        }
+        maxexpansion->position ++;
 
 #ifdef UCOL_DEBUG
-            int   temp;
-            UBool found = FALSE;
-            for (temp = 0; temp < maxexpansion->position; temp ++) {
-                if (pendexpansionce[temp] >= pendexpansionce[temp + 1]) {
-                    fprintf(stderr, "expansions %d\n", temp);
-                }
-                if (pendexpansionce[temp] == endexpansion) {
-                    found =TRUE;
-                    if (pexpansionsize[temp] < expansionsize) {
-                        fprintf(stderr, "expansions size %d\n", temp);
-                    }
-                }
+        int   temp;
+        UBool found = FALSE;
+        for (temp = 0; temp < maxexpansion->position; temp ++) {
+            if (pendexpansionce[temp] >= pendexpansionce[temp + 1]) {
+                fprintf(stderr, "expansions %d\n", temp);
             }
             if (pendexpansionce[temp] == endexpansion) {
                 found =TRUE;
@@ -537,12 +546,19 @@ static int uprv_uca_setMaxExpansion(uint32_t           endexpansion,
                     fprintf(stderr, "expansions size %d\n", temp);
                 }
             }
-            if (!found)
-                fprintf(stderr, "expansion not found %d\n", temp);
-#endif
         }
+        if (pendexpansionce[temp] == endexpansion) {
+            found =TRUE;
+            if (pexpansionsize[temp] < expansionsize) {
+                fprintf(stderr, "expansions size %d\n", temp);
+            }
+        }
+        if (!found)
+            fprintf(stderr, "expansion not found %d\n", temp);
+#endif
+    }
 
-        return maxexpansion->position;
+    return maxexpansion->position;
 }
 
 /**
@@ -726,12 +742,13 @@ static void uprv_uca_unsafeCPAddCCNZ(tempUCATable *t, UErrorCode *status) {
     UChar              c;
     uint16_t           fcd;     // Hi byte is lead combining class.
     // lo byte is trailing combing class.
-    const uint16_t    *fcdTrieData;
+    const uint16_t    *fcdTrieIndex;
+    UChar32            fcdHighStart;
     UBool buildCMTable = (t->cmLookup==NULL); // flag for building combining class table
     UChar *cm=NULL;
     uint16_t index[256];
     int32_t count=0;
-    fcdTrieData = unorm_getFCDTrie(status);
+    fcdTrieIndex = unorm_getFCDTrieIndex(fcdHighStart, status);
     if (U_FAILURE(*status)) {
         return;
     }
@@ -747,12 +764,12 @@ static void uprv_uca_unsafeCPAddCCNZ(tempUCATable *t, UErrorCode *status) {
         uprv_memset(index, 0, sizeof(index));
     }
     for (c=0; c<0xffff; c++) {
-        fcd = unorm_getFCD16(fcdTrieData, c);
+        fcd = unorm_getFCD16(fcdTrieIndex, c);
         if (fcd >= 0x100 ||               // if the leading combining class(c) > 0 ||
             (UTF_IS_LEAD(c) && fcd != 0)) {//    c is a leading surrogate with some FCD data
             if (buildCMTable) {
                 uint32_t cClass = fcd & 0xff;
-                uint32_t temp=(cClass<<8)+index[cClass];
+                //uint32_t temp=(cClass<<8)+index[cClass];
                 cm[(cClass<<8)+index[cClass]] = c; //
                 index[cClass]++;
                 count++;
@@ -1076,6 +1093,25 @@ static uint32_t uprv_uca_finalizeAddition(tempUCATable *t, UCAElements *element,
             } else {
                 /*ucmpe32_set(t->mapping, element->cPoints[0], element->mapCE);*/
                 utrie_set32(t->mapping, element->cPoints[0], element->mapCE);
+                if ((element->prefixSize!=0) && (getCETag(CE)!=IMPLICIT_TAG)) {
+                    UCAElements *origElem = (UCAElements *)uprv_malloc(sizeof(UCAElements));
+                    /* test for NULL */
+                    if (origElem== NULL) {
+                        *status = U_MEMORY_ALLOCATION_ERROR;
+                        return 0;
+                    }
+                    /* copy the original UCA value */
+                    origElem->prefixSize = 0;
+                    origElem->prefix = NULL;
+                    origElem->cPoints = origElem->uchars;
+                    origElem->cPoints[0] = element->cPoints[0];
+                    origElem->cSize = 1;
+                    origElem->CEs[0]=CE;
+                    origElem->mapCE=CE;
+                    origElem->noOfCEs=1;
+                    uprv_uca_finalizeAddition(t, origElem, status);
+                    uprv_free(origElem);
+                }
 #ifdef UCOL_DEBUG
                 fprintf(stderr, "Warning - trying to overwrite existing data %08X for cp %04X with %08X\n", CE, element->cPoints[0], element->CEs[0]);
                 //*status = U_ILLEGAL_ARGUMENT_ERROR;
@@ -1127,43 +1163,45 @@ uprv_uca_addAnElement(tempUCATable *t, UCAElements *element, UErrorCode *status)
             && (element->CEs[1] & (~(0xFF << 24 | UCOL_CONTINUATION_MARKER))) == 0 // that has only primaries in continuation,
             && (((element->CEs[0]>>8) & 0xFF) == UCOL_BYTE_COMMON) // a common secondary
             && ((element->CEs[0] & 0xFF) == UCOL_BYTE_COMMON) // and a common tertiary
-            ) {
+            )
+        {
 #ifdef UCOL_DEBUG
-                fprintf(stdout, "Long primary %04X\n", element->cPoints[0]);
+            fprintf(stdout, "Long primary %04X\n", element->cPoints[0]);
 #endif
-                element->mapCE = UCOL_SPECIAL_FLAG | (LONG_PRIMARY_TAG<<24) // a long primary special
-                    | ((element->CEs[0]>>8) & 0xFFFF00) // first and second byte of primary
-                    | ((element->CEs[1]>>24) & 0xFF);   // third byte of primary
-            } else {
-                expansion = (uint32_t)(UCOL_SPECIAL_FLAG | (EXPANSION_TAG<<UCOL_TAG_SHIFT) 
-                    | ((uprv_uca_addExpansion(expansions, element->CEs[0], status)+(headersize>>2))<<4)
-                    & 0xFFFFF0);
+            element->mapCE = UCOL_SPECIAL_FLAG | (LONG_PRIMARY_TAG<<24) // a long primary special
+                | ((element->CEs[0]>>8) & 0xFFFF00) // first and second byte of primary
+                | ((element->CEs[1]>>24) & 0xFF);   // third byte of primary
+        }
+        else {
+            expansion = (uint32_t)(UCOL_SPECIAL_FLAG | (EXPANSION_TAG<<UCOL_TAG_SHIFT) 
+                | ((uprv_uca_addExpansion(expansions, element->CEs[0], status)+(headersize>>2))<<4)
+                & 0xFFFFF0);
 
-                for(i = 1; i<element->noOfCEs; i++) {
-                    uprv_uca_addExpansion(expansions, element->CEs[i], status);
-                }
-                if(element->noOfCEs <= 0xF) {
-                    expansion |= element->noOfCEs;
-                } else {
-                    uprv_uca_addExpansion(expansions, 0, status);
-                }
-                element->mapCE = expansion;
-                uprv_uca_setMaxExpansion(element->CEs[element->noOfCEs - 1],
-                    (uint8_t)element->noOfCEs,
-                    t->maxExpansions,
-                    status);
-                if(UCOL_ISJAMO(element->cPoints[0])) {
-                    t->image->jamoSpecial = TRUE;
-                    uprv_uca_setMaxJamoExpansion(element->cPoints[0],
-                        element->CEs[element->noOfCEs - 1],
-                        (uint8_t)element->noOfCEs,
-                        t->maxJamoExpansions,
-                        status);
-                    if (U_FAILURE(*status)) {
-                        return 0;
-                    }
-                }
+            for(i = 1; i<element->noOfCEs; i++) {
+                uprv_uca_addExpansion(expansions, element->CEs[i], status);
             }
+            if(element->noOfCEs <= 0xF) {
+                expansion |= element->noOfCEs;
+            } else {
+                uprv_uca_addExpansion(expansions, 0, status);
+            }
+            element->mapCE = expansion;
+            uprv_uca_setMaxExpansion(element->CEs[element->noOfCEs - 1],
+                (uint8_t)element->noOfCEs,
+                t->maxExpansions,
+                status);
+            if(UCOL_ISJAMO(element->cPoints[0])) {
+                t->image->jamoSpecial = TRUE;
+                uprv_uca_setMaxJamoExpansion(element->cPoints[0],
+                    element->CEs[element->noOfCEs - 1],
+                    (uint8_t)element->noOfCEs,
+                    t->maxJamoExpansions,
+                    status);
+            }
+            if (U_FAILURE(*status)) {
+                return 0;
+            }
+        }
     }
 
     // We treat digits differently - they are "uber special" and should be
@@ -1719,8 +1757,12 @@ uprv_uca_addMultiCMContractions(tempUCATable *t,
     CombinClassTable *cmLookup = t->cmLookup;
     UChar  newDecomp[256];
     int32_t maxComp, newDecLen;
-    const uint16_t  *fcdTrieData = unorm_getFCDTrie(status);
-    int16_t curClass = (unorm_getFCD16(fcdTrieData, c->tailoringCM) & 0xff);
+    UChar32 fcdHighStart;
+    const uint16_t *fcdTrieIndex = unorm_getFCDTrieIndex(fcdHighStart, status);
+    if (U_FAILURE(*status)) {
+        return;
+    }
+    int16_t curClass = (unorm_getFCD16(fcdTrieIndex, c->tailoringCM) & 0xff);
     CompData *precomp = c->precomp;
     int32_t  compLen = c->compLen;
     UChar *comp = c->comp;
@@ -1728,7 +1770,6 @@ uprv_uca_addMultiCMContractions(tempUCATable *t,
 
     for (int32_t j=0; j < maxComp; j++) {
         int32_t count=0;
-        int32_t newClass=0;
         do {
             if ( count == 0 ) {  // Decompose the saved precomposed char.
                 UChar temp[2];
@@ -1786,8 +1827,12 @@ uprv_uca_addTailCanonicalClosures(tempUCATable *t,
                                   UCAElements *el,
                                   UErrorCode *status) {
     CombinClassTable *cmLookup = t->cmLookup;
-    const uint16_t  *fcdTrieData = unorm_getFCDTrie(status);
-    int16_t maxIndex = (unorm_getFCD16(fcdTrieData, cMark) & 0xff );
+    UChar32 fcdHighStart;
+    const uint16_t *fcdTrieIndex = unorm_getFCDTrieIndex(fcdHighStart, status);
+    if (U_FAILURE(*status)) {
+        return;
+    }
+    int16_t maxIndex = (unorm_getFCD16(fcdTrieIndex, cMark) & 0xff );
     UCAElements element;
     uint16_t *index;
     UChar  decomp[256];
@@ -1801,8 +1846,8 @@ uprv_uca_addTailCanonicalClosures(tempUCATable *t,
         return;
     }
     index = cmLookup->index;
-    int32_t cClass=(unorm_getFCD16(fcdTrieData, cMark) & 0xff);
-    maxIndex = (int32_t)index[(unorm_getFCD16(fcdTrieData, cMark) & 0xff)-1];
+    int32_t cClass=(unorm_getFCD16(fcdTrieIndex, cMark) & 0xff);
+    maxIndex = (int32_t)index[(unorm_getFCD16(fcdTrieIndex, cMark) & 0xff)-1];
     c.comp = comp;
     c.decomp = decomp;
     c.precomp = precomp;
@@ -1825,7 +1870,7 @@ uprv_uca_addTailCanonicalClosures(tempUCATable *t,
             // other combining mark combinations.
             precomp[precompLen].cp=comp[0];
             curClass = precomp[precompLen].cClass =
-                       index[unorm_getFCD16(fcdTrieData, decomp[1]) & 0xff];
+                       index[unorm_getFCD16(fcdTrieIndex, decomp[1]) & 0xff];
             precompLen++;
             replacedPos=0;
             for (decompLen=0; decompLen< (int32_t)el->cSize; decompLen++) {
@@ -1865,7 +1910,7 @@ uprv_uca_addTailCanonicalClosures(tempUCATable *t,
             // This is a fix for tailoring contractions with accented
             // character at the end of contraction string.
             if ((len>2) && 
-                (unorm_getFCD16(fcdTrieData, comp[len-2]) & 0xff00)==0) {
+                (unorm_getFCD16(fcdTrieIndex, comp[len-2]) & 0xff00)==0) {
                 uprv_uca_addFCD4AccentedContractions(t, colEl, comp, len, &element, status);
             }
 
@@ -1881,7 +1926,7 @@ uprv_uca_addTailCanonicalClosures(tempUCATable *t,
     }
 }
 
-U_CAPI int32_t U_EXPORT2
+U_CFUNC int32_t U_EXPORT2
 uprv_uca_canonicalClosure(tempUCATable *t,
                           UColTokenParser *src,
                           UErrorCode *status)
@@ -1890,17 +1935,21 @@ uprv_uca_canonicalClosure(tempUCATable *t,
     context.noOfClosures = 0;
     UCAElements el;
     UColToken *tok;
-    UColToken *expt = NULL;
     uint32_t i = 0, j = 0;
     UChar  baseChar, firstCM;
-    const uint16_t  *fcdTrieData = unorm_getFCDTrie(status);
+    UChar32 fcdHighStart;
+    const uint16_t *fcdTrieIndex = unorm_getFCDTrieIndex(fcdHighStart, status);
 
-    if(!U_SUCCESS(*status)) {
+    if(U_FAILURE(*status)) {
         return 0;
     }
 
     UCollator *tempColl = NULL;
     tempUCATable *tempTable = uprv_uca_cloneTempTable(t, status);
+    // Check for null pointer
+    if (U_FAILURE(*status)) {
+        return 0;
+    }
 
     UCATableHeader *tempData = uprv_uca_assembleTable(tempTable, status);
     tempColl = ucol_initCollator(tempData, 0, t->UCA, status);
@@ -1911,8 +1960,8 @@ uprv_uca_canonicalClosure(tempUCATable *t,
     uprv_uca_closeTempTable(tempTable);
 
     if(U_SUCCESS(*status)) {
-        tempColl->rb = NULL;
-        tempColl->elements = NULL;
+        tempColl->ucaRules = NULL;
+        tempColl->actualLocale = NULL;
         tempColl->validLocale = NULL;
         tempColl->requestedLocale = NULL;
         tempColl->hasRealData = TRUE;
@@ -1923,7 +1972,10 @@ uprv_uca_canonicalClosure(tempUCATable *t,
 
     /* produce canonical closure */
     UCollationElements* colEl = ucol_openElements(tempColl, NULL, 0, status);
-
+    // Check for null pointer
+    if (U_FAILURE(*status)) {
+        return 0;
+    }
     context.t = t;
     context.tempColl = tempColl;
     context.colEl = colEl;
@@ -1957,7 +2009,7 @@ uprv_uca_canonicalClosure(tempUCATable *t,
             }
             if(src->UCA != NULL) {
                 for(j = 0; j<el.cSize; j++) {
-                    int16_t fcd = unorm_getFCD16(fcdTrieData, el.cPoints[j]);
+                    int16_t fcd = unorm_getFCD16(fcdTrieIndex, el.cPoints[j]);
                     if ( (fcd & 0xff) == 0 ) {
                         baseChar = el.cPoints[j];  // last base character
                         firstCM=0;  // reset combining mark value

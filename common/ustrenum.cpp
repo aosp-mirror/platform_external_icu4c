@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-* Copyright (c) 2002-2006, International Business Machines
+* Copyright (c) 2002-2009, International Business Machines
 * Corporation and others.  All Rights Reserved.
 **********************************************************************
 * Author: Alan Liu
@@ -231,7 +231,7 @@ U_CDECL_END
  * delete it (regardless of error status).
  */
 U_CAPI UEnumeration* U_EXPORT2
-uenum_openStringEnumeration(U_NAMESPACE_QUALIFIER StringEnumeration* adopted, UErrorCode* ec) { 
+uenum_openFromStringEnumeration(U_NAMESPACE_QUALIFIER StringEnumeration* adopted, UErrorCode* ec) { 
     UEnumeration* result = NULL;
     if (U_SUCCESS(*ec) && adopted != NULL) {
         result = (UEnumeration*) uprv_malloc(sizeof(UEnumeration));
@@ -302,7 +302,7 @@ static const UEnumeration UCHARSTRENUM_VT = {
 U_CDECL_END
 
 U_CAPI UEnumeration* U_EXPORT2
-uenum_openCharStringsEnumeration(const char** strings, int32_t count,
+uenum_openCharStringsEnumeration(const char* const* strings, int32_t count,
                                  UErrorCode* ec) {
     UCharStringEnumeration* result = NULL;
     if (U_SUCCESS(*ec) && count >= 0 && (count == 0 || strings != 0)) {
@@ -312,7 +312,7 @@ uenum_openCharStringsEnumeration(const char** strings, int32_t count,
         } else {
             U_ASSERT((char*)result==(char*)(&result->uenum));
             uprv_memcpy(result, &UCHARSTRENUM_VT, sizeof(UCHARSTRENUM_VT));
-            result->uenum.context = strings;
+            result->uenum.context = (void*)strings;
             result->index = 0;
             result->count = count;
         }

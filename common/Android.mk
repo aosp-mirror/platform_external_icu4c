@@ -39,7 +39,10 @@ LOCAL_SRC_FILES:= \
 	ustring.c          ustrtrns.c         \
 	ustr_wcs.c         utf_impl.c         \
 	utrace.c           utrie.c            \
-	utypes.c           wintz.c
+	utypes.c           wintz.c            \
+	utrie2.c           utrie2_builder.c   \
+	propsvec.c         ulist.c            \
+	uloc_tag.c
 
 ifneq ($(TARGET_SIMULATOR),true)
 LOCAL_SRC_FILES += \
@@ -76,7 +79,11 @@ LOCAL_SRC_FILES += \
 	usprep.cpp      ustack.cpp       \
 	ustrenum.cpp    utext.cpp        \
 	util.cpp        util_props.cpp   \
-	uvector.cpp     uvectr32.cpp
+	uvector.cpp     uvectr32.cpp     \
+	errorcode.cpp                    \
+	bytestream.cpp stringpiece.cpp   \
+	mutex.cpp       dtintrv.cpp      \
+	ucnvsel.cpp
 
 LOCAL_C_INCLUDES +=       \
 	$(LOCAL_PATH)         \

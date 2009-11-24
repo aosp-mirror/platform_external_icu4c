@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1997-2007, International Business Machines Corporation and
+ * Copyright (c) 1997-2009, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /*****************************************************************************
@@ -34,6 +34,7 @@
 #include "unicode/utypes.h"
 #include "unicode/ulocdata.h"
 #include "unicode/parseerr.h" /* may not be included with some uconfig switches */
+#include "unicode/udbgutil.h"
 #define LENGTHOF(array) (int32_t)(sizeof(array)/sizeof((array)[0]))
 
 static void TestNullDefault(void);
@@ -85,28 +86,28 @@ static const char* const rawData2[LOCALE_INFO_SIZE][LOCALE_SIZE] = {
     /* display language (French) */
     {   "anglais",  "fran\\u00E7ais",   "catalan", "grec",    "norv\\u00E9gien",    "chinois", "allemand", "espagnol", "japonais"     },
     /* display script code (French) */
-    {   "",     "",     "",     "",     "",     "id\\u00e9ogrammes han (variante simplifi\\u00e9e)", "", "", ""         },
+    {   "",     "",     "",     "",     "",     "id\\u00e9ogrammes han simplifi\\u00e9s", "", "", ""         },
     /* display country (French) */
     {   "\\u00C9tats-Unis",    "France",   "Espagne",  "Gr\\u00E8ce",   "Norv\\u00E8ge",    "Chine", "Allemagne", "", "Japon"       },
     /* display variant (French) */
     {   "",     "",     "",     "",     "NY",   "", "", "", ""       },
     /* display name (French) */
     {   "anglais (\\u00C9tats-Unis)", "fran\\u00E7ais (France)", "catalan (Espagne)", 
-        "grec (Gr\\u00E8ce)", "norv\\u00E9gien (Norv\\u00E8ge, NY)",  "chinois (id\\u00e9ogrammes han (variante simplifi\\u00e9e), Chine)", 
+        "grec (Gr\\u00E8ce)", "norv\\u00E9gien (Norv\\u00E8ge, NY)",  "chinois (id\\u00e9ogrammes han simplifi\\u00e9s, Chine)", 
         "allemand (Allemagne, Ordonnancement=Ordre de l\\u2019annuaire)", "espagnol (Ordonnancement=Ordre traditionnel)", "japonais (Japon, Calendrier=Calendrier japonais)" },
 
     /* display language (Catalan) */
-    {   "angl\\u00E8s", "franc\\u00E8s", "catal\\u00E0", "grec",  "noruec", "xin\\u00E9s", "alemany", "espanyol", "japon\\u00E8s"    },
+    {   "angl\\u00E8s", "franc\\u00E8s", "catal\\u00E0", "grec",  "noruec", "xin\\u00E8s", "alemany", "espanyol", "japon\\u00E8s"    },
     /* display script code (Catalan) */
-    {   "",     "",     "",     "",     "",     "Hans", "", "", ""         },
+    {   "",     "",     "",     "",     "",     "xin\\u00e8s simplificat", "", "", ""         },
     /* display country (Catalan) */
     {   "Estats Units", "Fran\\u00E7a", "Espanya",  "Gr\\u00E8cia", "Noruega",  "Xina", "Alemanya", "", "Jap\\u00F3"    },
     /* display variant (Catalan) */
     {   "", "", "",                    "", "NY",    "", "", "", ""    },
     /* display name (Catalan) */
     {   "angl\\u00E8s (Estats Units)", "franc\\u00E8s (Fran\\u00E7a)", "catal\\u00E0 (Espanya)", 
-    "grec (Gr\\u00E8cia)", "noruec (Noruega, NY)", "xin\\u00E9s (Hans, Xina)", 
-    "alemany (Alemanya, collation=phonebook)", "espanyol (collation=traditional)", "japon\\u00E8s (Jap\\u00F3, calendar=japanese)" },
+    "grec (Gr\\u00E8cia)", "noruec (Noruega, NY)", "xin\\u00E8s (xin\\u00e8s simplificat, Xina)", 
+    "alemany (Alemanya, ordre alfab\\u00e8tic=ordre de la guia telef\\u00F2nica)", "espanyol (ordre alfab\\u00e8tic=ordre tradicional)", "japon\\u00E8s (Jap\\u00F3, calendari=calendari japon\\u00e8s)" },
 
     /* display language (Greek) */
     {
@@ -122,10 +123,10 @@ static const char* const rawData2[LOCALE_INFO_SIZE][LOCALE_SIZE] = {
     },
     /* display script code (Greek) */
 
-    {   "",     "",     "",     "",     "", "\\u039a\\u03b9\\u03bd\\u03b5\\u03b6\\u03b9\\u03ba\\u03cc \\u0391\\u03c0\\u03bb\\u03bf\\u03c0\\u03bf\\u03b9\\u03b7\\u03bc\\u03ad\\u03bd\\u03bf", "", "", "" },
+    {   "",     "",     "",     "",     "", "\\u0391\\u03c0\\u03bb\\u03bf\\u03c0\\u03bf\\u03b9\\u03b7\\u03bc\\u03ad\\u03bd\\u03bf \\u039a\\u03b9\\u03bd\\u03b5\\u03b6\\u03b9\\u03ba\\u03cc", "", "", "" },
     /* display country (Greek) */
     {
-        "\\u0397\\u03bd\\u03c9\\u03bc\\u03ad\\u03bd\\u03b5\\u03c2 \\u03a0\\u03bf\\u03bb\\u03b9\\u03c4\\u03b5\\u03af\\u03b5\\u03c2",
+        "\\u0397\\u03BD\\u03C9\\u03BC\\u03AD\\u03BD\\u03B5\\u03C2 \\u03A0\\u03BF\\u03BB\\u03B9\\u03C4\\u03B5\\u03AF\\u03B5\\u03C2 \\u03C4\\u03B7\\u03C2 \\u0391\\u03BC\\u03B5\\u03C1\\u03B9\\u03BA\\u03AE\\u03C2",
         "\\u0393\\u03b1\\u03bb\\u03bb\\u03af\\u03b1",
         "\\u0399\\u03c3\\u03c0\\u03b1\\u03bd\\u03af\\u03b1",
         "\\u0395\\u03bb\\u03bb\\u03ac\\u03b4\\u03b1",
@@ -139,15 +140,15 @@ static const char* const rawData2[LOCALE_INFO_SIZE][LOCALE_SIZE] = {
     {   "", "", "", "", "NY", "", "", "", ""    }, /* TODO: currently there is no translation for NY in Greek fix this test when we have it */
     /* display name (Greek) */
     {
-        "\\u0391\\u03b3\\u03b3\\u03bb\\u03b9\\u03ba\\u03ac (\\u0397\\u03bd\\u03c9\\u03bc\\u03ad\\u03bd\\u03b5\\u03c2 \\u03a0\\u03bf\\u03bb\\u03b9\\u03c4\\u03b5\\u03af\\u03b5\\u03c2)",
+        "\\u0391\\u03b3\\u03b3\\u03bb\\u03b9\\u03ba\\u03ac (\\u0397\\u03BD\\u03C9\\u03BC\\u03AD\\u03BD\\u03B5\\u03C2 \\u03A0\\u03BF\\u03BB\\u03B9\\u03C4\\u03B5\\u03AF\\u03B5\\u03C2 \\u03C4\\u03B7\\u03C2 \\u0391\\u03BC\\u03B5\\u03C1\\u03B9\\u03BA\\u03AE\\u03C2)",
         "\\u0393\\u03b1\\u03bb\\u03bb\\u03b9\\u03ba\\u03ac (\\u0393\\u03b1\\u03bb\\u03bb\\u03af\\u03b1)",
         "\\u039a\\u03b1\\u03c4\\u03b1\\u03bb\\u03b1\\u03bd\\u03b9\\u03ba\\u03ac (\\u0399\\u03c3\\u03c0\\u03b1\\u03bd\\u03af\\u03b1)",
         "\\u0395\\u03bb\\u03bb\\u03b7\\u03bd\\u03b9\\u03ba\\u03ac (\\u0395\\u03bb\\u03bb\\u03ac\\u03b4\\u03b1)",
         "\\u039d\\u03bf\\u03c1\\u03b2\\u03b7\\u03b3\\u03b9\\u03ba\\u03ac (\\u039d\\u03bf\\u03c1\\u03b2\\u03b7\\u03b3\\u03af\\u03b1, NY)",
-        "\\u039A\\u03B9\\u03BD\\u03B5\\u03B6\\u03B9\\u03BA\\u03AC (\\u039a\\u03b9\\u03bd\\u03b5\\u03b6\\u03b9\\u03ba\\u03cc \\u0391\\u03c0\\u03bb\\u03bf\\u03c0\\u03bf\\u03b9\\u03b7\\u03bc\\u03ad\\u03bd\\u03bf, \\u039A\\u03AF\\u03BD\\u03B1)",
-        "\\u0393\\u03B5\\u03C1\\u03BC\\u03B1\\u03BD\\u03B9\\u03BA\\u03AC (\\u0393\\u03B5\\u03C1\\u03BC\\u03B1\\u03BD\\u03AF\\u03B1, \\u03A4\\u03B1\\u03BA\\u03C4\\u03BF\\u03C0\\u03BF\\u03AF\\u03B7\\u03C3\\u03B7=\\u03A3\\u03B5\\u03B9\\u03C1\\u03AC \\u03A4\\u03B7\\u03BB\\u03B5\\u03C6\\u03C9\\u03BD\\u03B9\\u03BA\\u03BF\\u03CD \\u039A\\u03B1\\u03C4\\u03B1\\u03BB\\u03CC\\u03B3\\u03BF\\u03C5)", 
-        "\\u0399\\u03C3\\u03C0\\u03B1\\u03BD\\u03B9\\u03BA\\u03AC (\\u03A4\\u03B1\\u03BA\\u03C4\\u03BF\\u03C0\\u03BF\\u03AF\\u03B7\\u03C3\\u03B7\\u003D\\u03A0\\u03B1\\u03C1\\u03B1\\u03B4\\u03BF\\u03C3\\u03B9\\u03B1\\u03BA\\u03AE \\u03A3\\u03B5\\u03B9\\u03C1\\u03AC)", 
-        "\\u0399\\u03B1\\u03C0\\u03C9\\u03BD\\u03B9\\u03BA\\u03AC (\\u0399\\u03B1\\u03C0\\u03C9\\u03BD\\u03AF\\u03B1, \\u0397\\u03BC\\u03B5\\u03C1\\u03BF\\u03BB\\u03CC\\u03B3\\u03B9\\u03BF=\\u0399\\u03B1\\u03C0\\u03C9\\u03BD\\u03B9\\u03BA\\u03CC \\u0397\\u03BC\\u03B5\\u03C1\\u03BF\\u03BB\\u03CC\\u03B3\\u03B9\\u03BF)"
+        "\\u039A\\u03B9\\u03BD\\u03B5\\u03B6\\u03B9\\u03BA\\u03AC (\\u0391\\u03c0\\u03bb\\u03bf\\u03c0\\u03bf\\u03b9\\u03b7\\u03bc\\u03ad\\u03bd\\u03bf \\u039a\\u03b9\\u03bd\\u03b5\\u03b6\\u03b9\\u03ba\\u03cc, \\u039A\\u03AF\\u03BD\\u03B1)",
+        "\\u0393\\u03B5\\u03C1\\u03BC\\u03B1\\u03BD\\u03B9\\u03BA\\u03AC (\\u0393\\u03B5\\u03C1\\u03BC\\u03B1\\u03BD\\u03AF\\u03B1, \\u03C4\\u03B1\\u03BA\\u03C4\\u03BF\\u03C0\\u03BF\\u03AF\\u03B7\\u03C3\\u03B7=\\u03A3\\u03B5\\u03B9\\u03C1\\u03AC \\u03C4\\u03B1\\u03BE\\u03B9\\u03BD\\u03CC\\u03BC\\u03B7\\u03C3\\u03B7\\u03C2 \\u03C4\\u03B7\\u03BB\\u03B5\\u03C6\\u03C9\\u03BD\\u03B9\\u03BA\\u03BF\\u03CD \\u03BA\\u03B1\\u03C4\\u03B1\\u03BB\\u03CC\\u03B3\\u03BF\\u03C5)", 
+        "\\u0399\\u03C3\\u03C0\\u03B1\\u03BD\\u03B9\\u03BA\\u03AC (\\u03C4\\u03B1\\u03BA\\u03C4\\u03BF\\u03C0\\u03BF\\u03AF\\u03B7\\u03C3\\u03B7=\\u03A0\\u03B1\\u03C1\\u03B1\\u03B4\\u03BF\\u03C3\\u03B9\\u03B1\\u03BA\\u03AE \\u03C3\\u03B5\\u03B9\\u03C1\\u03AC \\u03C4\\u03B1\\u03BE\\u03B9\\u03BD\\u03CC\\u03BC\\u03B7\\u03C3\\u03B7\\u03C2)", 
+        "\\u0399\\u03B1\\u03C0\\u03C9\\u03BD\\u03B9\\u03BA\\u03AC (\\u0399\\u03B1\\u03C0\\u03C9\\u03BD\\u03AF\\u03B1, \\u03B7\\u03BC\\u03B5\\u03C1\\u03BF\\u03BB\\u03CC\\u03B3\\u03B9\\u03BF=\\u0399\\u03B1\\u03C0\\u03C9\\u03BD\\u03B9\\u03BA\\u03CC \\u03B7\\u03BC\\u03B5\\u03C1\\u03BF\\u03BB\\u03CC\\u03B3\\u03B9\\u03BF)"
     }
 };
 
@@ -231,6 +232,10 @@ void addLocaleTest(TestNode** root)
     TESTCASE(TestDisplayName); 
     TESTCASE(TestAcceptLanguage); 
     TESTCASE(TestGetLocaleForLCID);
+    TESTCASE(TestOrientation);
+    TESTCASE(TestLikelySubtags);
+    TESTCASE(TestToLanguageTag);
+    TESTCASE(TestForLanguageTag);
 }
 
 
@@ -396,7 +401,7 @@ static void TestPrefixes() {
         {"no", "", "",   "", "no@ny", "no@ny", "no__NY"},
         {"el", "Latn", "", "", "el-latn", "el_Latn", NULL},
         {"en", "Cyrl", "RU", "", "en-cyrl-ru", "en_Cyrl_RU", NULL},
-        {"zh", "Hant", "TW", "STROKE", "zh-hant_TW_STROKE", "zh_Hant_TW_STROKE", NULL},
+        {"zh", "Hant", "TW", "STROKE", "zh-hant_TW_STROKE", "zh_Hant_TW_STROKE", "zh_Hant_TW@collation=stroke"},
         {"qq", "Qqqq", "QQ", "QQ", "qq_Qqqq_QQ_QQ", "qq_Qqqq_QQ_QQ", NULL},
         {"qq", "Qqqq", "", "QQ", "qq_Qqqq__QQ", "qq_Qqqq__QQ", NULL},
         {"12", "3456", "78", "90", "12_3456_78_90", "12_3456_78_90", NULL}, /* total garbage */
@@ -572,7 +577,7 @@ static void TestDisplayNames()
     length=uloc_getDisplayLanguage(NULL, NULL, buffer, LENGTHOF(buffer), &errorCode);
     if(U_FAILURE(errorCode) || (length<=3 && buffer[0]<=0x7f)) {
         /* check <=3 to reject getting the language code as a display name */
-        log_err("unable to get a display string for the language of the default locale - %s\n", u_errorName(errorCode));
+        log_data_err("unable to get a display string for the language of the default locale - %s (Are you missing data?)\n", u_errorName(errorCode));
     }
 
     /* test that we get the language code itself for an unknown language, and a default warning */
@@ -598,8 +603,8 @@ static void TestDisplayNames()
             "el_GR" };
         static const char *expect[] = { "Spanish (calendar=Japanese Calendar, collation=Traditional Sort Order)", /* note sorted order of keywords */
             "espagnol (Calendrier=Calendrier japonais, Ordonnancement=Ordre traditionnel)",
-            "espanyol (calendar=japanese, collation=traditional)",
-            "\\u0399\\u03C3\\u03C0\\u03B1\\u03BD\\u03B9\\u03BA\\u03AC (\\u0397\\u03BC\\u03B5\\u03C1\\u03BF\\u03BB\\u03CC\\u03B3\\u03B9\\u03BF=\\u0399\\u03B1\\u03C0\\u03C9\\u03BD\\u03B9\\u03BA\\u03CC \\u0397\\u03BC\\u03B5\\u03C1\\u03BF\\u03BB\\u03CC\\u03B3\\u03B9\\u03BF, \\u03A4\\u03B1\\u03BA\\u03C4\\u03BF\\u03C0\\u03BF\\u03AF\\u03B7\\u03C3\\u03B7=\\u03A0\\u03B1\\u03C1\\u03B1\\u03B4\\u03BF\\u03C3\\u03B9\\u03B1\\u03BA\\u03AE \\u03A3\\u03B5\\u03B9\\u03C1\\u03AC)" };
+            "espanyol (calendari=calendari japon\\u00e8s, ordre alfab\\u00e8tic=ordre tradicional)",
+            "\\u0399\\u03C3\\u03C0\\u03B1\\u03BD\\u03B9\\u03BA\\u03AC (\\u03B7\\u03BC\\u03B5\\u03C1\\u03BF\\u03BB\\u03CC\\u03B3\\u03B9\\u03BF=\\u0399\\u03B1\\u03C0\\u03C9\\u03BD\\u03B9\\u03BA\\u03CC \\u03B7\\u03BC\\u03B5\\u03C1\\u03BF\\u03BB\\u03CC\\u03B3\\u03B9\\u03BF, \\u03C4\\u03B1\\u03BA\\u03C4\\u03BF\\u03C0\\u03BF\\u03AF\\u03B7\\u03C3\\u03B7=\\u03A0\\u03B1\\u03C1\\u03B1\\u03B4\\u03BF\\u03C3\\u03B9\\u03B1\\u03BA\\u03AE \\u03C3\\u03B5\\u03B9\\u03C1\\u03AC \\u03C4\\u03B1\\u03BE\\u03B9\\u03BD\\u03CC\\u03BC\\u03B7\\u03C3\\u03B7\\u03C2)" };
         UChar *expectBuffer;
 
         for(i=0;i<LENGTHOF(testL);i++) {
@@ -610,7 +615,7 @@ static void TestDisplayNames()
             } else {
                 expectBuffer = CharsToUChars(expect[i]);
                 if(u_strcmp(buffer,expectBuffer)) {
-                    log_err("FAIL in uloc_getDisplayName(%s,%s,..) expected '%s' got '%s'\n", aLocale, testL[i], expect[i], austrdup(buffer));
+                    log_data_err("FAIL in uloc_getDisplayName(%s,%s,..) expected '%s' got '%s' (Are you missing data?)\n", aLocale, testL[i], expect[i], austrdup(buffer));
                 } else {
                     log_verbose("pass in uloc_getDisplayName(%s,%s,..) got '%s'\n", aLocale, testL[i], expect[i]);
                 }
@@ -823,23 +828,23 @@ setUpDataTable();
             expectedName=dataTable[DNAME_EN][i];
 
         if (0 !=u_strcmp(testLang,expectedLang))  {
-            log_data_err(" Display Language mismatch: got %s expected %s displayLocale=%s\n", austrdup(testLang), austrdup(expectedLang), displayLocale);
+            log_data_err(" Display Language mismatch: got %s expected %s displayLocale=%s (Are you missing data?)\n", austrdup(testLang), austrdup(expectedLang), displayLocale);
         }
 
         if (0 != u_strcmp(testScript,expectedScript))   {
-            log_data_err(" Display Script mismatch: got %s expected %s displayLocale=%s\n", austrdup(testScript), austrdup(expectedScript), displayLocale);
+            log_data_err(" Display Script mismatch: got %s expected %s displayLocale=%s (Are you missing data?)\n", austrdup(testScript), austrdup(expectedScript), displayLocale);
         }
 
         if (0 != u_strcmp(testCtry,expectedCtry))   {
-            log_data_err(" Display Country mismatch: got %s expected %s displayLocale=%s\n", austrdup(testCtry), austrdup(expectedCtry), displayLocale);
+            log_data_err(" Display Country mismatch: got %s expected %s displayLocale=%s (Are you missing data?)\n", austrdup(testCtry), austrdup(expectedCtry), displayLocale);
         }
 
         if (0 != u_strcmp(testVar,expectedVar))    {
-            log_data_err(" Display Variant mismatch: got %s expected %s displayLocale=%s\n", austrdup(testVar), austrdup(expectedVar), displayLocale);
+            log_data_err(" Display Variant mismatch: got %s expected %s displayLocale=%s (Are you missing data?)\n", austrdup(testVar), austrdup(expectedVar), displayLocale);
         }
 
         if(0 != u_strcmp(testName, expectedName))    {
-            log_data_err(" Display Name mismatch: got %s expected %s displayLocale=%s\n", austrdup(testName), austrdup(expectedName), displayLocale);
+            log_data_err(" Display Name mismatch: got %s expected %s displayLocale=%s (Are you missing data?)\n", austrdup(testName), austrdup(expectedName), displayLocale);
         }
 
         if(testName!=&_NUL) {
@@ -882,7 +887,7 @@ static void TestISOFunctions()
     res = ures_openDirect(loadTestData(&status), "structLocale", &status);
     subRes = ures_getByKey(res, "Languages", NULL, &status);
     if (U_FAILURE(status)) {
-        log_err("There is an error in structLocale's ures_getByKey(\"Languages\"), status=%s\n", u_errorName(status));
+        log_data_err("There is an error in structLocale's ures_getByKey(\"Languages\"), status=%s\n", u_errorName(status));
         return;
     }
 
@@ -1054,21 +1059,28 @@ static void TestSimpleDisplayNames()
      names, and other stuff like that.  This test just checks specific language
      and country codes to make sure we have the correct names for them.
   */
-    char languageCodes[] [4] = { "he", "id", "iu", "ug", "yi", "za" };
+    char languageCodes[] [4] = { "he", "id", "iu", "ug", "yi", "za", "419" };
     const char* languageNames [] = { "Hebrew", "Indonesian", "Inuktitut", "Uighur", "Yiddish",
-                               "Zhuang" };
+                               "Zhuang", "419" };
+    const char* inLocale [] = { "en_US", "zh_Hant"};
     UErrorCode status=U_ZERO_ERROR;
 
     int32_t i;
-    for (i = 0; i < 6; i++) {
+    int32_t localeIndex = 0;
+    for (i = 0; i < 7; i++) {
         UChar *testLang=0;
         UChar *expectedLang=0;
         int size=0;
-        size=uloc_getDisplayLanguage(languageCodes[i], "en_US", NULL, size, &status);
+        
+        if (i == 6) {
+            localeIndex = 1; /* Use the second locale for the rest of the test. */
+        }
+        
+        size=uloc_getDisplayLanguage(languageCodes[i], inLocale[localeIndex], NULL, size, &status);
         if(status==U_BUFFER_OVERFLOW_ERROR) {
             status=U_ZERO_ERROR;
             testLang=(UChar*)malloc(sizeof(UChar) * (size + 1));
-            uloc_getDisplayLanguage(languageCodes[i], "en_US", testLang, size + 1, &status);
+            uloc_getDisplayLanguage(languageCodes[i], inLocale[localeIndex], testLang, size + 1, &status);
         }
         expectedLang=(UChar*)malloc(sizeof(UChar) * (strlen(languageNames[i])+1));
         u_uastrcpy(expectedLang, languageNames[i]);
@@ -1158,7 +1170,11 @@ static void TestVariantParsing()
     }
     u_uastrcpy(displayName, dispName);
     if(u_strcmp(got,displayName)!=0) {
-        log_err("FAIL: getDisplayName() Wanted %s, got %s\n", dispName, austrdup(got));
+        if (status == U_USING_DEFAULT_WARNING) {
+            log_data_err("FAIL: getDisplayName() got %s. Perhaps you are missing data?\n", u_errorName(status));
+        } else {
+            log_err("FAIL: getDisplayName() Wanted %s, got %s\n", dispName, austrdup(got));
+        }
     }
 
     size=0;
@@ -1757,10 +1773,11 @@ static void TestCanonicalization(void)
         { "hi__DIRECT", "hi__DIRECT", "hi@collation=direct" },
         { "ja_JP_TRADITIONAL", "ja_JP_TRADITIONAL", "ja_JP@calendar=japanese" },
         { "th_TH_TRADITIONAL", "th_TH_TRADITIONAL", "th_TH@calendar=buddhist" },
-        { "zh_TW_STROKE", "zh_TW_STROKE", "zh_Hant_TW@collation=stroke" },
+        { "zh_TW_STROKE", "zh_TW_STROKE", "zh_TW@collation=stroke" },
         { "zh__PINYIN", "zh__PINYIN", "zh@collation=pinyin" },
         { "zh@collation=pinyin", "zh@collation=pinyin", "zh@collation=pinyin" },
         { "zh_CN@collation=pinyin", "zh_CN@collation=pinyin", "zh_CN@collation=pinyin" },
+        { "zh_CN_STROKE", "zh_CN_STROKE", "zh_CN@collation=stroke" },
         { "zh_CN_CA@collation=pinyin", "zh_CN_CA@collation=pinyin", "zh_CN_CA@collation=pinyin" },
         { "en_US_POSIX", "en_US_POSIX", "en_US_POSIX" }, 
         { "hy_AM_REVISED", "hy_AM_REVISED", "hy_AM_REVISED" }, 
@@ -1771,9 +1788,9 @@ static void TestCanonicalization(void)
         { "en-BOONT", "en_BOONT", "en__BOONT" }, /* registered name */
         { "de-1901", "de_1901", "de__1901" }, /* registered name */
         { "de-1906", "de_1906", "de__1906" }, /* registered name */
-        { "sr-SP-Cyrl", "sr_SP_CYRL", "sr_Cyrl_CS" }, /* .NET name */
-        { "sr-SP-Latn", "sr_SP_LATN", "sr_Latn_CS" }, /* .NET name */
-        { "sr_YU_CYRILLIC", "sr_YU_CYRILLIC", "sr_Cyrl_CS" }, /* Linux name */
+        { "sr-SP-Cyrl", "sr_SP_CYRL", "sr_Cyrl_RS" }, /* .NET name */
+        { "sr-SP-Latn", "sr_SP_LATN", "sr_Latn_RS" }, /* .NET name */
+        { "sr_YU_CYRILLIC", "sr_YU_CYRILLIC", "sr_Cyrl_RS" }, /* Linux name */
         { "uz-UZ-Cyrl", "uz_UZ_CYRL", "uz_Cyrl_UZ" }, /* .NET name */
         { "uz-UZ-Latn", "uz_UZ_LATN", "uz_Latn_UZ" }, /* .NET name */
         { "zh-CHS", "zh_CHS", "zh_Hans" }, /* .NET name */
@@ -1906,7 +1923,11 @@ static void TestDisplayKeywords(void)
                       break; 
                   }
                   if(u_strncmp(displayKeyword, testCases[i].displayKeyword, displayKeywordLen)!=0){
-                      log_err("uloc_getDisplayKeyword did not get the expected value for keyword : %s in locale id: %s for display locale: %s \n", testCases[i].localeID, keyword, testCases[i].displayLocale); 
+                      if (status == U_USING_DEFAULT_WARNING) {
+                          log_data_err("uloc_getDisplayKeyword did not get the expected value for keyword : %s in locale id: %s for display locale: %s . Got error: %s. Perhaps you are missing data?\n", testCases[i].localeID, keyword, testCases[i].displayLocale, u_errorName(status));
+                      } else {
+                          log_err("uloc_getDisplayKeyword did not get the expected value for keyword : %s in locale id: %s for display locale: %s \n", testCases[i].localeID, keyword, testCases[i].displayLocale);
+                      }
                       break; 
                   }
               }else{
@@ -1929,7 +1950,7 @@ static void TestDisplayKeywordValues(void){
         UChar displayKeywordValue[500];
     } testCases[] = {
         {   "ca_ES@currency=ESP",         "de_AT", 
-            {0x0053, 0x0070, 0x0061, 0x006e, 0x0069, 0x0073, 0x0063, 0x0068, 0x0065, 0x0020, 0x0050, 0x0065, 0x0073, 0x0065, 0x0074, 0x0065, 0x0000}
+            {0x0053, 0x0070, 0x0061, 0x006e, 0x0069, 0x0073, 0x0063, 0x0068, 0x0065, 0x0020, 0x0050, 0x0065, 0x0073, 0x0065, 0x0074, 0x0061, 0x0000}
         },
         {   "de_AT@currency=ATS",         "fr_FR", 
             {0x0073, 0x0063, 0x0068, 0x0069, 0x006c, 0x006c, 0x0069, 0x006e, 0x0067, 0x0020, 0x0061, 0x0075, 0x0074, 0x0072, 0x0069, 0x0063, 0x0068, 0x0069, 0x0065, 0x006e, 0x0000}
@@ -1985,7 +2006,11 @@ static void TestDisplayKeywordValues(void){
                       break; 
                   }
                   if(u_strncmp(displayKeywordValue, testCases[i].displayKeywordValue, displayKeywordValueLen)!=0){
-                      log_err("uloc_getDisplayKeywordValue did not return the expected value keyword : %s in locale id: %s for display locale: %s with error : %s \n", testCases[i].localeID, keyword, testCases[i].displayLocale, u_errorName(status)); 
+                      if (status == U_USING_DEFAULT_WARNING) {
+                          log_data_err("uloc_getDisplayKeywordValue did not return the expected value keyword : %s in locale id: %s for display locale: %s with error : %s Perhaps you are missing data\n", testCases[i].localeID, keyword, testCases[i].displayLocale, u_errorName(status)); 
+                      } else {
+                          log_err("uloc_getDisplayKeywordValue did not return the expected value keyword : %s in locale id: %s for display locale: %s with error : %s \n", testCases[i].localeID, keyword, testCases[i].displayLocale, u_errorName(status)); 
+                      }
                       break;   
                   }
               }else{
@@ -2034,7 +2059,11 @@ static void TestDisplayKeywordValues(void){
                       break; 
                   }
                   if(u_strncmp(displayKeywordValue, expected[keywordCount], displayKeywordValueLen)!=0){
-                      log_err("uloc_getDisplayKeywordValue did not return the expected value keyword : %s in locale id: %s for display locale: %s \n", localeID, keyword, displayLocale); 
+                      if (status == U_USING_DEFAULT_WARNING) {
+                          log_data_err("uloc_getDisplayKeywordValue did not return the expected value keyword : %s in locale id: %s for display locale: %s  got error: %s. Perhaps you are missing data?\n", localeID, keyword, displayLocale, u_errorName(status));
+                      } else {
+                          log_err("uloc_getDisplayKeywordValue did not return the expected value keyword : %s in locale id: %s for display locale: %s \n", localeID, keyword, displayLocale);
+                      }
                       break;   
                   }
               }else{
@@ -2154,7 +2183,7 @@ static void TestGetLocale(void) {
                         NULL, 0,
                         NULL, 0, &ec);
         if (U_FAILURE(ec)) {
-            log_err("udat_open failed.Error %s\n", u_errorName(ec));
+            log_data_err("udat_open failed.Error %s\n", u_errorName(ec));
             return;
         }
         valid = udat_getLocaleByType(obj, ULOC_VALID_LOCALE, &ec);
@@ -2311,7 +2340,7 @@ static void TestNonexistentLanguageExemplars(void) {
     UErrorCode ec = U_ZERO_ERROR;
     ULocaleData *uld = ulocdata_open("qqq",&ec);
     if (ec != U_USING_DEFAULT_WARNING) {
-        log_err("Exemplar set for \"qqq\", expecting U_USING_DEFAULT_WARNING, but got %s\n",
+        log_err_status(ec, "Exemplar set for \"qqq\", expecting U_USING_DEFAULT_WARNING, but got %s\n",
             u_errorName(ec));
     }
     uset_close(ulocdata_getExemplarSet(uld, NULL, 0, ULOCDATA_ES_STANDARD, &ec));
@@ -2336,7 +2365,7 @@ static void TestLanguageExemplarsFallbacks(void) {
     ULocaleData *uld = ulocdata_open("en_US",&ec);
     uset_close(ulocdata_getExemplarSet(uld, NULL, 0, ULOCDATA_ES_STANDARD, &ec));
     if (ec != U_USING_FALLBACK_WARNING) {
-        log_err("Exemplar set for \"en_US\", expecting U_USING_FALLBACK_WARNING, but got %s\n",
+        log_err_status(ec, "Exemplar set for \"en_US\", expecting U_USING_FALLBACK_WARNING, but got %s\n",
             u_errorName(ec));
     }
     ulocdata_close(uld);
@@ -2344,10 +2373,14 @@ static void TestLanguageExemplarsFallbacks(void) {
     uld = ulocdata_open("en",&ec);
     uset_close(ulocdata_getExemplarSet(uld, NULL, 0, ULOCDATA_ES_STANDARD, &ec));
     if (ec != U_ZERO_ERROR) {
-        log_err("Exemplar set for \"en\", expecting U_ZERO_ERROR, but got %s\n",
+        log_err_status(ec, "Exemplar set for \"en\", expecting U_ZERO_ERROR, but got %s\n",
             u_errorName(ec));
     }
     ulocdata_close(uld);
+}
+
+static const char *acceptResult(UAcceptResult uar) {
+    return  udbg_enumName(UDBG_UAcceptResult, uar);
 }
 
 static void TestAcceptLanguage(void) {
@@ -2359,16 +2392,20 @@ static void TestAcceptLanguage(void) {
     int32_t rc = 0;
 
     struct { 
-        int32_t httpSet; 
-        const char *icuSet;
-        const char *expect;
-        UAcceptResult res;
+        int32_t httpSet;       /**< Which of http[] should be used? */
+        const char *icuSet;    /**< ? */
+        const char *expect;    /**< The expected locale result */
+        UAcceptResult res;     /**< The expected error code */
     } tests[] = { 
         /*0*/{ 0, NULL, "mt_MT", ULOC_ACCEPT_VALID },
         /*1*/{ 1, NULL, "en", ULOC_ACCEPT_VALID },
         /*2*/{ 2, NULL, "en", ULOC_ACCEPT_FALLBACK },
         /*3*/{ 3, NULL, "", ULOC_ACCEPT_FAILED },
         /*4*/{ 4, NULL, "es", ULOC_ACCEPT_VALID },
+        
+        /*5*/{ 5, NULL, "en", ULOC_ACCEPT_VALID },  /* XF */
+        /*6*/{ 6, NULL, "ja", ULOC_ACCEPT_FALLBACK },  /* XF */
+        /*7*/{ 7, NULL, "zh", ULOC_ACCEPT_FALLBACK },  /* XF */
     };
     const int32_t numTests = sizeof(tests)/sizeof(tests[0]);
     static const char *http[] = {
@@ -2383,29 +2420,35 @@ static void TestAcceptLanguage(void) {
               "xxx-yyy;q=.01, xxx-yyy;q=.01, xxx-yyy;q=.01, xxx-yyy;q=.01, xxx-yyy;q=.01, "
               "xxx-yyy;q=.01, xxx-yyy;q=.01, xxx-yyy;q=.01, xxx-yyy;q=.01, xxx-yyy;q=.01, "
               "xxx-yyy;q=.01, xxx-yyy;q=.01, xxx-yyy;q=.01, xx-yy;q=.1, "
-              "es"
+              "es",
+              
+        /*5*/ "zh-xx;q=0.9, en;q=0.6",
+        /*6*/ "ja-JA",
+        /*7*/ "zh-xx;q=0.9",
     };
 
     for(i=0;i<numTests;i++) {
         outResult = -3;
         status=U_ZERO_ERROR;
-        log_verbose("test #%d: http[%s], ICU[%s], expect %s, %d\n", 
-            i, http[tests[i].httpSet], tests[i].icuSet, tests[i].expect, tests[i].res);
+        log_verbose("test #%d: http[%s], ICU[%s], expect %s, %s\n", 
+            i, http[tests[i].httpSet], tests[i].icuSet, tests[i].expect, acceptResult(tests[i].res));
 
         available = ures_openAvailableLocales(tests[i].icuSet, &status);
         tmp[0]=0;
         rc = uloc_acceptLanguageFromHTTP(tmp, 199, &outResult, http[tests[i].httpSet], available, &status);
         uenum_close(available);
-        log_verbose(" got %s, %d [%s]\n", tmp[0]?tmp:"(EMPTY)", outResult, u_errorName(status));
+        log_verbose(" got %s, %s [%s]\n", tmp[0]?tmp:"(EMPTY)", acceptResult(outResult), u_errorName(status));
         if(outResult != tests[i].res) {
-            log_err("FAIL: #%d: expected outResult of %d but got %d\n", i, tests[i].res, outResult);
-            log_info("test #%d: http[%s], ICU[%s], expect %s, %d\n", 
-                i, http[tests[i].httpSet], tests[i].icuSet, tests[i].expect, tests[i].res);
+            log_err_status(status, "FAIL: #%d: expected outResult of %s but got %s\n", i, 
+                acceptResult( tests[i].res), 
+                acceptResult( outResult));
+            log_info("test #%d: http[%s], ICU[%s], expect %s, %s\n", 
+                i, http[tests[i].httpSet], tests[i].icuSet, tests[i].expect,acceptResult(tests[i].res));
         }
         if((outResult>0)&&uprv_strcmp(tmp, tests[i].expect)) {
-            log_err("FAIL: #%d: expected %s but got %s\n", i, tests[i].expect, tmp);
-            log_info("test #%d: http[%s], ICU[%s], expect %s, %d\n", 
-                i, http[tests[i].httpSet], tests[i].icuSet, tests[i].expect, tests[i].res);
+            log_err_status(status, "FAIL: #%d: expected %s but got %s\n", i, tests[i].expect, tmp);
+            log_info("test #%d: http[%s], ICU[%s], expect %s, %s\n", 
+                i, http[tests[i].httpSet], tests[i].icuSet, tests[i].expect, acceptResult(tests[i].res));
         }
     }
 }
@@ -2440,7 +2483,7 @@ static void TestCalendar() {
     UErrorCode status = U_ZERO_ERROR;
     UResourceBundle *resIndex = ures_open(NULL,"res_index", &status);
     if(U_FAILURE(status)){
-        log_err("Could not open res_index.res. Exiting. Error: %s\n", u_errorName(status));
+        log_err_status(status, "Could not open res_index.res. Exiting. Error: %s\n", u_errorName(status));
         return;
     }
     for (i=0; i<LENGTHOF(LOCALE_ALIAS); i++) {
@@ -2476,7 +2519,7 @@ static void TestDateFormat() {
     UErrorCode status = U_ZERO_ERROR;
     UResourceBundle *resIndex = ures_open(NULL,"res_index", &status);
     if(U_FAILURE(status)){
-        log_err("Could not open res_index.res. Exiting. Error: %s\n", u_errorName(status));
+        log_err_status(status, "Could not open res_index.res. Exiting. Error: %s\n", u_errorName(status));
         return;
     }
     for (i=0; i<LENGTHOF(LOCALE_ALIAS); i++) {
@@ -2519,7 +2562,7 @@ static void TestCollation() {
     UErrorCode status = U_ZERO_ERROR;
     UResourceBundle *resIndex = ures_open(NULL,"res_index", &status);
     if(U_FAILURE(status)){
-        log_err("Could not open res_index.res. Exiting. Error: %s\n", u_errorName(status));
+        log_err_status(status, "Could not open res_index.res. Exiting. Error: %s\n", u_errorName(status));
         return;
     }
     for (i=0; i<LENGTHOF(LOCALE_ALIAS); i++) {
@@ -2556,12 +2599,94 @@ static void TestCollation() {
 #endif
 }
 
+typedef struct OrientationStructTag {
+    const char* localeId;
+    ULayoutType character;
+    ULayoutType line;
+} OrientationStruct;
+
+const char* ULayoutTypeToString(ULayoutType type)
+{
+    switch(type)
+    {
+    case ULOC_LAYOUT_LTR:
+        return "ULOC_LAYOUT_LTR";
+        break;
+    case ULOC_LAYOUT_RTL:
+        return "ULOC_LAYOUT_RTL";
+        break;
+    case ULOC_LAYOUT_TTB:
+        return "ULOC_LAYOUT_TTB";
+        break;
+    case ULOC_LAYOUT_BTT:
+        return "ULOC_LAYOUT_BTT";
+        break;
+    case ULOC_LAYOUT_UNKNOWN:
+        break;
+    }
+
+    return "Unknown enum value for ULayoutType!";
+}
+
+static void  TestOrientation()
+{
+    static const OrientationStruct toTest [] = {
+        { "ar", ULOC_LAYOUT_RTL, ULOC_LAYOUT_TTB },
+        { "aR", ULOC_LAYOUT_RTL, ULOC_LAYOUT_TTB },
+        { "ar_Arab", ULOC_LAYOUT_RTL, ULOC_LAYOUT_TTB },
+        { "fa", ULOC_LAYOUT_RTL, ULOC_LAYOUT_TTB },
+        { "Fa", ULOC_LAYOUT_RTL, ULOC_LAYOUT_TTB },
+        { "he", ULOC_LAYOUT_RTL, ULOC_LAYOUT_TTB },
+        { "ps", ULOC_LAYOUT_RTL, ULOC_LAYOUT_TTB },
+        { "ur", ULOC_LAYOUT_RTL, ULOC_LAYOUT_TTB },
+        { "UR", ULOC_LAYOUT_RTL, ULOC_LAYOUT_TTB },
+        { "en", ULOC_LAYOUT_LTR, ULOC_LAYOUT_TTB }
+    };
+
+    size_t i = 0;
+    for (; i < sizeof(toTest) / sizeof(toTest[0]); ++i) {
+        UErrorCode statusCO = U_ZERO_ERROR;
+        UErrorCode statusLO = U_ZERO_ERROR;
+        const char* const localeId = toTest[i].localeId;
+        const ULayoutType co = uloc_getCharacterOrientation(localeId, &statusCO);
+        const ULayoutType expectedCO = toTest[i].character;
+        const ULayoutType lo = uloc_getLineOrientation(localeId, &statusLO);
+        const ULayoutType expectedLO = toTest[i].line;
+        if (U_FAILURE(statusCO)) {
+            log_err_status(statusCO,
+                "  unexpected failure for uloc_getCharacterOrientation(), with localId \"%s\" and status %s\n",
+                localeId,
+                u_errorName(statusCO));
+        }
+        else if (co != expectedCO) {
+            log_err(
+                "  unexpected result for uloc_getCharacterOrientation(), with localeId \"%s\". Expected %s but got result %s\n",
+                localeId,
+                ULayoutTypeToString(expectedCO),
+                ULayoutTypeToString(co));
+        }
+        if (U_FAILURE(statusLO)) {
+            log_err_status(statusLO,
+                "  unexpected failure for uloc_getLineOrientation(), with localId \"%s\" and status %s\n",
+                localeId,
+                u_errorName(statusLO));
+        }
+        else if (lo != expectedLO) {
+            log_err(
+                "  unexpected result for uloc_getLineOrientation(), with localeId \"%s\". Expected %s but got result %s\n",
+                localeId,
+                ULayoutTypeToString(expectedLO),
+                ULayoutTypeToString(lo));
+        }
+    }
+}
+
 static void  TestULocale() {
     int i;
     UErrorCode status = U_ZERO_ERROR;
     UResourceBundle *resIndex = ures_open(NULL,"res_index", &status);
     if(U_FAILURE(status)){
-        log_err("Could not open res_index.res. Exiting. Error: %s\n", u_errorName(status));
+        log_err_status(status, "Could not open res_index.res. Exiting. Error: %s\n", u_errorName(status));
         return;
     }
     for (i=0; i<LENGTHOF(LOCALE_ALIAS); i++) {
@@ -2622,14 +2747,14 @@ static void TestUResourceBundle() {
             log_err("ures_open(%s) failed %s\n", oldLoc, u_errorName(status));
         }
 
-        us1 = ures_getLocale(rb1, &status);
+        us1 = ures_getLocaleByType(rb1, ULOC_ACTUAL_LOCALE, &status);
 
         status = U_ZERO_ERROR;
         rb2 = ures_open(NULL, newLoc, &status);
         if (U_FAILURE(status)) {
             log_err("ures_open(%s) failed %s\n", oldLoc, u_errorName(status));
         } 
-        us2 = ures_getLocale(rb2, &status);
+        us2 = ures_getLocaleByType(rb2, ULOC_ACTUAL_LOCALE, &status);
 
         if (strcmp(us1,newLoc)!=0 || strcmp(us1,us2)!=0 ) {
             log_err("The locales are not equal!.Old: %s, New: %s \n", oldLoc, newLoc);
@@ -2770,5 +2895,2640 @@ static void TestGetLocaleForLCID() {
         }
     }
     
+}
+
+const char* const basic_maximize_data[][2] = {
+  {
+    "zu_Zzzz_Zz",
+    "zu_Latn_ZA",
+  }, {
+    "ZU_Zz",
+    "zu_Latn_ZA"
+  }, {
+    "zu_LATN",
+    "zu_Latn_ZA"
+  }, {
+    "en_Zz",
+    "en_Latn_US"
+  }, {
+    "en_us",
+    "en_Latn_US"
+  }, {
+    "en_Kore",
+    "en_Kore_US"
+  }, {
+    "en_Kore_Zz",
+    "en_Kore_US"
+  }, {
+    "en_Kore_ZA",
+    "en_Kore_ZA"
+  }, {
+    "en_Kore_ZA_POSIX",
+    "en_Kore_ZA_POSIX"
+  }, {
+    "en_Gujr",
+    "en_Gujr_US"
+  }, {
+    "en_ZA",
+    "en_Latn_ZA"
+  }, {
+    "en_Gujr_Zz",
+    "en_Gujr_US"
+  }, {
+    "en_Gujr_ZA",
+    "en_Gujr_ZA"
+  }, {
+    "en_Gujr_ZA_POSIX",
+    "en_Gujr_ZA_POSIX"
+  }, {
+    "en_US_POSIX_1901",
+    "en_Latn_US_POSIX_1901"
+  }, {
+    "en_Latn__POSIX_1901",
+    "en_Latn_US_POSIX_1901"
+  }, {
+    "en__POSIX_1901",
+    "en_Latn_US_POSIX_1901"
+  }, {
+    "de__POSIX_1901",
+    "de_Latn_DE_POSIX_1901"
+  }, {
+    "en_US_BOSTON",
+    "en_Latn_US_BOSTON"
+  }, {
+    "th@calendar=buddhist",
+    "th_Thai_TH@calendar=buddhist"
+  }, {
+    "ar_ZZ",
+    "ar_Arab_EG"
+  }, {
+    "zh",
+    "zh_Hans_CN"
+  }, {
+    "zh_TW",
+    "zh_Hant_TW"
+  }, {
+    "zh_HK",
+    "zh_Hant_HK"
+  }, {
+    "zh_Hant",
+    "zh_Hant_TW"
+  }, {
+    "zh_Zzzz_CN",
+    "zh_Hans_CN"
+  }, {
+    "und_US",
+    "en_Latn_US"
+  }, {
+    "und_HK",
+    "zh_Hant_HK"
+  }, {
+    "zzz",
+    ""
+  }
+};
+
+const char* const basic_minimize_data[][2] = {
+  {
+    "en_Latn_US",
+    "en"
+  }, {
+    "en_Latn_US_POSIX_1901",
+    "en__POSIX_1901"
+  }, {
+    "EN_Latn_US_POSIX_1901",
+    "en__POSIX_1901"
+  }, {
+    "en_Zzzz_US_POSIX_1901",
+    "en__POSIX_1901"
+  }, {
+    "de_Latn_DE_POSIX_1901",
+    "de__POSIX_1901"
+  }, {
+    "und",
+    ""
+  }
+};
+
+const char* const full_data[][3] = {
+  {
+    /*   "FROM", */
+    /*   "ADD-LIKELY", */
+    /*   "REMOVE-LIKELY" */
+    /* }, { */
+    "aa",
+    "aa_Latn_ET",
+    "aa"
+  }, {
+    "af",
+    "af_Latn_ZA",
+    "af"
+  }, {
+    "ak",
+    "ak_Latn_GH",
+    "ak"
+  }, {
+    "am",
+    "am_Ethi_ET",
+    "am"
+  }, {
+    "ar",
+    "ar_Arab_EG",
+    "ar"
+  }, {
+    "as",
+    "as_Beng_IN",
+    "as"
+  }, {
+    "az",
+    "az_Latn_AZ",
+    "az"
+  }, {
+    "be",
+    "be_Cyrl_BY",
+    "be"
+  }, {
+    "bg",
+    "bg_Cyrl_BG",
+    "bg"
+  }, {
+    "bn",
+    "bn_Beng_BD",
+    "bn"
+  }, {
+    "bo",
+    "bo_Tibt_CN",
+    "bo"
+  }, {
+    "bs",
+    "bs_Latn_BA",
+    "bs"
+  }, {
+    "ca",
+    "ca_Latn_ES",
+    "ca"
+  }, {
+    "ch",
+    "ch_Latn_GU",
+    "ch"
+  }, {
+    "chk",
+    "chk_Latn_FM",
+    "chk"
+  }, {
+    "cs",
+    "cs_Latn_CZ",
+    "cs"
+  }, {
+    "cy",
+    "cy_Latn_GB",
+    "cy"
+  }, {
+    "da",
+    "da_Latn_DK",
+    "da"
+  }, {
+    "de",
+    "de_Latn_DE",
+    "de"
+  }, {
+    "dv",
+    "dv_Thaa_MV",
+    "dv"
+  }, {
+    "dz",
+    "dz_Tibt_BT",
+    "dz"
+  }, {
+    "ee",
+    "ee_Latn_GH",
+    "ee"
+  }, {
+    "el",
+    "el_Grek_GR",
+    "el"
+  }, {
+    "en",
+    "en_Latn_US",
+    "en"
+  }, {
+    "es",
+    "es_Latn_ES",
+    "es"
+  }, {
+    "et",
+    "et_Latn_EE",
+    "et"
+  }, {
+    "eu",
+    "eu_Latn_ES",
+    "eu"
+  }, {
+    "fa",
+    "fa_Arab_IR",
+    "fa"
+  }, {
+    "fi",
+    "fi_Latn_FI",
+    "fi"
+  }, {
+    "fil",
+    "fil_Latn_PH",
+    "fil"
+  }, {
+    "fj",
+    "fj_Latn_FJ",
+    "fj"
+  }, {
+    "fo",
+    "fo_Latn_FO",
+    "fo"
+  }, {
+    "fr",
+    "fr_Latn_FR",
+    "fr"
+  }, {
+    "fur",
+    "fur_Latn_IT",
+    "fur"
+  }, {
+    "ga",
+    "ga_Latn_IE",
+    "ga"
+  }, {
+    "gaa",
+    "gaa_Latn_GH",
+    "gaa"
+  }, {
+    "gl",
+    "gl_Latn_ES",
+    "gl"
+  }, {
+    "gn",
+    "gn_Latn_PY",
+    "gn"
+  }, {
+    "gu",
+    "gu_Gujr_IN",
+    "gu"
+  }, {
+    "ha",
+    "ha_Latn_NG",
+    "ha"
+  }, {
+    "haw",
+    "haw_Latn_US",
+    "haw"
+  }, {
+    "he",
+    "he_Hebr_IL",
+    "he"
+  }, {
+    "hi",
+    "hi_Deva_IN",
+    "hi"
+  }, {
+    "hr",
+    "hr_Latn_HR",
+    "hr"
+  }, {
+    "ht",
+    "ht_Latn_HT",
+    "ht"
+  }, {
+    "hu",
+    "hu_Latn_HU",
+    "hu"
+  }, {
+    "hy",
+    "hy_Armn_AM",
+    "hy"
+  }, {
+    "id",
+    "id_Latn_ID",
+    "id"
+  }, {
+    "ig",
+    "ig_Latn_NG",
+    "ig"
+  }, {
+    "ii",
+    "ii_Yiii_CN",
+    "ii"
+  }, {
+    "is",
+    "is_Latn_IS",
+    "is"
+  }, {
+    "it",
+    "it_Latn_IT",
+    "it"
+  }, {
+    "iu",
+    "iu_Cans_CA",
+    "iu"
+  }, {
+    "ja",
+    "ja_Jpan_JP",
+    "ja"
+  }, {
+    "ka",
+    "ka_Geor_GE",
+    "ka"
+  }, {
+    "kaj",
+    "kaj_Latn_NG",
+    "kaj"
+  }, {
+    "kam",
+    "kam_Latn_KE",
+    "kam"
+  }, {
+    "kk",
+    "kk_Cyrl_KZ",
+    "kk"
+  }, {
+    "kl",
+    "kl_Latn_GL",
+    "kl"
+  }, {
+    "km",
+    "km_Khmr_KH",
+    "km"
+  }, {
+    "kn",
+    "kn_Knda_IN",
+    "kn"
+  }, {
+    "ko",
+    "ko_Kore_KR",
+    "ko"
+  }, {
+    "kok",
+    "kok_Deva_IN",
+    "kok"
+  }, {
+    "kpe",
+    "kpe_Latn_LR",
+    "kpe"
+  }, {
+    "ku",
+    "ku_Arab_IQ",
+    "ku"
+  }, {
+    "ky",
+    "ky_Cyrl_KG",
+    "ky"
+  }, {
+    "la",
+    "la_Latn_VA",
+    "la"
+  }, {
+    "ln",
+    "ln_Latn_CD",
+    "ln"
+  }, {
+    "lo",
+    "lo_Laoo_LA",
+    "lo"
+  }, {
+    "lt",
+    "lt_Latn_LT",
+    "lt"
+  }, {
+    "lv",
+    "lv_Latn_LV",
+    "lv"
+  }, {
+    "mg",
+    "mg_Latn_MG",
+    "mg"
+  }, {
+    "mh",
+    "mh_Latn_MH",
+    "mh"
+  }, {
+    "mk",
+    "mk_Cyrl_MK",
+    "mk"
+  }, {
+    "ml",
+    "ml_Mlym_IN",
+    "ml"
+  }, {
+    "mn",
+    "mn_Cyrl_MN",
+    "mn"
+  }, {
+    "mr",
+    "mr_Deva_IN",
+    "mr"
+  }, {
+    "ms",
+    "ms_Latn_MY",
+    "ms"
+  }, {
+    "mt",
+    "mt_Latn_MT",
+    "mt"
+  }, {
+    "my",
+    "my_Mymr_MM",
+    "my"
+  }, {
+    "na",
+    "na_Latn_NR",
+    "na"
+  }, {
+    "ne",
+    "ne_Deva_NP",
+    "ne"
+  }, {
+    "niu",
+    "niu_Latn_NU",
+    "niu"
+  }, {
+    "nl",
+    "nl_Latn_NL",
+    "nl"
+  }, {
+    "nn",
+    "nn_Latn_NO",
+    "nn"
+  }, {
+    "nr",
+    "nr_Latn_ZA",
+    "nr"
+  }, {
+    "nso",
+    "nso_Latn_ZA",
+    "nso"
+  }, {
+    "ny",
+    "ny_Latn_MW",
+    "ny"
+  }, {
+    "om",
+    "om_Latn_ET",
+    "om"
+  }, {
+    "or",
+    "or_Orya_IN",
+    "or"
+  }, {
+    "pa",
+    "pa_Guru_IN",
+    "pa"
+  }, {
+    "pa_Arab",
+    "pa_Arab_PK",
+    "pa_PK"
+  }, {
+    "pa_PK",
+    "pa_Arab_PK",
+    "pa_PK"
+  }, {
+    "pap",
+    "pap_Latn_AN",
+    "pap"
+  }, {
+    "pau",
+    "pau_Latn_PW",
+    "pau"
+  }, {
+    "pl",
+    "pl_Latn_PL",
+    "pl"
+  }, {
+    "ps",
+    "ps_Arab_AF",
+    "ps"
+  }, {
+    "pt",
+    "pt_Latn_BR",
+    "pt"
+  }, {
+    "rn",
+    "rn_Latn_BI",
+    "rn"
+  }, {
+    "ro",
+    "ro_Latn_RO",
+    "ro"
+  }, {
+    "ru",
+    "ru_Cyrl_RU",
+    "ru"
+  }, {
+    "rw",
+    "rw_Latn_RW",
+    "rw"
+  }, {
+    "sa",
+    "sa_Deva_IN",
+    "sa"
+  }, {
+    "se",
+    "se_Latn_NO",
+    "se"
+  }, {
+    "sg",
+    "sg_Latn_CF",
+    "sg"
+  }, {
+    "si",
+    "si_Sinh_LK",
+    "si"
+  }, {
+    "sid",
+    "sid_Latn_ET",
+    "sid"
+  }, {
+    "sk",
+    "sk_Latn_SK",
+    "sk"
+  }, {
+    "sl",
+    "sl_Latn_SI",
+    "sl"
+  }, {
+    "sm",
+    "sm_Latn_WS",
+    "sm"
+  }, {
+    "so",
+    "so_Latn_SO",
+    "so"
+  }, {
+    "sq",
+    "sq_Latn_AL",
+    "sq"
+  }, {
+    "sr",
+    "sr_Cyrl_RS",
+    "sr"
+  }, {
+    "ss",
+    "ss_Latn_ZA",
+    "ss"
+  }, {
+    "st",
+    "st_Latn_ZA",
+    "st"
+  }, {
+    "sv",
+    "sv_Latn_SE",
+    "sv"
+  }, {
+    "sw",
+    "sw_Latn_TZ",
+    "sw"
+  }, {
+    "ta",
+    "ta_Taml_IN",
+    "ta"
+  }, {
+    "te",
+    "te_Telu_IN",
+    "te"
+  }, {
+    "tet",
+    "tet_Latn_TL",
+    "tet"
+  }, {
+    "tg",
+    "tg_Cyrl_TJ",
+    "tg"
+  }, {
+    "th",
+    "th_Thai_TH",
+    "th"
+  }, {
+    "ti",
+    "ti_Ethi_ET",
+    "ti"
+  }, {
+    "tig",
+    "tig_Ethi_ER",
+    "tig"
+  }, {
+    "tk",
+    "tk_Latn_TM",
+    "tk"
+  }, {
+    "tkl",
+    "tkl_Latn_TK",
+    "tkl"
+  }, {
+    "tn",
+    "tn_Latn_ZA",
+    "tn"
+  }, {
+    "to",
+    "to_Latn_TO",
+    "to"
+  }, {
+    "tpi",
+    "tpi_Latn_PG",
+    "tpi"
+  }, {
+    "tr",
+    "tr_Latn_TR",
+    "tr"
+  }, {
+    "ts",
+    "ts_Latn_ZA",
+    "ts"
+  }, {
+    "tt",
+    "tt_Cyrl_RU",
+    "tt"
+  }, {
+    "tvl",
+    "tvl_Latn_TV",
+    "tvl"
+  }, {
+    "ty",
+    "ty_Latn_PF",
+    "ty"
+  }, {
+    "uk",
+    "uk_Cyrl_UA",
+    "uk"
+  }, {
+    "und",
+    "en_Latn_US",
+    "en"
+  }, {
+    "und_AD",
+    "ca_Latn_AD",
+    "ca_AD"
+  }, {
+    "und_AE",
+    "ar_Arab_AE",
+    "ar_AE"
+  }, {
+    "und_AF",
+    "fa_Arab_AF",
+    "fa_AF"
+  }, {
+    "und_AL",
+    "sq_Latn_AL",
+    "sq"
+  }, {
+    "und_AM",
+    "hy_Armn_AM",
+    "hy"
+  }, {
+    "und_AN",
+    "pap_Latn_AN",
+    "pap"
+  }, {
+    "und_AO",
+    "pt_Latn_AO",
+    "pt_AO"
+  }, {
+    "und_AR",
+    "es_Latn_AR",
+    "es_AR"
+  }, {
+    "und_AS",
+    "sm_Latn_AS",
+    "sm_AS"
+  }, {
+    "und_AT",
+    "de_Latn_AT",
+    "de_AT"
+  }, {
+    "und_AW",
+    "nl_Latn_AW",
+    "nl_AW"
+  }, {
+    "und_AX",
+    "sv_Latn_AX",
+    "sv_AX"
+  }, {
+    "und_AZ",
+    "az_Latn_AZ",
+    "az"
+  }, {
+    "und_Arab",
+    "ar_Arab_EG",
+    "ar"
+  }, {
+    "und_Arab_IN",
+    "ur_Arab_IN",
+    "ur_IN"
+  }, {
+    "und_Arab_PK",
+    "ur_Arab_PK",
+    "ur"
+  }, {
+    "und_Arab_SN",
+    "ar_Arab_SN",
+    "ar_SN"
+  }, {
+    "und_Armn",
+    "hy_Armn_AM",
+    "hy"
+  }, {
+    "und_BA",
+    "bs_Latn_BA",
+    "bs"
+  }, {
+    "und_BD",
+    "bn_Beng_BD",
+    "bn"
+  }, {
+    "und_BE",
+    "nl_Latn_BE",
+    "nl_BE"
+  }, {
+    "und_BF",
+    "fr_Latn_BF",
+    "fr_BF"
+  }, {
+    "und_BG",
+    "bg_Cyrl_BG",
+    "bg"
+  }, {
+    "und_BH",
+    "ar_Arab_BH",
+    "ar_BH"
+  }, {
+    "und_BI",
+    "rn_Latn_BI",
+    "rn"
+  }, {
+    "und_BJ",
+    "fr_Latn_BJ",
+    "fr_BJ"
+  }, {
+    "und_BN",
+    "ms_Latn_BN",
+    "ms_BN"
+  }, {
+    "und_BO",
+    "es_Latn_BO",
+    "es_BO"
+  }, {
+    "und_BR",
+    "pt_Latn_BR",
+    "pt"
+  }, {
+    "und_BT",
+    "dz_Tibt_BT",
+    "dz"
+  }, {
+    "und_BY",
+    "be_Cyrl_BY",
+    "be"
+  }, {
+    "und_Beng",
+    "bn_Beng_BD",
+    "bn"
+  }, {
+    "und_Beng_IN",
+    "bn_Beng_IN",
+    "bn_IN"
+  }, {
+    "und_CD",
+    "sw_Latn_CD",
+    "sw_CD"
+  }, {
+    "und_CF",
+    "fr_Latn_CF",
+    "fr_CF"
+  }, {
+    "und_CG",
+    "fr_Latn_CG",
+    "fr_CG"
+  }, {
+    "und_CH",
+    "de_Latn_CH",
+    "de_CH"
+  }, {
+    "und_CI",
+    "fr_Latn_CI",
+    "fr_CI"
+  }, {
+    "und_CL",
+    "es_Latn_CL",
+    "es_CL"
+  }, {
+    "und_CM",
+    "fr_Latn_CM",
+    "fr_CM"
+  }, {
+    "und_CN",
+    "zh_Hans_CN",
+    "zh"
+  }, {
+    "und_CO",
+    "es_Latn_CO",
+    "es_CO"
+  }, {
+    "und_CR",
+    "es_Latn_CR",
+    "es_CR"
+  }, {
+    "und_CU",
+    "es_Latn_CU",
+    "es_CU"
+  }, {
+    "und_CV",
+    "pt_Latn_CV",
+    "pt_CV"
+  }, {
+    "und_CY",
+    "el_Grek_CY",
+    "el_CY"
+  }, {
+    "und_CZ",
+    "cs_Latn_CZ",
+    "cs"
+  }, {
+    "und_Cans",
+    "crk_Cans_CA",
+    "crk"
+  }, {
+    "und_Cyrl",
+    "ru_Cyrl_RU",
+    "ru"
+  }, {
+    "und_Cyrl_KZ",
+    "ru_Cyrl_KZ",
+    "ru_KZ"
+  }, {
+    "und_DE",
+    "de_Latn_DE",
+    "de"
+  }, {
+    "und_DJ",
+    "aa_Latn_DJ",
+    "aa_DJ"
+  }, {
+    "und_DK",
+    "da_Latn_DK",
+    "da"
+  }, {
+    "und_DO",
+    "es_Latn_DO",
+    "es_DO"
+  }, {
+    "und_DZ",
+    "ar_Arab_DZ",
+    "ar_DZ"
+  }, {
+    "und_Deva",
+    "hi_Deva_IN",
+    "hi"
+  }, {
+    "und_EC",
+    "es_Latn_EC",
+    "es_EC"
+  }, {
+    "und_EE",
+    "et_Latn_EE",
+    "et"
+  }, {
+    "und_EG",
+    "ar_Arab_EG",
+    "ar"
+  }, {
+    "und_EH",
+    "ar_Arab_EH",
+    "ar_EH"
+  }, {
+    "und_ER",
+    "ti_Ethi_ER",
+    "ti_ER"
+  }, {
+    "und_ES",
+    "es_Latn_ES",
+    "es"
+  }, {
+    "und_ET",
+    "en_Latn_ET",
+    "en_ET"
+  }, {
+    "und_Ethi",
+    "am_Ethi_ET",
+    "am"
+  }, {
+    "und_Ethi_ER",
+    "am_Ethi_ER",
+    "am_ER"
+  }, {
+    "und_FI",
+    "fi_Latn_FI",
+    "fi"
+  }, {
+    "und_FJ",
+    "fj_Latn_FJ",
+    "fj"
+  }, {
+    "und_FM",
+    "chk_Latn_FM",
+    "chk"
+  }, {
+    "und_FO",
+    "fo_Latn_FO",
+    "fo"
+  }, {
+    "und_FR",
+    "fr_Latn_FR",
+    "fr"
+  }, {
+    "und_GA",
+    "fr_Latn_GA",
+    "fr_GA"
+  }, {
+    "und_GE",
+    "ka_Geor_GE",
+    "ka"
+  }, {
+    "und_GF",
+    "fr_Latn_GF",
+    "fr_GF"
+  }, {
+    "und_GL",
+    "kl_Latn_GL",
+    "kl"
+  }, {
+    "und_GN",
+    "fr_Latn_GN",
+    "fr_GN"
+  }, {
+    "und_GP",
+    "fr_Latn_GP",
+    "fr_GP"
+  }, {
+    "und_GQ",
+    "fr_Latn_GQ",
+    "fr_GQ"
+  }, {
+    "und_GR",
+    "el_Grek_GR",
+    "el"
+  }, {
+    "und_GT",
+    "es_Latn_GT",
+    "es_GT"
+  }, {
+    "und_GU",
+    "en_Latn_GU",
+    "en_GU"
+  }, {
+    "und_GW",
+    "pt_Latn_GW",
+    "pt_GW"
+  }, {
+    "und_Geor",
+    "ka_Geor_GE",
+    "ka"
+  }, {
+    "und_Grek",
+    "el_Grek_GR",
+    "el"
+  }, {
+    "und_Gujr",
+    "gu_Gujr_IN",
+    "gu"
+  }, {
+    "und_Guru",
+    "pa_Guru_IN",
+    "pa"
+  }, {
+    "und_HK",
+    "zh_Hant_HK",
+    "zh_HK"
+  }, {
+    "und_HN",
+    "es_Latn_HN",
+    "es_HN"
+  }, {
+    "und_HR",
+    "hr_Latn_HR",
+    "hr"
+  }, {
+    "und_HT",
+    "ht_Latn_HT",
+    "ht"
+  }, {
+    "und_HU",
+    "hu_Latn_HU",
+    "hu"
+  }, {
+    "und_Hani",
+    "zh_Hans_CN",
+    "zh"
+  }, {
+    "und_Hans",
+    "zh_Hans_CN",
+    "zh"
+  }, {
+    "und_Hant",
+    "zh_Hant_TW",
+    "zh_TW"
+  }, {
+    "und_Hebr",
+    "he_Hebr_IL",
+    "he"
+  }, {
+    "und_IL",
+    "he_Hebr_IL",
+    "he"
+  }, {
+    "und_IN",
+    "hi_Deva_IN",
+    "hi"
+  }, {
+    "und_IQ",
+    "ar_Arab_IQ",
+    "ar_IQ"
+  }, {
+    "und_IR",
+    "fa_Arab_IR",
+    "fa"
+  }, {
+    "und_IS",
+    "is_Latn_IS",
+    "is"
+  }, {
+    "und_IT",
+    "it_Latn_IT",
+    "it"
+  }, {
+    "und_JO",
+    "ar_Arab_JO",
+    "ar_JO"
+  }, {
+    "und_JP",
+    "ja_Jpan_JP",
+    "ja"
+  }, {
+    "und_Jpan",
+    "ja_Jpan_JP",
+    "ja"
+  }, {
+    "und_KG",
+    "ky_Cyrl_KG",
+    "ky"
+  }, {
+    "und_KH",
+    "km_Khmr_KH",
+    "km"
+  }, {
+    "und_KM",
+    "ar_Arab_KM",
+    "ar_KM"
+  }, {
+    "und_KP",
+    "ko_Kore_KP",
+    "ko_KP"
+  }, {
+    "und_KR",
+    "ko_Kore_KR",
+    "ko"
+  }, {
+    "und_KW",
+    "ar_Arab_KW",
+    "ar_KW"
+  }, {
+    "und_KZ",
+    "ru_Cyrl_KZ",
+    "ru_KZ"
+  }, {
+    "und_Khmr",
+    "km_Khmr_KH",
+    "km"
+  }, {
+    "und_Knda",
+    "kn_Knda_IN",
+    "kn"
+  }, {
+    "und_Kore",
+    "ko_Kore_KR",
+    "ko"
+  }, {
+    "und_LA",
+    "lo_Laoo_LA",
+    "lo"
+  }, {
+    "und_LB",
+    "ar_Arab_LB",
+    "ar_LB"
+  }, {
+    "und_LI",
+    "de_Latn_LI",
+    "de_LI"
+  }, {
+    "und_LK",
+    "si_Sinh_LK",
+    "si"
+  }, {
+    "und_LS",
+    "st_Latn_LS",
+    "st_LS"
+  }, {
+    "und_LT",
+    "lt_Latn_LT",
+    "lt"
+  }, {
+    "und_LU",
+    "fr_Latn_LU",
+    "fr_LU"
+  }, {
+    "und_LV",
+    "lv_Latn_LV",
+    "lv"
+  }, {
+    "und_LY",
+    "ar_Arab_LY",
+    "ar_LY"
+  }, {
+    "und_Laoo",
+    "lo_Laoo_LA",
+    "lo"
+  }, {
+    "und_Latn_ES",
+    "es_Latn_ES",
+    "es"
+  }, {
+    "und_Latn_ET",
+    "en_Latn_ET",
+    "en_ET"
+  }, {
+    "und_Latn_GB",
+    "en_Latn_GB",
+    "en_GB"
+  }, {
+    "und_Latn_GH",
+    "ak_Latn_GH",
+    "ak"
+  }, {
+    "und_Latn_ID",
+    "id_Latn_ID",
+    "id"
+  }, {
+    "und_Latn_IT",
+    "it_Latn_IT",
+    "it"
+  }, {
+    "und_Latn_NG",
+    "en_Latn_NG",
+    "en_NG"
+  }, {
+    "und_Latn_TR",
+    "tr_Latn_TR",
+    "tr"
+  }, {
+    "und_Latn_ZA",
+    "en_Latn_ZA",
+    "en_ZA"
+  }, {
+    "und_MA",
+    "ar_Arab_MA",
+    "ar_MA"
+  }, {
+    "und_MC",
+    "fr_Latn_MC",
+    "fr_MC"
+  }, {
+    "und_MD",
+    "ro_Latn_MD",
+    "ro_MD"
+  }, {
+    "und_ME",
+    "sr_Latn_ME",
+    "sr_ME"
+  }, {
+    "und_MG",
+    "mg_Latn_MG",
+    "mg"
+  }, {
+    "und_MH",
+    "mh_Latn_MH",
+    "mh"
+  }, {
+    "und_MK",
+    "mk_Cyrl_MK",
+    "mk"
+  }, {
+    "und_ML",
+    "fr_Latn_ML",
+    "fr_ML"
+  }, {
+    "und_MM",
+    "my_Mymr_MM",
+    "my"
+  }, {
+    "und_MN",
+    "mn_Cyrl_MN",
+    "mn"
+  }, {
+    "und_MO",
+    "zh_Hant_MO",
+    "zh_MO"
+  }, {
+    "und_MQ",
+    "fr_Latn_MQ",
+    "fr_MQ"
+  }, {
+    "und_MR",
+    "ar_Arab_MR",
+    "ar_MR"
+  }, {
+    "und_MT",
+    "mt_Latn_MT",
+    "mt"
+  }, {
+    "und_MV",
+    "dv_Thaa_MV",
+    "dv"
+  }, {
+    "und_MW",
+    "ny_Latn_MW",
+    "ny"
+  }, {
+    "und_MX",
+    "es_Latn_MX",
+    "es_MX"
+  }, {
+    "und_MY",
+    "ms_Latn_MY",
+    "ms"
+  }, {
+    "und_MZ",
+    "pt_Latn_MZ",
+    "pt_MZ"
+  }, {
+    "und_Mlym",
+    "ml_Mlym_IN",
+    "ml"
+  }, {
+    "und_Mymr",
+    "my_Mymr_MM",
+    "my"
+  }, {
+    "und_NC",
+    "fr_Latn_NC",
+    "fr_NC"
+  }, {
+    "und_NE",
+    "ha_Latn_NE",
+    "ha_NE"
+  }, {
+    "und_NG",
+    "en_Latn_NG",
+    "en_NG"
+  }, {
+    "und_NI",
+    "es_Latn_NI",
+    "es_NI"
+  }, {
+    "und_NL",
+    "nl_Latn_NL",
+    "nl"
+  }, {
+    "und_NO",
+    "nb_Latn_NO",
+    "nb"
+  }, {
+    "und_NP",
+    "ne_Deva_NP",
+    "ne"
+  }, {
+    "und_NR",
+    "en_Latn_NR",
+    "en_NR"
+  }, {
+    "und_NU",
+    "niu_Latn_NU",
+    "niu"
+  }, {
+    "und_OM",
+    "ar_Arab_OM",
+    "ar_OM"
+  }, {
+    "und_Orya",
+    "or_Orya_IN",
+    "or"
+  }, {
+    "und_PA",
+    "es_Latn_PA",
+    "es_PA"
+  }, {
+    "und_PE",
+    "es_Latn_PE",
+    "es_PE"
+  }, {
+    "und_PF",
+    "fr_Latn_PF",
+    "fr_PF"
+  }, {
+    "und_PG",
+    "tpi_Latn_PG",
+    "tpi"
+  }, {
+    "und_PH",
+    "fil_Latn_PH",
+    "fil"
+  }, {
+    "und_PL",
+    "pl_Latn_PL",
+    "pl"
+  }, {
+    "und_PM",
+    "fr_Latn_PM",
+    "fr_PM"
+  }, {
+    "und_PR",
+    "es_Latn_PR",
+    "es_PR"
+  }, {
+    "und_PS",
+    "ar_Arab_PS",
+    "ar_PS"
+  }, {
+    "und_PT",
+    "pt_Latn_PT",
+    "pt_PT"
+  }, {
+    "und_PW",
+    "pau_Latn_PW",
+    "pau"
+  }, {
+    "und_PY",
+    "gn_Latn_PY",
+    "gn"
+  }, {
+    "und_QA",
+    "ar_Arab_QA",
+    "ar_QA"
+  }, {
+    "und_RE",
+    "fr_Latn_RE",
+    "fr_RE"
+  }, {
+    "und_RO",
+    "ro_Latn_RO",
+    "ro"
+  }, {
+    "und_RS",
+    "sr_Cyrl_RS",
+    "sr"
+  }, {
+    "und_RU",
+    "ru_Cyrl_RU",
+    "ru"
+  }, {
+    "und_RW",
+    "rw_Latn_RW",
+    "rw"
+  }, {
+    "und_SA",
+    "ar_Arab_SA",
+    "ar_SA"
+  }, {
+    "und_SD",
+    "ar_Arab_SD",
+    "ar_SD"
+  }, {
+    "und_SE",
+    "sv_Latn_SE",
+    "sv"
+  }, {
+    "und_SG",
+    "en_Latn_SG",
+    "en_SG"
+  }, {
+    "und_SI",
+    "sl_Latn_SI",
+    "sl"
+  }, {
+    "und_SJ",
+    "nb_Latn_SJ",
+    "nb_SJ"
+  }, {
+    "und_SK",
+    "sk_Latn_SK",
+    "sk"
+  }, {
+    "und_SM",
+    "it_Latn_SM",
+    "it_SM"
+  }, {
+    "und_SN",
+    "fr_Latn_SN",
+    "fr_SN"
+  }, {
+    "und_SO",
+    "so_Latn_SO",
+    "so"
+  }, {
+    "und_SR",
+    "nl_Latn_SR",
+    "nl_SR"
+  }, {
+    "und_ST",
+    "pt_Latn_ST",
+    "pt_ST"
+  }, {
+    "und_SV",
+    "es_Latn_SV",
+    "es_SV"
+  }, {
+    "und_SY",
+    "ar_Arab_SY",
+    "ar_SY"
+  }, {
+    "und_Sinh",
+    "si_Sinh_LK",
+    "si"
+  }, {
+    "und_TD",
+    "fr_Latn_TD",
+    "fr_TD"
+  }, {
+    "und_TG",
+    "fr_Latn_TG",
+    "fr_TG"
+  }, {
+    "und_TH",
+    "th_Thai_TH",
+    "th"
+  }, {
+    "und_TJ",
+    "tg_Cyrl_TJ",
+    "tg"
+  }, {
+    "und_TK",
+    "en_Latn_TK",
+    "en_TK"
+  }, {
+    "und_TL",
+    "pt_Latn_TL",
+    "pt_TL"
+  }, {
+    "und_TM",
+    "tk_Latn_TM",
+    "tk"
+  }, {
+    "und_TN",
+    "ar_Arab_TN",
+    "ar_TN"
+  }, {
+    "und_TO",
+    "to_Latn_TO",
+    "to"
+  }, {
+    "und_TR",
+    "tr_Latn_TR",
+    "tr"
+  }, {
+    "und_TV",
+    "tvl_Latn_TV",
+    "tvl"
+  }, {
+    "und_TW",
+    "zh_Hant_TW",
+    "zh_TW"
+  }, {
+    "und_Taml",
+    "ta_Taml_IN",
+    "ta"
+  }, {
+    "und_Telu",
+    "te_Telu_IN",
+    "te"
+  }, {
+    "und_Thaa",
+    "dv_Thaa_MV",
+    "dv"
+  }, {
+    "und_Thai",
+    "th_Thai_TH",
+    "th"
+  }, {
+    "und_Tibt",
+    "bo_Tibt_CN",
+    "bo"
+  }, {
+    "und_UA",
+    "uk_Cyrl_UA",
+    "uk"
+  }, {
+    "und_UY",
+    "es_Latn_UY",
+    "es_UY"
+  }, {
+    "und_UZ",
+    "uz_Cyrl_UZ",
+    "uz"
+  }, {
+    "und_VA",
+    "la_Latn_VA",
+    "la"
+  }, {
+    "und_VE",
+    "es_Latn_VE",
+    "es_VE"
+  }, {
+    "und_VN",
+    "vi_Latn_VN",
+    "vi"
+  }, {
+    "und_VU",
+    "bi_Latn_VU",
+    "bi"
+  }, {
+    "und_WF",
+    "fr_Latn_WF",
+    "fr_WF"
+  }, {
+    "und_WS",
+    "sm_Latn_WS",
+    "sm"
+  }, {
+    "und_YE",
+    "ar_Arab_YE",
+    "ar_YE"
+  }, {
+    "und_YT",
+    "fr_Latn_YT",
+    "fr_YT"
+  }, {
+    "und_Yiii",
+    "ii_Yiii_CN",
+    "ii"
+  }, {
+    "ur",
+    "ur_Arab_PK",
+    "ur"
+  }, {
+    "uz",
+    "uz_Cyrl_UZ",
+    "uz"
+  }, {
+    "uz_AF",
+    "uz_Arab_AF",
+    "uz_AF"
+  }, {
+    "uz_Arab",
+    "uz_Arab_AF",
+    "uz_AF"
+  }, {
+    "ve",
+    "ve_Latn_ZA",
+    "ve"
+  }, {
+    "vi",
+    "vi_Latn_VN",
+    "vi"
+  }, {
+    "wal",
+    "wal_Ethi_ET",
+    "wal"
+  }, {
+    "wo",
+    "wo_Latn_SN",
+    "wo"
+  }, {
+    "xh",
+    "xh_Latn_ZA",
+    "xh"
+  }, {
+    "yo",
+    "yo_Latn_NG",
+    "yo"
+  }, {
+    "zh",
+    "zh_Hans_CN",
+    "zh"
+  }, {
+    "zh_HK",
+    "zh_Hant_HK",
+    "zh_HK"
+  }, {
+    "zh_Hani",
+    "zh_Hans_CN",
+    "zh"
+  }, {
+    "zh_Hant",
+    "zh_Hant_TW",
+    "zh_TW"
+  }, {
+    "zh_MO",
+    "zh_Hant_MO",
+    "zh_MO"
+  }, {
+    "zh_TW",
+    "zh_Hant_TW",
+    "zh_TW"
+  }, {
+    "zu",
+    "zu_Latn_ZA",
+    "zu"
+  }, {
+    "und",
+    "en_Latn_US",
+    "en"
+  }, {
+    "und_ZZ",
+    "en_Latn_US",
+    "en"
+  }, {
+    "und_CN",
+    "zh_Hans_CN",
+    "zh"
+  }, {
+    "und_TW",
+    "zh_Hant_TW",
+    "zh_TW"
+  }, {
+    "und_HK",
+    "zh_Hant_HK",
+    "zh_HK"
+  }, {
+    "und_AQ",
+    "en_Latn_AQ",
+    "en_AQ"
+  }, {
+    "und_Zzzz",
+    "en_Latn_US",
+    "en"
+  }, {
+    "und_Zzzz_ZZ",
+    "en_Latn_US",
+    "en"
+  }, {
+    "und_Zzzz_CN",
+    "zh_Hans_CN",
+    "zh"
+  }, {
+    "und_Zzzz_TW",
+    "zh_Hant_TW",
+    "zh_TW"
+  }, {
+    "und_Zzzz_HK",
+    "zh_Hant_HK",
+    "zh_HK"
+  }, {
+    "und_Zzzz_AQ",
+    "en_Latn_AQ",
+    "en_AQ"
+  }, {
+    "und_Latn",
+    "en_Latn_US",
+    "en"
+  }, {
+    "und_Latn_ZZ",
+    "en_Latn_US",
+    "en"
+  }, {
+    "und_Latn_CN",
+    "za_Latn_CN",
+    "za"
+  }, {
+    "und_Latn_TW",
+    "zh_Latn_TW",
+    "zh_Latn_TW"
+  }, {
+    "und_Latn_HK",
+    "zh_Latn_HK",
+    "zh_Latn_HK"
+  }, {
+    "und_Latn_AQ",
+    "en_Latn_AQ",
+    "en_AQ"
+  }, {
+    "und_Hans",
+    "zh_Hans_CN",
+    "zh"
+  }, {
+    "und_Hans_ZZ",
+    "zh_Hans_CN",
+    "zh"
+  }, {
+    "und_Hans_CN",
+    "zh_Hans_CN",
+    "zh"
+  }, {
+    "und_Hans_TW",
+    "zh_Hans_TW",
+    "zh_Hans_TW"
+  }, {
+    "und_Hans_HK",
+    "zh_Hans_HK",
+    "zh_Hans_HK"
+  }, {
+    "und_Hans_AQ",
+    "zh_Hans_AQ",
+    "zh_AQ"
+  }, {
+    "und_Hant",
+    "zh_Hant_TW",
+    "zh_TW"
+  }, {
+    "und_Hant_ZZ",
+    "zh_Hant_TW",
+    "zh_TW"
+  }, {
+    "und_Hant_CN",
+    "zh_Hant_CN",
+    "zh_Hant_CN"
+  }, {
+    "und_Hant_TW",
+    "zh_Hant_TW",
+    "zh_TW"
+  }, {
+    "und_Hant_HK",
+    "zh_Hant_HK",
+    "zh_HK"
+  }, {
+    "und_Hant_AQ",
+    "zh_Hant_AQ",
+    "zh_Hant_AQ"
+  }, {
+    "und_Moon",
+    "en_Moon_US",
+    "en_Moon"
+  }, {
+    "und_Moon_ZZ",
+    "en_Moon_US",
+    "en_Moon"
+  }, {
+    "und_Moon_CN",
+    "zh_Moon_CN",
+    "zh_Moon"
+  }, {
+    "und_Moon_TW",
+    "zh_Moon_TW",
+    "zh_Moon_TW"
+  }, {
+    "und_Moon_HK",
+    "zh_Moon_HK",
+    "zh_Moon_HK"
+  }, {
+    "und_Moon_AQ",
+    "en_Moon_AQ",
+    "en_Moon_AQ"
+  }, {
+    "es",
+    "es_Latn_ES",
+    "es"
+  }, {
+    "es_ZZ",
+    "es_Latn_ES",
+    "es"
+  }, {
+    "es_CN",
+    "es_Latn_CN",
+    "es_CN"
+  }, {
+    "es_TW",
+    "es_Latn_TW",
+    "es_TW"
+  }, {
+    "es_HK",
+    "es_Latn_HK",
+    "es_HK"
+  }, {
+    "es_AQ",
+    "es_Latn_AQ",
+    "es_AQ"
+  }, {
+    "es_Zzzz",
+    "es_Latn_ES",
+    "es"
+  }, {
+    "es_Zzzz_ZZ",
+    "es_Latn_ES",
+    "es"
+  }, {
+    "es_Zzzz_CN",
+    "es_Latn_CN",
+    "es_CN"
+  }, {
+    "es_Zzzz_TW",
+    "es_Latn_TW",
+    "es_TW"
+  }, {
+    "es_Zzzz_HK",
+    "es_Latn_HK",
+    "es_HK"
+  }, {
+    "es_Zzzz_AQ",
+    "es_Latn_AQ",
+    "es_AQ"
+  }, {
+    "es_Latn",
+    "es_Latn_ES",
+    "es"
+  }, {
+    "es_Latn_ZZ",
+    "es_Latn_ES",
+    "es"
+  }, {
+    "es_Latn_CN",
+    "es_Latn_CN",
+    "es_CN"
+  }, {
+    "es_Latn_TW",
+    "es_Latn_TW",
+    "es_TW"
+  }, {
+    "es_Latn_HK",
+    "es_Latn_HK",
+    "es_HK"
+  }, {
+    "es_Latn_AQ",
+    "es_Latn_AQ",
+    "es_AQ"
+  }, {
+    "es_Hans",
+    "es_Hans_ES",
+    "es_Hans"
+  }, {
+    "es_Hans_ZZ",
+    "es_Hans_ES",
+    "es_Hans"
+  }, {
+    "es_Hans_CN",
+    "es_Hans_CN",
+    "es_Hans_CN"
+  }, {
+    "es_Hans_TW",
+    "es_Hans_TW",
+    "es_Hans_TW"
+  }, {
+    "es_Hans_HK",
+    "es_Hans_HK",
+    "es_Hans_HK"
+  }, {
+    "es_Hans_AQ",
+    "es_Hans_AQ",
+    "es_Hans_AQ"
+  }, {
+    "es_Hant",
+    "es_Hant_ES",
+    "es_Hant"
+  }, {
+    "es_Hant_ZZ",
+    "es_Hant_ES",
+    "es_Hant"
+  }, {
+    "es_Hant_CN",
+    "es_Hant_CN",
+    "es_Hant_CN"
+  }, {
+    "es_Hant_TW",
+    "es_Hant_TW",
+    "es_Hant_TW"
+  }, {
+    "es_Hant_HK",
+    "es_Hant_HK",
+    "es_Hant_HK"
+  }, {
+    "es_Hant_AQ",
+    "es_Hant_AQ",
+    "es_Hant_AQ"
+  }, {
+    "es_Moon",
+    "es_Moon_ES",
+    "es_Moon"
+  }, {
+    "es_Moon_ZZ",
+    "es_Moon_ES",
+    "es_Moon"
+  }, {
+    "es_Moon_CN",
+    "es_Moon_CN",
+    "es_Moon_CN"
+  }, {
+    "es_Moon_TW",
+    "es_Moon_TW",
+    "es_Moon_TW"
+  }, {
+    "es_Moon_HK",
+    "es_Moon_HK",
+    "es_Moon_HK"
+  }, {
+    "es_Moon_AQ",
+    "es_Moon_AQ",
+    "es_Moon_AQ"
+  }, {
+    "zh",
+    "zh_Hans_CN",
+    "zh"
+  }, {
+    "zh_ZZ",
+    "zh_Hans_CN",
+    "zh"
+  }, {
+    "zh_CN",
+    "zh_Hans_CN",
+    "zh"
+  }, {
+    "zh_TW",
+    "zh_Hant_TW",
+    "zh_TW"
+  }, {
+    "zh_HK",
+    "zh_Hant_HK",
+    "zh_HK"
+  }, {
+    "zh_AQ",
+    "zh_Hans_AQ",
+    "zh_AQ"
+  }, {
+    "zh_Zzzz",
+    "zh_Hans_CN",
+    "zh"
+  }, {
+    "zh_Zzzz_ZZ",
+    "zh_Hans_CN",
+    "zh"
+  }, {
+    "zh_Zzzz_CN",
+    "zh_Hans_CN",
+    "zh"
+  }, {
+    "zh_Zzzz_TW",
+    "zh_Hant_TW",
+    "zh_TW"
+  }, {
+    "zh_Zzzz_HK",
+    "zh_Hant_HK",
+    "zh_HK"
+  }, {
+    "zh_Zzzz_AQ",
+    "zh_Hans_AQ",
+    "zh_AQ"
+  }, {
+    "zh_Latn",
+    "zh_Latn_CN",
+    "zh_Latn"
+  }, {
+    "zh_Latn_ZZ",
+    "zh_Latn_CN",
+    "zh_Latn"
+  }, {
+    "zh_Latn_CN",
+    "zh_Latn_CN",
+    "zh_Latn"
+  }, {
+    "zh_Latn_TW",
+    "zh_Latn_TW",
+    "zh_Latn_TW"
+  }, {
+    "zh_Latn_HK",
+    "zh_Latn_HK",
+    "zh_Latn_HK"
+  }, {
+    "zh_Latn_AQ",
+    "zh_Latn_AQ",
+    "zh_Latn_AQ"
+  }, {
+    "zh_Hans",
+    "zh_Hans_CN",
+    "zh"
+  }, {
+    "zh_Hans_ZZ",
+    "zh_Hans_CN",
+    "zh"
+  }, {
+    "zh_Hans_TW",
+    "zh_Hans_TW",
+    "zh_Hans_TW"
+  }, {
+    "zh_Hans_HK",
+    "zh_Hans_HK",
+    "zh_Hans_HK"
+  }, {
+    "zh_Hans_AQ",
+    "zh_Hans_AQ",
+    "zh_AQ"
+  }, {
+    "zh_Hant",
+    "zh_Hant_TW",
+    "zh_TW"
+  }, {
+    "zh_Hant_ZZ",
+    "zh_Hant_TW",
+    "zh_TW"
+  }, {
+    "zh_Hant_CN",
+    "zh_Hant_CN",
+    "zh_Hant_CN"
+  }, {
+    "zh_Hant_AQ",
+    "zh_Hant_AQ",
+    "zh_Hant_AQ"
+  }, {
+    "zh_Moon",
+    "zh_Moon_CN",
+    "zh_Moon"
+  }, {
+    "zh_Moon_ZZ",
+    "zh_Moon_CN",
+    "zh_Moon"
+  }, {
+    "zh_Moon_CN",
+    "zh_Moon_CN",
+    "zh_Moon"
+  }, {
+    "zh_Moon_TW",
+    "zh_Moon_TW",
+    "zh_Moon_TW"
+  }, {
+    "zh_Moon_HK",
+    "zh_Moon_HK",
+    "zh_Moon_HK"
+  }, {
+    "zh_Moon_AQ",
+    "zh_Moon_AQ",
+    "zh_Moon_AQ"
+  }, {
+    "art",
+    "",
+    ""
+  }, {
+    "art_ZZ",
+    "",
+    ""
+  }, {
+    "art_CN",
+    "",
+    ""
+  }, {
+    "art_TW",
+    "",
+    ""
+  }, {
+    "art_HK",
+    "",
+    ""
+  }, {
+    "art_AQ",
+    "",
+    ""
+  }, {
+    "art_Zzzz",
+    "",
+    ""
+  }, {
+    "art_Zzzz_ZZ",
+    "",
+    ""
+  }, {
+    "art_Zzzz_CN",
+    "",
+    ""
+  }, {
+    "art_Zzzz_TW",
+    "",
+    ""
+  }, {
+    "art_Zzzz_HK",
+    "",
+    ""
+  }, {
+    "art_Zzzz_AQ",
+    "",
+    ""
+  }, {
+    "art_Latn",
+    "",
+    ""
+  }, {
+    "art_Latn_ZZ",
+    "",
+    ""
+  }, {
+    "art_Latn_CN",
+    "",
+    ""
+  }, {
+    "art_Latn_TW",
+    "",
+    ""
+  }, {
+    "art_Latn_HK",
+    "",
+    ""
+  }, {
+    "art_Latn_AQ",
+    "",
+    ""
+  }, {
+    "art_Hans",
+    "",
+    ""
+  }, {
+    "art_Hans_ZZ",
+    "",
+    ""
+  }, {
+    "art_Hans_CN",
+    "",
+    ""
+  }, {
+    "art_Hans_TW",
+    "",
+    ""
+  }, {
+    "art_Hans_HK",
+    "",
+    ""
+  }, {
+    "art_Hans_AQ",
+    "",
+    ""
+  }, {
+    "art_Hant",
+    "",
+    ""
+  }, {
+    "art_Hant_ZZ",
+    "",
+    ""
+  }, {
+    "art_Hant_CN",
+    "",
+    ""
+  }, {
+    "art_Hant_TW",
+    "",
+    ""
+  }, {
+    "art_Hant_HK",
+    "",
+    ""
+  }, {
+    "art_Hant_AQ",
+    "",
+    ""
+  }, {
+    "art_Moon",
+    "",
+    ""
+  }, {
+    "art_Moon_ZZ",
+    "",
+    ""
+  }, {
+    "art_Moon_CN",
+    "",
+    ""
+  }, {
+    "art_Moon_TW",
+    "",
+    ""
+  }, {
+    "art_Moon_HK",
+    "",
+    ""
+  }, {
+    "art_Moon_AQ",
+    "",
+    ""
+  }
+};
+
+typedef struct errorDataTag {
+    const char* tag;
+    const char* expected;
+    UErrorCode uerror;
+    int32_t  bufferSize;
+} errorData;
+
+const errorData maximizeErrors[] = {
+    {
+        "enfueiujhytdf",
+        NULL,
+        U_ILLEGAL_ARGUMENT_ERROR,
+        -1
+    },
+    {
+        "en_THUJIOGIURJHGJFURYHFJGURYYYHHGJURHG",
+        NULL,
+        U_ILLEGAL_ARGUMENT_ERROR,
+        -1
+    },
+    {
+        "en_THUJIOGIURJHGJFURYHFJGURYYYHHGJURHG",
+        NULL,
+        U_ILLEGAL_ARGUMENT_ERROR,
+        -1
+    },
+    {
+        "en_Latn_US_POSIX@currency=EURO",
+        "en_Latn_US_POSIX@currency=EURO",
+        U_BUFFER_OVERFLOW_ERROR,
+        29
+    },
+    {
+        "en_Latn_US_POSIX@currency=EURO",
+        "en_Latn_US_POSIX@currency=EURO",
+        U_STRING_NOT_TERMINATED_WARNING,
+        30
+    }
+};
+
+const errorData minimizeErrors[] = {
+    {
+        "enfueiujhytdf",
+        NULL,
+        U_ILLEGAL_ARGUMENT_ERROR,
+        -1
+    },
+    {
+        "en_THUJIOGIURJHGJFURYHFJGURYYYHHGJURHG",
+        NULL,
+        U_ILLEGAL_ARGUMENT_ERROR,
+        -1
+    },
+    {
+        "en_Latn_US_POSIX@currency=EURO",
+        "en__POSIX@currency=EURO",
+        U_BUFFER_OVERFLOW_ERROR,
+        22
+    },
+    {
+        "en_Latn_US_POSIX@currency=EURO",
+        "en__POSIX@currency=EURO",
+        U_STRING_NOT_TERMINATED_WARNING,
+        23
+    }
+};
+
+static int32_t getExpectedReturnValue(const errorData* data)
+{
+    if (data->uerror == U_BUFFER_OVERFLOW_ERROR ||
+        data->uerror == U_STRING_NOT_TERMINATED_WARNING)
+    {
+        return strlen(data->expected);
+    }
+    else
+    {
+        return -1;
+    }
+}
+
+static int32_t getBufferSize(const errorData* data, int32_t actualSize)
+{
+    if (data->expected == NULL)
+    {
+        return actualSize;
+    }
+    else if (data->bufferSize < 0)
+    {
+        return strlen(data->expected) + 1;
+    }
+    else
+    {
+        return data->bufferSize;
+    }
+}
+
+static void TestLikelySubtags()
+{
+    char buffer[ULOC_FULLNAME_CAPACITY + ULOC_KEYWORD_AND_VALUES_CAPACITY + 1];
+    int32_t i = 0;
+
+    for (; i < sizeof(basic_maximize_data) / sizeof(basic_maximize_data[0]); ++i)
+    {
+        UErrorCode status = U_ZERO_ERROR;
+        const char* const minimal = basic_maximize_data[i][0];
+        const char* const maximal = basic_maximize_data[i][1];
+
+        const int32_t length =
+            uloc_addLikelySubtags(
+                minimal,
+                buffer,
+                sizeof(buffer),
+                &status);
+        if (U_FAILURE(status)) {
+            log_err_status(status, "  unexpected failure of uloc_addLikelySubtags(), minimal \"%s\" status %s\n", minimal, u_errorName(status));
+            status = U_ZERO_ERROR;
+        }
+        else if (uprv_strlen(maximal) == 0) {
+            if (uprv_stricmp(minimal, buffer) != 0) {
+                log_err("  unexpected maximal value \"%s\" in uloc_addLikelySubtags(), minimal \"%s\" = \"%s\"\n", maximal, minimal, buffer);
+            }
+        }
+        else if (uprv_stricmp(maximal, buffer) != 0) {
+            log_err("  maximal doesn't match expected %s in uloc_addLikelySubtags(), minimal \"%s\" = %s\n", maximal, minimal, buffer);
+        }
+    }
+
+    for (i = 0; i < sizeof(basic_minimize_data) / sizeof(basic_minimize_data[0]); ++i) {
+
+        UErrorCode status = U_ZERO_ERROR;
+        const char* const maximal = basic_minimize_data[i][0];
+        const char* const minimal = basic_minimize_data[i][1];
+
+        const int32_t length =
+            uloc_minimizeSubtags(
+                maximal,
+                buffer,
+                sizeof(buffer),
+                &status);
+
+        if (U_FAILURE(status)) {
+            log_err_status(status, "  unexpected failure of uloc_MinimizeSubtags(), maximal \"%s\" status %s\n", maximal, u_errorName(status));
+            status = U_ZERO_ERROR;
+        }
+        else if (uprv_strlen(minimal) == 0) {
+            if (uprv_stricmp(maximal, buffer) != 0) {
+                log_err("  unexpected minimal value \"%s\" in uloc_minimizeSubtags(), maximal \"%s\" = \"%s\"\n", minimal, maximal, buffer);
+            }
+        }
+        else if (uprv_stricmp(minimal, buffer) != 0) {
+            log_err("  minimal doesn't match expected %s in uloc_MinimizeSubtags(), maximal \"%s\" = %s\n", minimal, maximal, buffer);
+        }
+    }
+
+    for (i = 0; i < sizeof(full_data) / sizeof(full_data[0]); ++i) {
+
+        UErrorCode status = U_ZERO_ERROR;
+        const char* const minimal = full_data[i][0];
+        const char* const maximal = full_data[i][1];
+
+        const int32_t length =
+            uloc_addLikelySubtags(
+                minimal,
+                buffer,
+                sizeof(buffer),
+                &status);
+        if (U_FAILURE(status)) {
+            log_err_status(status, "  unexpected failure of uloc_addLikelySubtags(), minimal \"%s\" status \"%s\"\n", minimal, u_errorName(status));
+            status = U_ZERO_ERROR;
+        }
+        else if (uprv_strlen(maximal) == 0) {
+            if (uprv_stricmp(minimal, buffer) != 0) {
+                log_err("  unexpected maximal value \"%s\" in uloc_addLikelySubtags(), minimal \"%s\" = \"%s\"\n", maximal, minimal, buffer);
+            }
+        }
+        else if (uprv_stricmp(maximal, buffer) != 0) {
+            log_err("  maximal doesn't match expected \"%s\" in uloc_addLikelySubtags(), minimal \"%s\" = \"%s\"\n", maximal, minimal, buffer);
+        }
+    }
+
+    for (i = 0; i < sizeof(full_data) / sizeof(full_data[0]); ++i) {
+
+        UErrorCode status = U_ZERO_ERROR;
+        const char* const maximal = full_data[i][1];
+        const char* const minimal = full_data[i][2];
+
+        if (strlen(maximal) > 0) {
+
+            const int32_t length =
+                uloc_minimizeSubtags(
+                    maximal,
+                    buffer,
+                    sizeof(buffer),
+                    &status);
+
+            if (U_FAILURE(status)) {
+                log_err_status(status, "  unexpected failure of uloc_minimizeSubtags(), maximal \"%s\" status %s\n", maximal, u_errorName(status));
+                status = U_ZERO_ERROR;
+            }
+            else if (uprv_strlen(minimal) == 0) {
+                if (uprv_stricmp(maximal, buffer) != 0) {
+                    log_err("  unexpected minimal value \"%s\" in uloc_minimizeSubtags(), maximal \"%s\" = \"%s\"\n", minimal, maximal, buffer);
+                }
+            }
+            else if (uprv_stricmp(minimal, buffer) != 0) {
+                log_err("  minimal doesn't match expected %s in uloc_MinimizeSubtags(), maximal \"%s\" = %s\n", minimal, maximal, buffer);
+            }
+        }
+    }
+
+    for (i = 0; i < sizeof(maximizeErrors) / sizeof(maximizeErrors[0]); ++i) {
+
+        UErrorCode status = U_ZERO_ERROR;
+        const char* const minimal = maximizeErrors[i].tag;
+        const char* const maximal = maximizeErrors[i].expected;
+        const UErrorCode expectedStatus = maximizeErrors[i].uerror;
+        const int32_t expectedLength = getExpectedReturnValue(&maximizeErrors[i]);
+        const int32_t bufferSize = getBufferSize(&maximizeErrors[i], sizeof(buffer));
+
+        const int32_t length =
+            uloc_addLikelySubtags(
+                minimal,
+                buffer,
+                bufferSize,
+                &status);
+
+        if (status == U_ZERO_ERROR) {
+            log_err("  unexpected U_ZERO_ERROR for uloc_addLikelySubtags(), minimal \"%s\" expected status %s\n", minimal, u_errorName(expectedStatus));
+            status = U_ZERO_ERROR;
+        }
+        else if (status != expectedStatus) {
+            log_err_status(status, "  unexpected status for uloc_addLikelySubtags(), minimal \"%s\" expected status %s, but got %s\n", minimal, u_errorName(expectedStatus), u_errorName(status));
+        }
+        else if (length != expectedLength) {
+            log_err("  unexpected length for uloc_addLikelySubtags(), minimal \"%s\" expected length %d, but got %d\n", minimal, expectedLength, length);
+        }
+        else if (status == U_BUFFER_OVERFLOW_ERROR || status == U_STRING_NOT_TERMINATED_WARNING) {
+            if (uprv_strnicmp(maximal, buffer, bufferSize) != 0) {
+                log_err("  maximal doesn't match expected %s in uloc_addLikelySubtags(), minimal \"%s\" = %*s\n",
+                    maximal, minimal, (int)sizeof(buffer), buffer);
+            }
+        }
+    }
+
+    for (i = 0; i < sizeof(minimizeErrors) / sizeof(minimizeErrors[0]); ++i) {
+
+        UErrorCode status = U_ZERO_ERROR;
+        const char* const maximal = minimizeErrors[i].tag;
+        const char* const minimal = minimizeErrors[i].expected;
+        const UErrorCode expectedStatus = minimizeErrors[i].uerror;
+        const int32_t expectedLength = getExpectedReturnValue(&minimizeErrors[i]);
+        const int32_t bufferSize = getBufferSize(&minimizeErrors[i], sizeof(buffer));
+
+        const int32_t length =
+            uloc_minimizeSubtags(
+                maximal,
+                buffer,
+                bufferSize,
+                &status);
+
+        if (status == U_ZERO_ERROR) {
+            log_err("  unexpected U_ZERO_ERROR for uloc_minimizeSubtags(), maximal \"%s\" expected status %s\n", maximal, u_errorName(expectedStatus));
+            status = U_ZERO_ERROR;
+        }
+        else if (status != expectedStatus) {
+            log_err_status(status, "  unexpected status for uloc_minimizeSubtags(), maximal \"%s\" expected status %s, but got %s\n", maximal, u_errorName(expectedStatus), u_errorName(status));
+        }
+        else if (length != expectedLength) {
+            log_err("  unexpected length for uloc_minimizeSubtags(), maximal \"%s\" expected length %d, but got %d\n", maximal, expectedLength, length);
+        }
+        else if (status == U_BUFFER_OVERFLOW_ERROR || status == U_STRING_NOT_TERMINATED_WARNING) {
+            if (uprv_strnicmp(minimal, buffer, bufferSize) != 0) {
+                log_err("  minimal doesn't match expected \"%s\" in uloc_minimizeSubtags(), minimal \"%s\" = \"%*s\"\n",
+                    minimal, maximal, (int)sizeof(buffer), buffer);
+            }
+        }
+    }
+}
+
+const char* const locale_to_langtag[][3] = {
+    {"",            "und",          "und"},
+    {"en",          "en",           "en"},
+    {"en_US",       "en-us",        "en-us"},
+    {"iw_IL",       "he-il",        "he-il"},
+    {"sr_Latn_SR",  "sr-latn-sr",   "sr-latn-sr"},
+    {"en__POSIX",   "en-posix",     "en-posix"},
+    {"en_POSIX",    "en",           NULL},
+    {"und_555",     "und-555",      "und-555"},
+    {"123",         "und",          NULL},
+    {"%$#&",        "und",          NULL},
+    {"_Latn",       "und-latn",     "und-latn"},
+    {"_DE",         "und-de",       "und-de"},
+    {"und_FR",      "und-fr",       "und-fr"},
+    {"th_TH_TH",    "th-th",        NULL},
+    {"bogus",       "bogus",        "bogus"},
+    {"foooobarrr",  "und",          NULL},
+    {"az_AZ_CYRL",  "az-cyrl-az",   "az-cyrl-az"},
+    {"aa_BB_CYRL",  "aa-bb",        NULL},
+    {"en_US_1234",  "en-us-1234",   "en-us-1234"},
+    {"en_US_VARIANTA_VARIANTB", "en-us-varianta-variantb",  "en-us-varianta-variantb"},
+    {"en_US_VARIANTB_VARIANTA", "en-us-varianta-variantb",  "en-us-varianta-variantb"},
+    {"ja__9876_5432",   "ja-5432-9876", "ja-5432-9876"},
+    {"zh_Hant__VAR",    "zh-hant",  NULL},
+    {"es__BADVARIANT_GOODVAR",  "es-goodvar",   NULL},
+    {"en@calendar=gregorian",   "en-u-ca-gregory",  "en-u-ca-gregory"},
+    {"de@collation=phonebook;calendar=gregorian",   "de-u-ca-gregory-co-phonebk",   "de-u-ca-gregory-co-phonebk"},
+    {"th@numbers=thai;z=extz;x=priv-use;a=exta",   "th-a-exta-u-nu-thai-z-extz-x-priv-use", "th-a-exta-u-nu-thai-z-extz-x-priv-use"},
+    {"en@timezone=America/New_York;calendar=japanese",    "en-u-ca-japanese-tz-usnyc",    "en-u-ca-japanese-tz-usnyc"},
+    {"en@x=x-y-z;a=a-b-c",  "en-x-x-y-z",   NULL},
+    {"it@collation=badcollationtype;colStrength=identical;cu=usd-eur", "it-u-ks-identic",  NULL},
+    {NULL,          NULL,           NULL}
+};
+
+static void TestToLanguageTag(void) {
+    char langtag[256];
+    int32_t i;
+    UErrorCode status;
+    int32_t len;
+    const char *inloc;
+    const char *expected;
+
+    for (i = 0; locale_to_langtag[i][0] != NULL; i++) {
+        inloc = locale_to_langtag[i][0];
+
+        /* testing non-strict mode */
+        status = U_ZERO_ERROR;
+        langtag[0] = 0;
+        expected = locale_to_langtag[i][1];
+
+        len = uloc_toLanguageTag(inloc, langtag, sizeof(langtag), FALSE, &status);
+        if (U_FAILURE(status)) {
+            if (expected != NULL) {
+                log_err("Error returned by uloc_toLanguageTag for locale id [%s] - error: %s\n",
+                    inloc, u_errorName(status));
+            }
+        } else {
+            if (expected == NULL) {
+                log_err("Error should be returned by uloc_toLanguageTag for locale id [%s], but [%s] is returned without errors\n",
+                    inloc, langtag);
+            } else if (uprv_strcmp(langtag, expected) != 0) {
+                log_data_err("uloc_toLanguageTag returned language tag [%s] for input locale [%s] - expected: [%s]. Are you missing data?\n",
+                    langtag, inloc, expected);
+            }
+        }
+
+        /* testing strict mode */
+        status = U_ZERO_ERROR;
+        langtag[0] = 0;
+        expected = locale_to_langtag[i][2];
+
+        len = uloc_toLanguageTag(inloc, langtag, sizeof(langtag), TRUE, &status);
+        if (U_FAILURE(status)) {
+            if (expected != NULL) {
+                log_data_err("Error returned by uloc_toLanguageTag {strict} for locale id [%s] - error: %s Are you missing data?\n",
+                    inloc, u_errorName(status));
+            }
+        } else {
+            if (expected == NULL) {
+                log_err("Error should be returned by uloc_toLanguageTag {strict} for locale id [%s], but [%s] is returned without errors\n",
+                    inloc, langtag);
+            } else if (uprv_strcmp(langtag, expected) != 0) {
+                log_err("uloc_toLanguageTag {strict} returned language tag [%s] for input locale [%s] - expected: [%s]\n",
+                    langtag, inloc, expected);
+            }
+        }
+    }
+}
+
+static const struct {
+    const char  *bcpID;
+    const char  *locID;
+    int32_t     len;
+} langtag_to_locale[] = {
+    {"en",                  "en",                   2},
+    {"en-us",               "en_US",                5},
+    {"und-us",              "_US",                  6},
+    {"und-latn",            "_Latn",                8},
+    {"en-us-posix",         "en_US_POSIX",          11},
+    {"de-de_euro",          "de",                   2},
+    {"kok-in",              "kok_IN",               6},
+    {"123",                 "",                     0},
+    {"en_us",               "",                     0},
+    {"en-latn-x",           "en_Latn",              7},
+    {"art-lojban",          "jbo",                  10},
+    {"zh-hakka",            "hak",                  8},
+    {"zh-cmn-CH",           "cmn_CH",               9},
+    {"xxx-yy",              "xxx_YY",               6},
+    {"fr-234",              "fr_234",               6},
+    {"i-default",           "",                     9},
+    {"i-test",              "",                     0},
+    {"ja-jp-jp",            "ja_JP",                5},
+    {"bogus",               "bogus",                5},
+    {"boguslang",           "",                     0},
+    {"EN-lATN-us",          "en_Latn_US",           10},
+    {"und-variant-1234",    "__1234_VARIANT",       16},
+    {"und-varzero-var1-vartwo", "__VARZERO",        11},
+    {"en-u-ca-gregory",     "en@calendar=gregorian",    15},
+    {"en-U-cu-USD",         "en@currency=usd",      11},
+    {"ar-x-1-2-3",          "ar@x=1-2-3",           10},
+    {"fr-u-nu-latn-cu-eur", "fr@currency=eur;numbers=latn", 19},
+    {"de-k-kext-u-co-phonebk-nu-latn",  "de@collation=phonebook;k=kext;numbers=latn",   30},
+    {"ja-u-cu-jpy-ca-jp",   "ja@currency=jpy",      11},
+    {"en-us-u-tz-usnyc",    "en_US@timezone=america/new_york",      16},
+    {"und-a-abc-def",       "und@a=abc-def",        13},
+    {"zh-u-ca-chinese-x-u-ca-chinese",  "zh@calendar=chinese;x=u-ca-chinese",   30},
+    {NULL,          NULL,           0}
+};
+
+static void TestForLanguageTag(void) {
+    char locale[256];
+    int32_t i;
+    UErrorCode status;
+    int32_t parsedLen;
+
+    for (i = 0; langtag_to_locale[i].bcpID != NULL; i++) {
+        status = U_ZERO_ERROR;
+        locale[0] = 0;        
+        uloc_forLanguageTag(langtag_to_locale[i].bcpID, locale, sizeof(locale), &parsedLen, &status);
+        if (U_FAILURE(status)) {
+            log_err_status(status, "Error returned by uloc_forLanguageTag for language tag [%s] - error: %s\n",
+                langtag_to_locale[i].bcpID, u_errorName(status));
+        } else {
+            if (uprv_strcmp(langtag_to_locale[i].locID, locale) != 0) {
+                log_err("uloc_forLanguageTag returned locale [%s] for input language tag [%s] - expected: [%s]\n",
+                    locale, langtag_to_locale[i].bcpID, langtag_to_locale[i].locID);
+            }
+            if (parsedLen != langtag_to_locale[i].len) {
+                log_err("uloc_forLanguageTag parsed length of %d for input language tag [%s] - expected parsed length: %d\n",
+                    parsedLen, langtag_to_locale[i].bcpID, langtag_to_locale[i].len);
+            }
+        }
+    }
 }
 

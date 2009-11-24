@@ -1,6 +1,6 @@
 /*
  ********************************************************************************
- * Copyright (C) 2003-2007, International Business Machines Corporation
+ * Copyright (C) 2003-2008, International Business Machines Corporation
  * and others. All Rights Reserved.
  ********************************************************************************
  *
@@ -108,6 +108,13 @@ public:
      */
     virtual int32_t handleGetExtendedYear();
 
+    /**
+     * Return the maximum value that this field could have, given the current date.
+     * @internal
+     */
+    virtual int32_t getActualMaximum(UCalendarDateFields field, UErrorCode& status) const;
+
+
 public:
     /**
      * Override Calendar Returns a unique class ID POLYMORPHICALLY. Pure virtual
@@ -185,17 +192,20 @@ protected:
      * Called by computeJulianDay.  Returns the default month (0-based) for the year,
      * taking year and era into account.  Will return the first month of the given era, if 
      * the current year is an ascension year.
+     * @param eyear the extended year
      * @internal
      */
-    virtual int32_t getDefaultMonthInYear();
+    virtual int32_t getDefaultMonthInYear(int32_t eyear);
 
     /***
      * Called by computeJulianDay.  Returns the default day (1-based) for the month,
      * taking currently-set year and era into account.  Will return the first day of the given
      * era, if the current month is an ascension year and month.
+     * @param eyear the extended year
+     * @param mon the month in the year
      * @internal
      */
-    virtual int32_t getDefaultDayInMonth(int32_t month);
+    virtual int32_t getDefaultDayInMonth(int32_t eyear, int32_t month);
 };
 
 U_NAMESPACE_END

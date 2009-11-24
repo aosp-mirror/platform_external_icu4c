@@ -1,6 +1,6 @@
 /*
  ********************************************************************************
- *   Copyright (C) 1997-2007, International Business Machines
+ *   Copyright (C) 1997-2009, International Business Machines
  *   Corporation and others.  All Rights Reserved.
  ********************************************************************************
  *
@@ -37,6 +37,7 @@
 U_NAMESPACE_BEGIN
 
 class TimeZone;
+class DateTimePatternGenerator;
 
 /**
  * DateFormat is an abstract class for a family of classes that convert dates and
@@ -140,8 +141,8 @@ public:
     /**
      * Constants for various style patterns. These reflect the order of items in
      * the DateTimePatterns resource. There are 4 time patterns, 4 date patterns,
-     * and then the date-time pattern. Each block of 4 values in the resource occurs
-     * in the order full, long, medium, short.
+     * the default date-time pattern, and 4 date-time patterns. Each block of 4 values 
+     * in the resource occurs in the order full, long, medium, short.
      * @stable ICU 2.4
      */
     enum EStyle
@@ -160,7 +161,13 @@ public:
      // kShort  + kDateOffset = 7
 
         kDateTime             = 8,
-        
+     // Default DateTime
+
+        kDateTimeOffset = kDateTime + 1,
+     // kFull   + kDateTimeOffset = 9
+     // kLong   + kDateTimeOffset = 10
+     // kMedium + kDateTimeOffset = 11
+     // kShort  + kDateTimeOffset = 12
 
         // relative dates
         kRelative = (1 << 7),
@@ -244,7 +251,11 @@ public:
      * occurence of the timezone pattern character 'z'.
      *
      * @param cal           Calendar set to the date and time to be formatted
-     *                      into a date/time string.
+     *                      into a date/time string.  When the calendar type is
+     *                      different from the internal calendar held by this
+     *                      DateFormat instance, the date and the time zone will
+     *                      be inherited from the input calendar, but other calendar
+     *                      field values will be calculated by the internal calendar.
      * @param appendTo      Output parameter to receive result.
      *                      Result is appended to existing contents.
      * @param fieldPosition On input: an alignment field, if desired (see examples above)
@@ -341,7 +352,12 @@ public:
      *
      * @param text  The date/time string to be parsed
      * @param cal   a Calendar set to the date and time to be formatted
-     *              into a date/time string.
+     *              into a date/time string.  When the calendar type
+     *              is different from the internal calendar held by this
+     *              DateFormat instance, calendar field values will be
+     *              parsed based on the internal calendar, then the result
+     *              (time in milliseconds and time zone) will be set in
+     *              this calendar.
      * @param pos   On input, the position at which to start parsing; on
      *              output, the position at which parsing terminated, or the
      *              start position if the parse failed.
@@ -418,7 +434,8 @@ public:
      * locale.
      *
      * @param style     The given formatting style. For example,
-     *                  SHORT for "h:mm a" in the US locale.
+     *                  SHORT for "h:mm a" in the US locale. Relative
+     *                  time styles are not currently supported.
      * @param aLocale   The given locale.
      * @return          A time formatter which the caller owns.
      * @stable ICU 2.0
@@ -446,7 +463,8 @@ public:
      * @param dateStyle The given formatting style for the date portion of the result.
      *                  For example, SHORT for "M/d/yy" in the US locale.
      * @param timeStyle The given formatting style for the time portion of the result.
-     *                  For example, SHORT for "h:mm a" in the US locale.
+     *                  For example, SHORT for "h:mm a" in the US locale. Relative
+     *                  time styles are not currently supported.
      * @param aLocale   The given locale.
      * @return          A date/time formatter which the caller owns.
      * @stable ICU 2.0

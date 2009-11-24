@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2007, International Business Machines Corporation and
+ * Copyright (c) 1997-2009, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /*****************************************************************************
@@ -381,8 +381,14 @@ static void TestErrorBehaviour(){
         static const uint8_t expected3MBCS[] = { 0x01, 0xa2, 0xb4, 0xa1, 0xe0};
         static const int32_t offsets3MBCS[]        = { 0x00, 0x01, 0x01, 0x02, 0x02};
 
-        static const UChar       sampleText4MBCS[] = { 0x0061, 0xFFE4, 0xdc01};
-        static const uint8_t expected4MBCS[] = { 0x61, 0x8f, 0xa2, 0xc3, 0xf4, 0xfe};
+        /* BEGIN android-changed */
+        /* Android uses a different EUC-JP table. We change one character,
+         * choosing a mapping that is common to both tables. */
+        static const UChar       sampleText4MBCS[] = { 0x0061, 0x9ED1, 0xdc01};
+        static const uint8_t expected4MBCS[] = { 0x61, 0x8f, 0xf4, 0xf8, 0xf4, 0xfe};
+        /* static const UChar       sampleText4MBCS[] = { 0x0061, 0xFFE4, 0xdc01}; */
+        /* static const uint8_t expected4MBCS[] = { 0x61, 0x8f, 0xa2, 0xc3, 0xf4, 0xfe}; */
+        /* END android-changed */
         static const int32_t offsets4MBCS[]        = { 0x00, 0x01, 0x01, 0x01, 0x02, 0x02 };
 
         /*DBCS*/
@@ -1944,7 +1950,7 @@ TestUnicodeSet() {
         name=ucnv_getAvailableName(i);
         cnv=ucnv_open(name, &errorCode);
         if(U_FAILURE(errorCode)) {
-            log_err("error: unable to open converter %s - %s\n",
+            log_data_err("error: unable to open converter %s - %s\n",
                     name, u_errorName(errorCode));
             continue;
         }
@@ -1967,7 +1973,7 @@ TestUnicodeSet() {
         name=completeSetNames[i];
         cnv=ucnv_open(name, &errorCode);
         if(U_FAILURE(errorCode)) {
-            log_err("error: unable to open converter %s - %s\n",
+            log_data_err("error: unable to open converter %s - %s\n",
                     name, u_errorName(errorCode));
             continue;
         }
@@ -1990,7 +1996,7 @@ TestUnicodeSet() {
         name=lmbcsNames[i];
         cnv=ucnv_open(name, &errorCode);
         if(U_FAILURE(errorCode)) {
-            log_err("error: unable to open converter %s - %s\n",
+            log_data_err("error: unable to open converter %s - %s\n",
                     name, u_errorName(errorCode));
             continue;
         }

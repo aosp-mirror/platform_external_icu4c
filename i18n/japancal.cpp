@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 2003-2007, International Business Machines Corporation and    *
+* Copyright (C) 2003-2009, International Business Machines Corporation and    *
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 *
@@ -278,7 +278,10 @@ static const struct {
 
 #define kEraCount (sizeof(kEraInfo)/sizeof(kEraInfo[0]))
 
-static const uint32_t kCurrentEra = (kEraCount-1);
+/**
+ * The current era, for reference. 
+ */
+static const int32_t kCurrentEra = (kEraCount-1);  // int32_t to match the calendar field type
 
 static const int32_t kGregorianEpoch = 1970;    // used as the default value of EXTENDED_YEAR
 
@@ -318,19 +321,16 @@ const char *JapaneseCalendar::getType() const
     return "japanese";
 }
 
-int32_t JapaneseCalendar::getDefaultMonthInYear() 
+int32_t JapaneseCalendar::getDefaultMonthInYear(int32_t eyear) 
 {
-    UErrorCode status  = U_ZERO_ERROR;
     int32_t era = internalGetEra();
-    computeFields(status); // slow
-    int32_t year = getGregorianYear();
     // TODO do we assume we can trust 'era'?  What if it is denormalized?
 
-    int32_t month = GregorianCalendar::getDefaultMonthInYear();
+    int32_t month = 0;
 
     // Find out if we are at the edge of an era
 
-    if(year == kEraInfo[era].year) {
+    if(eyear == kEraInfo[era].year) {
         // Yes, we're in the first year of this era.
         return kEraInfo[era].month-1;
     }
@@ -338,15 +338,12 @@ int32_t JapaneseCalendar::getDefaultMonthInYear()
     return month;
 }
 
-int32_t JapaneseCalendar::getDefaultDayInMonth(int32_t month) 
+int32_t JapaneseCalendar::getDefaultDayInMonth(int32_t eyear, int32_t month) 
 {
-    UErrorCode status  = U_ZERO_ERROR;
     int32_t era = internalGetEra();
-    computeFields(status); // slow
-    int32_t year = getGregorianYear();
-    int32_t day = GregorianCalendar::getDefaultDayInMonth(month);
+    int32_t day = 1;
 
-    if(year == kEraInfo[era].year) {
+    if(eyear == kEraInfo[era].year) {
         if(month == (kEraInfo[era].month-1)) {
             return kEraInfo[era].day;
         }
@@ -476,69 +473,58 @@ int32_t JapaneseCalendar::defaultCenturyStartYear() const
     return 0;
 }
 
-static int32_t gJapanCalendarLimits[2][4] = {
-    //    Minimum  Greatest min      Least max   Greatest max
-    {        0,        0, kCurrentEra, kCurrentEra }, // ERA
-    {        1,        1,           0,           0 }, // YEAR least-max/greatest-max computed at runtime
-};
-
-static UBool gJapanYearLimitsKnown = FALSE;
-
 int32_t JapaneseCalendar::handleGetLimit(UCalendarDateFields field, ELimitType limitType) const
 {
     switch(field) {
+    case UCAL_ERA:
+        if (limitType == UCAL_LIMIT_MINIMUM || limitType == UCAL_LIMIT_GREATEST_MINIMUM) {
+            return 1;
+        }
+        return kCurrentEra;
     case UCAL_YEAR:
         {
-            UBool needCalc;
-            UMTX_CHECK(NULL, (gJapanYearLimitsKnown == FALSE), needCalc);
-            if(needCalc) {
-                int32_t min = kEraInfo[1].year - kEraInfo[0].year;
-                int32_t max = min;
-                for (uint32_t i=2; i<kEraCount; i++) { // counting by year, not field (3's)
-                    int32_t d = kEraInfo[i].year - kEraInfo[i-1].year;
-                    U_ASSERT(d >= 0);
-                    if (d < min) {
-                        min = d;
-                    }
-                    if (d > max) {
-                        max = d;
-                    }
-                }
-                U_ASSERT(min >= 0 && max > min);
-
-                umtx_lock(NULL);
-                if(gJapanYearLimitsKnown==FALSE) {
-                    gJapanCalendarLimits[field][UCAL_LIMIT_LEAST_MAXIMUM] = ++min; // 1-based
-                    gJapanCalendarLimits[field][UCAL_LIMIT_MAXIMUM] = ++max; // 1-based
-                    gJapanYearLimitsKnown = TRUE;
-                }
-                umtx_unlock(NULL);
+            switch (limitType) {
+            case UCAL_LIMIT_MINIMUM:
+            case UCAL_LIMIT_GREATEST_MINIMUM:
+                return 1;
+            case UCAL_LIMIT_LEAST_MAXIMUM:
+                return 1;
+            case  UCAL_LIMIT_COUNT: //added to avoid warning
+            case UCAL_LIMIT_MAXIMUM:
+                return GregorianCalendar::handleGetLimit(UCAL_YEAR, UCAL_LIMIT_MAXIMUM) - kEraInfo[kCurrentEra].year;
+            default:
+                return 1;    // Error condition, invalid limitType
             }
-            return gJapanCalendarLimits[field][limitType];
         }
-
-    case UCAL_ERA:
-        return gJapanCalendarLimits[field][limitType];
-
-    case UCAL_EXTENDED_YEAR:  // extended year limits
-        switch(limitType) {
-    case UCAL_LIMIT_GREATEST_MINIMUM:
-    case UCAL_LIMIT_MINIMUM:
-        return kEraInfo[0].year;  /* minimum is 1st era year */
-
-    case UCAL_LIMIT_LEAST_MAXIMUM:
-    case UCAL_LIMIT_MAXIMUM:
-        /* use Gregorian calendar max */
-    default:
-        return GregorianCalendar::handleGetLimit(field,limitType);
-        }
-        break;
-
     default:
         return GregorianCalendar::handleGetLimit(field,limitType);
     }
 }
 
+int32_t JapaneseCalendar::getActualMaximum(UCalendarDateFields field, UErrorCode& status) const {
+    if (field == UCAL_YEAR) {
+        int32_t era = get(UCAL_ERA, status);
+        if (U_FAILURE(status)) {
+            return 0; // error case... any value
+        }
+        if (era == kCurrentEra) {
+            // TODO: Investigate what value should be used here - revisit after 4.0.
+            return handleGetLimit(UCAL_YEAR, UCAL_LIMIT_MAXIMUM);
+        } else {
+            int32_t nextEraYear = kEraInfo[era + 1].year;
+            int32_t nextEraMonth = kEraInfo[era + 1].month;
+            int32_t nextEraDate = kEraInfo[era + 1].day;
+
+            int32_t maxYear = nextEraYear - kEraInfo[era].year + 1; // 1-base
+            if (nextEraMonth == 1 && nextEraDate == 1) {
+                // Subtract 1, because the next era starts at Jan 1
+                maxYear--;
+            }
+            return maxYear;
+        }
+    }
+    return GregorianCalendar::getActualMaximum(field, status);
+}
 
 U_NAMESPACE_END
 

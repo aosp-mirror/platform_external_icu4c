@@ -1,6 +1,6 @@
 /*
  *******************************************************************************
- * Copyright (C) 1996-2007, International Business Machines Corporation and
+ * Copyright (C) 1996-2009, International Business Machines Corporation and
  * others. All Rights Reserved.
  *******************************************************************************
  */
@@ -149,10 +149,22 @@ typedef void* UCalendar;
  * @stable ICU 2.0
  */
 enum UCalendarType {
-  /** A traditional calendar for the locale */
+  /**
+   * Despite the name, UCAL_TRADITIONAL designates the locale's default calendar,
+   * which may be the Gregorian calendar or some other calendar.
+   * @stable ICU 2.0
+   */
   UCAL_TRADITIONAL,
-  /** The Gregorian calendar */
-  UCAL_GREGORIAN
+  /**
+   * Unambiguously designates the Gregorian calendar for the locale.
+   * @stable ICU 2.0
+   */
+  UCAL_GREGORIAN,
+  /**
+   * A better name for UCAL_TRADITIONAL.
+   * @draft ICU 4.2
+   */
+  UCAL_DEFAULT = UCAL_TRADITIONAL
 };
 
 /** @stable ICU 2.0 */
@@ -397,6 +409,12 @@ enum UCalendarDateFields {
    * @stable ICU 2.8
    */
   UCAL_MILLISECONDS_IN_DAY,
+
+  /**
+   * Whether or not the current month is a leap month (0 or 1). See the Chinese calendar for
+   * an example of this.
+   */
+  UCAL_IS_LEAP_MONTH,
   
   /**
    * Field count
@@ -592,10 +610,20 @@ ucal_getNow(void);
  * Open a UCalendar.
  * A UCalendar may be used to convert a millisecond value to a year,
  * month, and day.
+ * <p>
+ * Note: When unknown TimeZone ID is specified, the UCalendar returned
+ * by the function is initialized with GMT ("Etc/GMT") without any
+ * errors/warnings.  If you want to check if a TimeZone ID is valid,
+ * use ucal_getCanonicalTimeZoneID prior to this function.
+ * 
  * @param zoneID The desired TimeZone ID.  If 0, use the default time zone.
  * @param len The length of zoneID, or -1 if null-terminated.
  * @param locale The desired locale
- * @param type The type of UCalendar to open.
+ * @param type The type of UCalendar to open. This can be UCAL_GREGORIAN to open the Gregorian
+ * calendar for the locale, or UCAL_DEFAULT to open the default calendar for the locale (the
+ * default calendar may also be Gregorian). To open a specific non-Gregorian calendar for the
+ * locale, use uloc_setKeywordValue to set the value of the calendar keyword for the locale
+ * and then pass the locale to ucal_open with UCAL_DEFAULT as the type.
  * @param status A pointer to an UErrorCode to receive any errors
  * @return A pointer to a UCalendar, or 0 if an error occurred.
  * @stable ICU 2.0
@@ -615,6 +643,18 @@ ucal_open(const UChar*   zoneID,
  */
 U_STABLE void U_EXPORT2 
 ucal_close(UCalendar *cal);
+
+/**
+ * Open a copy of a UCalendar.
+ * This function performs a deep copy.
+ * @param cal The calendar to copy
+ * @param status A pointer to an UErrorCode to receive any errors.
+ * @return A pointer to a UCalendar identical to cal.
+ * @stable ICU 4.0
+ */
+U_DRAFT UCalendar* U_EXPORT2 
+ucal_clone(const UCalendar* cal,
+           UErrorCode*      status);
 
 /**
  * Set the TimeZone used by a UCalendar.
@@ -779,13 +819,13 @@ ucal_setAttribute(UCalendar*          cal,
  * Get a locale for which calendars are available.
  * A UCalendar in a locale returned by this function will contain the correct
  * day and month names for the locale.
- * @param index The index of the desired locale.
+ * @param localeIndex The index of the desired locale.
  * @return A locale for which calendars are available, or 0 if none.
  * @see ucal_countAvailable
  * @stable ICU 2.0
  */
 U_STABLE const char* U_EXPORT2 
-ucal_getAvailable(int32_t index);
+ucal_getAvailable(int32_t localeIndex);
 
 /**
  * Determine how many locales have calendars available.
@@ -1079,10 +1119,64 @@ ucal_getLocaleByType(const UCalendar *cal, ULocDataLocaleType type, UErrorCode* 
  * Returns the timezone data version currently used by ICU.
  * @param status error code for the operation
  * @return the version string, such as "2007f"
- * @draft ICU 3.8
+ * @stable ICU 3.8
  */
 U_DRAFT const char * U_EXPORT2
 ucal_getTZDataVersion(UErrorCode* status);
+
+/**
+ * Returns the canonical system timezone ID or the normalized
+ * custom time zone ID for the given time zone ID.
+ * @param id        The input timezone ID to be canonicalized.
+ * @param len       The length of id, or -1 if null-terminated.
+ * @param result    The buffer receives the canonical system timezone ID
+ *                  or the custom timezone ID in normalized format.
+ * @param resultCapacity    The capacity of the result buffer.
+ * @param isSystemID        Receives if the given ID is a known system
+     *                      timezone ID.
+ * @param status    Recevies the status.  When the given timezone ID
+ *                  is neither a known system time zone ID nor a
+ *                  valid custom timezone ID, U_ILLEGAL_ARGUMENT_ERROR
+ *                  is set.
+ * @return          The result string length, not including the terminating
+ *                  null.
+ * @stable ICU 4.0
+ */
+U_DRAFT int32_t U_EXPORT2
+ucal_getCanonicalTimeZoneID(const UChar* id, int32_t len,
+                            UChar* result, int32_t resultCapacity, UBool *isSystemID, UErrorCode* status);
+/**
+ * Get the resource keyword value string designating the calendar type for the UCalendar.
+ * @param cal The UCalendar to query.
+ * @param status The error code for the operation.
+ * @return The resource keyword value string.
+ * @draft ICU 4.2
+ */
+U_DRAFT const char * U_EXPORT2
+ucal_getType(const UCalendar *cal, UErrorCode* status);
+
+/**
+ * Given a key and a locale, returns an array of string values in a preferred
+ * order that would make a difference. These are all and only those values where
+ * the open (creation) of the service with the locale formed from the input locale
+ * plus input keyword and that value has different behavior than creation with the
+ * input locale alone.
+ * @param key           one of the keys supported by this service.  For now, only
+ *                      "calendar" is supported.
+ * @param locale        the locale
+ * @param commonlyUsed  if set to true it will return only commonly used values
+ *                      with the given locale in preferred order.  Otherwise,
+ *                      it will return all the available values for the locale.
+ * @param status error status
+ * @return a string enumeration over keyword values for the given key and the locale.
+ * @draft ICU 4.2
+ */
+U_DRAFT UEnumeration* U_EXPORT2
+ucal_getKeywordValuesForLocale(const char* key,
+                               const char* locale,
+                               UBool commonlyUsed,
+                               UErrorCode* status);
+
 
 #endif /* #if !UCONFIG_NO_FORMATTING */
 

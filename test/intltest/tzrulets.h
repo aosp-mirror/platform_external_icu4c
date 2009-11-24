@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 2007, International Business Machines Corporation and         *
+* Copyright (C) 2007-2009, International Business Machines Corporation and    *
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 */
@@ -34,6 +34,8 @@ public:
     void TestSimpleTimeZoneCoverage(void);
     void TestVTimeZoneCoverage(void);
     void TestVTimeZoneParse(void);
+    void TestT6216(void);
+    void TestT6669(void);
 
 private:
     void verifyTransitions(BasicTimeZone& icutz, UDate start, UDate end);

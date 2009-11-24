@@ -30,5 +30,5 @@ RBNF_ALIAS_SOURCE =
 
 
 # Please try to keep this list in alphabetical order
-RBNF_SOURCE = de.txt en.txt en_GB.txt es.txt\
+RBNF_SOURCE = de.txt en.txt es.txt\
 fr.txt fr_BE.txt fr_CH.txt it.txt

@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2004-2007, International Business Machines
+*   Copyright (C) 2004-2008, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -24,7 +24,7 @@
 #include "umutex.h"
 #include "uassert.h"
 #include "cmemory.h"
-#include "utrie.h"
+#include "utrie2.h"
 #include "ubidi_props.h"
 #include "ucln_cmn.h"
 
@@ -34,13 +34,11 @@ struct UBiDiProps {
     const uint32_t *mirrors;
     const uint8_t *jgArray;
 
-    UTrie trie;
+    UTrie2 trie;
     uint8_t formatVersion[4];
 };
 
 /* data loading etc. -------------------------------------------------------- */
-
-#define UBIDI_HARDCODE_DATA 1
 
 #if UBIDI_HARDCODE_DATA
 
@@ -200,25 +198,23 @@ ubidi_closeProps(UBiDiProps *bdp) {
 
 /* UBiDiProps singleton ----------------------------------------------------- */
 
-static UBiDiProps *gBdpDummy=NULL;
 #if !UBIDI_HARDCODE_DATA
+static UBiDiProps *gBdpDummy=NULL;
 static UBiDiProps *gBdp=NULL;
 static UErrorCode gErrorCode=U_ZERO_ERROR;
 static int8_t gHaveData=0;
-#endif
 
 static UBool U_CALLCONV
 ubidi_cleanup(void) {
     ubidi_closeProps(gBdpDummy);
     gBdpDummy=NULL;
-#if !UBIDI_HARDCODE_DATA
     ubidi_closeProps(gBdp);
     gBdp=NULL;
     gErrorCode=U_ZERO_ERROR;
     gHaveData=0;
-#endif
     return TRUE;
 }
+#endif
 
 U_CFUNC const UBiDiProps *
 ubidi_getSingleton(UErrorCode *pErrorCode) {
@@ -268,6 +264,7 @@ ubidi_getSingleton(UErrorCode *pErrorCode) {
 #endif
 }
 
+#if !UBIDI_HARDCODE_DATA
 U_CAPI const UBiDiProps *
 ubidi_getDummy(UErrorCode *pErrorCode) {
     UBiDiProps *bdp;
@@ -319,11 +316,12 @@ ubidi_getDummy(UErrorCode *pErrorCode) {
         return gBdpDummy;
     }
 }
+#endif
 
 /* set of property starts for UnicodeSet ------------------------------------ */
 
 static UBool U_CALLCONV
-_enumPropertyStartsRange(const void *context, UChar32 start, UChar32 limit, uint32_t value) {
+_enumPropertyStartsRange(const void *context, UChar32 start, UChar32 end, uint32_t value) {
     /* add the start code point to the USet */
     const USetAdder *sa=(const USetAdder *)context;
     sa->add(sa->set, start);
@@ -343,7 +341,7 @@ ubidi_addPropertyStarts(const UBiDiProps *bdp, const USetAdder *sa, UErrorCode *
     }
 
     /* add the start code point of each same-value range of the trie */
-    utrie_enum(&bdp->trie, NULL, _enumPropertyStartsRange, sa);
+    utrie2_enum(&bdp->trie, NULL, _enumPropertyStartsRange, sa);
 
     /* add the code points from the bidi mirroring table */
     length=bdp->indexes[UBIDI_IX_MIRROR_LENGTH];
@@ -375,12 +373,6 @@ ubidi_addPropertyStarts(const UBiDiProps *bdp, const USetAdder *sa, UErrorCode *
     /* (none right now) */
 }
 
-/* data access primitives --------------------------------------------------- */
-
-/* UTRIE_GET16() itself validates c */
-#define GET_PROPS(bdp, c, result) \
-    UTRIE_GET16(&(bdp)->trie, c, result);
-
 /* property access functions ------------------------------------------------ */
 
 U_CFUNC int32_t
@@ -406,25 +398,20 @@ ubidi_getMaxValue(const UBiDiProps *bdp, UProperty which) {
 
 U_CAPI UCharDirection
 ubidi_getClass(const UBiDiProps *bdp, UChar32 c) {
-    uint32_t props;
-    GET_PROPS(bdp, c, props);
+    uint16_t props=UTRIE2_GET16(&bdp->trie, c);
     return (UCharDirection)UBIDI_GET_CLASS(props);
 }
 
 U_CFUNC UBool
 ubidi_isMirrored(const UBiDiProps *bdp, UChar32 c) {
-    uint32_t props;
-    GET_PROPS(bdp, c, props);
+    uint16_t props=UTRIE2_GET16(&bdp->trie, c);
     return (UBool)UBIDI_GET_FLAG(props, UBIDI_IS_MIRRORED_SHIFT);
 }
 
 U_CFUNC UChar32
 ubidi_getMirror(const UBiDiProps *bdp, UChar32 c) {
-    uint32_t props;
-    int32_t delta;
-
-    GET_PROPS(bdp, c, props);
-    delta=((int16_t)props)>>UBIDI_MIRROR_DELTA_SHIFT;
+    uint16_t props=UTRIE2_GET16(&bdp->trie, c);
+    int32_t delta=((int16_t)props)>>UBIDI_MIRROR_DELTA_SHIFT;
     if(delta!=UBIDI_ESC_MIRROR_DELTA) {
         return c+delta;
     } else {
@@ -456,22 +443,19 @@ ubidi_getMirror(const UBiDiProps *bdp, UChar32 c) {
 
 U_CFUNC UBool
 ubidi_isBidiControl(const UBiDiProps *bdp, UChar32 c) {
-    uint32_t props;
-    GET_PROPS(bdp, c, props);
+    uint16_t props=UTRIE2_GET16(&bdp->trie, c);
     return (UBool)UBIDI_GET_FLAG(props, UBIDI_BIDI_CONTROL_SHIFT);
 }
 
 U_CFUNC UBool
 ubidi_isJoinControl(const UBiDiProps *bdp, UChar32 c) {
-    uint32_t props;
-    GET_PROPS(bdp, c, props);
+    uint16_t props=UTRIE2_GET16(&bdp->trie, c);
     return (UBool)UBIDI_GET_FLAG(props, UBIDI_JOIN_CONTROL_SHIFT);
 }
 
 U_CFUNC UJoiningType
 ubidi_getJoiningType(const UBiDiProps *bdp, UChar32 c) {
-    uint32_t props;
-    GET_PROPS(bdp, c, props);
+    uint16_t props=UTRIE2_GET16(&bdp->trie, c);
     return (UJoiningType)((props&UBIDI_JT_MASK)>>UBIDI_JT_SHIFT);
 }
 

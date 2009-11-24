@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 1997-2007, International Business Machines Corporation and    *
+* Copyright (C) 1997-2008, International Business Machines Corporation and    *
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 *
@@ -57,13 +57,13 @@
 * day number of January 1, 1970 (Gregorian calendar) at noon UTC. [LIU]
 */
 
-static const int32_t kNumDays[]
+static const int16_t kNumDays[]
 = {0,31,59,90,120,151,181,212,243,273,304,334}; // 0-based, for day-in-year
-static const int32_t kLeapNumDays[]
+static const int16_t kLeapNumDays[]
 = {0,31,60,91,121,152,182,213,244,274,305,335}; // 0-based, for day-in-year
-static const int32_t kMonthLength[]
+static const int8_t kMonthLength[]
 = {31,28,31,30,31,30,31,31,30,31,30,31}; // 0-based
-static const int32_t kLeapMonthLength[]
+static const int8_t kLeapMonthLength[]
 = {31,29,31,30,31,30,31,31,30,31,30,31}; // 0-based
 
 // setTimeInMillis() limits the Julian day range to +/-7F000000.
@@ -76,28 +76,29 @@ static const int32_t kLeapMonthLength[]
 static const int32_t kGregorianCalendarLimits[UCAL_FIELD_COUNT][4] = {
     // Minimum  Greatest    Least  Maximum
     //           Minimum  Maximum
-    {        0,        0,       1,       1 }, // ERA
-    {        1,        1,  140742,  144683 }, // YEAR
-    {        0,        0,      11,      11 }, // MONTH
-    {        1,        1,      52,      53 }, // WEEK_OF_YEAR
-    {        0,        0,       4,       6 }, // WEEK_OF_MONTH
-    {        1,        1,      28,      31 }, // DAY_OF_MONTH
-    {        1,        1,     365,     366 }, // DAY_OF_YEAR
-    {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1},// DAY_OF_WEEK
-    {       -1,       -1,       4,       5 }, // DAY_OF_WEEK_IN_MONTH
-    {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1},// AM_PM
-    {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1},// HOUR
-    {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1},// HOUR_OF_DAY
-    {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1},// MINUTE
-    {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1},// SECOND
-    {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1},// MILLISECOND
-    {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1},// ZONE_OFFSET
-    {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1},// DST_OFFSET
-    { -140742, -140742, 140742, 144683 }, // YEAR_WOY
-    {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1},// DOW_LOCAL
-    { -140742, -140742, 140742, 144683 }, // EXTENDED_YEAR
-    {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1},// JULIAN_DAY
-    {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1} // MILLISECONDS_IN_DAY
+    {        0,        0,        1,        1}, // ERA
+    {        1,        1,   140742,   144683}, // YEAR
+    {        0,        0,       11,       11}, // MONTH
+    {        1,        1,       52,       53}, // WEEK_OF_YEAR
+    {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1}, // WEEK_OF_MONTH
+    {        1,        1,       28,       31}, // DAY_OF_MONTH
+    {        1,        1,      365,      366}, // DAY_OF_YEAR
+    {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1}, // DAY_OF_WEEK
+    {       -1,       -1,        4,        5}, // DAY_OF_WEEK_IN_MONTH
+    {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1}, // AM_PM
+    {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1}, // HOUR
+    {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1}, // HOUR_OF_DAY
+    {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1}, // MINUTE
+    {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1}, // SECOND
+    {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1}, // MILLISECOND
+    {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1}, // ZONE_OFFSET
+    {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1}, // DST_OFFSET
+    {  -140742,  -140742,   140742,   144683}, // YEAR_WOY
+    {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1}, // DOW_LOCAL
+    {  -140742,  -140742,   140742,   144683}, // EXTENDED_YEAR
+    {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1}, // JULIAN_DAY
+    {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1}, // MILLISECONDS_IN_DAY
+    {/*N/A*/-1,/*N/A*/-1,/*N/A*/-1,/*N/A*/-1}, // IS_LEAP_MONTH
 };
 
 /*
@@ -329,7 +330,7 @@ GregorianCalendar::setGregorianChange(UDate date, UErrorCode& status)
     // normalized cutover is in pure date milliseconds; it contains no time
     // of day or timezone component, and it used to compare against other
     // pure date values.
-    int32_t cutoverDay = (int32_t)Math::floorDivide(fGregorianCutover, (double)kOneDay);
+    int32_t cutoverDay = (int32_t)ClockMath::floorDivide(fGregorianCutover, (double)kOneDay);
     fNormalizedGregorianCutover = cutoverDay * kOneDay;
 
     // Handle the rare case of numeric overflow.  If the user specifies a
@@ -385,10 +386,10 @@ void GregorianCalendar::handleComputeFields(int32_t julianDay, UErrorCode& statu
         // The Julian epoch day (not the same as Julian Day)
         // is zero on Saturday December 30, 0 (Gregorian).
         int32_t julianEpochDay = julianDay - (kJan1_1JulianDay - 2);
-        eyear = (int32_t) Math::floorDivide(4*julianEpochDay + 1464, 1461);
+        eyear = (int32_t) ClockMath::floorDivide(4*julianEpochDay + 1464, 1461);
 
         // Compute the Julian calendar day number for January 1, eyear
-        int32_t january1 = 365*(eyear-1) + Math::floorDivide(eyear-1, (int32_t)4);
+        int32_t january1 = 365*(eyear-1) + ClockMath::floorDivide(eyear-1, (int32_t)4);
         dayOfYear = (julianEpochDay - january1); // 0-based
 
         // Julian leap years occurred historically every 4 years starting
@@ -534,12 +535,12 @@ int32_t GregorianCalendar::handleComputeMonthStart(int32_t eyear, int32_t month,
     // If the month is out of range, adjust it into range, and
     // modify the extended year value accordingly.
     if (month < 0 || month > 11) {
-        eyear += Math::floorDivide(month, 12, month);
+        eyear += ClockMath::floorDivide(month, 12, month);
     }
 
     UBool isLeap = eyear%4 == 0;
     int32_t y = eyear-1;
-    int32_t julianDay = 365*y + Math::floorDivide(y, 4) + (kJan1_1JulianDay - 3);
+    int32_t julianDay = 365*y + ClockMath::floorDivide(y, 4) + (kJan1_1JulianDay - 3);
 
     nonConstThis->fIsGregorian = (eyear >= fGregorianCutoverYear);
 #if defined (U_DEBUG_CAL)
@@ -577,7 +578,7 @@ int32_t GregorianCalendar::handleGetMonthLength(int32_t extendedYear, int32_t mo
     // If the month is out of range, adjust it into range, and
     // modify the extended year value accordingly.
     if (month < 0 || month > 11) {
-        extendedYear += Math::floorDivide(month, 12, month);
+        extendedYear += ClockMath::floorDivide(month, 12, month);
     }
 
     return isLeapYear(extendedYear) ? kLeapMonthLength[month] : kMonthLength[month];
@@ -696,7 +697,7 @@ GregorianCalendar::getEpochDay(UErrorCode& status)
     // dealing with UDate(Long.MIN_VALUE) and UDate(Long.MAX_VALUE).
     double wallSec = internalGetTime()/1000 + (internalGet(UCAL_ZONE_OFFSET) + internalGet(UCAL_DST_OFFSET))/1000;
 
-    return Math::floorDivide(wallSec, kOneDay/1000.0);
+    return ClockMath::floorDivide(wallSec, kOneDay/1000.0);
 }
 
 // -------------------------------------
@@ -715,7 +716,7 @@ double GregorianCalendar::computeJulianDayOfYear(UBool isGregorian,
 {
     isLeap = year%4 == 0;
     int32_t y = year - 1;
-    double julianDay = 365.0*y + Math::floorDivide(y, 4) + (kJan1_1JulianDay - 3);
+    double julianDay = 365.0*y + ClockMath::floorDivide(y, 4) + (kJan1_1JulianDay - 3);
 
     if (isGregorian) {
         isLeap = isLeap && ((year%100 != 0) || (year%400 == 0));
@@ -784,7 +785,7 @@ double GregorianCalendar::computeJulianDayOfYear(UBool isGregorian,
 double 
 GregorianCalendar::millisToJulianDay(UDate millis)
 {
-    return (double)kEpochStartAsJulianDay + Math::floorDivide(millis, (double)kOneDay);
+    return (double)kEpochStartAsJulianDay + ClockMath::floorDivide(millis, (double)kOneDay);
 }
 
 // -------------------------------------
@@ -1312,29 +1313,26 @@ GregorianCalendar::initializeSystemDefaultCentury()
     // initialize systemDefaultCentury and systemDefaultCenturyYear based
     // on the current time.  They'll be set to 80 years before
     // the current time.
-    // No point in locking as it should be idempotent.
-    if (fgSystemDefaultCenturyStart == fgSystemDefaultCentury)
+    UErrorCode status = U_ZERO_ERROR;
+    Calendar *calendar = new GregorianCalendar(status);
+    if (calendar != NULL && U_SUCCESS(status))
     {
-        UErrorCode status = U_ZERO_ERROR;
-        Calendar *calendar = new GregorianCalendar(status);
-        if (calendar != NULL && U_SUCCESS(status))
-        {
-            calendar->setTime(Calendar::getNow(), status);
-            calendar->add(UCAL_YEAR, -80, status);
+        calendar->setTime(Calendar::getNow(), status);
+        calendar->add(UCAL_YEAR, -80, status);
 
-            UDate    newStart =  calendar->getTime(status);
-            int32_t  newYear  =  calendar->get(UCAL_YEAR, status);
-            {
-                umtx_lock(NULL);
-                fgSystemDefaultCenturyStart = newStart;
-                fgSystemDefaultCenturyStartYear = newYear;
-                umtx_unlock(NULL);
-            }
-            delete calendar;
+        UDate    newStart =  calendar->getTime(status);
+        int32_t  newYear  =  calendar->get(UCAL_YEAR, status);
+        umtx_lock(NULL);
+        if (fgSystemDefaultCenturyStart == fgSystemDefaultCentury)
+        {
+            fgSystemDefaultCenturyStartYear = newYear;
+            fgSystemDefaultCenturyStart = newStart;
         }
-        // We have no recourse upon failure unless we want to propagate the failure
-        // out.
+        umtx_unlock(NULL);
+        delete calendar;
     }
+    // We have no recourse upon failure unless we want to propagate the failure
+    // out.
 }
 
 

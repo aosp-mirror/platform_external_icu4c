@@ -1,6 +1,6 @@
 /*
  *******************************************************************************
- * Copyright (C) 2003-2007, International Business Machines Corporation and    *
+ * Copyright (C) 2003-2008, International Business Machines Corporation and    *
  * others. All Rights Reserved.                                                *
  *******************************************************************************
  *
@@ -9,6 +9,7 @@
  * Modification History:
  *  05/13/2003    srl     copied from gregocal.cpp
  *  06/29/2007    srl     copied from buddhcal.cpp
+ *  05/12/2008    jce     modified to use calendar=roc per CLDR
  *
  */
 
@@ -57,7 +58,7 @@ Calendar* TaiwanCalendar::clone(void) const
 
 const char *TaiwanCalendar::getType() const
 {
-    return "taiwan";
+    return "roc";
 }
 
 int32_t TaiwanCalendar::handleGetExtendedYear()
@@ -193,27 +194,24 @@ TaiwanCalendar::initializeSystemDefaultCentury()
     // initialize systemDefaultCentury and systemDefaultCenturyYear based
     // on the current time.  They'll be set to 80 years before
     // the current time.
-    // No point in locking as it should be idempotent.
-    if (fgSystemDefaultCenturyStart == fgSystemDefaultCentury)
+    UErrorCode status = U_ZERO_ERROR;
+    TaiwanCalendar calendar(Locale("@calendar=roc"),status);
+    if (U_SUCCESS(status))
     {
-        UErrorCode status = U_ZERO_ERROR;
-        TaiwanCalendar calendar(Locale("@calendar=Taiwan"),status);
-        if (U_SUCCESS(status))
+        calendar.setTime(Calendar::getNow(), status);
+        calendar.add(UCAL_YEAR, -80, status);
+        UDate    newStart =  calendar.getTime(status);
+        int32_t  newYear  =  calendar.get(UCAL_YEAR, status);
+        umtx_lock(NULL);
+        if (fgSystemDefaultCenturyStart == fgSystemDefaultCentury)
         {
-            calendar.setTime(Calendar::getNow(), status);
-            calendar.add(UCAL_YEAR, -80, status);
-            UDate    newStart =  calendar.getTime(status);
-            int32_t  newYear  =  calendar.get(UCAL_YEAR, status);
-            {
-                umtx_lock(NULL);
-                fgSystemDefaultCenturyStart = newStart;
-                fgSystemDefaultCenturyStartYear = newYear;
-                umtx_unlock(NULL);
-            }
+            fgSystemDefaultCenturyStartYear = newYear;
+            fgSystemDefaultCenturyStart = newStart;
         }
-        // We have no recourse upon failure unless we want to propagate the failure
-        // out.
+        umtx_unlock(NULL);
     }
+    // We have no recourse upon failure unless we want to propagate the failure
+    // out.
 }
 
 

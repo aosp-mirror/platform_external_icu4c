@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2005-2007, International Business Machines
+*   Copyright (C) 2005-2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -572,6 +572,7 @@ utext_setup(UText *ut, int32_t extraSpace, UErrorCode *status) {
         ut = (UText *)uprv_malloc(spaceRequired);
         if (ut == NULL) {
             *status = U_MEMORY_ALLOCATION_ERROR;
+            return NULL;
         } else {
             *ut = emptyText;
             ut->flags |= UTEXT_HEAP_ALLOCATED;
@@ -1583,7 +1584,7 @@ utf8TextClose(UText *ut) {
 U_CDECL_END
 
 
-static struct UTextFuncs utf8Funcs = 
+static const struct UTextFuncs utf8Funcs = 
 {
     sizeof(UTextFuncs),
     0, 0, 0,             // Reserved alignment padding
@@ -1602,11 +1603,17 @@ static struct UTextFuncs utf8Funcs =
 };
 
 
+static const char gEmptyString[] = {0};
+
 U_CAPI UText * U_EXPORT2
 utext_openUTF8(UText *ut, const char *s, int64_t length, UErrorCode *status) {
     if(U_FAILURE(*status)) {
         return NULL;
     }
+    if(s==NULL && length==0) {
+        s = gEmptyString;
+    }
+
     if(s==NULL || length<-1 || length>INT32_MAX) {
         *status=U_ILLEGAL_ARGUMENT_ERROR;
         return NULL;
@@ -1984,7 +1991,7 @@ repTextCopy(UText *ut,
     repTextAccess(ut, nativeIterIndex, TRUE);
 }
 
-static struct UTextFuncs repFuncs = 
+static const struct UTextFuncs repFuncs = 
 {
     sizeof(UTextFuncs),
     0, 0, 0,           // Reserved alignment padding
@@ -2232,7 +2239,7 @@ unistrTextCopy(UText *ut,
 
 }
 
-static struct UTextFuncs unistrFuncs = 
+static const struct UTextFuncs unistrFuncs = 
 {
     sizeof(UTextFuncs),
     0, 0, 0,             // Reserved alignment padding
@@ -2448,7 +2455,13 @@ ucstrTextAccess(UText *ut, int64_t index, UBool  forward) {
             if (U16_IS_LEAD(str[chunkLimit-1])) {
                 --chunkLimit;
             }
+            // Null-terminated chunk with end still unknown.
+            // Update the chunk length to reflect what has been scanned thus far.
+            // That the full length is still unknown is (still) flagged by
+            //    ut->a being < 0.
             ut->chunkNativeLimit = chunkLimit;
+            ut->nativeIndexingLimit = chunkLimit;
+            ut->chunkLength = chunkLimit;
         }
 
     }
@@ -2543,7 +2556,7 @@ ucstrTextExtract(UText *ut,
     return di;
 }
 
-static struct UTextFuncs ucstrFuncs = 
+static const struct UTextFuncs ucstrFuncs = 
 {
     sizeof(UTextFuncs),
     0, 0, 0,           // Reserved alignment padding
@@ -2563,13 +2576,17 @@ static struct UTextFuncs ucstrFuncs =
 
 U_CDECL_END
 
+static const UChar gEmptyUString[] = {0};
 
 U_CAPI UText * U_EXPORT2
 utext_openUChars(UText *ut, const UChar *s, int64_t length, UErrorCode *status) {
     if (U_FAILURE(*status)) {
         return NULL;
     }
-    if (length < -1 || length>INT32_MAX) {
+    if(s==NULL && length==0) {
+        s = gEmptyUString;
+    }
+    if (s==NULL || length < -1 || length>INT32_MAX) {
         *status = U_ILLEGAL_ARGUMENT_ERROR;
         return NULL;
     }
@@ -2757,7 +2774,7 @@ charIterTextExtract(UText *ut,
     return desti;
 }
 
-static struct UTextFuncs charIterFuncs = 
+static const struct UTextFuncs charIterFuncs = 
 {
     sizeof(UTextFuncs),
     0, 0, 0,             // Reserved alignment padding

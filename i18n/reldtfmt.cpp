@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 2007, International Business Machines Corporation and    *
+* Copyright (C) 2007-2009, International Business Machines Corporation and    *
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 */
@@ -16,6 +16,7 @@
 
 #include "reldtfmt.h"
 #include "unicode/msgfmt.h"
+#include "unicode/smpdtfmt.h"
 
 #include "gregoimp.h" // for CalendarData
 #include "cmemory.h"
@@ -31,6 +32,8 @@ struct URelativeString {
     int32_t len;            /** length of the string **/
     const UChar* string;    /** string, or NULL if not set **/
 };
+
+static const char DT_DateTimePatternsTag[]="DateTimePatterns";
 
 
 UOBJECT_DEFINE_RTTI_IMPLEMENTATION(RelativeDateFormat)
@@ -73,8 +76,10 @@ fDateStyle(dateStyle), fTimeStyle(timeStyle), fLocale(locale), fDatesLen(0), fDa
         // Create a DateFormat in the non-relative style requested.
         fDateFormat = createDateInstance(newStyle, locale);
     }
-    if(fTimeStyle != UDAT_NONE) {
-        // don't support time style, for now
+    if(fTimeStyle >= UDAT_FULL && fTimeStyle <= UDAT_SHORT) {
+        fTimeFormat = createTimeInstance((EStyle)fTimeStyle, locale);
+    } else if(fTimeStyle != UDAT_NONE) {
+        // don't support other time styles (e.g. relative styles), for now
         status = U_ILLEGAL_ARGUMENT_ERROR;
         return;
     }
@@ -112,6 +117,8 @@ UnicodeString& RelativeDateFormat::format(  Calendar& cal,
                                 FieldPosition& pos) const {
                                 
     UErrorCode status = U_ZERO_ERROR;
+    UChar emptyStr = 0;
+    UnicodeString dateString(&emptyStr);
     
     // calculate the difference, in days, between 'cal' and now.
     int dayDiff = dayDifference(cal, status);
@@ -119,18 +126,39 @@ UnicodeString& RelativeDateFormat::format(  Calendar& cal,
     // look up string
     int32_t len;
     const UChar *theString = getStringForDay(dayDiff, len, status);
+    if(U_SUCCESS(status) && (theString!=NULL)) {
+        // found a relative string
+        dateString.setTo(theString, len);
+    }
     
-    if(U_FAILURE(status) || (theString==NULL)) {
-        // didn't find it. Fall through to the fDateFormat 
-        if(fDateFormat != NULL) {
-            return fDateFormat->format(cal,appendTo,pos);
-        } else {
-            return appendTo; // no op
+    if(fTimeFormat == NULL || fCombinedFormat == 0) {
+        if (dateString.length() > 0) {
+            appendTo.append(dateString);
+        } else if(fDateFormat != NULL) {
+            fDateFormat->format(cal,appendTo,pos);
         }
     } else {
-        // found a relative string
-        return appendTo.append(theString, len);
+        if (dateString.length() == 0 && fDateFormat != NULL) {
+            fDateFormat->format(cal,dateString,pos);
+        }
+        UnicodeString timeString(&emptyStr);
+        FieldPosition timepos = pos;
+        fTimeFormat->format(cal,timeString,timepos);
+        Formattable timeDateStrings[] = { timeString, dateString };
+        fCombinedFormat->format(timeDateStrings, 2, appendTo, pos, status); // pos is ignored by this
+        int32_t offset;
+        if (pos.getEndIndex() > 0 && (offset = appendTo.indexOf(dateString)) >= 0) {
+            // pos.field was found in dateString, offset start & end based on final position of dateString
+            pos.setBeginIndex( pos.getBeginIndex() + offset );
+            pos.setEndIndex( pos.getEndIndex() + offset );
+        } else if (timepos.getEndIndex() > 0 && (offset = appendTo.indexOf(timeString)) >= 0) {
+            // pos.field was found in timeString, offset start & end based on final position of timeString
+            pos.setBeginIndex( timepos.getBeginIndex() + offset );
+            pos.setEndIndex( timepos.getEndIndex() + offset );
+        }
     }
+    
+    return appendTo;
 }
 
 
@@ -227,8 +255,126 @@ const UChar *RelativeDateFormat::getStringForDay(int32_t day, int32_t &len, UErr
     return NULL;  // not found.
 }
 
+UnicodeString&
+RelativeDateFormat::toPattern(UnicodeString& result, UErrorCode& status) const
+{
+    if (!U_FAILURE(status)) {
+        result.remove();
+        if (fTimeFormat == NULL || fCombinedFormat == 0) {
+            if (fDateFormat != NULL) {
+                UnicodeString datePattern;
+                this->toPatternDate(datePattern, status);
+                if (!U_FAILURE(status)) {
+                    result.setTo(datePattern);
+                }
+            }
+        } else {
+            UnicodeString datePattern, timePattern;
+            this->toPatternDate(datePattern, status);
+            this->toPatternTime(timePattern, status);
+            if (!U_FAILURE(status)) {
+                Formattable timeDatePatterns[] = { timePattern, datePattern };
+                FieldPosition pos;
+                fCombinedFormat->format(timeDatePatterns, 2, result, pos, status);
+            }
+        }
+    }
+    return result;
+}
+
+UnicodeString&
+RelativeDateFormat::toPatternDate(UnicodeString& result, UErrorCode& status) const
+{
+    if (!U_FAILURE(status)) {
+        result.remove();
+        if ( fDateFormat ) {
+            if ( fDateFormat->getDynamicClassID()==SimpleDateFormat::getStaticClassID() ) {
+                ((SimpleDateFormat*)fDateFormat)->toPattern(result);
+            } else {
+                status = U_UNSUPPORTED_ERROR;
+            }
+        }
+    }
+    return result;
+}
+
+UnicodeString&
+RelativeDateFormat::toPatternTime(UnicodeString& result, UErrorCode& status) const
+{
+    if (!U_FAILURE(status)) {
+        result.remove();
+        if ( fTimeFormat ) {
+            if ( fTimeFormat->getDynamicClassID()==SimpleDateFormat::getStaticClassID() ) {
+                ((SimpleDateFormat*)fTimeFormat)->toPattern(result);
+            } else {
+                status = U_UNSUPPORTED_ERROR;
+            }
+        }
+    }
+    return result;
+}
+
+void
+RelativeDateFormat::applyPatterns(const UnicodeString& datePattern, const UnicodeString& timePattern, UErrorCode &status)
+{
+    if (!U_FAILURE(status)) {
+        if ( fDateFormat && fDateFormat->getDynamicClassID()!=SimpleDateFormat::getStaticClassID() ) {
+            status = U_UNSUPPORTED_ERROR;
+            return;
+        }
+        if ( fTimeFormat && fTimeFormat->getDynamicClassID()!=SimpleDateFormat::getStaticClassID() ) {
+            status = U_UNSUPPORTED_ERROR;
+            return;
+        }
+        if ( fDateFormat ) {
+            ((SimpleDateFormat*)fDateFormat)->applyPattern(datePattern);
+        }
+        if ( fTimeFormat ) {
+            ((SimpleDateFormat*)fTimeFormat)->applyPattern(timePattern);
+        }
+    }
+}
+
 void RelativeDateFormat::loadDates(UErrorCode &status) {
     CalendarData calData(fLocale, "gregorian", status);
+    
+    UErrorCode tempStatus = status;
+    UResourceBundle *dateTimePatterns = calData.getByKey(DT_DateTimePatternsTag, tempStatus);
+    if(U_SUCCESS(tempStatus)) {
+        int32_t patternsSize = ures_getSize(dateTimePatterns);
+        if (patternsSize > kDateTime) {
+            int32_t resStrLen = 0;
+
+            int32_t glueIndex = kDateTime;
+            if (patternsSize >= (DateFormat::kDateTimeOffset + DateFormat::kShort + 1)) {
+                // Get proper date time format
+                switch (fDateStyle) { 
+ 	            case kFullRelative: 
+ 	            case kFull: 
+ 	                glueIndex = kDateTimeOffset + kFull; 
+ 	                break; 
+ 	            case kLongRelative: 
+ 	            case kLong: 
+ 	                glueIndex = kDateTimeOffset + kLong; 
+ 	                break; 
+ 	            case kMediumRelative: 
+ 	            case kMedium: 
+ 	                glueIndex = kDateTimeOffset + kMedium; 
+ 	                break;         
+ 	            case kShortRelative: 
+ 	            case kShort: 
+ 	                glueIndex = kDateTimeOffset + kShort; 
+ 	                break; 
+ 	            default: 
+ 	                break; 
+ 	            } 
+            }
+
+            const UChar *resStr = ures_getStringByIndex(dateTimePatterns, glueIndex, &resStrLen, &tempStatus);
+            fCombinedFormat = new MessageFormat(UnicodeString(TRUE, resStr, resStrLen), fLocale, tempStatus);
+        }
+    }
+
     UResourceBundle *strings = calData.getByKey3("fields", "day", "relative", status);
     // set up min/max 
     fDayMin=-1;
@@ -303,10 +449,15 @@ int32_t RelativeDateFormat::dayDifference(Calendar &cal, UErrorCode &status) {
     if(U_FAILURE(status)) {
         return 0;
     }
-    // TODO: Cache the nowCal to avoid heap allocs?
+    // TODO: Cache the nowCal to avoid heap allocs? Would be difficult, don't know the calendar type
     Calendar *nowCal = cal.clone();
     nowCal->setTime(Calendar::getNow(), status);
-    int32_t dayDiff = nowCal->fieldDifference(cal.getTime(status), Calendar::DATE, status);
+
+    // For the day difference, we are interested in the difference in the (modified) julian day number
+    // which is midnight to midnight.  Using fieldDifference() is NOT correct here, because 
+    // 6pm Jan 4th  to 10am Jan 5th should be considered "tomorrow".
+    int32_t dayDiff = cal.get(UCAL_JULIAN_DAY, status) - nowCal->get(UCAL_JULIAN_DAY, status);
+
     delete nowCal;
     return dayDiff;
 }

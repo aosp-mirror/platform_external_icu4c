@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 1999-2007, International Business Machines
+*   Copyright (C) 1999-2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *   Date        Name        Description
@@ -188,11 +188,14 @@ TransliteratorTest::runIndexedTest(int32_t index, UBool exec,
         TESTCASE(79,TestBeginEndToRules);
         TESTCASE(80,TestRegisterAlias);
         TESTCASE(81,TestRuleStripping);
+        TESTCASE(82,TestHalfwidthFullwidth);
+        TESTCASE(83,TestThai);
+        TESTCASE(84,TestAny);
         default: name = ""; break;
     }
 }
 
-static const UVersionInfo ICU_39 = {3,9,0,0};
+static const UVersionInfo ICU_39 = {3,9,4,0};
 /**
  * Make sure every system transliterator can be instantiated.
  * 
@@ -225,10 +228,6 @@ void TransliteratorTest::TestInstantiation() {
         if (id != id2) {
             errln(UnicodeString("FAIL: getAvailableID(") +
                   i + ") != getAvailableIDs().snext()");
-            continue;
-        }
-        if(id2.indexOf("Thai")>-1 && !isICUVersionAtLeast(ICU_39)){
-            /* The Thai-Latin transliterator doesn't exist in ICU4C yet */
             continue;
         }
         UParseError parseError;
@@ -342,7 +341,7 @@ void TransliteratorTest::TestSimpleRules(void) {
         UTRANS_FORWARD, parseError,
         status);
     if (U_FAILURE(status)) {
-        errln("FAIL: RBT constructor failed");
+        dataerrln("FAIL: RBT constructor failed - %s", u_errorName(status));
         return;
     }
     expect(*t, "abcdefgABCDEFGU", "&bcd&fg!^**!^*&");
@@ -601,7 +600,7 @@ void TransliteratorTest::TestCompoundKana(void) {
     UErrorCode status = U_ZERO_ERROR;
     Transliterator* t = Transliterator::createInstance("Latin-Hiragana;Hiragana-Latin", UTRANS_FORWARD, parseError, status);
     if (t == 0) {
-        errln("FAIL: construction of Latin-Hiragana;Hiragana-Latin failed");
+        dataerrln("FAIL: construction of Latin-Hiragana;Hiragana-Latin failed - %s", u_errorName(status));
     } else {
         expect(*t, "aaaaa", "aaaaa");
         delete t;
@@ -762,7 +761,7 @@ void TransliteratorTest::TestJ277(void) {
     UParseError parseError;
     Transliterator *gl = Transliterator::createInstance("Greek-Latin; NFD; [:M:]Remove; NFC", UTRANS_FORWARD, parseError, status);
     if (gl == NULL) {
-        errln("FAIL: createInstance(Greek-Latin) returned NULL");
+        dataerrln("FAIL: createInstance(Greek-Latin) returned NULL - %s", u_errorName(status));
         return;
     }
 
@@ -1075,7 +1074,7 @@ void TransliteratorTest::TestHiraganaKatakana(void) {
     Transliterator* hk = Transliterator::createInstance("Hiragana-Katakana", UTRANS_FORWARD, parseError, status);
     Transliterator* kh = Transliterator::createInstance("Katakana-Hiragana", UTRANS_FORWARD, parseError, status);
     if (hk == 0 || kh == 0) {
-        errln("FAIL: createInstance failed");
+        dataerrln("FAIL: createInstance failed - %s", u_errorName(status));
         delete hk;
         delete kh;
         return;
@@ -1149,7 +1148,7 @@ void TransliteratorTest::TestInterIndic(void) {
     UParseError parseError;
     Transliterator* dg = Transliterator::createInstance(ID, UTRANS_FORWARD, parseError, status);
     if (dg == 0) {
-        errln("FAIL: createInstance(" + ID + ") returned NULL");
+        dataerrln("FAIL: createInstance(" + ID + ") returned NULL - " + u_errorName(status));
         return;
     }
     UnicodeString id = dg->getID();
@@ -1272,7 +1271,7 @@ void TransliteratorTest::TestNameMap(void) {
     // Careful:  CharsToUS will convert "\\N" => "N"; use "\\\\N" for \N
     expect(*uni2name, CharsToUnicodeString("\\u00A0abc\\u4E01\\u00B5\\u0A81\\uFFFD\\u0004\\u0009\\u0081\\uFFFF"),
            CharsToUnicodeString("\\\\N{NO-BREAK SPACE}abc\\\\N{CJK UNIFIED IDEOGRAPH-4E01}\\\\N{MICRO SIGN}\\\\N{GUJARATI SIGN CANDRABINDU}\\\\N{REPLACEMENT CHARACTER}\\\\N{END OF TRANSMISSION}\\\\N{CHARACTER TABULATION}\\\\N{<control-0081>}\\\\N{<noncharacter-FFFF>}"));
-    expect(*name2uni, "{\\N { NO-BREAK SPACE}abc\\N{  CJK UNIFIED  IDEOGRAPH-4E01  }\\N{x\\N{MICRO SIGN}\\N{GUJARATI SIGN CANDRABINDU}\\N{REPLACEMENT CHARACTER}\\N{END OF TRANSMISSION}\\N{CHARACTER TABULATION}\\N{<control-0081>}\\N{<noncharacter-FFFF>}\\N{<control-0004>}\\N{",
+    expect(*name2uni, UNICODE_STRING_SIMPLE("{\\N { NO-BREAK SPACE}abc\\N{  CJK UNIFIED  IDEOGRAPH-4E01  }\\N{x\\N{MICRO SIGN}\\N{GUJARATI SIGN CANDRABINDU}\\N{REPLACEMENT CHARACTER}\\N{END OF TRANSMISSION}\\N{CHARACTER TABULATION}\\N{<control-0081>}\\N{<noncharacter-FFFF>}\\N{<control-0004>}\\N{"),
            CharsToUnicodeString("{\\u00A0abc\\u4E01\\\\N{x\\u00B5\\u0A81\\uFFFD\\u0004\\u0009\\u0081\\uFFFF\\u0004\\\\N{"));
 
     delete uni2name;
@@ -1314,8 +1313,8 @@ void TransliteratorTest::TestLiberalizedID(void) {
     for (int32_t i=0; i<DATA_length; i+=3) {
         Transliterator *t = Transliterator::createInstance(DATA[i], UTRANS_FORWARD, parseError, status);
         if (t == 0) {
-            errln(UnicodeString("FAIL: ") + DATA[i+2] +
-                  " cannot create ID \"" + DATA[i] + "\"");
+            dataerrln(UnicodeString("FAIL: ") + DATA[i+2] +
+                  " cannot create ID \"" + DATA[i] + "\" - " + u_errorName(status));
         } else {
             UnicodeString exp;
             if (DATA[i+1]) {
@@ -1379,7 +1378,7 @@ void TransliteratorTest::TestCreateInstance(){
             logln((UnicodeString)"Ok: createInstance(" +
                   id + "," + DATA[i+1] + ") => " + newID);
         } else {
-            errln((UnicodeString)"FAIL: createInstance(" +
+            dataerrln((UnicodeString)"FAIL: createInstance(" +
                   id + "," + DATA[i+1] + ") => " + newID +
                   ", expected " + expID);
         }
@@ -1519,7 +1518,7 @@ void TransliteratorTest::TestCompoundRBT(void) {
         errln("FAIL: createFromRules failed");
         return;
     }
-    expect(*t, "\\u0043at in the hat, bat on the mat",
+    expect(*t, UNICODE_STRING_SIMPLE("\\u0043at in the hat, bat on the mat"),
            "C.A.t IN tHE H.A.t, .B..A.t ON tHE M.A.t");
     UnicodeString r;
     t->toRules(r, TRUE);
@@ -1534,7 +1533,7 @@ void TransliteratorTest::TestCompoundRBT(void) {
     // Now test toRules
     t = Transliterator::createInstance("Greek-Latin; Latin-Cyrillic", UTRANS_FORWARD, parseError, status);
     if (t == 0) {
-        errln("FAIL: createInstance failed");
+        dataerrln("FAIL: createInstance failed - %s", u_errorName(status));
         return;
     }
     UnicodeString exp("::Greek-Latin;\n::Latin-Cyrillic;");
@@ -1622,7 +1621,7 @@ void TransliteratorTest::TestCompoundFilter(void) {
     Transliterator *t = Transliterator::createInstance
         ("Greek-Latin; Latin-Greek; Lower", UTRANS_FORWARD, parseError, status);
     if (t == 0) {
-        errln("FAIL: createInstance failed");
+        dataerrln("FAIL: createInstance failed - %s", u_errorName(status));
         return;
     }
     t->adoptFilter(new UnicodeSet("[^A]", status));
@@ -1731,28 +1730,28 @@ void TransliteratorTest::TestToRules(void) {
             UParseError parseError;
             UErrorCode status = U_ZERO_ERROR;
             Transliterator *t = Transliterator::createFromRules("ID",
-                                                                DATA[d+1], UTRANS_FORWARD, parseError, status);
+                                                                UnicodeString(DATA[d+1], -1, US_INV), UTRANS_FORWARD, parseError, status);
             if (t == 0) {
-                errln("FAIL: createFromRules failed");
+                dataerrln("FAIL: createFromRules failed - %s", u_errorName(status));
                 return;
             }
             UnicodeString rules, escapedRules;
             t->toRules(rules, FALSE);
             t->toRules(escapedRules, TRUE);
             UnicodeString expRules = CharsToUnicodeString(DATA[d+2]);
-            UnicodeString expEscapedRules(DATA[d+2]);
+            UnicodeString expEscapedRules(DATA[d+2], -1, US_INV);
             if (rules == expRules) {
-                logln((UnicodeString)"Ok: " + DATA[d+1] +
+                logln((UnicodeString)"Ok: " + UnicodeString(DATA[d+1], -1, US_INV) +
                       " => " + rules);
             } else {
-                errln((UnicodeString)"FAIL: " + DATA[d+1] +
+                errln((UnicodeString)"FAIL: " + UnicodeString(DATA[d+1], -1, US_INV) +
                       " => " + rules + ", exp " + expRules);
             }
             if (escapedRules == expEscapedRules) {
-                logln((UnicodeString)"Ok: " + DATA[d+1] +
+                logln((UnicodeString)"Ok: " + UnicodeString(DATA[d+1], -1, US_INV) +
                       " => " + escapedRules);
             } else {
-                errln((UnicodeString)"FAIL: " + DATA[d+1] +
+                errln((UnicodeString)"FAIL: " + UnicodeString(DATA[d+1], -1, US_INV) +
                       " => " + escapedRules + ", exp " + expEscapedRules);
             }
             delete t;
@@ -1760,8 +1759,8 @@ void TransliteratorTest::TestToRules(void) {
         } else {
             // UnicodeSet test
             UErrorCode status = U_ZERO_ERROR;
-            UnicodeString pat(DATA[d+1]);
-            UnicodeString expToPat(DATA[d+2]);
+            UnicodeString pat(DATA[d+1], -1, US_INV);
+            UnicodeString expToPat(DATA[d+2], -1, US_INV);
             UnicodeSet set(pat, status);
             if (U_FAILURE(status)) {
                 errln("FAIL: UnicodeSet ct failed");
@@ -1823,23 +1822,23 @@ void TransliteratorTest::TestSupplemental() {
 
     expectT("Any-Name",
            CharsToUnicodeString("\\U00010330\\U000E0061\\u00A0"),
-           "\\N{GOTHIC LETTER AHSA}\\N{TAG LATIN SMALL LETTER A}\\N{NO-BREAK SPACE}");
+           UNICODE_STRING_SIMPLE("\\N{GOTHIC LETTER AHSA}\\N{TAG LATIN SMALL LETTER A}\\N{NO-BREAK SPACE}"));
 
     expectT("Any-Hex/Unicode",
            CharsToUnicodeString("\\U00010330\\U0010FF00\\U000E0061\\u00A0"),
-           "U+10330U+10FF00U+E0061U+00A0");
+           UNICODE_STRING_SIMPLE("U+10330U+10FF00U+E0061U+00A0"));
 
     expectT("Any-Hex/C",
            CharsToUnicodeString("\\U00010330\\U0010FF00\\U000E0061\\u00A0"),
-           "\\U00010330\\U0010FF00\\U000E0061\\u00A0");
+           UNICODE_STRING_SIMPLE("\\U00010330\\U0010FF00\\U000E0061\\u00A0"));
 
     expectT("Any-Hex/Perl",
            CharsToUnicodeString("\\U00010330\\U0010FF00\\U000E0061\\u00A0"),
-           "\\x{10330}\\x{10FF00}\\x{E0061}\\x{A0}");
+           UNICODE_STRING_SIMPLE("\\x{10330}\\x{10FF00}\\x{E0061}\\x{A0}"));
 
     expectT("Any-Hex/Java",
            CharsToUnicodeString("\\U00010330\\U0010FF00\\U000E0061\\u00A0"),
-           "\\uD800\\uDF30\\uDBFF\\uDF00\\uDB40\\uDC61\\u00A0");
+           UNICODE_STRING_SIMPLE("\\uD800\\uDF30\\uDBFF\\uDF00\\uDB40\\uDC61\\u00A0"));
 
     expectT("Any-Hex/XML",
            CharsToUnicodeString("\\U00010330\\U0010FF00\\U000E0061\\u00A0"),
@@ -1849,7 +1848,7 @@ void TransliteratorTest::TestSupplemental() {
            CharsToUnicodeString("\\U00010330\\U0010FF00\\U000E0061\\u00A0"),
            "&#66352;&#1113856;&#917601;&#160;");
 
-    expectT("[\\U000E0000-\\U000E0FFF] Remove",
+    expectT(UNICODE_STRING_SIMPLE("[\\U000E0000-\\U000E0FFF] Remove"),
            CharsToUnicodeString("\\U00010330\\U0010FF00\\U000E0061\\u00A0"),
            CharsToUnicodeString("\\U00010330\\U0010FF00\\u00A0"));
 }
@@ -2075,7 +2074,7 @@ void TransliteratorTest::TestCompoundInverse(void) {
     Transliterator *t = Transliterator::createInstance
         ("Greek-Latin; Title()", UTRANS_REVERSE,parseError, status);
     if (t == 0) {
-        errln("FAIL: createInstance");
+        dataerrln("FAIL: createInstance - %s", u_errorName(status));
         return;
     }
     UnicodeString exp("(Title);Latin-Greek");
@@ -2226,7 +2225,7 @@ void TransliteratorTest::TestAliasInverseID() {
     UErrorCode ec = U_ZERO_ERROR;
     Transliterator *t = Transliterator::createInstance(ID, UTRANS_FORWARD, pe, ec);
     if (t == 0 || U_FAILURE(ec)) {
-        errln("FAIL: createInstance");
+        dataerrln("FAIL: createInstance - %s", u_errorName(ec));
         return;
     }
     Transliterator *u = t->createInverse(ec);
@@ -2254,7 +2253,7 @@ void TransliteratorTest::TestCompoundInverseID() {
     UErrorCode ec = U_ZERO_ERROR;
     Transliterator *t = Transliterator::createInstance(ID, UTRANS_FORWARD, pe, ec);
     if (t == 0 || U_FAILURE(ec)) {
-        errln("FAIL: createInstance");
+        dataerrln("FAIL: createInstance - %s", u_errorName(ec));
         return;
     }
     Transliterator *u = t->createInverse(ec);
@@ -2356,7 +2355,7 @@ void TransliteratorTest::TestCompoundFilterID(void) {
             }
             delete t;
         } else {
-            errln((UnicodeString)"FAIL: " + id + " => " + transID + ", " +
+            dataerrln((UnicodeString)"FAIL: " + id + " => " + transID + ", " +
                   u_errorName(ec));
         }
     }
@@ -2366,7 +2365,7 @@ void TransliteratorTest::TestCompoundFilterID(void) {
  * Test new property set syntax
  */
 void TransliteratorTest::TestPropertySet() {
-    expect("a>A; \\p{Lu}>x; \\p{ANY}>y;", "abcDEF", "Ayyxxx");
+    expect(UNICODE_STRING_SIMPLE("a>A; \\p{Lu}>x; \\p{ANY}>y;"), "abcDEF", "Ayyxxx");
     expect("(.+)>'[' $1 ']';", " a stitch \n in time \r saves 9",
            "[ a stitch ]\n[ in time ]\r[ saves 9]");
 }
@@ -2379,7 +2378,7 @@ void TransliteratorTest::TestNewEngine() {
     UErrorCode ec = U_ZERO_ERROR;
     Transliterator *t = Transliterator::createInstance("Latin-Hiragana", UTRANS_FORWARD, pe, ec);
     if (t == 0 || U_FAILURE(ec)) {
-        errln("FAIL: createInstance Latin-Hiragana");
+        dataerrln("FAIL: createInstance Latin-Hiragana - %s", u_errorName(ec));
         return;
     }
     // Katakana should be untouched
@@ -2638,8 +2637,8 @@ void TransliteratorTest::TestDevanagariLatinRT(){
     Transliterator* latinToDev=Transliterator::createInstance("Latin-Devanagari", UTRANS_FORWARD, parseError, status);
     Transliterator* devToLatin=Transliterator::createInstance("Devanagari-Latin", UTRANS_FORWARD, parseError, status);
     if(U_FAILURE(status)){
-        errln("FAIL: construction " +   UnicodeString(" Error: ") + u_errorName(status));
-        errln("PreContext: " + prettify(parseError.preContext) + " PostContext: " + prettify( parseError.postContext) );
+        dataerrln("FAIL: construction " +   UnicodeString(" Error: ") + u_errorName(status));
+        dataerrln("PreContext: " + prettify(parseError.preContext) + " PostContext: " + prettify( parseError.postContext) );
         return;
     }
     UnicodeString gotResult;
@@ -2686,8 +2685,8 @@ void TransliteratorTest::TestTeluguLatinRT(){
     Transliterator* latinToDev=Transliterator::createInstance("Latin-Telugu", UTRANS_FORWARD, parseError, status);
     Transliterator* devToLatin=Transliterator::createInstance("Telugu-Latin", UTRANS_FORWARD, parseError, status);
     if(U_FAILURE(status)){
-        errln("FAIL: construction " +   UnicodeString(" Error: ") + u_errorName(status));
-        errln("PreContext: " + prettify(parseError.preContext) + " PostContext: " + prettify( parseError.postContext) );
+        dataerrln("FAIL: construction " +   UnicodeString(" Error: ") + u_errorName(status));
+        dataerrln("PreContext: " + prettify(parseError.preContext) + " PostContext: " + prettify( parseError.postContext) );
         return;
     }
     UnicodeString gotResult;
@@ -2746,8 +2745,8 @@ void TransliteratorTest::TestSanskritLatinRT(){
     Transliterator* latinToDev=Transliterator::createInstance("Latin-Devanagari", UTRANS_FORWARD, parseError, status);
     Transliterator* devToLatin=Transliterator::createInstance("Devanagari-Latin", UTRANS_FORWARD, parseError, status);
     if(U_FAILURE(status)){
-        errln("FAIL: construction " +   UnicodeString(" Error: ") + u_errorName(status));
-        errln("PreContext: " + prettify(parseError.preContext) + " PostContext: " + prettify( parseError.postContext) );
+        dataerrln("FAIL: construction " +   UnicodeString(" Error: ") + u_errorName(status));
+        dataerrln("PreContext: " + prettify(parseError.preContext) + " PostContext: " + prettify( parseError.postContext) );
         return;
     }
     UnicodeString gotResult;
@@ -2815,8 +2814,8 @@ void TransliteratorTest::TestCompoundLatinRT(){
     Transliterator* latinToTelToLatin=Transliterator::createInstance("Latin-Telugu;Telugu-Latin", UTRANS_FORWARD, parseError, status);
 
     if(U_FAILURE(status)){
-        errln("FAIL: construction " +   UnicodeString(" Error: ") + u_errorName(status));
-        errln("PreContext: " + prettify(parseError.preContext) + " PostContext: " + prettify( parseError.postContext) );
+        dataerrln("FAIL: construction " +   UnicodeString(" Error: ") + u_errorName(status));
+        dataerrln("PreContext: " + prettify(parseError.preContext) + " PostContext: " + prettify( parseError.postContext) );
         return;
     }
     UnicodeString gotResult;
@@ -2841,20 +2840,20 @@ void TransliteratorTest::TestGurmukhiDevanagari(){
     // (\u0902) (when preceded by vowel)      --->  (\u0A02)
     // (\u0902) (when preceded by consonant)  --->  (\u0A70)
     UErrorCode status = U_ZERO_ERROR;
-    UnicodeSet vowel(UnicodeString("[\\u0905-\\u090A \\u090F\\u0910\\u0913\\u0914 \\u093e-\\u0942\\u0947\\u0948\\u094B\\u094C\\u094D]").unescape(), status);
-    UnicodeSet non_vowel(UnicodeString("[\\u0915-\\u0928\\u092A-\\u0930]").unescape(), status);
+    UnicodeSet vowel(UnicodeString("[\\u0905-\\u090A \\u090F\\u0910\\u0913\\u0914 \\u093e-\\u0942\\u0947\\u0948\\u094B\\u094C\\u094D]", -1, US_INV).unescape(), status);
+    UnicodeSet non_vowel(UnicodeString("[\\u0915-\\u0928\\u092A-\\u0930]", -1, US_INV).unescape(), status);
     UParseError parseError;
 
     UnicodeSetIterator vIter(vowel);
     UnicodeSetIterator nvIter(non_vowel);
     Transliterator* trans = Transliterator::createInstance("Devanagari-Gurmukhi",UTRANS_FORWARD, parseError, status);
     if(U_FAILURE(status)) {
-      errln("Error creating transliterator %s", u_errorName(status));
+      dataerrln("Error creating transliterator %s", u_errorName(status));
       delete trans;
       return;
     }
-    UnicodeString src (" \\u0902");
-    UnicodeString expected(" \\u0A02");
+    UnicodeString src (" \\u0902", -1, US_INV);
+    UnicodeString expected(" \\u0A02", -1, US_INV);
     src = src.unescape();
     expected= expected.unescape();
 
@@ -2881,7 +2880,7 @@ void TransliteratorTest::TestLocaleInstantiation(void) {
     UErrorCode ec = U_ZERO_ERROR;
     Transliterator *t = Transliterator::createInstance("ru_RU-Latin", UTRANS_FORWARD, pe, ec);
     if (U_FAILURE(ec)) {
-        errln("FAIL: createInstance(ru_RU-Latin)");
+        dataerrln("FAIL: createInstance(ru_RU-Latin) - %s", u_errorName(ec));
         delete t;
         return;
     }
@@ -2933,7 +2932,7 @@ void TransliteratorTest::TestLocaleResource() {
         UErrorCode ec = U_ZERO_ERROR;
         Transliterator *t = Transliterator::createInstance(DATA[i], UTRANS_FORWARD, pe, ec);
         if (U_FAILURE(ec)) {
-            errln((UnicodeString)"FAIL: createInstance(" + DATA[i] + ")");
+            dataerrln((UnicodeString)"FAIL: createInstance(" + DATA[i] + ") - " + u_errorName(ec));
             delete t;
             continue;
         }
@@ -3085,7 +3084,7 @@ void TransliteratorTest::TestIDForms() {
             if (!expValid) {
                 logln((UnicodeString)"Ok: getInstance(" + ID +") => " + u_errorName(ec));
             } else {
-                errln((UnicodeString)"FAIL: Couldn't create " + ID);
+                dataerrln((UnicodeString)"FAIL: Couldn't create " + ID + " - " + u_errorName(ec));
             }
             delete t;
             continue;
@@ -3168,21 +3167,21 @@ void TransliteratorTest::TestToRulesMark() {
     
     UParseError pe;
     UErrorCode ec = U_ZERO_ERROR;
-    Transliterator *t2 = Transliterator::createFromRules("source-target", testRules, UTRANS_FORWARD, pe, ec);
-    Transliterator *t3 = Transliterator::createFromRules("target-source", testRules, UTRANS_REVERSE, pe, ec);
+    Transliterator *t2 = Transliterator::createFromRules("source-target", UnicodeString(testRules, -1, US_INV), UTRANS_FORWARD, pe, ec);
+    Transliterator *t3 = Transliterator::createFromRules("target-source", UnicodeString(testRules, -1, US_INV), UTRANS_REVERSE, pe, ec);
 
     if (U_FAILURE(ec)) {
         delete t2;
         delete t3;
-        errln((UnicodeString)"FAIL: createFromRules => " + u_errorName(ec));
+        dataerrln((UnicodeString)"FAIL: createFromRules => " + u_errorName(ec));
         return;
     }
     
     expect(*t2, source, target);
     expect(*t3, target, source);
     
-    checkRules("Failed toRules FORWARD", *t2, testRulesForward);
-    checkRules("Failed toRules BACKWARD", *t3, testRulesBackward);
+    checkRules("Failed toRules FORWARD", *t2, UnicodeString(testRulesForward, -1, US_INV));
+    checkRules("Failed toRules BACKWARD", *t3, UnicodeString(testRulesBackward, -1, US_INV));
 
     delete t2;
     delete t3;
@@ -3202,7 +3201,7 @@ void TransliteratorTest::TestEscape() {
         errln((UnicodeString)"FAIL: createInstance");
     } else {
         expect(*t,
-               "\\x{40}\\U00000031&#x32;&#81;",
+               UNICODE_STRING_SIMPLE("\\x{40}\\U00000031&#x32;&#81;"),
                "@12Q");
     }
     delete t;
@@ -3214,7 +3213,7 @@ void TransliteratorTest::TestEscape() {
     } else {
         expect(*t,
                CharsToUnicodeString("A\\U0010BEEF\\uFEED"),
-               "\\u0041\\U0010BEEF\\uFEED");
+               UNICODE_STRING_SIMPLE("\\u0041\\U0010BEEF\\uFEED"));
     }
     delete t;
 
@@ -3225,7 +3224,7 @@ void TransliteratorTest::TestEscape() {
     } else {
         expect(*t,
                CharsToUnicodeString("A\\U0010BEEF\\uFEED"),
-               "\\u0041\\uDBEF\\uDEEF\\uFEED");
+               UNICODE_STRING_SIMPLE("\\u0041\\uDBEF\\uDEEF\\uFEED"));
     }
     delete t;
 
@@ -3236,7 +3235,7 @@ void TransliteratorTest::TestEscape() {
     } else {
         expect(*t,
                CharsToUnicodeString("A\\U0010BEEF\\uFEED"),
-               "\\x{41}\\x{10BEEF}\\x{FEED}");
+               UNICODE_STRING_SIMPLE("\\x{41}\\x{10BEEF}\\x{FEED}"));
     }
     delete t;
 }
@@ -3291,7 +3290,7 @@ void TransliteratorTest::TestDisplayName() {
         UnicodeString name;
         Transliterator::getDisplayName(DATA[i], US, name);
         if (name != DATA[i+1]) {
-            errln((UnicodeString)"FAIL: " + DATA[i] + ".getDisplayName() => " +
+            dataerrln((UnicodeString)"FAIL: " + DATA[i] + ".getDisplayName() => " +
                   name + ", expected " + DATA[i+1]);
         } else {
             logln((UnicodeString)"Ok: " + DATA[i] + ".getDisplayName() => " + name);
@@ -3301,12 +3300,12 @@ void TransliteratorTest::TestDisplayName() {
         Transliterator *t = Transliterator::createInstance(DATA[i], UTRANS_REVERSE, pe, ec);
         if (U_FAILURE(ec)) {
             delete t;
-            errln("FAIL: createInstance failed");
+            dataerrln("FAIL: createInstance failed - %s", u_errorName(ec));
             continue;
         }
         name = Transliterator::getDisplayName(t->getID(), US, name);
         if (name != DATA[i+2]) {
-            errln((UnicodeString)"FAIL: " + t->getID() + ".getDisplayName() => " +
+            dataerrln((UnicodeString)"FAIL: " + t->getID() + ".getDisplayName() => " +
                   name + ", expected " + DATA[i+2]);
         } else {
             logln((UnicodeString)"Ok: " + t->getID() + ".getDisplayName() => " + name);
@@ -3389,7 +3388,7 @@ void TransliteratorTest::TestSpecialCases(void) {
         Transliterator *t = Transliterator::createFromRules(registerRules[0+i], 
             registerRules[i+1], UTRANS_FORWARD, pos, status);
         if (U_FAILURE(status)) {
-            errln("Fails: Unable to create the transliterator from rules.");
+            dataerrln("Fails: Unable to create the transliterator from rules. - %s", u_errorName(status));
         } else {
             Transliterator::registerInstance(t);
         }
@@ -3400,7 +3399,7 @@ void TransliteratorTest::TestSpecialCases(void) {
         const UnicodeString& name = testCases[i];
         Transliterator *t = Transliterator::createInstance(name, UTRANS_FORWARD, pe, ec);
         if (U_FAILURE(ec)) {
-            errln((UnicodeString)"FAIL: Couldn't create " + name);
+            dataerrln((UnicodeString)"FAIL: Couldn't create " + name + " - " + u_errorName(ec));
             delete t;
             continue;
         }
@@ -3554,10 +3553,6 @@ void TransliteratorTest::TestIncrementalProgress(void) {
                 Transliterator::getAvailableVariant(k, source, target, variant);
                 UnicodeString id = source + "-" + target + "/" + variant;
                 
-                if(id.indexOf("Thai")>-1 && !isICUVersionAtLeast(ICU_39)){
-                    /* The Thai-Latin transliterator doesn't exist in ICU4C yet */
-                    continue;
-                }    
                 Transliterator *t = Transliterator::createInstance(id, UTRANS_FORWARD, err, status);
                 if (U_FAILURE(status)) {
                     errln((UnicodeString)"FAIL: Could not create " + id);
@@ -3631,7 +3626,7 @@ void TransliteratorTest::TestFunction() {
     UErrorCode ec = U_ZERO_ERROR;
     Transliterator *t = Transliterator::createFromRules("Test", rule, UTRANS_FORWARD, pe, ec);
     if (t == NULL) {
-        errln("FAIL: createFromRules failed");
+        dataerrln("FAIL: createFromRules failed - %s", u_errorName(ec));
         return;
     }
     
@@ -3645,7 +3640,7 @@ void TransliteratorTest::TestFunction() {
     }
     
     expect(*t, "The Quick Brown Fox",
-           "T(t=\\u0074)he Q(q=\\u0071)uick B(b=\\u0062)rown F(f=\\u0066)ox");
+           UNICODE_STRING_SIMPLE("T(t=\\u0074)he Q(q=\\u0071)uick B(b=\\u0062)rown F(f=\\u0066)ox"));
 
     delete t;
 }
@@ -3763,22 +3758,22 @@ void TransliteratorTest::TestUserFunction() {
 
     // There's no need to register inverses if we don't use them
     t = Transliterator::createFromRules("gif",
-                                        "'\\'u(..)(..) > '<img src=\"http://www.unicode.org/gifs/24/' $1 '/U' $1$2 '.gif\">';",
+                                        UNICODE_STRING_SIMPLE("'\\'u(..)(..) > '<img src=\"http://www.unicode.org/gifs/24/' $1 '/U' $1$2 '.gif\">';"),
                                         UTRANS_FORWARD, pe, ec);
     if (t == NULL || U_FAILURE(ec)) {
-        errln((UnicodeString)"FAIL: createFromRules gif " + u_errorName(ec));
+        dataerrln((UnicodeString)"FAIL: createFromRules gif " + u_errorName(ec));
         return;
     }
     _TUFReg("Any-gif", t, 0);
 
     t = Transliterator::createFromRules("RemoveCurly",
-                                        "[\\{\\}] > ; '\\N' > ;",
+                                        UNICODE_STRING_SIMPLE("[\\{\\}] > ; '\\N' > ;"),
                                         UTRANS_FORWARD, pe, ec);
     if (t == NULL || U_FAILURE(ec)) {
         errln((UnicodeString)"FAIL: createFromRules RemoveCurly " + u_errorName(ec));
         goto FAIL;
     }
-    expect(*t, "\\N{name}", "name");
+    expect(*t, UNICODE_STRING_SIMPLE("\\N{name}"), "name");
     _TUFReg("Any-RemoveCurly", t, 1);
 
     logln("Trying &hex");
@@ -3796,7 +3791,7 @@ void TransliteratorTest::TestUserFunction() {
         errln((UnicodeString)"FAIL: createInstance Any-hex2 " + u_errorName(ec));
         goto FAIL;
     }
-    expect(*t, "abc", "\\u0061\\u0062\\u0063");
+    expect(*t, "abc", UNICODE_STRING_SIMPLE("\\u0061\\u0062\\u0063"));
     delete t;
 
     logln("Trying &gif");
@@ -3827,7 +3822,7 @@ void TransliteratorTest::TestUserFunction() {
         goto FAIL;
     }
     expect(*t, "abc",
-           "\\u0061 LATIN SMALL LETTER A \\u0062 LATIN SMALL LETTER B \\u0063 LATIN SMALL LETTER C ");
+           UNICODE_STRING_SIMPLE("\\u0061 LATIN SMALL LETTER A \\u0062 LATIN SMALL LETTER B \\u0063 LATIN SMALL LETTER C "));
     delete t;
 
  FAIL:
@@ -3845,7 +3840,7 @@ void TransliteratorTest::TestAnyX(void) {
     Transliterator* anyLatin =
         Transliterator::createInstance("Any-Latin", UTRANS_FORWARD, parseError, status);
     if (anyLatin==0) {
-        errln("FAIL: createInstance returned NULL");
+        dataerrln("FAIL: createInstance returned NULL - %s", u_errorName(status));
         delete anyLatin;
         return;
     }
@@ -3856,6 +3851,59 @@ void TransliteratorTest::TestAnyX(void) {
 
     delete anyLatin;
 }
+
+/**
+ * Test Any-X transliterators with sample letters from all scripts.
+ */
+void TransliteratorTest::TestAny(void) {
+    UErrorCode status = U_ZERO_ERROR;
+    // Note: there is a lot of implict construction of UnicodeStrings from (char *) in
+    //       function call parameters going on in this test.
+    UnicodeSet alphabetic("[:alphabetic:]", status);
+    if (U_FAILURE(status)) {
+        dataerrln("Failure: file %s, line %d, status = %s", __FILE__, __LINE__, u_errorName(status));
+        return;
+    }
+    alphabetic.freeze();
+
+    UnicodeString testString;
+    for (int32_t i = 0; i < USCRIPT_CODE_LIMIT; i++) {
+        const char *scriptName = uscript_getShortName((UScriptCode)i);
+        if (scriptName == NULL) {
+            errln("Failure: file %s, line %d: Script Code %d is invalid, ", __FILE__, __LINE__, i);
+            return;
+        }
+
+        UnicodeSet sample;
+        sample.applyPropertyAlias("script", scriptName, status);
+        if (U_FAILURE(status)) {
+            errln("Failure: file %s, line %d, status = %s", __FILE__, __LINE__, u_errorName(status));
+            return;
+        }
+        sample.retainAll(alphabetic);
+        for (int32_t count=0; count<5; count++) {
+            UChar32 c = sample.charAt(count);
+            if (c == -1) {
+                break;
+            }
+            testString.append(c);
+        }
+    }
+
+    UParseError parseError;
+    Transliterator* anyLatin =
+        Transliterator::createInstance("Any-Latin", UTRANS_FORWARD, parseError, status);
+    if (U_FAILURE(status)) {
+        errln("Failure: file %s, line %d, status = %s", __FILE__, __LINE__, u_errorName(status));
+        return;
+    }
+
+    logln(UnicodeString("Sample set for Any-Latin: ") + testString);
+    anyLatin->transliterate(testString);
+    logln(UnicodeString("Sample result for Any-Latin: ") + testString);
+    delete anyLatin;
+}
+
 
 /**
  * Test the source and target set API.  These are only implemented
@@ -3956,7 +4004,7 @@ void TransliteratorTest::TestAllCodepoints(){
         }
         const char* myId = uscript_getName(code);
         if(!myId) {
-          errln("Valid script code returned NULL name. Check your data!");
+          dataerrln("Valid script code returned NULL name. Check your data!");
           return;
         }
         uprv_strcpy(id,myId);
@@ -3995,7 +4043,7 @@ void TransliteratorTest::TestAllCodepoints(){
   UErrorCode ec = U_ZERO_ERROR; \
   Transliterator* t = Transliterator::createInstance(id, UTRANS_FORWARD, ec); \
   if (U_FAILURE(ec)) { \
-    errln("FAIL: Couldn't create " id); \
+    dataerrln("FAIL: Couldn't create %s - %s", id, u_errorName(ec)); \
   } else { \
     if (t->getDynamicClassID() != cls::getStaticClassID()) { \
       errln("FAIL: " #cls " dynamic and static class ID mismatch"); \
@@ -4046,7 +4094,7 @@ void TransliteratorTest::TestAlternateSyntax() {
            "xbz");
     expect(CharsToUnicodeString("([:^ASCII:]) \\u2192 \\u2206Name($1);"),
            CharsToUnicodeString("<=\\u2190; >=\\u2192; <>=\\u2194; &=\\u2206"),
-           "<=\\N{LEFTWARDS ARROW}; >=\\N{RIGHTWARDS ARROW}; <>=\\N{LEFT RIGHT ARROW}; &=\\N{INCREMENT}");
+           UNICODE_STRING_SIMPLE("<=\\N{LEFTWARDS ARROW}; >=\\N{RIGHTWARDS ARROW}; <>=\\N{LEFT RIGHT ARROW}; &=\\N{INCREMENT}"));
 }
 
 static const char* BEGIN_END_RULES[] = {
@@ -4283,9 +4331,9 @@ void TransliteratorTest::TestBeginEnd() {
     int32_t i = 0;
     for (i = 0; i < BEGIN_END_TEST_CASES_length; i += 3) {
         expect((UnicodeString)"Test case #" + (i / 3),
-               UnicodeString(BEGIN_END_TEST_CASES[i]),
-               UnicodeString(BEGIN_END_TEST_CASES[i + 1]),
-               UnicodeString(BEGIN_END_TEST_CASES[i + 2]));
+               UnicodeString(BEGIN_END_TEST_CASES[i], -1, US_INV),
+               UnicodeString(BEGIN_END_TEST_CASES[i + 1], -1, US_INV),
+               UnicodeString(BEGIN_END_TEST_CASES[i + 2], -1, US_INV));
     }
 
     // instantiate the one reversible rule set in the reverse direction and make sure it does the right thing
@@ -4326,7 +4374,7 @@ void TransliteratorTest::TestBeginEndToRules() {
     for (int32_t i = 0; i < BEGIN_END_TEST_CASES_length; i += 3) {
         UParseError parseError;
         UErrorCode status = U_ZERO_ERROR;
-        Transliterator* t = Transliterator::createFromRules("--", UnicodeString(BEGIN_END_TEST_CASES[i]),
+        Transliterator* t = Transliterator::createFromRules("--", UnicodeString(BEGIN_END_TEST_CASES[i], -1, US_INV),
                 UTRANS_FORWARD, parseError, status);
         if (U_FAILURE(status)) {
             reportParseError(UnicodeString("FAIL: Couldn't create transliterator"), parseError, status);
@@ -4341,8 +4389,8 @@ void TransliteratorTest::TestBeginEndToRules() {
                 delete t;
             } else {
                 expect(*t2,
-                       UnicodeString(BEGIN_END_TEST_CASES[i + 1]),
-                       UnicodeString(BEGIN_END_TEST_CASES[i + 2]));
+                       UnicodeString(BEGIN_END_TEST_CASES[i + 1], -1, US_INV),
+                       UnicodeString(BEGIN_END_TEST_CASES[i + 2], -1, US_INV));
                 delete t;
                 delete t2;
             }
@@ -4429,7 +4477,7 @@ void TransliteratorTest::TestRegisterAlias() {
     err = U_ZERO_ERROR;
     t1 = Transliterator::createInstance(realID, UTRANS_FORWARD, err);
     if (U_FAILURE(err)) {
-        errln("Failed to instantiate transliterator with real ID");
+        dataerrln("Failed to instantiate transliterator with real ID - %s", u_errorName(err));
         Transliterator::unregister(realID);
         return;
     }
@@ -4474,6 +4522,136 @@ void TransliteratorTest::TestRuleStripping() {
     }
 }
 
+/**
+ * Test the Halfwidth-Fullwidth transliterator (ticket 6281).
+ */
+void TransliteratorTest::TestHalfwidthFullwidth(void) {
+    UParseError parseError;
+    UErrorCode status = U_ZERO_ERROR;
+    Transliterator* hf = Transliterator::createInstance("Halfwidth-Fullwidth", UTRANS_FORWARD, parseError, status);
+    Transliterator* fh = Transliterator::createInstance("Fullwidth-Halfwidth", UTRANS_FORWARD, parseError, status);
+    if (hf == 0 || fh == 0) {
+        dataerrln("FAIL: createInstance failed - %s", u_errorName(status));
+        delete hf;
+        delete fh;
+        return;
+    }
+
+    // Array of 2n items
+    // Each item is
+    //   "hf"|"fh"|"both",
+    //   <Halfwidth>,
+    //   <Fullwidth>
+    const char* DATA[] = {
+        "both",
+        "\\uFFE9\\uFFEA\\uFFEB\\uFFEC\\u0061\\uFF71\\u00AF\\u0020",
+        "\\u2190\\u2191\\u2192\\u2193\\uFF41\\u30A2\\uFFE3\\u3000",
+    };
+    int32_t DATA_length = (int32_t)(sizeof(DATA) / sizeof(DATA[0]));
+
+    for (int32_t i=0; i<DATA_length; i+=3) {
+        UnicodeString h = CharsToUnicodeString(DATA[i+1]);
+        UnicodeString f = CharsToUnicodeString(DATA[i+2]);
+        switch (*DATA[i]) {
+        case 0x68: //'h': // Halfwidth-Fullwidth only
+            expect(*hf, h, f);
+            break;
+        case 0x66: //'f': // Fullwidth-Halfwidth only
+            expect(*fh, f, h);
+            break;
+        case 0x62: //'b': // both directions
+            expect(*hf, h, f);
+            expect(*fh, f, h);
+            break;
+        }
+    }
+    delete hf;
+    delete fh;
+}
+
+
+    /**
+     *  Test Thai.  The text is the first paragraph of "What is Unicode" from the Unicode.org web site.
+     *              TODO: confirm that the expected results are correct.
+     *              For now, test just confirms that C++ and Java give identical results.
+     */
+void TransliteratorTest::TestThai(void) {
+    UParseError parseError;
+    UErrorCode status = U_ZERO_ERROR;
+    Transliterator* tr = Transliterator::createInstance("Any-Latin", UTRANS_FORWARD, parseError, status);
+    if (tr == 0) {
+        dataerrln("FAIL: createInstance failed - %s", u_errorName(status));
+        return;
+    }
+    if (U_FAILURE(status)) {
+        errln("FAIL: createInstance failed with %s", u_errorName(status));
+        return;
+    }
+    const char *thaiText = 
+        "\\u0e42\\u0e14\\u0e22\\u0e1e\\u0e37\\u0e49\\u0e19\\u0e10\\u0e32\\u0e19\\u0e41\\u0e25\\u0e49\\u0e27, \\u0e04\\u0e2d"
+        "\\u0e21\\u0e1e\\u0e34\\u0e27\\u0e40\\u0e15\\u0e2d\\u0e23\\u0e4c\\u0e08\\u0e30\\u0e40\\u0e01\\u0e35\\u0e48\\u0e22"
+        "\\u0e27\\u0e02\\u0e49\\u0e2d\\u0e07\\u0e01\\u0e31\\u0e1a\\u0e40\\u0e23\\u0e37\\u0e48\\u0e2d\\u0e07\\u0e02\\u0e2d"
+        "\\u0e07\\u0e15\\u0e31\\u0e27\\u0e40\\u0e25\\u0e02. \\u0e04\\u0e2d\\u0e21\\u0e1e\\u0e34\\u0e27\\u0e40\\u0e15\\u0e2d"
+        "\\u0e23\\u0e4c\\u0e08\\u0e31\\u0e14\\u0e40\\u0e01\\u0e47\\u0e1a\\u0e15\\u0e31\\u0e27\\u0e2d\\u0e31\\u0e01\\u0e29"
+        "\\u0e23\\u0e41\\u0e25\\u0e30\\u0e2d\\u0e31\\u0e01\\u0e02\\u0e23\\u0e30\\u0e2d\\u0e37\\u0e48\\u0e19\\u0e46 \\u0e42"
+        "\\u0e14\\u0e22\\u0e01\\u0e32\\u0e23\\u0e01\\u0e33\\u0e2b\\u0e19\\u0e14\\u0e2b\\u0e21\\u0e32\\u0e22\\u0e40\\u0e25"
+        "\\u0e02\\u0e43\\u0e2b\\u0e49\\u0e2a\\u0e33\\u0e2b\\u0e23\\u0e31\\u0e1a\\u0e41\\u0e15\\u0e48\\u0e25\\u0e30\\u0e15"
+        "\\u0e31\\u0e27. \\u0e01\\u0e48\\u0e2d\\u0e19\\u0e2b\\u0e19\\u0e49\\u0e32\\u0e17\\u0e35\\u0e48\\u0e4a Unicode \\u0e08"
+        "\\u0e30\\u0e16\\u0e39\\u0e01\\u0e2a\\u0e23\\u0e49\\u0e32\\u0e07\\u0e02\\u0e36\\u0e49\\u0e19, \\u0e44\\u0e14\\u0e49"
+        "\\u0e21\\u0e35\\u0e23\\u0e30\\u0e1a\\u0e1a encoding \\u0e2d\\u0e22\\u0e39\\u0e48\\u0e2b\\u0e25\\u0e32\\u0e22\\u0e23"
+        "\\u0e49\\u0e2d\\u0e22\\u0e23\\u0e30\\u0e1a\\u0e1a\\u0e2a\\u0e33\\u0e2b\\u0e23\\u0e31\\u0e1a\\u0e01\\u0e32\\u0e23"
+        "\\u0e01\\u0e33\\u0e2b\\u0e19\\u0e14\\u0e2b\\u0e21\\u0e32\\u0e22\\u0e40\\u0e25\\u0e02\\u0e40\\u0e2b\\u0e25\\u0e48"
+        "\\u0e32\\u0e19\\u0e35\\u0e49. \\u0e44\\u0e21\\u0e48\\u0e21\\u0e35 encoding \\u0e43\\u0e14\\u0e17\\u0e35\\u0e48"
+        "\\u0e21\\u0e35\\u0e08\\u0e33\\u0e19\\u0e27\\u0e19\\u0e15\\u0e31\\u0e27\\u0e2d\\u0e31\\u0e01\\u0e02\\u0e23\\u0e30"
+        "\\u0e21\\u0e32\\u0e01\\u0e40\\u0e1e\\u0e35\\u0e22\\u0e07\\u0e1e\\u0e2d: \\u0e22\\u0e01\\u0e15\\u0e31\\u0e27\\u0e2d"
+        "\\u0e22\\u0e48\\u0e32\\u0e07\\u0e40\\u0e0a\\u0e48\\u0e19, \\u0e40\\u0e09\\u0e1e\\u0e32\\u0e30\\u0e43\\u0e19\\u0e01"
+        "\\u0e25\\u0e38\\u0e48\\u0e21\\u0e2a\\u0e2b\\u0e20\\u0e32\\u0e1e\\u0e22\\u0e38\\u0e42\\u0e23\\u0e1b\\u0e40\\u0e1e"
+        "\\u0e35\\u0e22\\u0e07\\u0e41\\u0e2b\\u0e48\\u0e07\\u0e40\\u0e14\\u0e35\\u0e22\\u0e27 \\u0e01\\u0e47\\u0e15\\u0e49"
+        "\\u0e2d\\u0e07\\u0e01\\u0e32\\u0e23\\u0e2b\\u0e25\\u0e32\\u0e22 encoding \\u0e43\\u0e19\\u0e01\\u0e32\\u0e23\\u0e04"
+        "\\u0e23\\u0e2d\\u0e1a\\u0e04\\u0e25\\u0e38\\u0e21\\u0e17\\u0e38\\u0e01\\u0e20\\u0e32\\u0e29\\u0e32\\u0e43\\u0e19"
+        "\\u0e01\\u0e25\\u0e38\\u0e48\\u0e21. \\u0e2b\\u0e23\\u0e37\\u0e2d\\u0e41\\u0e21\\u0e49\\u0e41\\u0e15\\u0e48\\u0e43"
+        "\\u0e19\\u0e20\\u0e32\\u0e29\\u0e32\\u0e40\\u0e14\\u0e35\\u0e48\\u0e22\\u0e27 \\u0e40\\u0e0a\\u0e48\\u0e19 \\u0e20"
+        "\\u0e32\\u0e29\\u0e32\\u0e2d\\u0e31\\u0e07\\u0e01\\u0e24\\u0e29 \\u0e01\\u0e47\\u0e44\\u0e21\\u0e48\\u0e21\\u0e35"
+        " encoding \\u0e43\\u0e14\\u0e17\\u0e35\\u0e48\\u0e40\\u0e1e\\u0e35\\u0e22\\u0e07\\u0e1e\\u0e2d\\u0e2a\\u0e33\\u0e2b"
+        "\\u0e23\\u0e31\\u0e1a\\u0e17\\u0e38\\u0e01\\u0e15\\u0e31\\u0e27\\u0e2d\\u0e31\\u0e01\\u0e29\\u0e23, \\u0e40\\u0e04"
+        "\\u0e23\\u0e37\\u0e48\\u0e2d\\u0e07\\u0e2b\\u0e21\\u0e32\\u0e22\\u0e27\\u0e23\\u0e23\\u0e04\\u0e15\\u0e2d\\u0e19"
+        " \\u0e41\\u0e25\\u0e30\\u0e2a\\u0e31\\u0e0d\\u0e25\\u0e31\\u0e01\\u0e29\\u0e13\\u0e4c\\u0e17\\u0e32\\u0e07\\u0e40"
+        "\\u0e17\\u0e04\\u0e19\\u0e34\\u0e04\\u0e17\\u0e35\\u0e48\\u0e43\\u0e0a\\u0e49\\u0e01\\u0e31\\u0e19\\u0e2d\\u0e22"
+        "\\u0e39\\u0e48\\u0e17\\u0e31\\u0e48\\u0e27\\u0e44\\u0e1b.";
+    
+    const char *latinText =     
+        "doy ph\\u1ee5\\u0304\\u0302n \\u1e6d\\u0304h\\u0101n l\\u00e6\\u0302w, khxmphiwtexr\\u0312 ca ke\\u012b\\u0300"
+        "ywk\\u0304\\u0125xng k\\u1ea1b re\\u1ee5\\u0304\\u0300xng k\\u0304hxng t\\u1ea1wlek\\u0304h. khxmphiwtexr"
+        "\\u0312 c\\u1ea1d k\\u0115b t\\u1ea1w x\\u1ea1ks\\u0304\\u02b9r l\\u00e6a x\\u1ea1kk\\u0304h ra x\\u1ee5\\u0304"
+        "\\u0300n\\u00ab doy k\\u0101r k\\u1ea3h\\u0304nd h\\u0304m\\u0101ylek\\u0304h h\\u0304\\u0131\\u0302 s\\u0304"
+        "\\u1ea3h\\u0304r\\u1ea1b t\\u00e6\\u0300la t\\u1ea1w. k\\u0300xn h\\u0304n\\u0302\\u0101 th\\u012b\\u0300\\u0301"
+        " Unicode ca t\\u0304h\\u016bk s\\u0304r\\u0302\\u0101ng k\\u0304h\\u1ee5\\u0302n, d\\u1ecb\\u0302 m\\u012b "
+        "rabb encoding xy\\u016b\\u0300 h\\u0304l\\u0101y r\\u0302xy rabb s\\u0304\\u1ea3h\\u0304r\\u1ea1b k\\u0101"
+        "r k\\u1ea3h\\u0304nd h\\u0304m\\u0101ylek\\u0304h h\\u0304el\\u0300\\u0101 n\\u012b\\u0302. m\\u1ecb\\u0300m"
+        "\\u012b encoding d\\u0131 th\\u012b\\u0300 m\\u012b c\\u1ea3nwn t\\u1ea1w x\\u1ea1kk\\u0304hra m\\u0101k p"
+        "he\\u012byng phx: yk t\\u1ea1wx\\u1ef3\\u0101ng ch\\u00e8n, c\\u0304heph\\u0101a n\\u0131 kl\\u00f9m s\\u0304"
+        "h\\u0304p\\u0323h\\u0101ph yurop phe\\u012byng h\\u0304\\u00e6\\u0300ng de\\u012byw k\\u0306 t\\u0302xngk\\u0101"
+        "r h\\u0304l\\u0101y encoding n\\u0131 k\\u0101r khrxbkhlum thuk p\\u0323h\\u0101s\\u0304\\u02b9\\u0101 n\\u0131"
+        " kl\\u00f9m. h\\u0304r\\u1ee5\\u0304x m\\u00e6\\u0302t\\u00e6\\u0300 n\\u0131 p\\u0323h\\u0101s\\u0304\\u02b9"
+        "\\u0101 de\\u012b\\u0300yw ch\\u00e8n p\\u0323h\\u0101s\\u0304\\u02b9\\u0101 x\\u1ea1ngkvs\\u0304\\u02b9 k\\u0306"
+        " m\\u1ecb\\u0300m\\u012b encoding d\\u0131 th\\u012b\\u0300 phe\\u012byng phx s\\u0304\\u1ea3h\\u0304r\\u1ea1"
+        "b thuk t\\u1ea1w x\\u1ea1ks\\u0304\\u02b9r, kher\\u1ee5\\u0304\\u0300xngh\\u0304m\\u0101y wrrkh txn l\\u00e6"
+        "a s\\u0304\\u1ea1\\u1ef5l\\u1ea1ks\\u0304\\u02b9\\u1e47\\u0312 th\\u0101ng thekhnikh th\\u012b\\u0300 ch\\u0131"
+        "\\u0302 k\\u1ea1n xy\\u016b\\u0300 th\\u1ea1\\u0300wp\\u1ecb.";
+    
+    
+    UnicodeString  xlitText(thaiText);
+    xlitText = xlitText.unescape();
+    tr->transliterate(xlitText);
+
+    UnicodeString expectedText(latinText);
+    expectedText = expectedText.unescape();
+    expect(*tr, xlitText, expectedText);
+    
+    delete tr;
+}
+
+
 //======================================================================
 // Support methods
 //======================================================================
@@ -4484,7 +4662,7 @@ void TransliteratorTest::expectT(const UnicodeString& id,
     UParseError pe;
     Transliterator *t = Transliterator::createInstance(id, UTRANS_FORWARD, pe, ec);
     if (U_FAILURE(ec)) {
-        errln((UnicodeString)"FAIL: Could not create " + id);
+        errln((UnicodeString)"FAIL: Could not create " + id + " -  " + u_errorName(ec));
         delete t;
         return;
     }
@@ -4495,7 +4673,7 @@ void TransliteratorTest::expectT(const UnicodeString& id,
 void TransliteratorTest::reportParseError(const UnicodeString& message,
                                           const UParseError& parseError,
                                           const UErrorCode& status) {
-    errln(message +
+    dataerrln(message +
           /*", parse error " + parseError.code +*/
           ", line " + parseError.line +
           ", offset " + parseError.offset +
@@ -4643,7 +4821,7 @@ void TransliteratorTest::expectAux(const UnicodeString& tag,
     if (pass) {
         logln(UnicodeString("(")+tag+") " + prettify(summary));
     } else {
-        errln(UnicodeString("FAIL: (")+tag+") "
+        dataerrln(UnicodeString("FAIL: (")+tag+") "
               + prettify(summary)
               + ", expected " + prettify(expectedResult));
     }

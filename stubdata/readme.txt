@@ -6,9 +6,9 @@ one. Fortunately it is supported by a script. :)
 
 Quick tour:
 
-- icudt38l/* contains the resources in unpacked
+- icudt42l/* contains the resources in unpacked
   form. It includes everything that comes with
-  a vanilla ICU 3.8 as well as a couple of
+  a vanilla ICU 4.2 as well as a couple of
   additional encodings required by Android.
   These are
   
@@ -28,9 +28,9 @@ Quick tour:
   different configuration for an ICU data file.
   Each of these configurations consists of a
   couple of files the directory structure of
-  which mimics the structure in icudt38l/*.
+  which mimics the structure in icudt42l/*.
   
-  - icudt38l.txt contains the main manifest of
+  - icudt42l.txt contains the main manifest of
     our data file. It currently includes a lot
     of character conversion tables, locale data
     for various countries as well as timezone
@@ -39,17 +39,17 @@ Quick tour:
   - Local manifest files named res_index.txt
     are residing in the following directories:
   
-    - icudt38l
-    - icudt38l/brkitr
-    - icudt38l/coll
-    - icudt38l/rbnf
+    - icudt42l
+    - icudt42l/brkitr
+    - icudt42l/coll
+    - icudt42l/rbnf
 
     These also need to be updated to reflect
     any changes to the resources we want in
     Android.
   
 - The actual data files are named using the
-  same pattern, that is, icudt38l-<foo> is
+  same pattern, that is, icudt42l-<foo> is
   the data file geenrated from cfg-<foo>. The
   files currently need to be rebuilt manually
   whenever one of the manifests changes (don't

@@ -1,6 +1,6 @@
 /***********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2007, International Business Machines Corporation
+ * Copyright (c) 1997-2009, International Business Machines Corporation
  * and others. All Rights Reserved.
  ***********************************************************************/
  
@@ -164,7 +164,7 @@ void DateFormatRoundTripTest::TestDateFormatRoundTrip()
 #if 1
     // installed locales
     for (int i=0; i < locCount; ++i) {
-        test(avail[i]);
+            test(avail[i]);
     }
 #endif
 
@@ -258,7 +258,7 @@ void DateFormatRoundTripTest::test(const Locale& loc)
                 logln("Testing dstyle" + UnicodeString(styleName((DateFormat::EStyle)dstyle)) + ", tstyle" + UnicodeString(styleName((DateFormat::EStyle)tstyle)) );
                 DateFormat *df = DateFormat::createDateTimeInstance((DateFormat::EStyle)dstyle, (DateFormat::EStyle)tstyle, loc);
                 if(df == NULL) {
-                    errln(UnicodeString("Could not DF::createDateTimeInstance ") + UnicodeString(styleName((DateFormat::EStyle)dstyle)) + ", tstyle" + UnicodeString(styleName((DateFormat::EStyle)tstyle))    + "Locale: " + loc.getDisplayName(temp));
+                    dataerrln(UnicodeString("Could not DF::createDateTimeInstance ") + UnicodeString(styleName((DateFormat::EStyle)dstyle)) + ", tstyle" + UnicodeString(styleName((DateFormat::EStyle)tstyle))    + "Locale: " + loc.getDisplayName(temp));
                 } else {
                     test(df, loc);
                     delete df;

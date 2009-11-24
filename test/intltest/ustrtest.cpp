@@ -1,15 +1,17 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2007, International Business Machines Corporation and
+ * Copyright (c) 1997-2009, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
 #include "ustrtest.h"
+#include "unicode/std_string.h"
 #include "unicode/unistr.h"
 #include "unicode/uchar.h"
 #include "unicode/ustring.h"
 #include "unicode/locid.h"
 #include "unicode/ucnv.h"
+#include "unicode/uenum.h"
 #include "cmemory.h"
 #include "charstr.h"
 
@@ -58,6 +60,8 @@ void UnicodeStringTest::runIndexedTest( int32_t index, UBool exec, const char* &
         case 15: name = "TestStringEnumeration"; if (exec) TestStringEnumeration(); break;
         case 16: name = "TestCharString"; if (exec) TestCharString(); break;
         case 17: name = "TestNameSpace"; if (exec) TestNameSpace(); break;
+        case 18: name = "TestUTF32"; if (exec) TestUTF32(); break;
+        case 19: name = "TestUTF8"; if (exec) TestUTF8(); break;
 
         default: name = ""; break; //needed to end loop
     }
@@ -225,10 +229,33 @@ UnicodeStringTest::TestBasicManipulation()
         cnv=ucnv_open("ISO-8859-1", &errorCode);
         UnicodeString v(cs, -1, cnv, errorCode);
         ucnv_close(cnv);
-        if(v!=UnicodeString("a\\xe4\\x85").unescape()) {
+        if(v!=CharsToUnicodeString("a\\xe4\\x85")) {
             errln("UnicodeString(const char *, length, cnv, errorCode) does not work with length==-1");
         }
     }
+
+#if U_CHARSET_IS_UTF8
+    {
+        // Test the hardcoded-UTF-8 UnicodeString optimizations.
+        static const uint8_t utf8[]={ 0x61, 0xC3, 0xA4, 0xC3, 0x9F, 0xE4, 0xB8, 0x80, 0 };
+        static const UChar utf16[]={ 0x61, 0xE4, 0xDF, 0x4E00 };
+        UnicodeString from8a = UnicodeString((const char *)utf8);
+        UnicodeString from8b = UnicodeString((const char *)utf8, (int32_t)sizeof(utf8)-1);
+        UnicodeString from16(FALSE, utf16, LENGTHOF(utf16));
+        if(from8a != from16 || from8b != from16) {
+            errln("UnicodeString(const char * U_CHARSET_IS_UTF8) failed");
+        }
+        char buffer[16];
+        int32_t length8=from16.extract(0, 0x7fffffff, buffer, (uint32_t)sizeof(buffer));
+        if(length8!=((int32_t)sizeof(utf8)-1) || 0!=uprv_memcmp(buffer, utf8, sizeof(utf8))) {
+            errln("UnicodeString::extract(char * U_CHARSET_IS_UTF8) failed");
+        }
+        length8=from16.extract(1, 2, buffer, (uint32_t)sizeof(buffer));
+        if(length8!=4 || buffer[length8]!=0 || 0!=uprv_memcmp(buffer, utf8+1, length8)) {
+            errln("UnicodeString::extract(substring to char * U_CHARSET_IS_UTF8) failed");
+        }
+    }
+#endif
 }
 
 void
@@ -1064,7 +1091,15 @@ UnicodeStringTest::TestMiscellaneous()
 
     test1.setTo(TRUE, u, -1);
     q=test1.getTerminatedBuffer();
-    if(q!=u || test1.length()!=4 || q[3]!=8 || q[4]!=0) {
+#ifndef U_VALGRIND
+    // The VALGRIND option always copies the buffer for getTerminatedBuffer(),
+    //    to avoid reading uninitialized memory when checking for the termination.
+    if(q!=u) {
+        errln("UnicodeString(u[-1]).getTerminatedBuffer() returns a bad buffer");
+    }
+#endif
+
+    if(test1.length()!=4 || q[3]!=8 || q[4]!=0) {
         errln("UnicodeString(u[-1]).getTerminatedBuffer() returns a bad buffer");
     }
 
@@ -1235,7 +1270,7 @@ UnicodeStringTest::TestStackAllocation()
  * Test the unescape() function.
  */
 void UnicodeStringTest::TestUnescape(void) {
-    UnicodeString IN("abc\\u4567 \\n\\r \\U00101234xyz\\x1\\x{5289}\\x1b");
+    UnicodeString IN("abc\\u4567 \\n\\r \\U00101234xyz\\x1\\x{5289}\\x1b", -1, US_INV);
     UnicodeString OUT("abc");
     OUT.append((UChar)0x4567);
     OUT.append(" ");
@@ -1649,6 +1684,46 @@ UnicodeStringTest::TestStringEnumeration() {
     if(ten.clone()!=NULL) {
         errln("StringEnumeration.clone()!=NULL");
     }
+
+    // test that uenum_openFromStringEnumeration() works
+    // Need a heap allocated string enumeration because it is adopted by the UEnumeration.
+    StringEnumeration *newTen = new TestEnumeration;
+    status=U_ZERO_ERROR;
+    UEnumeration *uten = uenum_openFromStringEnumeration(newTen, &status);
+    if (uten==NULL || U_FAILURE(status)) {
+        errln("fail at file %s, line %d, UErrorCode is %s\n", __FILE__, __LINE__, u_errorName(status));
+        return;
+    }
+    
+    // test  uenum_next()
+    for(i=0; i<LENGTHOF(testEnumStrings); ++i) {
+        status=U_ZERO_ERROR;
+        pc=uenum_next(uten, &length, &status);
+        if(U_FAILURE(status) || pc==NULL || strcmp(pc, testEnumStrings[i]) != 0) {
+            errln("File %s, line %d, StringEnumeration.next(%d) failed", __FILE__, __LINE__, i);
+        }
+    }
+    status=U_ZERO_ERROR;
+    if(uenum_next(uten, &length, &status)!=NULL) {
+        errln("File %s, line %d, uenum_next(done)!=NULL");
+    }
+
+    // test the uenum_unext()
+    uenum_reset(uten, &status);
+    for(i=0; i<LENGTHOF(testEnumStrings); ++i) {
+        status=U_ZERO_ERROR;
+        pu=uenum_unext(uten, &length, &status);
+        s=UnicodeString(testEnumStrings[i], "");
+        if(U_FAILURE(status) || pu==NULL || length!=s.length() || UnicodeString(TRUE, pu, length)!=s) {
+            errln("File %s, Line %d, uenum_unext(%d) failed", __FILE__, __LINE__, i);
+        }
+    }
+    status=U_ZERO_ERROR;
+    if(uenum_unext(uten, &length, &status)!=NULL) {
+        errln("File %s, Line %d, uenum_unext(done)!=NULL" __FILE__, __LINE__);
+    }
+
+    uenum_close(uten);
 }
 
 void
@@ -1698,6 +1773,111 @@ UnicodeStringTest::TestNameSpace() {
     icu::UnicodeString s4=s1+s2+s3;
     if(s4.length()!=9) {
         errln("Something wrong with UnicodeString::operator+().");
+    }
+#endif
+}
+
+void
+UnicodeStringTest::TestUTF32() {
+    // Input string length US_STACKBUF_SIZE to cause overflow of the
+    // initially chosen fStackBuffer due to supplementary characters.
+    static const UChar32 utf32[] = {
+        0x41, 0xd900, 0x61, 0xdc00, -1, 0x110000, 0x5a, 0x50000, 0x7a,
+        0x10000, 0x20000, 0xe0000, 0x10ffff
+    };
+    static const UChar expected_utf16[] = {
+        0x41, 0xfffd, 0x61, 0xfffd, 0xfffd, 0xfffd, 0x5a, 0xd900, 0xdc00, 0x7a,
+        0xd800, 0xdc00, 0xd840, 0xdc00, 0xdb40, 0xdc00, 0xdbff, 0xdfff
+    };
+    UnicodeString from32 = UnicodeString::fromUTF32(utf32, LENGTHOF(utf32));
+    UnicodeString expected(FALSE, expected_utf16, LENGTHOF(expected_utf16));
+    if(from32 != expected) {
+        errln("UnicodeString::fromUTF32() did not create the expected string.");
+    }
+
+    static const UChar utf16[] = {
+        0x41, 0xd900, 0x61, 0xdc00, 0x5a, 0xd900, 0xdc00, 0x7a, 0xd800, 0xdc00, 0xdbff, 0xdfff
+    };
+    static const UChar32 expected_utf32[] = {
+        0x41, 0xfffd, 0x61, 0xfffd, 0x5a, 0x50000, 0x7a, 0x10000, 0x10ffff
+    };
+    UChar32 result32[16];
+    UErrorCode errorCode = U_ZERO_ERROR;
+    int32_t length32 =
+        UnicodeString(FALSE, utf16, LENGTHOF(utf16)).
+        toUTF32(result32, LENGTHOF(result32), errorCode);
+    if( length32 != LENGTHOF(expected_utf32) ||
+        0 != uprv_memcmp(result32, expected_utf32, length32*4) ||
+        result32[length32] != 0
+    ) {
+        errln("UnicodeString::toUTF32() did not create the expected string.");
+    }
+}
+
+void
+UnicodeStringTest::TestUTF8() {
+    static const uint8_t utf8[] = {
+        // Code points:
+        // 0x41, 0xd900,
+        // 0x61, 0xdc00,
+        // 0x110000, 0x5a,
+        // 0x50000, 0x7a,
+        // 0x10000, 0x20000,
+        // 0xe0000, 0x10ffff
+        0x41, 0xed, 0xa4, 0x80,
+        0x61, 0xed, 0xb0, 0x80,
+        0xf4, 0x90, 0x80, 0x80, 0x5a,
+        0xf1, 0x90, 0x80, 0x80, 0x7a,
+        0xf0, 0x90, 0x80, 0x80, 0xf0, 0xa0, 0x80, 0x80,
+        0xf3, 0xa0, 0x80, 0x80, 0xf4, 0x8f, 0xbf, 0xbf
+    };
+    static const UChar expected_utf16[] = {
+        0x41, 0xfffd,
+        0x61, 0xfffd,
+        0xfffd, 0x5a,
+        0xd900, 0xdc00, 0x7a,
+        0xd800, 0xdc00, 0xd840, 0xdc00,
+        0xdb40, 0xdc00, 0xdbff, 0xdfff
+    };
+    UnicodeString from8 = UnicodeString::fromUTF8(StringPiece((const char *)utf8, (int32_t)sizeof(utf8)));
+    UnicodeString expected(FALSE, expected_utf16, LENGTHOF(expected_utf16));
+
+    if(from8 != expected) {
+        errln("UnicodeString::fromUTF8(StringPiece) did not create the expected string.");
+    }
+#if U_HAVE_STD_STRING
+    U_STD_NSQ string utf8_string((const char *)utf8, sizeof(utf8));
+    UnicodeString from8b = UnicodeString::fromUTF8(utf8_string);
+    if(from8b != expected) {
+        errln("UnicodeString::fromUTF8(std::string) did not create the expected string.");
+    }
+#endif
+
+    static const UChar utf16[] = {
+        0x41, 0xd900, 0x61, 0xdc00, 0x5a, 0xd900, 0xdc00, 0x7a, 0xd800, 0xdc00, 0xdbff, 0xdfff
+    };
+    static const uint8_t expected_utf8[] = {
+        0x41, 0xef, 0xbf, 0xbd, 0x61, 0xef, 0xbf, 0xbd, 0x5a, 0xf1, 0x90, 0x80, 0x80, 0x7a,
+        0xf0, 0x90, 0x80, 0x80, 0xf4, 0x8f, 0xbf, 0xbf
+    };
+    UnicodeString us(FALSE, utf16, LENGTHOF(utf16));
+
+    char buffer[64];
+    CheckedArrayByteSink sink(buffer, (int32_t)sizeof(buffer));
+    us.toUTF8(sink);
+    if( sink.NumberOfBytesWritten() != (int32_t)sizeof(expected_utf8) ||
+        0 != uprv_memcmp(buffer, expected_utf8, sizeof(expected_utf8))
+    ) {
+        errln("UnicodeString::toUTF8() did not create the expected string.");
+    }
+#if U_HAVE_STD_STRING
+    // Initial contents for testing that toUTF8String() appends.
+    U_STD_NSQ string result8 = "-->";
+    U_STD_NSQ string expected8 = "-->" + U_STD_NSQ string((const char *)expected_utf8, sizeof(expected_utf8));
+    // Use the return value just for testing.
+    U_STD_NSQ string &result8r = us.toUTF8String(result8);
+    if(result8r != expected8 || &result8r != &result8) {
+        errln("UnicodeString::toUTF8String() did not create the expected string.");
     }
 #endif
 }

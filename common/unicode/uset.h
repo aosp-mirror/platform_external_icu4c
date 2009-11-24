@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2002-2007, International Business Machines
+*   Copyright (C) 2002-2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -97,8 +97,6 @@ enum {
     USET_SERIALIZED_STATIC_ARRAY_CAPACITY=8
 };
 
-#ifndef U_HIDE_DRAFT_API
-
 /**
  * Argument values for whether span() and similar functions continue while
  * the current character is contained vs. not contained in the set.
@@ -152,7 +150,7 @@ enum {
  * (strings with unpaired surrogates which cannot be converted to UTF-8)
  * are ignored.
  *
- * @draft ICU 3.8
+ * @stable ICU 3.8
  */
 typedef enum USetSpanCondition {
     /**
@@ -164,7 +162,7 @@ typedef enum USetSpanCondition {
      * it returned consists only of characters that are not in the set,
      * and none of its strings overlap with the span.
      *
-     * @draft ICU 3.8
+     * @stable ICU 3.8
      */
     USET_SPAN_NOT_CONTAINED = 0,
     /**
@@ -179,7 +177,7 @@ typedef enum USetSpanCondition {
      * (There must be a single, non-overlapping concatenation of characters or strings.)
      * This is equivalent to a POSIX regular expression for (OR of each set element)*.
      *
-     * @draft ICU 3.8
+     * @stable ICU 3.8
      */
     USET_SPAN_CONTAINED = 1,
     /**
@@ -198,17 +196,15 @@ typedef enum USetSpanCondition {
      * Use this span condition together with other longest-match algorithms,
      * such as ICU converters (ucnv_getUnicodeSet()).
      *
-     * @draft ICU 3.8
+     * @stable ICU 3.8
      */
     USET_SPAN_SIMPLE = 2,
     /**
      * One more than the last span condition.
-     * @draft ICU 3.8
+     * @stable ICU 3.8
      */
     USET_SPAN_CONDITION_COUNT
 } USetSpanCondition;
-
-#endif /* U_HIDE_DRAFT_API */
 
 /**
  * A serialized form of a Unicode set.  Limited manipulations are
@@ -243,8 +239,19 @@ typedef struct USerializedSet {
  *********************************************************************/
 
 /**
+ * Create an empty USet object.
+ * Equivalent to uset_open(1, 0).
+ * @return a newly created USet.  The caller must call uset_close() on
+ * it when done.
+ * @draft ICU 4.2
+ */
+U_DRAFT USet* U_EXPORT2
+uset_openEmpty();
+
+/**
  * Creates a USet object that contains the range of characters
- * start..end, inclusive.
+ * start..end, inclusive.  If <code>start > end</code> 
+ * then an empty set is created (same as using uset_openEmpty()).
  * @param start first character of the range, inclusive
  * @param end last character of the range, inclusive
  * @return a newly created USet.  The caller must call uset_close() on
@@ -299,7 +306,7 @@ uset_close(USet* set);
  * @param set the original set
  * @return the newly allocated copy of the set
  * @see uset_cloneAsThawed
- * @draft ICU 3.8
+ * @stable ICU 3.8
  */
 U_DRAFT USet * U_EXPORT2
 uset_clone(const USet *set);
@@ -311,7 +318,7 @@ uset_clone(const USet *set);
  * @return TRUE/FALSE for whether the set has been frozen
  * @see uset_freeze
  * @see uset_cloneAsThawed
- * @draft ICU 3.8
+ * @stable ICU 3.8
  */
 U_DRAFT UBool U_EXPORT2
 uset_isFrozen(const USet *set);
@@ -328,7 +335,7 @@ uset_isFrozen(const USet *set);
  * @return the same set, now frozen
  * @see uset_isFrozen
  * @see uset_cloneAsThawed
- * @draft ICU 3.8
+ * @stable ICU 3.8
  */
 U_DRAFT void U_EXPORT2
 uset_freeze(USet *set);
@@ -341,7 +348,7 @@ uset_freeze(USet *set);
  * @see uset_freeze
  * @see uset_isFrozen
  * @see uset_clone
- * @draft ICU 3.8
+ * @stable ICU 3.8
  */
 U_DRAFT USet * U_EXPORT2
 uset_cloneAsThawed(const USet *set);
@@ -677,6 +684,44 @@ U_STABLE void U_EXPORT2
 uset_clear(USet* set);
 
 /**
+ * Close this set over the given attribute.  For the attribute
+ * USET_CASE, the result is to modify this set so that:
+ *
+ * 1. For each character or string 'a' in this set, all strings or
+ * characters 'b' such that foldCase(a) == foldCase(b) are added
+ * to this set.
+ *
+ * 2. For each string 'e' in the resulting set, if e !=
+ * foldCase(e), 'e' will be removed.
+ *
+ * Example: [aq\\u00DF{Bc}{bC}{Fi}] => [aAqQ\\u00DF\\uFB01{ss}{bc}{fi}]
+ *
+ * (Here foldCase(x) refers to the operation u_strFoldCase, and a
+ * == b denotes that the contents are the same, not pointer
+ * comparison.)
+ *
+ * A frozen set will not be modified.
+ *
+ * @param set the set
+ *
+ * @param attributes bitmask for attributes to close over.
+ * Currently only the USET_CASE bit is supported.  Any undefined bits
+ * are ignored.
+ * @draft ICU 4.2
+ */
+U_DRAFT void U_EXPORT2
+uset_closeOver(USet* set, int32_t attributes);
+
+/**
+ * Remove all strings from this set.
+ *
+ * @param set the set
+ * @draft ICU 4.2
+ */
+U_DRAFT void U_EXPORT2
+uset_removeAllStrings(USet* set);
+
+/**
  * Returns TRUE if the given USet contains no characters and no
  * strings.
  * @param set the set
@@ -739,12 +784,12 @@ uset_indexOf(const USet* set, UChar32 c);
  * out of range, return (UChar32)-1.  The inverse of this method is
  * <code>indexOf()</code>.
  * @param set the set
- * @param index an index from 0..size()-1 to obtain the char for
+ * @param charIndex an index from 0..size()-1 to obtain the char for
  * @return the character at the given index, or (UChar32)-1.
  * @stable ICU 3.2
  */
 U_STABLE UChar32 U_EXPORT2
-uset_charAt(const USet* set, int32_t index);
+uset_charAt(const USet* set, int32_t charIndex);
 
 /**
  * Returns the number of characters and strings contained in the given
@@ -854,7 +899,7 @@ uset_containsSome(const USet* set1, const USet* set2);
  * @param spanCondition specifies the containment condition
  * @return the length of the initial substring according to the spanCondition;
  *         0 if the start of the string does not fit the spanCondition
- * @draft ICU 3.8
+ * @stable ICU 3.8
  * @see USetSpanCondition
  */
 U_DRAFT int32_t U_EXPORT2
@@ -875,7 +920,7 @@ uset_span(const USet *set, const UChar *s, int32_t length, USetSpanCondition spa
  * @param spanCondition specifies the containment condition
  * @return the start of the trailing substring according to the spanCondition;
  *         the string length if the end of the string does not fit the spanCondition
- * @draft ICU 3.8
+ * @stable ICU 3.8
  * @see USetSpanCondition
  */
 U_DRAFT int32_t U_EXPORT2
@@ -897,7 +942,7 @@ uset_spanBack(const USet *set, const UChar *s, int32_t length, USetSpanCondition
  * @param spanCondition specifies the containment condition
  * @return the length of the initial substring according to the spanCondition;
  *         0 if the start of the string does not fit the spanCondition
- * @draft ICU 3.8
+ * @stable ICU 3.8
  * @see USetSpanCondition
  */
 U_DRAFT int32_t U_EXPORT2
@@ -918,7 +963,7 @@ uset_spanUTF8(const USet *set, const char *s, int32_t length, USetSpanCondition 
  * @param spanCondition specifies the containment condition
  * @return the start of the trailing substring according to the spanCondition;
  *         the string length if the end of the string does not fit the spanCondition
- * @draft ICU 3.8
+ * @stable ICU 3.8
  * @see USetSpanCondition
  */
 U_DRAFT int32_t U_EXPORT2

@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 1997-2007, International Business Machines
+*   Copyright (C) 1997-2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -16,6 +16,9 @@
 ******************************************************************************
 */
 
+#ifndef _PLATFORM_H
+#define _PLATFORM_H
+
 /**
  * \file 
  * \brief Basic types for the platform 
@@ -26,18 +29,32 @@
 #define U_LINUX
 #endif
 
-/* Define whether inttypes.h is available */
+/* BEGIN android-changed */
+/* Define Android platform */
+#ifndef U_ANDROID_OS
+#define U_ANDROID_OS
+#endif
+/* END android-changed */
+
+/**
+ * \def U_HAVE_DIRENT_H
+ * Define whether dirent.h is available */
+#ifndef U_HAVE_DIRENT_H
+#define U_HAVE_DIRENT_H 1
+#endif
+
+/** Define whether inttypes.h is available */
 #ifndef U_HAVE_INTTYPES_H
 #define U_HAVE_INTTYPES_H 1
 #endif
 
-/*
+/**
  * Define what support for C++ streams is available.
- *     If U_IOSTREAM_SOURCE is set to 199711, then <iostream> is available
+ *     If U_IOSTREAM_SOURCE is set to 199711, then &lt;iostream&gt; is available
  * (1997711 is the date the ISO/IEC C++ FDIS was published), and then
  * one should qualify streams using the std namespace in ICU header
  * files.
- *     If U_IOSTREAM_SOURCE is set to 198506, then <iostream.h> is
+ *     If U_IOSTREAM_SOURCE is set to 198506, then &lt;iostream.h&gt; is
  * available instead (198506 is the date when Stroustrup published
  * "An Extensible I/O Facility for C++" at the summer USENIX conference).
  *     If U_IOSTREAM_SOURCE is 0, then C++ streams are not available and
@@ -49,7 +66,23 @@
 #define U_IOSTREAM_SOURCE 199711
 #endif
 
-/* Determines whether specific types are available */
+/**
+ * \def U_HAVE_STD_STRING
+ * Define whether the standard C++ (STL) <string> header is available.
+ * For platforms that do not use platform.h and do not define this constant
+ * in their platform-specific headers, std_string.h defaults
+ * U_HAVE_STD_STRING to 1.
+ * @draft ICU 4.2
+ */
+#ifdef U_ANDROID_OS
+#define U_HAVE_STD_STRING 0
+#else
+#ifndef U_HAVE_STD_STRING
+#define U_HAVE_STD_STRING 1
+#endif
+#endif
+
+/** @{ Determines whether specific types are available */
 #ifndef U_HAVE_INT8_T
 #define U_HAVE_INT8_T 1
 #endif
@@ -82,8 +115,10 @@
 #define U_HAVE_UINT64_T 1
 #endif
 
+/** @} */
+
 /*===========================================================================*/
-/* Generic data types                                                        */
+/** @{ Generic data types                                                        */
 /*===========================================================================*/
 
 #include <sys/types.h>
@@ -148,8 +183,10 @@ typedef unsigned int uint32_t;
 
 #endif
 
+/** @} */
+
 /*===========================================================================*/
-/* Compiler and environment features                                         */
+/** @{ Compiler and environment features                                         */
 /*===========================================================================*/
 
 /* Define whether namespace is supported */
@@ -212,16 +249,20 @@ typedef unsigned int uint32_t;
 #define U_LIB_SUFFIX_C_NAME 
 #define U_LIB_SUFFIX_C_NAME_STRING ""
 
+/** @} */
+
 /*===========================================================================*/
-/* Character data types                                                      */
+/** @{ Character data types                                                      */
 /*===========================================================================*/
 
 #if ((defined(OS390) && (!defined(__CHARSET_LIB) || !__CHARSET_LIB))) || defined(OS400)
 #   define U_CHARSET_FAMILY 1
 #endif
 
+/** @} */
+
 /*===========================================================================*/
-/* Information about wchar support                                           */
+/** @{ Information about wchar support                                           */
 /*===========================================================================*/
 
 #ifdef ARM_FLAG
@@ -229,14 +270,27 @@ typedef unsigned int uint32_t;
 #define U_SIZEOF_WCHAR_T    1
 
 #define U_HAVE_WCSCPY       0
-#else
-#define U_HAVE_WCHAR_H      1
-#define U_SIZEOF_WCHAR_T    4
 
+#else
+
+#ifndef U_HAVE_WCHAR_H
+#define U_HAVE_WCHAR_H      1
+#endif
+
+#ifndef U_SIZEOF_WCHAR_T
+#define U_SIZEOF_WCHAR_T    4
+#endif
+
+#ifndef U_HAVE_WCSCPY
 #define U_HAVE_WCSCPY       1
 #endif
 
+#endif
+
+/** @} */
+
 /**
+ * @{
  * \def U_DECLARE_UTF16
  * Do not use this macro. Use the UNICODE_STRING or U_STRING_DECL macros
  * instead.
@@ -257,15 +311,23 @@ typedef unsigned int uint32_t;
 #endif
 #endif
 
-/*===========================================================================*/
-/* Information about POSIX support                                           */
-/*===========================================================================*/
+/** @} */
 
+/*===========================================================================*/
+/** @{ Information about POSIX support                                           */
+/*===========================================================================*/
 #ifndef ARM_FLAG
 #define U_HAVE_NL_LANGINFO          1
+
+#ifndef U_HAVE_NL_LANGINFO_CODESET
 #define U_HAVE_NL_LANGINFO_CODESET  1
 #endif
+
+#endif
+
+#ifndef U_NL_LANGINFO_CODESET
 #define U_NL_LANGINFO_CODESET       CODESET
+#endif
 
 #ifndef ARM_FLAG
 #if 1
@@ -282,12 +344,17 @@ typedef unsigned int uint32_t;
 #define U_HAVE_MMAP     1
 #define U_HAVE_POPEN    1
 
+/** @} */
+
 /*===========================================================================*/
-/* Symbol import-export control                                              */
+/** @{ Symbol import-export control                                              */
 /*===========================================================================*/
 
 #if 1
 #define U_EXPORT __attribute__((visibility("default")))
+#elif (defined(__SUNPRO_CC) && __SUNPRO_CC >= 0x550) \
+   || (defined(__SUNPRO_C) && __SUNPRO_C >= 0x550) 
+#define U_EXPORT __global
 /*#elif defined(__HP_aCC) || defined(__HP_cc)
 #define U_EXPORT __declspec(dllexport)*/
 #else
@@ -304,8 +371,10 @@ typedef unsigned int uint32_t;
 #define U_IMPORT 
 #endif
 
+/* @} */
+
 /*===========================================================================*/
-/* Code alignment and C function inlining                                    */
+/** @{ Code alignment and C function inlining                                    */
 /*===========================================================================*/
 
 #ifndef U_INLINE
@@ -316,10 +385,23 @@ typedef unsigned int uint32_t;
 #   endif
 #endif
 
+#ifndef U_ALIGN_CODE
 #define U_ALIGN_CODE(n) 
+#endif
+
+/** @} */
 
 /*===========================================================================*/
-/* Programs used by ICU code                                                 */
+/** @{ Programs used by ICU code                                                 */
 /*===========================================================================*/
 
+/**
+ * \def U_MAKE
+ * What program to execute to run 'make'
+ */
+#ifndef U_MAKE
 #define U_MAKE  "make"
+#endif
+
+/** @} */
+#endif

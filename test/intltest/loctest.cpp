@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1997-2007, International Business Machines Corporation and
+ * Copyright (c) 1997-2009, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -13,6 +13,8 @@
 #include "unicode/coll.h"
 #include "cstring.h"
 #include <stdio.h>
+#include "putilimp.h"
+#include "unicode/ustring.h"
 
 static const char* const rawData[33][8] = {
 
@@ -49,26 +51,26 @@ static const char* const rawData[33][8] = {
         // display langage (French)
         {   "anglais",  "fran\\u00E7ais",   "catalan", "grec",    "norv\\u00E9gien",    "italien", "xx", "chinois" },
         // display script (French)
-        {   "",     "",     "",     "",     "",     "",     "",   "id\\u00E9ogrammes han (variante simplifi\\u00E9e)" },
+        {   "",     "",     "",     "",     "",     "",     "",   "id\\u00E9ogrammes han simplifi\\u00E9s" },
         // display country (French)
         {   "\\u00C9tats-Unis",    "France",   "Espagne",  "Gr\\u00E8ce",   "Norv\\u00E8ge", "", "YY", "Chine" },
         // display variant (French)
         {   "",     "",     "",     "",     "NY",     "",     "",   "" },
         // display name (French)
         //{   "anglais (Etats-Unis)", "francais (France)", "catalan (Espagne)", "grec (Grece)", "norvegien (Norvege,Nynorsk)", "italien", "xx (YY)" },
-        {   "anglais (\\u00C9tats-Unis)", "fran\\u00E7ais (France)", "catalan (Espagne)", "grec (Gr\\u00E8ce)", "norv\\u00E9gien (Norv\\u00E8ge, NY)", "italien", "xx (YY)", "chinois (id\\u00E9ogrammes han (variante simplifi\\u00E9e), Chine)" }, // STILL not right
+        {   "anglais (\\u00C9tats-Unis)", "fran\\u00E7ais (France)", "catalan (Espagne)", "grec (Gr\\u00E8ce)", "norv\\u00E9gien (Norv\\u00E8ge, NY)", "italien", "xx (YY)", "chinois (id\\u00E9ogrammes han simplifi\\u00E9s, Chine)" }, // STILL not right
 
 
         /* display language (Catalan) */
-        {   "angl\\u00E8s", "franc\\u00E8s", "catal\\u00E0", "grec",  "noruec", "itali\\u00E0", "", "xin\\u00E9s" },
+        {   "angl\\u00E8s", "franc\\u00E8s", "catal\\u00E0", "grec",  "noruec", "itali\\u00E0", "", "xin\\u00E8s" },
         /* display script (Catalan) */
-        {   "", "", "",                    "", "", "", "", "Hans" },
+        {   "", "", "",                    "", "", "", "", "xin\\u00E8s simplificat" },
         /* display country (Catalan) */
         {   "Estats Units", "Fran\\u00E7a", "Espanya",  "Gr\\u00E8cia", "Noruega", "", "", "Xina" },
         /* display variant (Catalan) */
         {   "", "", "",                    "", "NY", "", "" },
         /* display name (Catalan) */
-        {   "angl\\u00E8s (Estats Units)", "franc\\u00E8s (Fran\\u00E7a)", "catal\\u00E0 (Espanya)", "grec (Gr\\u00E8cia)", "noruec (Noruega, NY)", "itali\\u00E0", "", "xin\\u00E9s (Hans, Xina)" },
+        {   "angl\\u00E8s (Estats Units)", "franc\\u00E8s (Fran\\u00E7a)", "catal\\u00E0 (Espanya)", "grec (Gr\\u00E8cia)", "noruec (Noruega, NY)", "itali\\u00E0", "", "xin\\u00E8s (xin\\u00E8s simplificat, Xina)" },
 
         // display langage (Greek)[actual values listed below]
         {   "\\u0391\\u03b3\\u03b3\\u03bb\\u03b9\\u03ba\\u03ac",
@@ -81,9 +83,9 @@ static const char* const rawData[33][8] = {
             "\\u039A\\u03B9\\u03BD\\u03B5\\u03B6\\u03B9\\u03BA\\u03AC"
         },
         // display script (Greek)
-        {   "", "", "", "", "", "", "", "\\u039a\\u03b9\\u03bd\\u03b5\\u03b6\\u03b9\\u03ba\\u03cc \\u0391\\u03c0\\u03bb\\u03bf\\u03c0\\u03bf\\u03b9\\u03b7\\u03bc\\u03ad\\u03bd\\u03bf" },
+        {   "", "", "", "", "", "", "", "\\u0391\\u03c0\\u03bb\\u03bf\\u03c0\\u03bf\\u03b9\\u03b7\\u03bc\\u03ad\\u03bd\\u03bf \\u039a\\u03b9\\u03bd\\u03b5\\u03b6\\u03b9\\u03ba\\u03cc" },
         // display country (Greek)[actual values listed below]
-        {   "\\u0397\\u03BD\\u03C9\\u03BC\\u03AD\\u03BD\\u03B5\\u03C2 \\u03A0\\u03BF\\u03BB\\u03B9\\u03C4\\u03B5\\u03AF\\u03B5\\u03C2",
+        {   "\\u0397\\u03BD\\u03C9\\u03BC\\u03AD\\u03BD\\u03B5\\u03C2 \\u03A0\\u03BF\\u03BB\\u03B9\\u03C4\\u03B5\\u03AF\\u03B5\\u03C2 \\u03C4\\u03B7\\u03C2 \\u0391\\u03BC\\u03B5\\u03C1\\u03B9\\u03BA\\u03AE\\u03C2",
             "\\u0393\\u03b1\\u03bb\\u03bb\\u03af\\u03b1",
             "\\u0399\\u03c3\\u03c0\\u03b1\\u03bd\\u03af\\u03b1",
             "\\u0395\\u03bb\\u03bb\\u03ac\\u03b4\\u03b1",
@@ -95,14 +97,14 @@ static const char* const rawData[33][8] = {
         // display variant (Greek)
         {   "", "", "", "", "NY", "", "" },
         // display name (Greek)[actual values listed below]
-        {   "\\u0391\\u03b3\\u03b3\\u03bb\\u03b9\\u03ba\\u03ac (\\u0397\\u03BD\\u03C9\\u03BC\\u03AD\\u03BD\\u03B5\\u03C2 \\u03A0\\u03BF\\u03BB\\u03B9\\u03C4\\u03B5\\u03AF\\u03B5\\u03C2)",
+        {   "\\u0391\\u03b3\\u03b3\\u03bb\\u03b9\\u03ba\\u03ac (\\u0397\\u03BD\\u03C9\\u03BC\\u03AD\\u03BD\\u03B5\\u03C2 \\u03A0\\u03BF\\u03BB\\u03B9\\u03C4\\u03B5\\u03AF\\u03B5\\u03C2 \\u03C4\\u03B7\\u03C2 \\u0391\\u03BC\\u03B5\\u03C1\\u03B9\\u03BA\\u03AE\\u03C2)",
             "\\u0393\\u03b1\\u03bb\\u03bb\\u03b9\\u03ba\\u03ac (\\u0393\\u03b1\\u03bb\\u03bb\\u03af\\u03b1)",
             "\\u039a\\u03b1\\u03c4\\u03b1\\u03bb\\u03b1\\u03bd\\u03b9\\u03ba\\u03ac (\\u0399\\u03c3\\u03c0\\u03b1\\u03bd\\u03af\\u03b1)",
             "\\u0395\\u03bb\\u03bb\\u03b7\\u03bd\\u03b9\\u03ba\\u03ac (\\u0395\\u03bb\\u03bb\\u03ac\\u03b4\\u03b1)",
             "\\u039d\\u03bf\\u03c1\\u03b2\\u03b7\\u03b3\\u03b9\\u03ba\\u03ac (\\u039d\\u03bf\\u03c1\\u03b2\\u03b7\\u03b3\\u03af\\u03b1, NY)",
             "\\u0399\\u03c4\\u03b1\\u03bb\\u03b9\\u03ba\\u03ac",
             "",
-            "\\u039A\\u03B9\\u03BD\\u03B5\\u03B6\\u03B9\\u03BA\\u03AC (\\u039a\\u03b9\\u03bd\\u03b5\\u03b6\\u03b9\\u03ba\\u03cc \\u0391\\u03c0\\u03bb\\u03bf\\u03c0\\u03bf\\u03b9\\u03b7\\u03bc\\u03ad\\u03bd\\u03bf, \\u039A\\u03AF\\u03BD\\u03B1)"
+            "\\u039A\\u03B9\\u03BD\\u03B5\\u03B6\\u03B9\\u03BA\\u03AC (\\u0391\\u03c0\\u03bb\\u03bf\\u03c0\\u03bf\\u03b9\\u03b7\\u03bc\\u03ad\\u03bd\\u03bf \\u039a\\u03b9\\u03bd\\u03b5\\u03b6\\u03b9\\u03ba\\u03cc, \\u039A\\u03AF\\u03BD\\u03B1)"
         },
 
         // display langage (<root>)
@@ -214,6 +216,7 @@ void LocaleTest::runIndexedTest( int32_t index, UBool exec, const char* &name, c
         TESTCASE(27, TestGetLocale);
         TESTCASE(28, TestVariantWithOutCountry);
         TESTCASE(29, TestCanonicalization);
+        TESTCASE(30, TestCurrencyByDate);
 
         // keep the last index in sync with the condition in default:
 
@@ -478,7 +481,7 @@ LocaleTest::TestDisplayNames()
         Locale().getDisplayLanguage(Locale(), s);
         if(s.length()<=3 && s.charAt(0)<=0x7f) {
             /* check <=3 to reject getting the language code as a display name */
-            errln("unable to get a display string for the language of the default locale\n");
+            dataerrln("unable to get a display string for the language of the default locale.\n");
         }
 
         /*
@@ -489,7 +492,7 @@ LocaleTest::TestDisplayNames()
         s.remove();
         Locale().getDisplayLanguage(s);
         if(s.length()<=3 && s.charAt(0)<=0x7f) {
-            errln("unable to get a display string for the language of the default locale [2]\n");
+            dataerrln("unable to get a display string for the language of the default locale [2].\n");
         }
     }
     else {
@@ -670,7 +673,7 @@ void LocaleTest::TestGetAvailableLocales()
     const Locale* locList = Locale::getAvailableLocales(locCount);
 
     if (locCount == 0)
-        errln("getAvailableLocales() returned an empty list!");
+        dataerrln("getAvailableLocales() returned an empty list!");
     else {
         logln(UnicodeString("Number of locales returned = ") + locCount);
         UnicodeString temp;
@@ -773,15 +776,15 @@ void LocaleTest::doTestDisplayNames(Locale& displayLocale, int32_t compareIndex)
             expectedName = dataTable[DNAME_EN][i];
 
         if (testLang != expectedLang)
-            errln("Display language (" + UnicodeString(displayLocale.getName()) + ") of (" + UnicodeString(testLocale.getName()) + ") got " + testLang + " expected " + expectedLang);
+            dataerrln("Display language (" + UnicodeString(displayLocale.getName()) + ") of (" + UnicodeString(testLocale.getName()) + ") got " + testLang + " expected " + expectedLang);
         if (testScript != expectedScript)
-            errln("Display script (" + UnicodeString(displayLocale.getName()) + ") of (" + UnicodeString(testLocale.getName()) + ") got " + testScript + " expected " + expectedScript);
+            dataerrln("Display script (" + UnicodeString(displayLocale.getName()) + ") of (" + UnicodeString(testLocale.getName()) + ") got " + testScript + " expected " + expectedScript);
         if (testCtry != expectedCtry)
-            errln("Display country (" + UnicodeString(displayLocale.getName()) + ") of (" + UnicodeString(testLocale.getName()) + ") got " + testCtry + " expected " + expectedCtry);
+            dataerrln("Display country (" + UnicodeString(displayLocale.getName()) + ") of (" + UnicodeString(testLocale.getName()) + ") got " + testCtry + " expected " + expectedCtry);
         if (testVar != expectedVar)
-            errln("Display variant (" + UnicodeString(displayLocale.getName()) + ") of (" + UnicodeString(testLocale.getName()) + ") got " + testVar + " expected " + expectedVar);
+            dataerrln("Display variant (" + UnicodeString(displayLocale.getName()) + ") of (" + UnicodeString(testLocale.getName()) + ") got " + testVar + " expected " + expectedVar);
         if (testName != expectedName)
-            errln("Display name (" + UnicodeString(displayLocale.getName()) + ") of (" + UnicodeString(testLocale.getName()) + ") got " + testName + " expected " + expectedName);
+            dataerrln("Display name (" + UnicodeString(displayLocale.getName()) + ") of (" + UnicodeString(testLocale.getName()) + ") got " + testName + " expected " + expectedName);
     }
 }
 
@@ -857,8 +860,8 @@ LocaleTest::TestGetLangsAndCountries()
       ;
 
     /* TODO: Change this test to be more like the cloctst version? */
-    if (testCount != 489)
-        errln("Expected getISOLanguages() to return 489 languages; it returned %d", testCount);
+    if (testCount != 491)
+        errln("Expected getISOLanguages() to return 491 languages; it returned %d", testCount);
     else {
         for (i = 0; i < 15; i++) {
             int32_t j;
@@ -936,7 +939,7 @@ LocaleTest::TestSimpleDisplayNames()
         Locale l(languageCodes[i], "", "");
         l.getDisplayLanguage(Locale::getUS(), test);
         if (test != languageNames[i])
-            errln("Got wrong display name for " + UnicodeString(languageCodes[i]) + ": Expected \"" +
+            dataerrln("Got wrong display name for " + UnicodeString(languageCodes[i]) + ": Expected \"" +
                   languageNames[i] + "\", got \"" + test + "\".");
     }
 }
@@ -1051,7 +1054,7 @@ LocaleTest::TestAtypicalLocales()
         logln(name);
         if (name != englishDisplayNames[i])
         {
-            errln("Lookup in English failed: expected \"" + englishDisplayNames[i]
+            dataerrln("Lookup in English failed: expected \"" + englishDisplayNames[i]
                         + "\", got \"" + name + "\"");
             logln("Locale name was-> " + (name=localesToTest[i].getName()));
         }
@@ -1062,7 +1065,7 @@ LocaleTest::TestAtypicalLocales()
         localesToTest[i].getDisplayName(Locale("es", "ES"), name);
         logln(name);
         if (name != spanishDisplayNames[i])
-            errln("Lookup in Spanish failed: expected \"" + spanishDisplayNames[i]
+            dataerrln("Lookup in Spanish failed: expected \"" + spanishDisplayNames[i]
                         + "\", got \"" + name + "\"");
     }
 
@@ -1071,7 +1074,7 @@ LocaleTest::TestAtypicalLocales()
         localesToTest[i].getDisplayName(Locale::getFrance(), name);
         logln(name);
         if (name != frenchDisplayNames[i])
-            errln("Lookup in French failed: expected \"" + frenchDisplayNames[i]
+            dataerrln("Lookup in French failed: expected \"" + frenchDisplayNames[i]
                         + "\", got \"" + name + "\"");
     }
 
@@ -1080,12 +1083,12 @@ LocaleTest::TestAtypicalLocales()
         localesToTest[i].getDisplayName(Locale("inv", "IN"), name);
         logln(name + " Locale fallback to be, and data fallback to root");
         if (name != invDisplayNames[i])
-            errln("Lookup in INV failed: expected \"" + prettify(invDisplayNames[i])
+            dataerrln("Lookup in INV failed: expected \"" + prettify(invDisplayNames[i])
                         + "\", got \"" + prettify(name) + "\"");
         localesToTest[i].getDisplayName(Locale("inv", "BD"), name);
         logln(name + " Data fallback to root");
         if (name != invDisplayNames[i])
-            errln("Lookup in INV failed: expected \"" + prettify(invDisplayNames[i])
+            dataerrln("Lookup in INV failed: expected \"" + prettify(invDisplayNames[i])
                         + "\", got \"" + prettify(name )+ "\"");
     }
     Locale::setDefault(saveLocale, status);
@@ -1109,7 +1112,7 @@ LocaleTest::TestThaiCurrencyFormat()
 
     if(U_FAILURE(status) || !thaiCurrency)
     {
-        errln("Couldn't get th_TH currency -> " + UnicodeString(u_errorName(status)));
+        dataerrln("Couldn't get th_TH currency -> " + UnicodeString(u_errorName(status)));
         return;
     }
     if (thaiCurrency->getPositivePrefix(temp) != UnicodeString(&posPrefix, 1, 1))
@@ -1204,27 +1207,27 @@ LocaleTest::TestEuroSupport()
     ucurr_forLocale("en_US", tmp, 4, &status);
     resultStr.setTo(tmp);
     if (dollarStr != resultStr) {
-        errln("Fail: en_US didn't return USD");
+        errcheckln(status, "Fail: en_US didn't return USD - %s", u_errorName(status));
     }
     ucurr_forLocale("en_US_EURO", tmp, 4, &status);
     resultStr.setTo(tmp);
     if (euroStr != resultStr) {
-        errln("Fail: en_US_EURO didn't return EUR");
+        errcheckln(status, "Fail: en_US_EURO didn't return EUR - %s", u_errorName(status));
     }
     ucurr_forLocale("en_GB_EURO", tmp, 4, &status);
     resultStr.setTo(tmp);
     if (euroStr != resultStr) {
-        errln("Fail: en_GB_EURO didn't return EUR");
+        errcheckln(status, "Fail: en_GB_EURO didn't return EUR - %s", u_errorName(status));
     }
     ucurr_forLocale("en_US_PREEURO", tmp, 4, &status);
     resultStr.setTo(tmp);
     if (dollarStr != resultStr) {
-        errln("Fail: en_US_PREEURO didn't fallback to en_US");
+        errcheckln(status, "Fail: en_US_PREEURO didn't fallback to en_US - %s", u_errorName(status));
     }
     ucurr_forLocale("en_US_Q", tmp, 4, &status);
     resultStr.setTo(tmp);
     if (dollarStr != resultStr) {
-        errln("Fail: en_US_Q didn't fallback to en_US");
+        errcheckln(status, "Fail: en_US_Q didn't fallback to en_US - %s", u_errorName(status));
     }
     int32_t invalidLen = ucurr_forLocale("en_QQ", tmp, 4, &status);
     if (invalidLen || U_SUCCESS(status)) {
@@ -1299,7 +1302,7 @@ LocaleTest::Test4139940()
     UErrorCode status = U_ZERO_ERROR;
     SimpleDateFormat df_full("EEEE", mylocale, status);
     if(U_FAILURE(status)){
-        errln(UnicodeString("Could not create SimpleDateFormat object for locale hu. Error: " )+ UnicodeString(u_errorName(status)));
+        errcheckln(status, UnicodeString("Could not create SimpleDateFormat object for locale hu. Error: " )+ UnicodeString(u_errorName(status)));
         return;
     }
     UnicodeString str;
@@ -1344,7 +1347,7 @@ LocaleTest::Test4143951()
     Calendar *cal = Calendar::createInstance(Locale("ru", "", ""), status);
     if(U_SUCCESS(status)) {
       if (cal->getFirstDayOfWeek(status) != UCAL_MONDAY) {
-          errln("Fail: First day of week in Russia should be Monday");
+          dataerrln("Fail: First day of week in Russia should be Monday");
       }
     }
     delete cal;
@@ -1429,10 +1432,10 @@ LocaleTest::Test4147552()
         Locale loc = locales[i];
         UnicodeString temp;
         if (loc.getDisplayName(temp) != englishDisplayNames[i])
-           errln("English display-name mismatch: expected " +
+           dataerrln("English display-name mismatch: expected " +
                    englishDisplayNames[i] + ", got " + loc.getDisplayName(temp));
         if (loc.getDisplayName(loc, temp) != norwegianDisplayNames[i])
-            errln("Norwegian display-name mismatch: expected " +
+            dataerrln("Norwegian display-name mismatch: expected " +
                    norwegianDisplayNames[i] + ", got " +
                    loc.getDisplayName(loc, temp));
     }
@@ -1458,9 +1461,9 @@ LocaleTest::TestVariantParsing()
 
     en_US_custom.getDisplayName(Locale::getUS(), got);
     if(got != dispName) {
-        errln("FAIL: getDisplayName()");
-        errln("Wanted: " + dispName);
-        errln("Got   : " + got);
+        dataerrln("FAIL: getDisplayName()");
+        dataerrln("Wanted: " + dispName);
+        dataerrln("Got   : " + got);
     }
 
     Locale shortVariant("fr", "FR", "foo");
@@ -1516,7 +1519,7 @@ LocaleTest::Test4105828()
     for (int32_t i = 0; i < 4; ++i) {
         NumberFormat *fmt = NumberFormat::createPercentInstance(LOC[i], status);
         if(U_FAILURE(status)) {
-            errln("Couldn't create NumberFormat");
+            dataerrln("Couldn't create NumberFormat - %s", u_errorName(status));
             return;
         }
         UnicodeString result;
@@ -1755,7 +1758,7 @@ void LocaleTest::_checklocs(const char* label,
         logln("%s; req=%s, valid=%s, actual=%s",
               label, req, valid, actual);
     } else {
-        errln("FAIL: %s; req=%s, valid=%s, actual=%s.  Require (R %s V) and (V %s A)",
+        dataerrln("FAIL: %s; req=%s, valid=%s, actual=%s.  Require (R %s V) and (V %s A)",
               label, req, valid, actual,
               expReqValid, expValidActual);
     }
@@ -1772,7 +1775,7 @@ void LocaleTest::TestGetLocale(void) {
     req = "en_US_BROOKLYN";
     Calendar* cal = Calendar::createInstance(Locale::createFromName(req), ec);
     if (U_FAILURE(ec)) {
-        errln("FAIL: Calendar::createInstance failed");
+        errln("FAIL: Calendar::createInstance failed - %s", u_errorName(ec));
     } else {
         valid = cal->getLocale(ULOC_VALID_LOCALE, ec);
         actual = cal->getLocale(ULOC_ACTUAL_LOCALE, ec);
@@ -1797,7 +1800,7 @@ void LocaleTest::TestGetLocale(void) {
     DecimalFormat* dec = (DecimalFormat*)
     NumberFormat::createInstance(Locale::createFromName(req), ec);
     if (U_FAILURE(ec)) {
-        errln("FAIL: NumberFormat::createInstance failed");
+        dataerrln("FAIL: NumberFormat::createInstance failed - %s", u_errorName(ec));
     } else {
         if (dec->getDynamicClassID() != DecimalFormat::getStaticClassID()) {
             errln("FAIL: NumberFormat::createInstance does not return a DecimalFormat");
@@ -1870,7 +1873,7 @@ void LocaleTest::TestGetLocale(void) {
     reqLoc = Locale::createFromName(req);
     BreakIterator* brk = BreakIterator::createWordInstance(reqLoc, ec);
     if (U_FAILURE(ec)) {
-        errln("FAIL: BreakIterator::createWordInstance failed");
+        dataerrln("FAIL: BreakIterator::createWordInstance failed - %s", u_errorName(ec));
     } else {
         valid = brk->getLocale(ULOC_VALID_LOCALE, ec);
         actual = brk->getLocale(ULOC_ACTUAL_LOCALE, ec);
@@ -1932,7 +1935,7 @@ void LocaleTest::TestGetLocale(void) {
     reqLoc = Locale::createFromName(req);
     Collator* coll = Collator::createInstance(reqLoc, ec);
     if (U_FAILURE(ec)) {
-        errln("FAIL: Collator::createInstance failed");
+        dataerrln("FAIL: Collator::createInstance failed - %s", u_errorName(ec));
     } else {
         valid = coll->getLocale(ULOC_VALID_LOCALE, ec);
         actual = coll->getLocale(ULOC_ACTUAL_LOCALE, ec);
@@ -2063,7 +2066,7 @@ void LocaleTest::TestCanonicalization(void)
         { "hi__DIRECT", "hi__DIRECT", "hi@collation=direct" },
         { "ja_JP_TRADITIONAL", "ja_JP_TRADITIONAL", "ja_JP@calendar=japanese" },
         { "th_TH_TRADITIONAL", "th_TH_TRADITIONAL", "th_TH@calendar=buddhist" },
-        { "zh_TW_STROKE", "zh_TW_STROKE", "zh_Hant_TW@collation=stroke" },
+        { "zh_TW_STROKE", "zh_TW_STROKE", "zh_TW@collation=stroke" },
         { "zh__PINYIN", "zh__PINYIN", "zh@collation=pinyin" },
         { "zh@collation=pinyin", "zh@collation=pinyin", "zh@collation=pinyin" },
         { "zh_CN@collation=pinyin", "zh_CN@collation=pinyin", "zh_CN@collation=pinyin" },
@@ -2079,9 +2082,9 @@ void LocaleTest::TestCanonicalization(void)
         { "en-BOONT", "BOGUS", "en__BOONT" }, /* registered name */
         { "de-1901", "de_1901", "de__1901" }, /* registered name */
         { "de-1906", "de_1906", "de__1906" }, /* registered name */
-        { "sr-SP-Cyrl", "sr_SP_CYRL", "sr_Cyrl_CS" }, /* .NET name */
-        { "sr-SP-Latn", "sr_SP_LATN", "sr_Latn_CS" }, /* .NET name */
-        { "sr_YU_CYRILLIC", "sr_YU_CYRILLIC", "sr_Cyrl_CS" }, /* Linux name */
+        { "sr-SP-Cyrl", "sr_SP_CYRL", "sr_Cyrl_RS" }, /* .NET name */
+        { "sr-SP-Latn", "sr_SP_LATN", "sr_Latn_RS" }, /* .NET name */
+        { "sr_YU_CYRILLIC", "sr_YU_CYRILLIC", "sr_Cyrl_RS" }, /* Linux name */
         { "uz-UZ-Cyrl", "uz_UZ_CYRL", "uz_Cyrl_UZ" }, /* .NET name */
         { "uz-UZ-Latn", "uz_UZ_LATN", "uz_Latn_UZ" }, /* .NET name */
         { "zh-CHS", "zh_CHS", "zh_Hans" }, /* .NET name */
@@ -2133,4 +2136,322 @@ void LocaleTest::TestCanonicalization(void)
             }
         }
     }
+}
+
+void LocaleTest::TestCurrencyByDate(void)
+{
+#if !UCONFIG_NO_FORMATTING
+    UErrorCode status = U_ZERO_ERROR;
+    UDate date = uprv_getUTCtime();
+	UChar TMP[4];
+	int32_t index = 0;
+	int32_t resLen = 0;
+    UnicodeString tempStr, resultStr;
+
+	// Cycle through historical currencies
+    date = (UDate)-630720000000.0; // pre 1961 - no currency defined
+    index = ucurr_countCurrencies("eo_AM", date, &status);
+    if (index != 0)
+	{
+		errcheckln(status, "FAIL: didn't return 0 for eo_AM - %s", u_errorName(status));
+	}
+    resLen = ucurr_forLocaleAndDate("eo_AM", date, index, TMP, 4, &status);
+    if (resLen != 0) {
+		errcheckln(status, "FAIL: eo_AM didn't return NULL - %s", u_errorName(status));
+    }
+    status = U_ZERO_ERROR;
+
+    date = (UDate)0.0; // 1970 - one currency defined
+    index = ucurr_countCurrencies("eo_AM", date, &status);
+    if (index != 1)
+	{
+		errcheckln(status, "FAIL: didn't return 1 for eo_AM - %s", u_errorName(status));
+	}
+    resLen = ucurr_forLocaleAndDate("eo_AM", date, index, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("SUR");
+    if (resultStr != tempStr) {
+        errcheckln(status, "FAIL: didn't return SUR for eo_AM - %s", u_errorName(status));
+    }
+
+    date = (UDate)693792000000.0; // 1992 - one currency defined
+	index = ucurr_countCurrencies("eo_AM", date, &status);
+    if (index != 1)
+	{
+		errcheckln(status, "FAIL: didn't return 1 for eo_AM - %s", u_errorName(status));
+	}
+    resLen = ucurr_forLocaleAndDate("eo_AM", date, index, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("RUR");
+    if (resultStr != tempStr) {
+        errcheckln(status, "FAIL: didn't return RUR for eo_AM - %s", u_errorName(status));
+    }
+
+	date = (UDate)977616000000.0; // post 1993 - one currency defined
+	index = ucurr_countCurrencies("eo_AM", date, &status);
+    if (index != 1)
+	{
+		errcheckln(status, "FAIL: didn't return 1 for eo_AM - %s", u_errorName(status));
+	}
+    resLen = ucurr_forLocaleAndDate("eo_AM", date, index, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("AMD");
+    if (resultStr != tempStr) {
+        errcheckln(status, "FAIL: didn't return AMD for eo_AM - %s", u_errorName(status));
+    }
+
+    // Locale AD has multiple currencies at once
+	date = (UDate)977616000000.0; // year 2001
+	index = ucurr_countCurrencies("eo_AD", date, &status);
+    if (index != 4)
+	{
+		errcheckln(status, "FAIL: didn't return 4 for eo_AD - %s", u_errorName(status));
+	}
+    resLen = ucurr_forLocaleAndDate("eo_AD", date, 1, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("EUR");
+    if (resultStr != tempStr) {
+        errcheckln(status, "FAIL: didn't return EUR for eo_AD - %s", u_errorName(status));
+    }
+    resLen = ucurr_forLocaleAndDate("eo_AD", date, 2, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("ESP");
+    if (resultStr != tempStr) {
+        errcheckln(status, "FAIL: didn't return ESP for eo_AD - %s", u_errorName(status));
+    }
+    resLen = ucurr_forLocaleAndDate("eo_AD", date, 3, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("FRF");
+    if (resultStr != tempStr) {
+        errcheckln(status, "FAIL: didn't return FRF for eo_AD - %s", u_errorName(status));
+    }
+    resLen = ucurr_forLocaleAndDate("eo_AD", date, 4, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("ADP");
+    if (resultStr != tempStr) {
+        errcheckln(status, "FAIL: didn't return ADP for eo_AD - %s", u_errorName(status));
+    }
+
+	date = (UDate)0.0; // year 1970
+	index = ucurr_countCurrencies("eo_AD", date, &status);
+    if (index != 3)
+	{
+		errcheckln(status, "FAIL: didn't return 3 for eo_AD - %s", u_errorName(status));
+	}
+    resLen = ucurr_forLocaleAndDate("eo_AD", date, 1, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("ESP");
+    if (resultStr != tempStr) {
+        errcheckln(status, "FAIL: didn't return ESP for eo_AD - %s", u_errorName(status));
+    }
+    resLen = ucurr_forLocaleAndDate("eo_AD", date, 2, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("FRF");
+    if (resultStr != tempStr) {
+        errcheckln(status, "FAIL: didn't return FRF for eo_AD - %s", u_errorName(status));
+    }
+    resLen = ucurr_forLocaleAndDate("eo_AD", date, 3, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("ADP");
+    if (resultStr != tempStr) {
+        errcheckln(status, "FAIL: didn't return ADP for eo_AD - %s", u_errorName(status));
+    }
+
+	date = (UDate)-630720000000.0; // year 1950
+	index = ucurr_countCurrencies("eo_AD", date, &status);
+    if (index != 2)
+	{
+		errcheckln(status, "FAIL: didn't return 2 for eo_AD - %s", u_errorName(status));
+	}
+    resLen = ucurr_forLocaleAndDate("eo_AD", date, 1, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("ESP");
+    if (resultStr != tempStr) {
+        errcheckln(status, "FAIL: didn't return ESP for eo_AD - %s", u_errorName(status));
+    }
+    resLen = ucurr_forLocaleAndDate("eo_AD", date, 2, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("ADP");
+    if (resultStr != tempStr) {
+        errcheckln(status, "FAIL: didn't return ADP for eo_AD - %s", u_errorName(status));
+    }
+
+	date = (UDate)-2207520000000.0; // year 1900
+	index = ucurr_countCurrencies("eo_AD", date, &status);
+    if (index != 1)
+	{
+		errcheckln(status, "FAIL: didn't return 1 for eo_AD - %s", u_errorName(status));
+	}
+    resLen = ucurr_forLocaleAndDate("eo_AD", date, 1, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("ESP");
+    if (resultStr != tempStr) {
+        errcheckln(status, "FAIL: didn't return ESP for eo_AD - %s", u_errorName(status));
+    }
+
+	// Locale UA has gap between years 1994 - 1996
+	date = (UDate)788400000000.0;
+	index = ucurr_countCurrencies("eo_UA", date, &status);
+    if (index != 0)
+	{
+		errcheckln(status, "FAIL: didn't return 0 for eo_UA - %s", u_errorName(status));
+	}
+    resLen = ucurr_forLocaleAndDate("eo_UA", date, index, TMP, 4, &status);
+    if (resLen != 0) {
+		errcheckln(status, "FAIL: eo_UA didn't return NULL - %s", u_errorName(status));
+    }
+    status = U_ZERO_ERROR;
+
+	// Test index bounds
+    resLen = ucurr_forLocaleAndDate("eo_UA", date, 100, TMP, 4, &status);
+    if (resLen != 0) {
+		errcheckln(status, "FAIL: eo_UA didn't return NULL - %s", u_errorName(status));
+    }
+    status = U_ZERO_ERROR;
+
+    resLen = ucurr_forLocaleAndDate("eo_UA", date, 0, TMP, 4, &status);
+    if (resLen != 0) {
+		errcheckln(status, "FAIL: eo_UA didn't return NULL - %s", u_errorName(status));
+    }
+    status = U_ZERO_ERROR;
+
+	// Test for bogus locale
+	index = ucurr_countCurrencies("eo_QQ", date, &status);
+    if (index != 0)
+	{
+		errcheckln(status, "FAIL: didn't return 0 for eo_QQ - %s", u_errorName(status));
+	}
+    status = U_ZERO_ERROR;
+    resLen = ucurr_forLocaleAndDate("eo_QQ", date, 1, TMP, 4, &status);
+    if (resLen != 0) {
+		errcheckln(status, "FAIL: eo_QQ didn't return NULL - %s", u_errorName(status));
+    }
+    status = U_ZERO_ERROR;
+    resLen = ucurr_forLocaleAndDate("eo_QQ", date, 0, TMP, 4, &status);
+    if (resLen != 0) {
+		errcheckln(status, "FAIL: eo_QQ didn't return NULL - %s", u_errorName(status));
+    }
+    status = U_ZERO_ERROR;
+
+    // Cycle through histrocial currencies
+	date = (UDate)977616000000.0; // 2001 - one currency
+	index = ucurr_countCurrencies("eo_AO", date, &status);
+    if (index != 1)
+	{
+		errcheckln(status, "FAIL: didn't return 1 for eo_AO - %s", u_errorName(status));
+	}
+    resLen = ucurr_forLocaleAndDate("eo_AO", date, 1, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("AOA");
+    if (resultStr != tempStr) {
+        errcheckln(status, "FAIL: didn't return AOA for eo_AO - %s", u_errorName(status));
+    }
+
+	date = (UDate)819936000000.0; // 1996 - 2 currencies
+	index = ucurr_countCurrencies("eo_AO", date, &status);
+    if (index != 2)
+	{
+		errcheckln(status, "FAIL: didn't return 1 for eo_AO - %s", u_errorName(status));
+	}
+    resLen = ucurr_forLocaleAndDate("eo_AO", date, 1, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("AOR");
+    if (resultStr != tempStr) {
+        errcheckln(status, "FAIL: didn't return AOR for eo_AO - %s", u_errorName(status));
+    }
+    resLen = ucurr_forLocaleAndDate("eo_AO", date, 2, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("AON");
+    if (resultStr != tempStr) {
+        errcheckln(status, "FAIL: didn't return AON for eo_AO - %s", u_errorName(status));
+    }
+
+	date = (UDate)662256000000.0; // 1991 - 2 currencies
+	index = ucurr_countCurrencies("eo_AO", date, &status);
+    if (index != 2)
+	{
+		errcheckln(status, "FAIL: didn't return 1 for eo_AO - %s", u_errorName(status));
+	}
+    resLen = ucurr_forLocaleAndDate("eo_AO", date, 1, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("AON");
+    if (resultStr != tempStr) {
+        errcheckln(status, "FAIL: didn't return AON for eo_AO - %s", u_errorName(status));
+    }
+    resLen = ucurr_forLocaleAndDate("eo_AO", date, 2, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("AOK");
+    if (resultStr != tempStr) {
+        errcheckln(status, "FAIL: didn't return AOK for eo_AO - %s", u_errorName(status));
+    }
+
+	date = (UDate)315360000000.0; // 1980 - one currency
+	index = ucurr_countCurrencies("eo_AO", date, &status);
+    if (index != 1)
+	{
+		errcheckln(status, "FAIL: didn't return 1 for eo_AO - %s", u_errorName(status));
+	}
+    resLen = ucurr_forLocaleAndDate("eo_AO", date, 1, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("AOK");
+    if (resultStr != tempStr) {
+        errcheckln(status, "FAIL: didn't return AOK for eo_AO - %s", u_errorName(status));
+    }
+
+	date = (UDate)0.0; // 1970 - no currencies
+	index = ucurr_countCurrencies("eo_AO", date, &status);
+    if (index != 0)
+	{
+		errcheckln(status, "FAIL: didn't return 1 for eo_AO - %s", u_errorName(status));
+	}
+    resLen = ucurr_forLocaleAndDate("eo_AO", date, 1, TMP, 4, &status);
+    if (resLen != 0) {
+		errcheckln(status, "FAIL: eo_AO didn't return NULL - %s", u_errorName(status));
+    }
+    status = U_ZERO_ERROR;
+
+    // Test with currency keyword override
+	date = (UDate)977616000000.0; // 2001 - two currencies
+	index = ucurr_countCurrencies("eo_DE@currency=DEM", date, &status);
+    if (index != 2)
+	{
+		errcheckln(status, "FAIL: didn't return 2 for eo_DE@currency=DEM - %s", u_errorName(status));
+	}
+    resLen = ucurr_forLocaleAndDate("eo_DE@currency=DEM", date, 1, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("EUR");
+    if (resultStr != tempStr) {
+        errcheckln(status, "FAIL: didn't return EUR for eo_DE@currency=DEM - %s", u_errorName(status));
+    }
+    resLen = ucurr_forLocaleAndDate("eo_DE@currency=DEM", date, 2, TMP, 4, &status);
+	tempStr.setTo(TMP);
+    resultStr.setTo("DEM");
+    if (resultStr != tempStr) {
+        errcheckln(status, "FAIL: didn't return DEM for eo_DE@currency=DEM - %s", u_errorName(status));
+    }
+
+    // Test Euro Support
+	status = U_ZERO_ERROR; // reset
+    date = uprv_getUTCtime();
+
+    UChar USD[4];
+    ucurr_forLocaleAndDate("en_US", date, 1, USD, 4, &status);
+    
+	UChar YEN[4];
+    ucurr_forLocaleAndDate("ja_JP", date, 1, YEN, 4, &status);
+
+    ucurr_forLocaleAndDate("en_US", date, 1, TMP, 4, &status);
+    if (u_strcmp(USD, TMP) != 0) {
+        errcheckln(status, "Fail: en_US didn't return USD - %s", u_errorName(status));
+    }
+    ucurr_forLocaleAndDate("en_US_PREEURO", date, 1, TMP, 4, &status);
+    if (u_strcmp(USD, TMP) != 0) {
+        errcheckln(status, "Fail: en_US_PREEURO didn't fallback to en_US - %s", u_errorName(status));
+    }
+    ucurr_forLocaleAndDate("en_US_Q", date, 1, TMP, 4, &status);
+    if (u_strcmp(USD, TMP) != 0) {
+        errcheckln(status, "Fail: en_US_Q didn't fallback to en_US - %s", u_errorName(status));
+    }
+    status = U_ZERO_ERROR; // reset
+#endif
 }

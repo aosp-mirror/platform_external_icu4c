@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (c) 1996-2007, International Business Machines Corporation and others.
+* Copyright (c) 1996-2009, International Business Machines Corporation and others.
 * All Rights Reserved.
 *******************************************************************************
 */
@@ -520,13 +520,13 @@ ucol_getDisplayName(    const    char        *objLoc,
  * Get a locale for which collation rules are available.
  * A UCollator in a locale returned by this function will perform the correct
  * collation for the locale.
- * @param index The index of the desired locale.
+ * @param localeIndex The index of the desired locale.
  * @return A locale for which collation rules are available, or 0 if none.
  * @see ucol_countAvailable
  * @stable ICU 2.0
  */
 U_STABLE const char* U_EXPORT2 
-ucol_getAvailable(int32_t index);
+ucol_getAvailable(int32_t localeIndex);
 
 /**
  * Determine how many locales have collation rules available.
@@ -577,6 +577,28 @@ ucol_getKeywords(UErrorCode *status);
  */
 U_STABLE UEnumeration* U_EXPORT2
 ucol_getKeywordValues(const char *keyword, UErrorCode *status);
+
+/**
+ * Given a key and a locale, returns an array of string values in a preferred
+ * order that would make a difference. These are all and only those values where
+ * the open (creation) of the service with the locale formed from the input locale
+ * plus input keyword and that value has different behavior than creation with the
+ * input locale alone.
+ * @param key           one of the keys supported by this service.  For now, only
+ *                      "collation" is supported.
+ * @param locale        the locale
+ * @param commonlyUsed  if set to true it will return only commonly used values
+ *                      with the given locale in preferred order.  Otherwise,
+ *                      it will return all the available values for the locale.
+ * @param status error status
+ * @return a string enumeration over keyword values for the given key and the locale.
+ * @draft ICU 4.2
+ */
+U_DRAFT UEnumeration* U_EXPORT2
+ucol_getKeywordValuesForLocale(const char* key,
+                               const char* locale,
+                               UBool commonlyUsed,
+                               UErrorCode* status);
 
 /**
  * Return the functionally equivalent locale for the given
@@ -678,7 +700,7 @@ ucol_normalizeShortDefinitionString(const char *source,
                                     int32_t capacity,
                                     UParseError *parseError,
                                     UErrorCode *status);
-        
+
 
 /**
  * Get a sort key for a string from a UCollator.
@@ -688,7 +710,9 @@ ucol_normalizeShortDefinitionString(const char *source,
  * @param sourceLength The length of source, or -1 if null-terminated.
  * @param result A pointer to a buffer to receive the attribute.
  * @param resultLength The maximum size of result.
- * @return The size needed to fully store the sort key..
+ * @return The size needed to fully store the sort key.
+ *      If there was an internal error generating the sort key,
+ *      a zero value is returned.
  * @see ucol_keyHashCode
  * @stable ICU 2.0
  */
@@ -1011,99 +1035,6 @@ ucol_getLocaleByType(const UCollator *coll, ULocDataLocaleType type, UErrorCode 
  */
 U_STABLE USet * U_EXPORT2
 ucol_getTailoredSet(const UCollator *coll, UErrorCode *status);
-
-#ifndef U_HIDE_INTERNAL_API
-/**
- * Returned by ucol_collatorToIdentifier to signify that collator is
- * not encodable as an identifier.
- * @internal ICU 3.0
- */
-#define UCOL_SIT_COLLATOR_NOT_ENCODABLE 0x80000000
-#endif /* U_HIDE_INTERNAL_API */
-
-/**
- * Get a 31-bit identifier given a collator. 
- * @param coll UCollator
- *  @param locale a locale that will appear as a collators locale in the resulting
- *                short string definition. If NULL, the locale will be harvested 
- *                from the collator.
- * @param status holds error messages
- * @return 31-bit identifier. MSB is used if the collator cannot be encoded. In that
- *         case UCOL_SIT_COLLATOR_NOT_ENCODABLE is returned
- * @see ucol_openFromIdentifier
- * @see ucol_identifierToShortString
- * @internal ICU 3.0
- */
-U_INTERNAL uint32_t U_EXPORT2
-ucol_collatorToIdentifier(const UCollator *coll,
-                          const char *locale,
-                          UErrorCode *status);
-
-/**
- * Open a collator given a 31-bit identifier
- * @param identifier 31-bit identifier, encoded by calling ucol_collatorToIdentifier
- * @param forceDefaults if FALSE, the settings that are the same as the collator 
- *                   default settings will not be applied (for example, setting
- *                   French secondary on a French collator would not be executed). 
- *                   If TRUE, all the settings will be applied regardless of the 
- *                   collator default value. If the definition
- *                   strings that can be produced from a collator instantiated by 
- *                   calling this API are to be cached, should be set to FALSE.
- * @param status for returning errors
- * @return UCollator object
- * @see ucol_collatorToIdentifier
- * @see ucol_identifierToShortString
- * @internal ICU 3.0
- */
-U_INTERNAL UCollator* U_EXPORT2
-ucol_openFromIdentifier(uint32_t identifier,
-                        UBool forceDefaults,
-                        UErrorCode *status);
-
-
-/**
- * Calculate the short definition string given an identifier. Supports preflighting.
- * @param identifier 31-bit identifier, encoded by calling ucol_collatorToIdentifier
- * @param buffer buffer to store the result
- * @param capacity buffer capacity
- * @param forceDefaults whether the settings that are the same as the default setting
- *                      should be forced anyway. Setting this argument to FALSE reduces
- *                      the number of different configurations, but decreases performace
- *                      as a collator has to be instantiated.
- * @param status for returning errors
- * @return length of the short definition string
- * @see ucol_collatorToIdentifier
- * @see ucol_openFromIdentifier
- * @see ucol_shortStringToIdentifier
- * @internal ICU 3.0
- */
-U_INTERNAL int32_t U_EXPORT2
-ucol_identifierToShortString(uint32_t identifier,
-                             char *buffer,
-                             int32_t capacity,
-                             UBool forceDefaults,
-                             UErrorCode *status);
-
-/**
- * Calculate the identifier given a short definition string. Supports preflighting.
- * @param definition short string definition
- * @param forceDefaults whether the settings that are the same as the default setting
- *                      should be forced anyway. Setting this argument to FALSE reduces
- *                      the number of different configurations, but decreases performace
- *                      as a collator has to be instantiated.
- * @param status for returning errors
- * @return identifier
- * @see ucol_collatorToIdentifier
- * @see ucol_openFromIdentifier
- * @see ucol_identifierToShortString
- * @internal ICU 3.0
- */
-U_INTERNAL uint32_t U_EXPORT2
-ucol_shortStringToIdentifier(const char *definition,
-                             UBool forceDefaults,
-                             UErrorCode *status);
-
-
 
 /**
  * Universal attribute getter that returns UCOL_DEFAULT if the value is default

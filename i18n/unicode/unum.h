@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 1997-2007, International Business Machines Corporation and others.
+* Copyright (C) 1997-2009, International Business Machines Corporation and others.
 * All Rights Reserved.
 * Modification History:
 *
@@ -95,9 +95,9 @@
  *    num = unum_parse(nf, str, u_strlen(str), &pos, &status);
  * \endcode
  * </pre>
- * Use UCAL_DECIMAL to get the normal number format for that country.
- * There are other static options available.  Use UCAL_CURRENCY
- * to get the currency number format for that country.  Use UCAL_PERCENT
+ * Use UNUM_DECIMAL to get the normal number format for that country.
+ * There are other static options available.  Use UNUM_CURRENCY
+ * to get the currency number format for that country.  Use UNUM_PERCENT
  * to get a format for displaying percentages. With this format, a
  * fraction from 0.53 is displayed as 53%.
  * <P>
@@ -157,6 +157,11 @@ typedef enum UNumberFormatStyle {
      * @stable ICU 3.0
      */
     UNUM_DURATION,
+    /** 
+     * Numbering system rule-based format 
+     * @draft ICU 4.2
+     */
+    UNUM_NUMBERING_SYSTEM,
     /** 
      * Rule-based format defined by pattern 
      * @stable ICU 3.0
@@ -507,13 +512,13 @@ unum_applyPattern(          UNumberFormat  *format,
 * A UNumberFormat in a locale returned by this function will perform the correct
 * formatting and parsing for the locale.  The results of this call are not
 * valid for rule-based number formats.
-* @param index The index of the desired locale.
+* @param localeIndex The index of the desired locale.
 * @return A locale for which number formatting patterns are available, or 0 if none.
 * @see unum_countAvailable
 * @stable ICU 2.0
 */
 U_STABLE const char* U_EXPORT2 
-unum_getAvailable(int32_t index);
+unum_getAvailable(int32_t localeIndex);
 
 /**
 * Determine how many locales have decimal formatting patterns available.  The

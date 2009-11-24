@@ -1,5 +1,5 @@
 #**********************************************************************
-#* Copyright (C) 1999-2007, International Business Machines Corporation
+#* Copyright (C) 1999-2009, International Business Machines Corporation
 #* and others.  All Rights Reserved.
 #**********************************************************************
 # nmake file for creating data files on win32
@@ -10,10 +10,10 @@
 
 ##############################################################################
 # Keep the following in sync with the version - see common/unicode/uversion.h
-U_ICUDATA_NAME=icudt38
+U_ICUDATA_NAME=icudt42
 ##############################################################################
 U_ICUDATA_ENDIAN_SUFFIX=l
-UNICODE_VERSION=5.0
+UNICODE_VERSION=5.1
 ICU_LIB_TARGET=$(DLL_OUTPUT)\$(U_ICUDATA_NAME).dll
 
 #  ICUMAKE
@@ -100,6 +100,11 @@ ICUUNIDATA=$(ICUP)\source\data\unidata
 ICUMISC=$(ICUP)\source\data\misc
 ICUMISC2=misc
 
+#  ICUBRK
+#       The directory that contains sprepfiles.mk files along with *.txt stringprep files
+#
+ICUSPREP=sprep
+
 #
 #  ICUDATA
 #     The source directory.  Contains the source files for the common data to be built.
@@ -112,7 +117,11 @@ ICUDATA=$(ICUP)\source\data
 #      This is the same place that all of the other ICU DLLs go (the code-containing DLLs)
 #      The lib file for the data DLL goes in $(DLL_OUTPUT)/../lib/
 #
+!IF "$(CFG)" == "x64\Release" || "$(CFG)" == "x64\Debug"
+DLL_OUTPUT=$(ICUP)\bin64
+!ELSE
 DLL_OUTPUT=$(ICUP)\bin
+!ENDIF
 
 #
 #  TESTDATA
@@ -138,7 +147,14 @@ TESTDATABLD=$(ICUP)\source\test\testdata\out\build
 ICUTOOLS=$(ICUP)\source\tools
 
 # The current ICU tools need to be in the path first.
+!IF "$(CFG)" == "x64\Release" || "$(CFG)" == "x64\Debug"
+PATH = $(ICUP)\bin64;$(PATH)
+ICUPBIN=$(ICUP)\bin64
+!ELSE
 PATH = $(ICUP)\bin;$(PATH)
+ICUPBIN=$(ICUP)\bin
+!ENDIF
+
 
 # This variable can be overridden to "-m static" by the project settings,
 # if you want a static data library.
@@ -337,9 +353,24 @@ MISC_FILES = $(MISC_SOURCE:.txt=.res)
 ALL_RES = $(ALL_RES) $(RB_FILES) $(MISC_FILES)
 !ENDIF
 
+# Read list of stringprep profile files
+!IF EXISTS("$(ICUSRCDATA)\$(ICUSPREP)\sprepfiles.mk")
+!INCLUDE "$(ICUSRCDATA)\$(ICUSPREP)\sprepfiles.mk"
+!IF EXISTS("$(ICUSRCDATA)\$(ICUSPREP)\spreplocal.mk")
+!INCLUDE "$(ICUSRCDATA)\$(ICUSPREP)\spreplocal.mk"
+SPREP_SOURCE=$(SPREP_SOURCE) $(SPREP_SOURCE_LOCAL)
+!ELSE
+!MESSAGE Information: cannot find "spreplocal.mk". Not building user-additional stringprep files.
+!ENDIF
+!ELSE
+!MESSAGE Warning: cannot find "sprepfiles.mk"
+!ENDIF
+
+SPREP_FILES = $(SPREP_SOURCE:.txt=.spp)
+
 # Common defines for both ways of building ICU's data library.
-COMMON_ICUDATA_DEPENDENCIES="$(ICUP)\bin\pkgdata.exe" "$(ICUTMP)\icudata.res" "$(ICUP)\source\stubdata\stubdatabuilt.txt"
-COMMON_ICUDATA_ARGUMENTS=-f -e $(U_ICUDATA_NAME) -v $(ICU_PACKAGE_MODE) -M"PKGDATA_LDFLAGS=/base:0x4ad00000" -c -p $(ICUPKG) -T "$(ICUTMP)" -L $(U_ICUDATA_NAME) -d "$(ICUBLD_PKG)" -s .
+COMMON_ICUDATA_DEPENDENCIES="$(ICUPBIN)\pkgdata.exe" "$(ICUTMP)\icudata.res" "$(ICUP)\source\stubdata\stubdatabuilt.txt"
+COMMON_ICUDATA_ARGUMENTS=-f -e $(U_ICUDATA_NAME) -v $(ICU_PACKAGE_MODE) -c -p $(ICUPKG) -T "$(ICUTMP)" -L $(U_ICUDATA_NAME) -d "$(ICUBLD_PKG)" -s .
 
 #############################################################################
 #
@@ -367,10 +398,10 @@ uni-core-data: GODATA "$(ICUBLD_PKG)\uprops.icu" "$(ICUBLD_PKG)\ucase.icu" "$(IC
 #
 # testdata - nmake will invoke pkgdata, which will create testdata.dat
 #
-"$(TESTDATAOUT)\testdata.dat": "$(TESTDATA)\*" "$(ICUBLD_PKG)\ucadata.icu" $(TRANSLIT_RES_FILES) $(MISC_FILES) $(RB_FILES) {"$(ICUTOOLS)\genrb\$(CFG)"}genrb.exe
+"$(TESTDATAOUT)\testdata.dat": "$(TESTDATA)\*" "$(ICUBLD_PKG)\$(ICUCOL)\ucadata.icu" $(TRANSLIT_RES_FILES) $(MISC_FILES) $(RB_FILES) {"$(ICUTOOLS)\genrb\$(CFG)"}genrb.exe
 	@cd "$(TESTDATA)"
 	@echo building testdata...
-	nmake /nologo /f "$(TESTDATA)\testdata.mak" TESTDATA=. ICUTOOLS="$(ICUTOOLS)" ICUP="$(ICUP)" CFG=$(CFG) TESTDATAOUT="$(TESTDATAOUT)" TESTDATABLD="$(TESTDATABLD)"
+	nmake /nologo /f "$(TESTDATA)\testdata.mak" TESTDATA=. ICUTOOLS="$(ICUTOOLS)" ICUPBIN="$(ICUPBIN)" ICUP="$(ICUP)" CFG=$(CFG) TESTDATAOUT="$(TESTDATAOUT)" TESTDATABLD="$(TESTDATABLD)"
 
 #invoke pkgdata for ICU common data
 #  pkgdata will drop all output files (.dat, .dll, .lib) into the target (ICUBLD_PKG) directory.
@@ -384,22 +415,22 @@ uni-core-data: GODATA "$(ICUBLD_PKG)\uprops.icu" "$(ICUBLD_PKG)\ucase.icu" "$(IC
 "$(ICU_LIB_TARGET)" : $(COMMON_ICUDATA_DEPENDENCIES) "$(ICUDATA_SOURCE_ARCHIVE)"
 	@echo Building icu data from $(ICUDATA_SOURCE_ARCHIVE)
 	cd "$(ICUBLD_PKG)"
-	"$(ICUP)\bin\icupkg" -x * --list "$(ICUDATA_SOURCE_ARCHIVE)" > "$(ICUTMP)\icudata.lst"
-	"$(ICUP)\bin\pkgdata" $(COMMON_ICUDATA_ARGUMENTS) "$(ICUTMP)\icudata.lst"
+	"$(ICUPBIN)\icupkg" -x * --list "$(ICUDATA_SOURCE_ARCHIVE)" > "$(ICUTMP)\icudata.lst"
+	"$(ICUPBIN)\pkgdata" $(COMMON_ICUDATA_ARGUMENTS) "$(ICUTMP)\icudata.lst"
 	copy "$(U_ICUDATA_NAME).dll" "$(DLL_OUTPUT)"
 	-@erase "$(U_ICUDATA_NAME).dll"
 	copy "$(ICUTMP)\$(ICUPKG).dat" "$(ICUOUT)\$(U_ICUDATA_NAME)$(U_ICUDATA_ENDIAN_SUFFIX).dat"
 	-@erase "$(ICUTMP)\$(ICUPKG).dat"
 !ELSE
-"$(ICU_LIB_TARGET)" : $(COMMON_ICUDATA_DEPENDENCIES) $(CNV_FILES) "$(ICUBLD_PKG)\unames.icu" "$(ICUBLD_PKG)\pnames.icu" "$(ICUBLD_PKG)\cnvalias.icu" "$(ICUBLD_PKG)\ucadata.icu" "$(ICUBLD_PKG)\invuca.icu" "$(ICUBLD_PKG)\uidna.spp" $(BRK_FILES) $(BRK_CTD_FILES) $(BRK_RES_FILES) $(COL_COL_FILES) $(RBNF_RES_FILES) $(TRANSLIT_RES_FILES) $(ALL_RES)
+"$(ICU_LIB_TARGET)" : $(COMMON_ICUDATA_DEPENDENCIES) $(CNV_FILES) "$(ICUBLD_PKG)\unames.icu" "$(ICUBLD_PKG)\pnames.icu" "$(ICUBLD_PKG)\cnvalias.icu" "$(ICUBLD_PKG)\$(ICUCOL)\ucadata.icu" "$(ICUBLD_PKG)\$(ICUCOL)\invuca.icu" $(BRK_FILES) $(BRK_CTD_FILES) $(BRK_RES_FILES) $(COL_COL_FILES) $(RBNF_RES_FILES) $(TRANSLIT_RES_FILES) $(ALL_RES) $(SPREP_FILES) "$(ICUBLD_PKG)\confusables.cfu"
 	@echo Building icu data
 	cd "$(ICUBLD_PKG)"
-	"$(ICUP)\bin\pkgdata" $(COMMON_ICUDATA_ARGUMENTS) <<"$(ICUTMP)\icudata.lst"
+	"$(ICUPBIN)\pkgdata" $(COMMON_ICUDATA_ARGUMENTS) <<"$(ICUTMP)\icudata.lst"
 pnames.icu
 unames.icu
-ucadata.icu
-invuca.icu
-uidna.spp
+confusables.cfu
+$(ICUCOL)\ucadata.icu
+$(ICUCOL)\invuca.icu
 cnvalias.icu
 $(CNV_FILES:.cnv =.cnv
 )
@@ -416,6 +447,8 @@ $(BRK_FILES:.brk =.brk
 $(BRK_CTD_FILES:.ctd =.ctd
 )
 $(BRK_RES_FILES:.res =.res
+)
+$(SPREP_FILES:.spp=.spp
 )
 <<KEEP
 	-@erase "$(ICU_LIB_TARGET)"
@@ -454,6 +487,7 @@ CLEAN : GODATA
 	-@erase "*.res"
 	-@erase "*.spp"
 	-@erase "*.txt"
+	-@erase "*.cfu"
 	@cd "$(ICUBLD_PKG)\$(ICUBRK)"
 	-@erase "*.brk"
 	-@erase "*.ctd"
@@ -465,7 +499,7 @@ CLEAN : GODATA
 	@cd "$(ICUBLD_PKG)\$(ICURBNF)"
 	-@erase "*.res"
 	-@erase "*.txt"
-    @cd "$(ICUBLD_PKG)\$(ICUTRNS)"
+	@cd "$(ICUBLD_PKG)\$(ICUTRNS)"
 	-@erase "*.res"
 	@cd "$(ICUOUT)"
 	-@erase "*.dat"
@@ -632,13 +666,20 @@ res_index:table(nofallback) {
 # Targets for ucadata.icu & invuca.icu
 # used to depend on "$(ICUBLD_PKG)\uprops.icu" "$(ICUBLD_PKG)\ucase.icu" "$(ICUBLD_PKG)\unorm.icu"
 # see Jitterbug 4497
-"$(ICUBLD_PKG)\invuca.icu" "$(ICUBLD_PKG)\ucadata.icu": "$(ICUUNIDATA)\FractionalUCA.txt" "$(ICUTOOLS)\genuca\$(CFG)\genuca.exe"
+"$(ICUBLD_PKG)\$(ICUCOL)\invuca.icu" "$(ICUBLD_PKG)\$(ICUCOL)\ucadata.icu": "$(ICUUNIDATA)\FractionalUCA.txt" "$(ICUTOOLS)\genuca\$(CFG)\genuca.exe"
 	@echo Creating UCA data files
-	@"$(ICUTOOLS)\genuca\$(CFG)\genuca" -d "$(ICUBLD_PKG)" -i "$(ICUBLD_PKG)" -s "$(ICUUNIDATA)"
+	@"$(ICUTOOLS)\genuca\$(CFG)\genuca" -d "$(ICUBLD_PKG)\$(ICUCOL)" -i "$(ICUBLD_PKG)" -s "$(ICUUNIDATA)"
 
-# Targets for uidna.spp
-"$(ICUBLD_PKG)\uidna.spp" : "$(ICUUNIDATA)\*.txt" "$(ICUMISC)\NamePrepProfile.txt"
-	"$(ICUTOOLS)\gensprep\$(CFG)\gensprep" -s "$(ICUMISC)" -d "$(ICUBLD_PKG)\\" -b uidna -n "$(ICUUNIDATA)" -k -u 3.2.0 NamePrepProfile.txt
+# Stringprep .spp file generation.
+{$(ICUSRCDATA_RELATIVE_PATH)\$(ICUSPREP)}.txt.spp:
+	@echo Creating $@
+	@"$(ICUTOOLS)\gensprep\$(CFG)\gensprep" -s $(<D) -d "$(ICUBLD_PKG)" -b $(@B) -m "$(ICUUNIDATA)" -u 3.2.0 $(<F)
+
+# Confusables .cfu file generation
+#     Can't use an inference rule because two .txt source files combine to produce a single .cfu output file
+"$(ICUBLD_PKG)\confusables.cfu": "$(ICUUNIDATA)\confusables.txt" "$(ICUUNIDATA)\confusablesWholeScript.txt" "$(ICUTOOLS)\gencfu\$(CFG)\gencfu.exe"
+	@echo Creating $@
+	@"$(ICUTOOLS)\gencfu\$(CFG)\gencfu" -c -r "$(ICUUNIDATA)\confusables.txt" -w "$(ICUUNIDATA)\confusablesWholeScript.txt" -o $@ -i "$(ICUBLD_PKG)"
 
 !IFDEF ICUDATA_ARCHIVE
 "$(ICUDATA_SOURCE_ARCHIVE)": CREATE_DIRS $(ICUDATA_ARCHIVE) "$(ICUTOOLS)\icupkg\$(CFG)\icupkg.exe"
@@ -653,7 +694,7 @@ $(UCM_SOURCE) : {"$(ICUTOOLS)\makeconv\$(CFG)"}makeconv.exe
 # This used to depend on "$(ICUBLD_PKG)\uprops.icu" "$(ICUBLD_PKG)\ucase.icu" "$(ICUBLD_PKG)\ubidi.icu" "$(ICUBLD_PKG)\unorm.icu"
 # This data is now hard coded as a part of the library.
 # See Jitterbug 4497 for details.
-$(MISC_SOURCE) $(RB_FILES) $(COL_COL_FILES) $(RBNF_RES_FILES) $(BRK_RES_FILES) $(TRANSLIT_RES_FILES): {"$(ICUTOOLS)\genrb\$(CFG)"}genrb.exe "$(ICUBLD_PKG)\ucadata.icu"
+$(MISC_SOURCE) $(RB_FILES) $(COL_COL_FILES) $(RBNF_RES_FILES) $(BRK_RES_FILES) $(TRANSLIT_RES_FILES): {"$(ICUTOOLS)\genrb\$(CFG)"}genrb.exe "$(ICUBLD_PKG)\$(ICUCOL)\ucadata.icu"
 
 # This used to depend on "$(ICUBLD_PKG)\uprops.icu" "$(ICUBLD_PKG)\ucase.icu" "$(ICUBLD_PKG)\ubidi.icu" "$(ICUBLD_PKG)\unorm.icu"
 # This data is now hard coded as a part of the library.

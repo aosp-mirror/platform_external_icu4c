@@ -233,6 +233,13 @@ public:
     char                            *fDigits;
     DecimalFormat::ERoundingMode    fRoundingMode;
 
+    /**
+     * Round the representation to the given number of digits.
+     * @param maximumDigits The maximum number of digits to be shown.
+     * Upon return, count will be less than or equal to maximumDigits.
+     */
+    void round(int32_t maximumDigits);
+
 private:
 
     // BEGIN android-changed
@@ -241,15 +248,9 @@ private:
 
     char        fDecimalDigitsBuffer[MAX_DEC_DIGITS + 1];
 
-    int fBufferSize;
+    int         fBufferSize;
+    int         fMaxDigits;  // Max digits can be represented.
     // END android-changed
-
-    /**
-     * Round the representation to the given number of digits.
-     * @param maximumDigits The maximum number of digits to be shown.
-     * Upon return, count will be less than or equal to maximumDigits.
-     */
-    void round(int32_t maximumDigits);
 
     UBool shouldRoundUp(int32_t maximumDigits) const;
 };
@@ -262,9 +263,10 @@ inline void
 DigitList::append(char digit)
 {
     // BEGIN android-changed
-    // Ignore digits which exceed the precision we can represent
-    if (fCount < fBufferSize)
+    // Ignore digits which exceed the precision we can represent 
+    if (fCount < fMaxDigits) {
         fDigits[fCount++] = digit;
+    }
     // END android-changed
 }
 

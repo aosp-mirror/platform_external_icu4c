@@ -1,6 +1,6 @@
 /***********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2007, International Business Machines Corporation
+ * Copyright (c) 1997-2009, International Business Machines Corporation
  * and others. All Rights Reserved.
  ***********************************************************************/
 
@@ -34,6 +34,11 @@
 // class TimeZoneTest
 // *****************************************************************************
 
+// TODO: We should probably read following data at runtime, so we can update
+// the these values every release with necessary data changes.
+const int32_t TimeZoneTest::REFERENCE_YEAR = 2009;
+const char * TimeZoneTest::REFERENCE_DATA_VERSION = "2009d";
+
 void TimeZoneTest::runIndexedTest( int32_t index, UBool exec, const char* &name, char* /*par*/ )
 {
     if (exec) logln("TestSuite TestTimeZone");
@@ -54,6 +59,8 @@ void TimeZoneTest::runIndexedTest( int32_t index, UBool exec, const char* &name,
         CASE(13, TestAliasedNames);
         CASE(14, TestFractionalDST);
         CASE(15, TestFebruary);
+        CASE(16, TestCanonicalID);
+        CASE(17, TestDisplayNamesMeta);
        default: name = ""; break;
     }
 }
@@ -124,7 +131,7 @@ TimeZoneTest::TestGenericAPI()
     UErrorCode status = U_ZERO_ERROR;
     const char* tzver = TimeZone::getTZDataVersion(status);
     if (U_FAILURE(status)) {
-        errln("FAIL: getTZDataVersion failed");
+        errcheckln(status, "FAIL: getTZDataVersion failed - %s", u_errorName(status));
     } else if (uprv_strlen(tzver) != 5 /* 4 digits + 1 letter */) {
         errln((UnicodeString)"FAIL: getTZDataVersion returned " + tzver);
     } else {
@@ -297,7 +304,7 @@ TimeZoneTest::TestPRTOffset()
       double foundOffset = tz->getRawOffset();
       int32_t foundHour = (int32_t)foundOffset / millisPerHour;
       if (expectedOffset != foundOffset) {
-        errln("FAIL: Offset for PRT should be %d, found %d", expectedHour, foundHour);
+        dataerrln("FAIL: Offset for PRT should be %d, found %d", expectedHour, foundHour);
       } else {
         logln("PASS: Offset for PRT should be %d, found %d", expectedHour, foundHour);
       }
@@ -318,17 +325,17 @@ TimeZoneTest::TestVariousAPI518()
     UDate d = date(97, UCAL_APRIL, 30);
     UnicodeString str;
     logln("The timezone is " + time_zone->getID(str));
-    if (!time_zone->inDaylightTime(d, status)) errln("FAIL: inDaylightTime returned FALSE");
+    if (!time_zone->inDaylightTime(d, status)) dataerrln("FAIL: inDaylightTime returned FALSE");
     if (U_FAILURE(status)) { errln("FAIL: TimeZone::inDaylightTime failed"); return; }
-    if (!time_zone->useDaylightTime()) errln("FAIL: useDaylightTime returned FALSE");
-    if (time_zone->getRawOffset() != - 8 * millisPerHour) errln("FAIL: getRawOffset returned wrong value");
+    if (!time_zone->useDaylightTime()) dataerrln("FAIL: useDaylightTime returned FALSE");
+    if (time_zone->getRawOffset() != - 8 * millisPerHour) dataerrln("FAIL: getRawOffset returned wrong value");
     GregorianCalendar *gc = new GregorianCalendar(status);
     if (U_FAILURE(status)) { errln("FAIL: Couldn't create GregorianCalendar"); return; }
     gc->setTime(d, status);
     if (U_FAILURE(status)) { errln("FAIL: GregorianCalendar::setTime failed"); return; }
     if (time_zone->getOffset(gc->AD, gc->get(UCAL_YEAR, status), gc->get(UCAL_MONTH, status),
         gc->get(UCAL_DATE, status), (uint8_t)gc->get(UCAL_DAY_OF_WEEK, status), 0, status) != - 7 * millisPerHour)
-        errln("FAIL: getOffset returned wrong value");
+        dataerrln("FAIL: getOffset returned wrong value");
     if (U_FAILURE(status)) { errln("FAIL: GregorianCalendar::set failed"); return; }
     delete gc;
     delete time_zone;
@@ -577,6 +584,37 @@ TimeZoneTest::TestGetAvailableIDs913()
  */
 void TimeZoneTest::TestShortZoneIDs()
 {
+    UErrorCode status = U_ZERO_ERROR;
+
+    // This test case is tzdata version sensitive.
+    UBool isNonReferenceTzdataVersion = FALSE;
+    const char *tzdataVer = TimeZone::getTZDataVersion(status);
+    if (failure(status, "getTZDataVersion")) return;
+    if (uprv_strcmp(tzdataVer, TimeZoneTest::REFERENCE_DATA_VERSION) != 0) {
+        // Note: We want to display a warning message here if
+        // REFERENCE_DATA_VERSION is out of date - so we
+        // do not forget to update the value before GA.
+        isNonReferenceTzdataVersion = TRUE;
+        logln(UnicodeString("Warning: Active tzdata version (") + tzdataVer +
+            ") does not match the reference tzdata version ("
+            + REFERENCE_DATA_VERSION + ") for this test case data.");
+    }
+
+    // Note: useDaylightTime returns true if DST is observed
+    // in the time zone in the current calendar year.  The test
+    // data is valid for the date after the reference year below.
+    // If system clock is before the year, some test cases may
+    // fail.
+    GregorianCalendar cal(*TimeZone::getGMT(), status);
+    if (failure(status, "GregorianCalendar")) return;
+    cal.set(TimeZoneTest::REFERENCE_YEAR, UCAL_JANUARY, 2); // day 2 in GMT
+
+    UBool isDateBeforeReferenceYear = ucal_getNow() < cal.getTime(status);
+    if (failure(status, "Calendar::getTime")) return;
+    if (isDateBeforeReferenceYear) {
+        logln("Warning: Past time is set to the system clock.  Some test cases may not return expected results.");
+    }
+
     int32_t i;
     // Create a small struct to hold the array
     struct
@@ -598,20 +636,18 @@ void TimeZoneTest::TestShortZoneIDs()
         {"EST", -300, FALSE}, // updated Aug 2003 aliu
         {"PRT", -240, FALSE},
         {"CNT", -210, TRUE},
-        {"AGT", -180, FALSE}, // updated 26 Sep 2000 aliu
+        {"AGT", -180, TRUE}, // updated by tzdata2007k
         {"BET", -180, TRUE},
-        // "CAT", -60, FALSE, // Wrong:
-        // As of bug 4130885, fix CAT (Central Africa)
-        {"CAT", 120, FALSE}, // Africa/Harare
         {"GMT", 0, FALSE},
         {"UTC", 0, FALSE}, // ** srl: seems broken in C++
         {"ECT", 60, TRUE},
+        {"MET", 60, TRUE}, // updated 12/3/99 aliu
         {"ART", 120, TRUE},
         {"EET", 120, TRUE},
+        {"CAT", 120, FALSE}, // Africa/Harare
         {"EAT", 180, FALSE},
-        {"MET", 60, TRUE}, // updated 12/3/99 aliu
         {"NET", 240, TRUE}, // updated 12/3/99 aliu
-        {"PLT", 300, FALSE}, // updated Aug 2003 aliu
+        {"PLT", 300, FALSE}, // updated by 2008c - no DST after 2008
         {"IST", 330, FALSE},
         {"BST", 360, FALSE},
         {"VST", 420, FALSE},
@@ -620,8 +656,6 @@ void TimeZoneTest::TestShortZoneIDs()
         {"ACT", 570, FALSE}, // updated Aug 2003 aliu
         {"AET", 600, TRUE},
         {"SST", 660, FALSE},
-        // "NST", 720, FALSE,
-        // As of bug 4130885, fix NST (New Zealand)
         {"NST", 720, TRUE}, // Pacific/Auckland
 
         // From icuzones:
@@ -644,7 +678,6 @@ void TimeZoneTest::TestShortZoneIDs()
         {"",0,FALSE}
     };
 
-
     for(i=0;kReferenceList[i].id[0];i++) {
         UnicodeString itsID(kReferenceList[i].id);
         UBool ok = TRUE;
@@ -658,19 +691,32 @@ void TimeZoneTest::TestShortZoneIDs()
         // Check daylight usage.
         UBool usesDaylight = tz->useDaylightTime();
         if (usesDaylight != kReferenceList[i].daylight) {
-            errln("FAIL: Time Zone " + itsID + " use daylight is " +
-                  (usesDaylight?"TRUE":"FALSE") +
-                  " but it should be " +
-                  ((kReferenceList[i].daylight)?"TRUE":"FALSE"));
+            if (isNonReferenceTzdataVersion || isDateBeforeReferenceYear) {
+                logln("Warning: Time Zone " + itsID + " use daylight is " +
+                      (usesDaylight?"TRUE":"FALSE") +
+                      " but it should be " +
+                      ((kReferenceList[i].daylight)?"TRUE":"FALSE"));
+            } else {
+                errln("FAIL: Time Zone " + itsID + " use daylight is " +
+                      (usesDaylight?"TRUE":"FALSE") +
+                      " but it should be " +
+                      ((kReferenceList[i].daylight)?"TRUE":"FALSE"));
+            }
             ok = FALSE;
         }
 
         // Check offset
         int32_t offsetInMinutes = tz->getRawOffset()/60000;
         if (offsetInMinutes != kReferenceList[i].offset) {
-            errln("FAIL: Time Zone " + itsID + " raw offset is " +
-                  offsetInMinutes +
-                  " but it should be " + kReferenceList[i].offset);
+            if (isNonReferenceTzdataVersion || isDateBeforeReferenceYear) {
+                logln("FAIL: Time Zone " + itsID + " raw offset is " +
+                      offsetInMinutes +
+                      " but it should be " + kReferenceList[i].offset);
+            } else {
+                errln("FAIL: Time Zone " + itsID + " raw offset is " +
+                      offsetInMinutes +
+                      " but it should be " + kReferenceList[i].offset);
+            }
             ok = FALSE;
         }
 
@@ -826,7 +872,7 @@ UnicodeString& TimeZoneTest::formatTZID(int32_t offset, UnicodeString &rv) {
         rv += (UChar)0x0030;
     }
     rv += (UChar)(0x0030 + (h%10));
-
+    rv += (UChar)0x003A;
     if (m >= 10) {
         rv += (UChar)(0x0030 + (m/10));
     } else {
@@ -835,6 +881,7 @@ UnicodeString& TimeZoneTest::formatTZID(int32_t offset, UnicodeString &rv) {
     rv += (UChar)(0x0030 + (m%10));
 
     if (s) {
+        rv += (UChar)0x003A;
         if (s >= 10) {
             rv += (UChar)(0x0030 + (s/10));
         } else {
@@ -915,9 +962,9 @@ void TimeZoneTest::TestCustomParse()
             }
             // JDK 1.3 creates custom zones with the ID "Custom"
             // JDK 1.4 creates custom zones with IDs of the form "GMT+02:00"
-            // ICU creates custom zones with IDs of the form "GMT+0200"
+            // ICU creates custom zones with IDs of the form "GMT+02:00"
             else if (exp != kUnparseable && (ioffset != exp || itsID != expectedID)) {
-                errln("Expected offset of " + formatOffset(exp, temp) +
+                dataerrln("Expected offset of " + formatOffset(exp, temp) +
                       ", id " + expectedID +
                       ", for " + id +
                       ", got offset of " + offset +
@@ -1121,7 +1168,7 @@ TimeZoneTest::TestDisplayName()
     zone->getDisplayName(Locale::getEnglish(), name);
     logln("PST->" + name);
     if (name.compare("Pacific Standard Time") != 0)
-        errln("Fail: Expected \"Pacific Standard Time\" but got " + name);
+        dataerrln("Fail: Expected \"Pacific Standard Time\" but got " + name);
 
     //*****************************************************************
     // THE FOLLOWING LINES MUST BE UPDATED IF THE LOCALE DATA CHANGES
@@ -1149,7 +1196,7 @@ TimeZoneTest::TestDisplayName()
                                    kData[i].style,
                                    Locale::getEnglish(), name);
         if (name.compare(kData[i].expect) != 0)
-            errln("Fail: Expected " + UnicodeString(kData[i].expect) + "; got " + name);
+            dataerrln("Fail: Expected " + UnicodeString(kData[i].expect) + "; got " + name);
         logln("PST [with options]->" + name);
     }
     for (i=0; kData[i].expect[0] != '\0'; i++)
@@ -1158,7 +1205,7 @@ TimeZoneTest::TestDisplayName()
         name = zone->getDisplayName(kData[i].useDst,
                                    kData[i].style, name);
         if (name.compare(kData[i].expect) != 0)
-            errln("Fail: Expected " + UnicodeString(kData[i].expect) + "; got " + name);
+            dataerrln("Fail: Expected " + UnicodeString(kData[i].expect) + "; got " + name);
         logln("PST [with options]->" + name);
     }
 
@@ -1185,7 +1232,7 @@ TimeZoneTest::TestDisplayName()
     name = zone2->getDisplayName(Locale::getEnglish(),name);
     logln("Modified PST->" + name);
     if (name.compare("Pacific Standard Time") != 0)
-        errln("Fail: Expected \"Pacific Standard Time\"");
+        dataerrln("Fail: Expected \"Pacific Standard Time\"");
 
     // Make sure we get the default display format for Locales
     // with no display name data.
@@ -1205,7 +1252,7 @@ TimeZoneTest::TestDisplayName()
     ResourceBundle enRB(NULL,
                             Locale::getEnglish(), status);
     if(U_FAILURE(status))
-        errln("Couldn't get ResourceBundle for en");
+        errcheckln(status, "Couldn't get ResourceBundle for en - %s", u_errorName(status));
 
     ResourceBundle mtRB(NULL,
                          mt_MT, status);
@@ -1217,7 +1264,7 @@ TimeZoneTest::TestDisplayName()
     if (noZH) {
         logln("Warning: Not testing the mt_MT behavior because resource is absent");
         if (name != "Pacific Standard Time")
-            errln("Fail: Expected Pacific Standard Time");
+            dataerrln("Fail: Expected Pacific Standard Time");
     }
 
 
@@ -1225,10 +1272,10 @@ TimeZoneTest::TestDisplayName()
              name.compare("GMT-8:00") &&
              name.compare("GMT-0800") &&
              name.compare("GMT-800")) {
-      errln(UnicodeString("Fail: Expected GMT-08:00 or something similar for PST in mt_MT but got ") + name );
-        errln("************************************************************");
-        errln("THE ABOVE FAILURE MAY JUST MEAN THE LOCALE DATA HAS CHANGED");
-        errln("************************************************************");
+      dataerrln(UnicodeString("Fail: Expected GMT-08:00 or something similar for PST in mt_MT but got ") + name );
+        dataerrln("************************************************************");
+        dataerrln("THE ABOVE FAILURE MAY JUST MEAN THE LOCALE DATA HAS CHANGED");
+        dataerrln("************************************************************");
     }
 
     // Now try a non-existent zone
@@ -1241,7 +1288,7 @@ TimeZoneTest::TestDisplayName()
         name.compare("GMT+1:30") &&
         name.compare("GMT+0130") &&
         name.compare("GMT+130"))
-        errln("Fail: Expected GMT+01:30 or something similar");
+        dataerrln("Fail: Expected GMT+01:30 or something similar");
     name.truncate(0);
     zone2->getDisplayName(name);
     logln("GMT+90min->" + name);
@@ -1249,7 +1296,7 @@ TimeZoneTest::TestDisplayName()
         name.compare("GMT+1:30") &&
         name.compare("GMT+0130") &&
         name.compare("GMT+130"))
-        errln("Fail: Expected GMT+01:30 or something similar");
+        dataerrln("Fail: Expected GMT+01:30 or something similar");
     // clean up
     delete zone;
     delete zone2;
@@ -1392,7 +1439,7 @@ void TimeZoneTest::TestFractionalDST() {
     UnicodeString id;
     int32_t expected = 1800000;
 	if (expected != dst_icu) {
-	    errln(UnicodeString("java reports dst savings of ") + expected +
+	    dataerrln(UnicodeString("java reports dst savings of ") + expected +
 	        " but icu reports " + dst_icu + 
 	        " for tz " + tz_icu->getID(id));
 	} else {
@@ -1417,7 +1464,7 @@ void TimeZoneTest::TestCountries() {
     int32_t i;
 
     if (s == NULL || n <= 0) {
-        errln("FAIL: TimeZone::createEnumeration() returned nothing");
+        dataerrln("FAIL: TimeZone::createEnumeration() returned nothing");
         return;
     }
     for (i=0; i<n; ++i) {
@@ -1509,7 +1556,7 @@ void TimeZoneTest::TestHistorical() {
         if (tz == 0) {
             errln("FAIL: Cannot create %s", id);
         } else if (tz->getID(s) != UnicodeString(id)) {
-            errln((UnicodeString)"FAIL: createTimeZone(" + id + ") => " + s);
+            dataerrln((UnicodeString)"FAIL: createTimeZone(" + id + ") => " + s);
         } else {
             UErrorCode ec = U_ZERO_ERROR;
             int32_t raw, dst;
@@ -1536,7 +1583,7 @@ void TimeZoneTest::TestHistorical() {
 void TimeZoneTest::TestEquivalentIDs() {
     int32_t n = TimeZone::countEquivalentIDs("PST");
     if (n < 2) {
-        errln((UnicodeString)"FAIL: countEquivalentIDs(PST) = " + n);
+        dataerrln((UnicodeString)"FAIL: countEquivalentIDs(PST) = " + n);
     } else {
         UBool sawLA = FALSE;
         for (int32_t i=0; i<n; ++i) {
@@ -1658,6 +1705,252 @@ void TimeZoneTest::TestFebruary() {
                       raw, dst, data[i].offsetHours * U_MILLIS_PER_HOUR);
             }
         }
+    }
+}
+void TimeZoneTest::TestCanonicalID() {
+
+    // Some canonical IDs in CLDR are defined as "Link"
+    // in Olson tzdata.
+    static const struct {
+        const char *alias;
+        const char *zone;
+    } excluded1[] = {
+        {"America/Shiprock", "America/Denver"}, // America/Shiprock is defined as a Link to America/Denver in tzdata
+        {"America/Marigot", "America/Guadeloupe"}, 
+        {"America/St_Barthelemy", "America/Guadeloupe"},
+        {"Antarctica/South_Pole", "Antarctica/McMurdo"},
+        {"Atlantic/Jan_Mayen", "Europe/Oslo"},
+        {"Arctic/Longyearbyen", "Europe/Oslo"},
+        {"Europe/Guernsey", "Europe/London"},
+        {"Europe/Isle_of_Man", "Europe/London"},
+        {"Europe/Jersey", "Europe/London"},
+        {"Europe/Ljubljana", "Europe/Belgrade"},
+        {"Europe/Podgorica", "Europe/Belgrade"},
+        {"Europe/Sarajevo", "Europe/Belgrade"},
+        {"Europe/Skopje", "Europe/Belgrade"},
+        {"Europe/Zagreb", "Europe/Belgrade"},
+        {"Europe/Bratislava", "Europe/Prague"},
+        {"Europe/Mariehamn", "Europe/Helsinki"},
+        {"Europe/San_Marino", "Europe/Rome"},
+        {"Europe/Vatican", "Europe/Rome"},
+        {0, 0}
+    };
+
+    // Following IDs are aliases of Etc/GMT in CLDR,
+    // but Olson tzdata has 3 independent definitions
+    // for Etc/GMT, Etc/UTC, Etc/UCT.
+    // Until we merge them into one equivalent group
+    // in zoneinfo.res, we exclude them in the test
+    // below.
+    static const char* excluded2[] = {
+        "Etc/UCT", "UCT",
+        "Etc/UTC", "UTC",
+        "Etc/Universal", "Universal",
+        "Etc/Zulu", "Zulu", 0
+    };
+
+    // Walk through equivalency groups
+    UErrorCode ec = U_ZERO_ERROR;
+    int32_t s_length, i, j, k;
+    StringEnumeration* s = TimeZone::createEnumeration();
+    UnicodeString canonicalID, tmpCanonical;
+    s_length = s->count(ec);
+    for (i = 0; i < s_length;++i) {
+        const UnicodeString *tzid = s->snext(ec);
+        int32_t nEquiv = TimeZone::countEquivalentIDs(*tzid);
+        if (nEquiv == 0) {
+            continue;
+        }
+        UBool bFoundCanonical = FALSE;
+        // Make sure getCanonicalID returns the exact same result
+        // for all entries within a same equivalency group with some
+        // exceptions listed in exluded1.
+        // Also, one of them must be canonical id.
+        for (j = 0; j < nEquiv; j++) {
+            UnicodeString tmp = TimeZone::getEquivalentID(*tzid, j);
+            TimeZone::getCanonicalID(tmp, tmpCanonical, ec);
+            if (U_FAILURE(ec)) {
+                errln((UnicodeString)"FAIL: getCanonicalID(" + tmp + ") failed.");
+                ec = U_ZERO_ERROR;
+                continue;
+            }
+            // Some exceptional cases
+            for (k = 0; excluded1[k].alias != 0; k++) {
+                if (tmpCanonical == excluded1[k].alias) {
+                    tmpCanonical = excluded1[k].zone;
+                    break;
+                }
+            }
+            if (j == 0) {
+                canonicalID = tmpCanonical;
+            } else if (canonicalID != tmpCanonical) {
+                errln("FAIL: getCanonicalID(" + tmp + ") returned " + tmpCanonical + " expected:" + canonicalID);
+            }
+
+            if (canonicalID == tmp) {
+                bFoundCanonical = TRUE;
+            }
+        }
+        // At least one ID in an equvalency group must match the
+        // canonicalID
+        if (bFoundCanonical == FALSE) {
+            // test exclusion because of differences between Olson tzdata and CLDR
+            UBool isExcluded = FALSE;
+            for (k = 0; excluded2[k] != 0; k++) {
+                if (*tzid == UnicodeString(excluded2[k])) {
+                    isExcluded = TRUE;
+                    break;
+                }
+            }
+            if (isExcluded) {
+                continue;
+            }
+            errln((UnicodeString)"FAIL: No timezone ids match the canonical ID " + canonicalID);
+        }
+    }
+    delete s;
+
+    // Testing some special cases
+    static const struct {
+        const char *id;
+        const char *expected;
+        UBool isSystem;
+    } data[] = {
+        {"GMT-03", "GMT-03:00", FALSE},
+        {"GMT+4", "GMT+04:00", FALSE},
+        {"GMT-055", "GMT-00:55", FALSE},
+        {"GMT+430", "GMT+04:30", FALSE},
+        {"GMT-12:15", "GMT-12:15", FALSE},
+        {"GMT-091015", "GMT-09:10:15", FALSE},
+        {"GMT+1:90", 0, FALSE},
+        {"America/Argentina/Buenos_Aires", "America/Buenos_Aires", TRUE},
+        {"bogus", 0, FALSE},
+        {"", 0, FALSE},
+        {0, 0, FALSE}
+    };
+
+    UBool isSystemID;
+    for (i = 0; data[i].id != 0; i++) {
+        TimeZone::getCanonicalID(UnicodeString(data[i].id), canonicalID, isSystemID, ec);
+        if (U_FAILURE(ec)) {
+            if (ec != U_ILLEGAL_ARGUMENT_ERROR || data[i].expected != 0) {
+                errln((UnicodeString)"FAIL: getCanonicalID(\"" + data[i].id
+                    + "\") returned status U_ILLEGAL_ARGUMENT_ERROR");
+            }
+            ec = U_ZERO_ERROR;
+            continue;
+        }
+        if (canonicalID != data[i].expected) {
+            dataerrln((UnicodeString)"FAIL: getCanonicalID(\"" + data[i].id
+                + "\") returned " + canonicalID + " - expected: " + data[i].expected);
+        }
+        if (isSystemID != data[i].isSystem) {
+            dataerrln((UnicodeString)"FAIL: getCanonicalID(\"" + data[i].id
+                + "\") set " + isSystemID + " to isSystemID");
+        }
+    }
+}
+
+//
+//  Test Display Names, choosing zones and lcoales where there are multiple
+//                      meta-zones defined.
+//
+static struct   {
+    const char            *zoneName;
+    const char            *localeName;
+    UBool                  summerTime;
+    TimeZone::EDisplayType style;
+    const char            *expectedDisplayName; } 
+ zoneDisplayTestData [] =  {
+     //  zone id         locale   summer   format          expected display name
+      {"Europe/London",     "en", FALSE, TimeZone::SHORT, "GMT"},
+      {"Europe/London",     "en", FALSE, TimeZone::LONG,  "Greenwich Mean Time"},
+      {"Europe/London",     "en", TRUE,  TimeZone::SHORT, "GMT+01:00" /*"BST"*/},
+      {"Europe/London",     "en", TRUE,  TimeZone::LONG,  "British Summer Time"},
+      
+      {"America/Anchorage", "en", FALSE, TimeZone::SHORT, "AKST"},
+      {"America/Anchorage", "en", FALSE, TimeZone::LONG,  "Alaska Standard Time"},
+      {"America/Anchorage", "en", TRUE,  TimeZone::SHORT, "AKDT"},
+      {"America/Anchorage", "en", TRUE,  TimeZone::LONG,  "Alaska Daylight Time"},
+      
+      // Southern Hemisphere, all data from meta:Australia_Western
+      {"Australia/Perth",   "en", FALSE, TimeZone::SHORT, "GMT+08:00"/*"AWST"*/},
+      {"Australia/Perth",   "en", FALSE, TimeZone::LONG,  "Australian Western Standard Time"},
+      {"Australia/Perth",   "en", TRUE,  TimeZone::SHORT, "GMT+09:00"/*"AWDT"*/},
+      {"Australia/Perth",   "en", TRUE,  TimeZone::LONG,  "Australian Western Daylight Time"},
+       
+      {"America/Sao_Paulo",  "en", FALSE, TimeZone::SHORT, "GMT-03:00"/*"BRT"*/},
+      {"America/Sao_Paulo",  "en", FALSE, TimeZone::LONG,  "Brasilia Time"},
+      {"America/Sao_Paulo",  "en", TRUE,  TimeZone::SHORT, "GMT-02:00"/*"BRST"*/},
+      {"America/Sao_Paulo",  "en", TRUE,  TimeZone::LONG,  "Brasilia Summer Time"},
+       
+      // No Summer Time, but had it before 1983.
+      {"Pacific/Honolulu",   "en", FALSE, TimeZone::SHORT, "HST"},
+      {"Pacific/Honolulu",   "en", FALSE, TimeZone::LONG,  "Hawaii-Aleutian Standard Time"},
+      {"Pacific/Honolulu",   "en", TRUE,  TimeZone::SHORT, "HST"},
+      {"Pacific/Honolulu",   "en", TRUE,  TimeZone::LONG,  "Hawaii-Aleutian Standard Time"},
+       
+      // Northern, has Summer, not commonly used.
+      {"Europe/Helsinki",    "en", FALSE, TimeZone::SHORT, "GMT+02:00"/*"EET"*/},
+      {"Europe/Helsinki",    "en", FALSE, TimeZone::LONG,  "Eastern European Time"},
+      {"Europe/Helsinki",    "en", TRUE,  TimeZone::SHORT, "GMT+03:00"/*"EEST"*/},
+      {"Europe/Helsinki",    "en", true,  TimeZone::LONG,  "Eastern European Summer Time"},
+      {NULL, NULL, FALSE, TimeZone::SHORT, NULL}   // NULL values terminate list
+    };
+
+void TimeZoneTest::TestDisplayNamesMeta() {
+    UErrorCode status = U_ZERO_ERROR;
+    GregorianCalendar cal(*TimeZone::getGMT(), status);
+    if (failure(status, "GregorianCalendar")) return;
+
+    UBool isReferenceYear = TRUE;
+    if (cal.get(UCAL_YEAR, status) != TimeZoneTest::REFERENCE_YEAR) {
+        isReferenceYear = FALSE;
+    }
+
+    UBool sawAnError = FALSE;
+    for (int testNum   = 0; zoneDisplayTestData[testNum].zoneName != NULL; testNum++) {
+        Locale locale  = Locale::createFromName(zoneDisplayTestData[testNum].localeName);
+        TimeZone *zone = TimeZone::createTimeZone(zoneDisplayTestData[testNum].zoneName);
+        UnicodeString displayName;
+        zone->getDisplayName(zoneDisplayTestData[testNum].summerTime,
+                             zoneDisplayTestData[testNum].style,
+                             locale,
+                             displayName);
+        if (displayName != zoneDisplayTestData[testNum].expectedDisplayName) {
+            char  name[100];
+            UErrorCode status = U_ZERO_ERROR;
+            displayName.extract(name, 100, NULL, status);
+            if (isReferenceYear) {
+                sawAnError = TRUE;
+                dataerrln("Incorrect time zone display name.  zone = \"%s\",\n"
+                      "   locale = \"%s\",   style = %s,  Summertime = %d\n"
+                      "   Expected \"%s\", "
+                      "   Got \"%s\"\n   Error: %s", zoneDisplayTestData[testNum].zoneName,
+                                         zoneDisplayTestData[testNum].localeName,
+                                         zoneDisplayTestData[testNum].style==TimeZone::SHORT ?
+                                            "SHORT" : "LONG",
+                                         zoneDisplayTestData[testNum].summerTime,
+                                         zoneDisplayTestData[testNum].expectedDisplayName,
+                                         name,
+                                         u_errorName(status));
+            } else {
+                logln("Incorrect time zone display name.  zone = \"%s\",\n"
+                      "   locale = \"%s\",   style = %s,  Summertime = %d\n"
+                      "   Expected \"%s\", "
+                      "   Got \"%s\"\n", zoneDisplayTestData[testNum].zoneName,
+                                         zoneDisplayTestData[testNum].localeName,
+                                         zoneDisplayTestData[testNum].style==TimeZone::SHORT ?
+                                            "SHORT" : "LONG",
+                                         zoneDisplayTestData[testNum].summerTime,
+                                         zoneDisplayTestData[testNum].expectedDisplayName,
+                                         name);
+            }
+        }
+        delete zone;
+    }
+    if (sawAnError) {
+        dataerrln("***Note: Errors could be the result of changes to zoneStrings locale data");
     }
 }
 

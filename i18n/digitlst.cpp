@@ -69,6 +69,7 @@ DigitList::DigitList()
     // BEGIN android-added
     fDecimalDigits = fDecimalDigitsBuffer;
     fBufferSize = MAX_DEC_DIGITS;
+    fMaxDigits = MAX_DIGITS;
     // END android-added
     fDigits = fDecimalDigits + 1;   // skip the decimal
     clear();
@@ -90,6 +91,7 @@ DigitList::~DigitList()
 DigitList::DigitList(int capacity)
 {
     fBufferSize = capacity;
+    fMaxDigits = capacity;
     fDecimalDigits = (char *) calloc(capacity, 1);
     fDigits = fDecimalDigits + 1;   // skip the decimal
     clear();
@@ -104,6 +106,7 @@ DigitList::DigitList(const DigitList &other)
     // BEGIN android-added
     fDecimalDigits = fDecimalDigitsBuffer;
     fBufferSize = MAX_DEC_DIGITS;
+    fMaxDigits = MAX_DIGITS;
     // END android-added
     fDigits = fDecimalDigits + 1;   // skip the decimal
     *this = other;
@@ -126,6 +129,7 @@ DigitList::operator=(const DigitList& other)
         {
             fBufferSize = other.fBufferSize;
             fDecimalDigits = (char *) malloc(fBufferSize);
+            fMaxDigits = other.fMaxDigits;
             fDigits = fDecimalDigits + 1;   // skip the decimal
         }
         // END android-added

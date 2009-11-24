@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2007 International Business Machines
+// * Copyright (C) 2009 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/sw.xml
@@ -10,6 +10,7 @@
  *  ICU <specials> source: <path>/xml/main/sw.xml
  */
 sw{
+    AuxExemplarCharacters{"[q x]"}
     Countries{
         AE{"Muugano wa Falme za Nchi za Kiarabu"}
         AG{"Antigua na Barbuda"}
@@ -91,16 +92,6 @@ sw{
         YE{"Yemeni"}
         ZA{"Afrika ya Kusini"}
     }
-    Currencies{
-        KES{
-            "KSh",
-            "KES",
-        }
-        TZS{
-            "TSh",
-            "TZS",
-        }
-    }
     ExemplarCharacters{"[a-d {dh} e-n {ng} {ng'} {ny} o p r s {sh} t {th} u-w y z]"}
     Languages{
         de{"kijerumani"}
@@ -119,11 +110,11 @@ sw{
     }
     NumberPatterns{
         "#,##0.###",
-        "#,##0.00 ¤",
+        "#,##0.00 ¤",
         "#,##0%",
         "#E0",
     }
-    Version{"1.60"}
+    Version{"1.74"}
     calendar{
         gregorian{
             dayNames{
@@ -191,7 +182,6 @@ sw{
     zoneStrings{
         "meta:Africa_Eastern"{
             ls{"Saa za Africa Mashariki"}
-            ss{"EAT"}
         }
     }
 }

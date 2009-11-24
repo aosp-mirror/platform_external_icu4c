@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2005, International Business Machines Corporation and
+ * Copyright (c) 1997-2009, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -107,6 +107,8 @@ public:
     virtual void dataerr( const UnicodeString &message );
 
     virtual void dataerrln( const UnicodeString &message );
+    
+    void errcheckln(UErrorCode status, const UnicodeString &message );
 
     // convenience functions: sprintf() + errln() etc.
     void log(const char *fmt, ...);
@@ -117,6 +119,7 @@ public:
     void errln(const char *fmt, ...);
     void dataerr(const char *fmt, ...);
     void dataerrln(const char *fmt, ...);
+    void errcheckln(UErrorCode status, const char *fmt, ...);
 
     // Print ALL named errors encountered so far
     void printErrors(); 
@@ -145,13 +148,18 @@ public:
      */
     UBool isICUVersionAtLeast(const UVersionInfo x);
 
+    enum { kMaxProps = 16 };
+
+    virtual void setProperty(const char* propline);
+    virtual const char* getProperty(const char* prop);
+
 protected:
     /* JUnit-like assertions. Each returns TRUE if it succeeds. */
-    UBool assertTrue(const char* message, UBool condition, UBool quiet=FALSE);
+    UBool assertTrue(const char* message, UBool condition, UBool quiet=FALSE, UBool possibleDataError=FALSE);
     UBool assertFalse(const char* message, UBool condition, UBool quiet=FALSE);
-    UBool assertSuccess(const char* message, UErrorCode ec);
+    UBool assertSuccess(const char* message, UErrorCode ec, UBool possibleDataError=FALSE);
     UBool assertEquals(const char* message, const UnicodeString& expected,
-                       const UnicodeString& actual);
+                       const UnicodeString& actual, UBool possibleDataError=FALSE);
     UBool assertEquals(const char* message, const char* expected,
                        const char* actual);
 #if !UCONFIG_NO_FORMATTING
@@ -196,6 +204,9 @@ private:
 
     //FILE *testoutfp;
     void *testoutfp;
+
+    const char* proplines[kMaxProps];
+    int32_t     numProps;
 
 protected:
 

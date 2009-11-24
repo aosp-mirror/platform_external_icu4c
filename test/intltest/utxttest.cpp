@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 2005-2007, International Business Machines Corporation and
+ * Copyright (c) 2005-2009, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /************************************************************************
@@ -54,8 +54,10 @@ UTextTest::runIndexedTest(int32_t index, UBool exec,
             if (exec) ErrorTest();   break;
         case 2: name = "FreezeTest";
             if (exec) FreezeTest();  break;
-		case 3: name = "Ticket5560";
-			if (exec) Ticket5560();  break;
+        case 3: name = "Ticket5560";
+            if (exec) Ticket5560();  break;
+        case 4: name = "Ticket6847";
+            if (exec) Ticket6847();  break;
         default: name = "";          break;
     }
 }
@@ -276,9 +278,9 @@ void UTextTest::TestString(const UnicodeString &s) {
 
 
 
-	delete []cpMap;
-	delete []u8Map;
-	delete []u8String;
+    delete []cpMap;
+    delete []u8Map;
+    delete []u8String;
 }
 
 //  TestCMR   test Copy, Move and Replace operations.
@@ -902,6 +904,28 @@ void UTextTest::ErrorTest()
         TEST_ASSERT(utp == &ut);
     }
 
+    // Invalid parameters on open
+    //
+    {
+        UErrorCode status = U_ZERO_ERROR;
+        UText ut = UTEXT_INITIALIZER;
+        
+        utext_openUChars(&ut, NULL, 5, &status);
+        TEST_ASSERT(status == U_ILLEGAL_ARGUMENT_ERROR);
+
+        status = U_ZERO_ERROR;
+        utext_openUChars(&ut, NULL, -1, &status);
+        TEST_ASSERT(status == U_ILLEGAL_ARGUMENT_ERROR);
+
+        status = U_ZERO_ERROR;
+        utext_openUTF8(&ut, NULL, 4, &status);
+        TEST_ASSERT(status == U_ILLEGAL_ARGUMENT_ERROR);
+
+        status = U_ZERO_ERROR;
+        utext_openUTF8(&ut, NULL, -1, &status);
+        TEST_ASSERT(status == U_ILLEGAL_ARGUMENT_ERROR);
+    }
+
     //
     //  UTF-8 with malformed sequences.
     //    These should come through as the Unicode replacement char, \ufffd
@@ -1044,7 +1068,7 @@ void UTextTest::ErrorTest()
     {    //  Similar test, with utf16 instead of utf8
          //  TODO:  merge the common parts of these tests.
         
-        UnicodeString u16str("\\u1000\\U00011000\\u2000\\U00022000");
+        UnicodeString u16str("\\u1000\\U00011000\\u2000\\U00022000", -1, US_INV);
         int32_t startMap[]  ={ 0,     1,   1,    3,     4,  4,     6,  6};
         int32_t nextMap[]  = { 1,     3,   3,    4,     6,  6,     6,  6};
         int32_t prevMap[]  = { 0,     0,   0,    1,     3,  3,     4,  4};
@@ -1112,7 +1136,7 @@ void UTextTest::ErrorTest()
     {    //  Similar test, with UText over Replaceable
          //  TODO:  merge the common parts of these tests.
         
-        UnicodeString u16str("\\u1000\\U00011000\\u2000\\U00022000");
+        UnicodeString u16str("\\u1000\\U00011000\\u2000\\U00022000", -1, US_INV);
         int32_t startMap[]  ={ 0,     1,   1,    3,     4,  4,     6,  6};
         int32_t nextMap[]  = { 1,     3,   3,    4,     6,  6,     6,  6};
         int32_t prevMap[]  = { 0,     0,   0,    1,     3,  3,     4,  4};
@@ -1396,5 +1420,38 @@ void UTextTest::Ticket5560() {
 
     utext_close(&ut1);
     utext_close(&ut2);
+}
+
+
+// Test for Ticket 6847
+//
+void UTextTest::Ticket6847() {
+    const int STRLEN = 90;
+    UChar s[STRLEN+1];
+    u_memset(s, 0x41, STRLEN);
+    s[STRLEN] = 0;
+
+    UErrorCode status = U_ZERO_ERROR;
+    UText *ut = utext_openUChars(NULL, s, -1, &status);
+
+    utext_setNativeIndex(ut, 0);
+    int32_t count = 0;
+    UChar32 c = 0;
+    int32_t nativeIndex = UTEXT_GETNATIVEINDEX(ut);
+    TEST_ASSERT(nativeIndex == 0);
+    while ((c = utext_next32(ut)) != U_SENTINEL) {
+        TEST_ASSERT(c == 0x41);
+        TEST_ASSERT(count < STRLEN);
+        if (count >= STRLEN) {
+            break;
+        }
+        count++;
+        nativeIndex = UTEXT_GETNATIVEINDEX(ut);
+        TEST_ASSERT(nativeIndex == count);
+    }
+    TEST_ASSERT(count == STRLEN);
+    nativeIndex = UTEXT_GETNATIVEINDEX(ut);
+    TEST_ASSERT(nativeIndex == STRLEN);
+    utext_close(ut);
 }
 

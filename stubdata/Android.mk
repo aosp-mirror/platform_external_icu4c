@@ -75,7 +75,7 @@ config := $(word 1, \
             $(if $(findstring nl,$(PRODUCT_LOCALES)),default) \
             us)
 
-icu_var_name := icudt38_dat
+icu_var_name := icudt42_dat
 ##
 
 
@@ -94,7 +94,7 @@ else
 endif
 
 intermediates := $(call local-intermediates-dir)
-icu_data_file := $(LOCAL_PATH)/icudt38l-us-japan.dat
+icu_data_file := $(LOCAL_PATH)/icudt42l-us-japan.dat
 
 asm_file := $(intermediates)/icu_data_jp.S
 LOCAL_GENERATED_SOURCES += $(asm_file)
@@ -124,7 +124,7 @@ else
 endif
 
 intermediates := $(call local-intermediates-dir)
-icu_data_file := $(LOCAL_PATH)/icudt38l-large.dat
+icu_data_file := $(LOCAL_PATH)/icudt42l-large.dat
 
 asm_file := $(intermediates)/icu_data_large.S
 LOCAL_GENERATED_SOURCES += $(asm_file)
@@ -154,7 +154,7 @@ else
 endif
 
 intermediates := $(call local-intermediates-dir)
-icu_data_file := $(LOCAL_PATH)/icudt38l-us-euro.dat
+icu_data_file := $(LOCAL_PATH)/icudt42l-us-euro.dat
 
 asm_file := $(intermediates)/icu_data_eu.S
 LOCAL_GENERATED_SOURCES += $(asm_file)
@@ -184,7 +184,7 @@ else
 endif
 
 intermediates := $(call local-intermediates-dir)
-icu_data_file := $(LOCAL_PATH)/icudt38l-default.dat
+icu_data_file := $(LOCAL_PATH)/icudt42l-default.dat
 
 asm_file := $(intermediates)/icu_data_default.S
 LOCAL_GENERATED_SOURCES += $(asm_file)
@@ -214,7 +214,7 @@ else
 endif
 
 intermediates := $(call local-intermediates-dir)
-icu_data_file := $(LOCAL_PATH)/icudt38l-us.dat
+icu_data_file := $(LOCAL_PATH)/icudt42l-us.dat
 
 asm_file := $(intermediates)/icu_data_us.S
 LOCAL_GENERATED_SOURCES += $(asm_file)

@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-* Copyright (c) 2002-2006, International Business Machines
+* Copyright (c) 2002-2009, International Business Machines
 * Corporation and others.  All Rights Reserved.
 **********************************************************************
 * Author: Alan Liu
@@ -15,20 +15,12 @@
 #include "unicode/strenum.h"
 
 /**
- * Given a StringEnumeration, wrap it in a UEnumeration.  The
- * StringEnumeration is adopted; after this call, the caller must not
- * delete it (regardless of error status).
- */
-U_CAPI UEnumeration* U_EXPORT2
-uenum_openStringEnumeration(U_NAMESPACE_QUALIFIER StringEnumeration* adopted, UErrorCode* ec);
-
-/**
  * Given an array of const char* strings (invariant chars only),
  * return a UEnumeration.  Must have strings[i] != 0 for i in
  * 0..count-1.
  */
 U_CAPI UEnumeration* U_EXPORT2
-uenum_openCharStringsEnumeration(const char** strings, int32_t count,
+uenum_openCharStringsEnumeration(const char* const* strings, int32_t count,
                                  UErrorCode* ec);
 
 //----------------------------------------------------------------------

@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-* Copyright (c) 2002-2006, International Business Machines
+* Copyright (c) 2002-2009, International Business Machines
 * Corporation and others.  All Rights Reserved.
 **********************************************************************
 */
@@ -139,6 +139,30 @@ ucurr_getName(const UChar* currency,
               UErrorCode* ec);
 
 /**
+ * Returns the plural name for the given currency in the
+ * given locale.  For example, the plural name for the USD
+ * currency object in the en_US locale is "US dollar" or "US dollars".
+ * @param currency null-terminated 3-letter ISO 4217 code
+ * @param locale locale in which to display currency
+ * @param isChoiceFormat fill-in set to TRUE if the returned value
+ * is a ChoiceFormat pattern; otherwise it is a static string
+ * @param pluralCount plural count
+ * @param len fill-in parameter to receive length of result
+ * @param ec error code
+ * @return pointer to display string of 'len' UChars.  If the resource
+ * data contains no entry for 'currency', then 'currency' itself is
+ * returned.  
+ * @draft ICU 4.2
+ */
+U_STABLE const UChar* U_EXPORT2
+ucurr_getPluralName(const UChar* currency,
+                    const char* locale,
+                    UBool* isChoiceFormat,
+                    const char* pluralCount,
+                    int32_t* len,
+                    UErrorCode* ec);
+
+/**
  * Returns the number of the number of fraction digits that should
  * be displayed for the given currency.
  * @param currency null-terminated 3-letter ISO 4217 code
@@ -219,6 +243,73 @@ typedef enum UCurrCurrencyType {
 U_STABLE UEnumeration * U_EXPORT2
 ucurr_openISOCurrencies(uint32_t currType, UErrorCode *pErrorCode);
 
+/** 
+ * Finds the number of valid currency codes for the
+ * given locale and date.
+ * @param locale the locale for which to retrieve the
+ *               currency count.
+ * @param date   the date for which to retrieve the
+ *               currency count for the given locale.
+ * @param ec     error code
+ * @return       the number of currency codes for the
+ *               given locale and date.  If 0, currency
+ *               codes couldn't be found for the input
+ *               values are invalid.
+ * @stable ICU 4.0
+ */
+U_DRAFT int32_t U_EXPORT2
+ucurr_countCurrencies(const char* locale, 
+                 UDate date, 
+                 UErrorCode* ec); 
+
+/** 
+ * Finds a currency code for the given locale and date 
+ * @param locale the locale for which to retrieve a currency code.  
+ *               Currency can be specified by the "currency" keyword 
+ *               in which case it overrides the default currency code 
+ * @param date   the date for which to retrieve a currency code for 
+ *               the given locale. 
+ * @param index  the index within the available list of currency codes
+ *               for the given locale on the given date.
+ * @param buff   fill in buffer. Can be NULL for preflighting. 
+ * @param buffCapacity capacity of the fill in buffer. Can be 0 for 
+ *               preflighting. If it is non-zero, the buff parameter 
+ *               must not be NULL. 
+ * @param ec     error code 
+ * @return       length of the currency string. It should always be 3. 
+ *               If 0, currency couldn't be found or the input values are  
+ *               invalid.  
+ * @stable ICU 4.0 
+ */ 
+U_DRAFT int32_t U_EXPORT2 
+ucurr_forLocaleAndDate(const char* locale, 
+                UDate date, 
+                int32_t index,
+                UChar* buff, 
+                int32_t buffCapacity, 
+                UErrorCode* ec); 
+
+/**
+ * Given a key and a locale, returns an array of string values in a preferred
+ * order that would make a difference. These are all and only those values where
+ * the open (creation) of the service with the locale formed from the input locale
+ * plus input keyword and that value has different behavior than creation with the
+ * input locale alone.
+ * @param key           one of the keys supported by this service.  For now, only
+ *                      "currency" is supported.
+ * @param locale        the locale
+ * @param commonlyUsed  if set to true it will return only commonly used values
+ *                      with the given locale in preferred order.  Otherwise,
+ *                      it will return all the available values for the locale.
+ * @param status error status
+ * @return a string enumeration over keyword values for the given key and the locale.
+ * @draft ICU 4.2
+ */
+U_DRAFT UEnumeration* U_EXPORT2
+ucurr_getKeywordValuesForLocale(const char* key,
+                                const char* locale,
+                                UBool commonlyUsed,
+                                UErrorCode* status);
 
 #endif /* #if !UCONFIG_NO_FORMATTING */
 

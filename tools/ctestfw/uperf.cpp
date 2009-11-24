@@ -1,13 +1,11 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 2002-2007, International Business Machines Corporation and
+ * Copyright (c) 2002-2009, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
 /* z/OS needs this definition for timeval */
-#if !defined(_XOPEN_SOURCE_EXTENDED)
-#define _XOPEN_SOURCE_EXTENDED 1
-#endif
+#include "platform_xopen_source_extended.h"
 
 #include "unicode/uperf.h"
 #include "uoptions.h"
@@ -110,6 +108,8 @@ void UPerfTest::init(UOption addOptions[], int32_t addOptionsCount,
     //initialize the argument list
     U_MAIN_INIT_ARGS(_argc, _argv);
 
+    resolvedFileName = NULL;
+
     // add specific options
     int32_t optionsCount = OPTIONS_COUNT;
     if (addOptionsCount > 0) {
@@ -177,11 +177,10 @@ void UPerfTest::init(UOption addOptions[], int32_t addOptionsCount,
     }
     
     if(options[LOCALE].doesOccur) {
-      locale = options[LOCALE].value;
+        locale = options[LOCALE].value;
     }
 
     int32_t len = 0;
-    resolvedFileName = NULL;
     if(fileName!=NULL){
         //pre-flight
         ucbuf_resolveFileName(sourceDir, fileName, NULL, &len, &status);

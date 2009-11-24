@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2007 International Business Machines
+// * Copyright (C) 2009 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/supplementalData.xml
@@ -22,9 +22,9 @@ supplementalData:table(nofallback){
             }
             {
                 id{"ESP"}
-                from:intvector{ /** 1873  */
+                from:intvector{ /** 1873-01-01  */
                     -713,
-                    1332482048,
+                    1332542048,
                 }
                 to:intvector{ /** 2002-02-28  */
                     235,
@@ -44,9 +44,9 @@ supplementalData:table(nofallback){
             }
             {
                 id{"ADP"}
-                from:intvector{ /** 1936  */
+                from:intvector{ /** 1936-01-01  */
                     -250,
-                    740224000,
+                    740284000,
                 }
                 to:intvector{ /** 2001-12-31  */
                     228,
@@ -109,6 +109,17 @@ supplementalData:table(nofallback){
                     -1851097344,
                 }
             }
+            {
+                id{"ALK"}
+                from:intvector{ /** 1946-11-01  */
+                    -177,
+                    -1467495904,
+                }
+                to:intvector{ /** 1965-08-16  */
+                    -37,
+                    -1851097344,
+                }
+            }
         }
         AM{
             {
@@ -164,7 +175,7 @@ supplementalData:table(nofallback){
                     183,
                     -1355162464,
                 }
-                to:intvector{ /** 2000-02  */
+                to:intvector{ /** 2000-02-01  */
                     220,
                     1792114880,
                 }
@@ -175,7 +186,7 @@ supplementalData:table(nofallback){
                     147,
                     1865947488,
                 }
-                to:intvector{ /** 2000-02  */
+                to:intvector{ /** 2000-02-01  */
                     220,
                     1792114880,
                 }
@@ -186,7 +197,7 @@ supplementalData:table(nofallback){
                     51,
                     -1808639392,
                 }
-                to:intvector{ /** 1991-03  */
+                to:intvector{ /** 1991-03-01  */
                     154,
                     1263216416,
                 }
@@ -224,6 +235,28 @@ supplementalData:table(nofallback){
                 to:intvector{ /** 1985-06-14  */
                     110,
                     2062757440,
+                }
+            }
+            {
+                id{"ARL"}
+                from:intvector{ /** 1970-01-01  */
+                    0,
+                    60000,
+                }
+                to:intvector{ /** 1983-06-01  */
+                    95,
+                    -2089300416,
+                }
+            }
+            {
+                id{"ARM"}
+                from:intvector{ /** 1881-11-05  */
+                    -654,
+                    736471584,
+                }
+                to:intvector{ /** 1970-01-01  */
+                    0,
+                    60000,
                 }
             }
         }
@@ -345,14 +378,36 @@ supplementalData:table(nofallback){
                 }
             }
             {
+                id{"BAN"}
+                from:intvector{ /** 1994-08-15  */
+                    176,
+                    -1616731392,
+                }
+                to:intvector{ /** 1997-07-01  */
+                    198,
+                    1673695392,
+                }
+            }
+            {
                 id{"BAD"}
                 from:intvector{ /** 1992-07-01  */
                     161,
                     -1560281952,
                 }
-                to:intvector{ /** 1997-07  */
-                    198,
-                    1673695392,
+                to:intvector{ /** 1994-08-15  */
+                    176,
+                    -1616731392,
+                }
+            }
+            {
+                id{"YUR"}
+                from:intvector{ /** 1992-07-01  */
+                    161,
+                    -1560281952,
+                }
+                to:intvector{ /** 1993-10-01  */
+                    168,
+                    -2473024,
                 }
             }
             {
@@ -488,6 +543,28 @@ supplementalData:table(nofallback){
                     666785952,
                 }
             }
+            {
+                id{"BGM"}
+                from:intvector{ /** 1952-05-12  */
+                    -133,
+                    -193616928,
+                }
+                to:intvector{ /** 1962-01-01  */
+                    -59,
+                    942330464,
+                }
+            }
+            {
+                id{"BGO"}
+                from:intvector{ /** 1879-07-08  */
+                    -669,
+                    -2033426272,
+                }
+                to:intvector{ /** 1952-05-12  */
+                    -133,
+                    -193616928,
+                }
+            }
         }
         BH{
             {
@@ -584,6 +661,17 @@ supplementalData:table(nofallback){
                     708179072,
                 }
             }
+            {
+                id{"BOL"}
+                from:intvector{ /** 1863-06-23  */
+                    -786,
+                    1147054656,
+                }
+                to:intvector{ /** 1963-01-01  */
+                    -52,
+                    -1881407904,
+                }
+            }
         }
         BR{
             {
@@ -648,6 +736,17 @@ supplementalData:table(nofallback){
                     448379072,
                 }
             }
+            {
+                id{"BRZ"}
+                from:intvector{ /** 1942-11-01  */
+                    -206,
+                    1151122976,
+                }
+                to:intvector{ /** 1967-02-13  */
+                    -22,
+                    831800512,
+                }
+            }
         }
         BS{
             {
@@ -660,15 +759,19 @@ supplementalData:table(nofallback){
         }
         BT{
             {
-                id{"INR"}
-                from:intvector{ /** 1907  */
-                    -463,
-                    419458048,
+                id{"BTN"}
+                from:intvector{ /** 1974-04-16  */
+                    29,
+                    -1322378880,
                 }
             }
             {
-                id{"BTN"}
-                from:intvector{ /** 1974-04-16  */
+                id{"INR"}
+                from:intvector{ /** 1907-01-01  */
+                    -463,
+                    419518048,
+                }
+                to:intvector{ /** 1974-04-16  */
                     29,
                     -1322378880,
                 }
@@ -726,7 +829,7 @@ supplementalData:table(nofallback){
             }
             {
                 id{"BYB"}
-                from:intvector{ /** 1994-08  */
+                from:intvector{ /** 1994-08-01  */
                     176,
                     1468635904,
                 }
@@ -788,7 +891,7 @@ supplementalData:table(nofallback){
         CD{
             {
                 id{"CDF"}
-                from:intvector{ /** 1998-07  */
+                from:intvector{ /** 1998-07-01  */
                     205,
                     -1150042976,
                 }
@@ -799,7 +902,7 @@ supplementalData:table(nofallback){
                     168,
                     -2413024,
                 }
-                to:intvector{ /** 1998-07  */
+                to:intvector{ /** 1998-07-01  */
                     205,
                     -1150042976,
                 }
@@ -828,9 +931,9 @@ supplementalData:table(nofallback){
         CG{
             {
                 id{"XAF"}
-                from:intvector{ /** 1993  */
+                from:intvector{ /** 1993-01-01  */
                     168,
-                    -3073024,
+                    -3013024,
                 }
             }
         }
@@ -855,7 +958,7 @@ supplementalData:table(nofallback){
         CK{
             {
                 id{"NZD"}
-                from:intvector{ /** 1967-7-10  */
+                from:intvector{ /** 1967-07-10  */
                     -22,
                     572900512,
                 }
@@ -865,6 +968,17 @@ supplementalData:table(nofallback){
             {
                 id{"CLP"}
                 from:intvector{ /** 1975-09-29  */
+                    37,
+                    1272350048,
+                }
+            }
+            {
+                id{"CLE"}
+                from:intvector{ /** 1960-01-01  */
+                    -74,
+                    -2086527392,
+                }
+                to:intvector{ /** 1975-09-29  */
                     37,
                     1272350048,
                 }
@@ -891,9 +1005,9 @@ supplementalData:table(nofallback){
         CO{
             {
                 id{"COP"}
-                from:intvector{ /** 1905  */
+                from:intvector{ /** 1905-01-01  */
                     -478,
-                    1771967488,
+                    1772027488,
                 }
             }
         }
@@ -943,6 +1057,13 @@ supplementalData:table(nofallback){
         }
         CU{
             {
+                id{"CUC"}
+                from:intvector{ /** 1994-01-01  */
+                    176,
+                    1468215904,
+                }
+            }
+            {
                 id{"CUP"}
                 from:intvector{ /** 1859-01-01  */
                     -816,
@@ -951,13 +1072,13 @@ supplementalData:table(nofallback){
             }
             {
                 id{"USD"}
-                from:intvector{ /** 1899  */
+                from:intvector{ /** 1899-01-01  */
                     -522,
-                    1448128512,
+                    1448188512,
                 }
-                to:intvector{ /** 1959  */
+                to:intvector{ /** 1959-01-01  */
                     -81,
-                    737150976,
+                    737210976,
                 }
             }
         }
@@ -1024,7 +1145,7 @@ supplementalData:table(nofallback){
                     -125,
                     413672000,
                 }
-                to:intvector{ /** 1993-03  */
+                to:intvector{ /** 1993-03-01  */
                     168,
                     -2893024,
                 }
@@ -1093,7 +1214,7 @@ supplementalData:table(nofallback){
         DO{
             {
                 id{"DOP"}
-                from:intvector{ /** 1947-10  */
+                from:intvector{ /** 1947-10-01  */
                     -169,
                     3673024,
                 }
@@ -1104,7 +1225,7 @@ supplementalData:table(nofallback){
                     -478,
                     -794639808,
                 }
-                to:intvector{ /** 1947-10  */
+                to:intvector{ /** 1947-10-01  */
                     -169,
                     3673024,
                 }
@@ -1185,6 +1306,17 @@ supplementalData:table(nofallback){
                     -2016231904,
                 }
             }
+            {
+                id{"ETB"}
+                from:intvector{ /** 1993-05-24  */
+                    169,
+                    1984426976,
+                }
+                to:intvector{ /** 1997-11-08  */
+                    198,
+                    -2016231904,
+                }
+            }
         }
         ES{
             {
@@ -1247,18 +1379,18 @@ supplementalData:table(nofallback){
         FK{
             {
                 id{"FKP"}
-                from:intvector{ /** 1901  */
+                from:intvector{ /** 1901-01-01  */
                     -507,
-                    95619072,
+                    95679072,
                 }
             }
         }
         FM{
             {
                 id{"USD"}
-                from:intvector{ /** 1944  */
+                from:intvector{ /** 1944-01-01  */
                     -192,
-                    -202046464,
+                    -201986464,
                 }
             }
             {
@@ -1267,18 +1399,18 @@ supplementalData:table(nofallback){
                     -412,
                     -1820641344,
                 }
-                to:intvector{ /** 1944  */
+                to:intvector{ /** 1944-01-01  */
                     -192,
-                    -202046464,
+                    -201986464,
                 }
             }
         }
         FO{
             {
                 id{"DKK"}
-                from:intvector{ /** 1948  */
+                from:intvector{ /** 1948-01-01  */
                     -162,
-                    1474301952,
+                    1474361952,
                 }
             }
         }
@@ -1394,9 +1526,9 @@ supplementalData:table(nofallback){
         GG{
             {
                 id{"GBP"}
-                from:intvector{ /** 1830  */
+                from:intvector{ /** 1830-01-01  */
                     -1029,
-                    1543747584,
+                    1543807584,
                 }
             }
         }
@@ -1423,9 +1555,9 @@ supplementalData:table(nofallback){
         GI{
             {
                 id{"GIP"}
-                from:intvector{ /** 1713  */
+                from:intvector{ /** 1713-01-01  */
                     -1889,
-                    -1210545152,
+                    -1210485152,
                 }
             }
         }
@@ -1501,7 +1633,7 @@ supplementalData:table(nofallback){
                     36,
                     -628569952,
                 }
-                to:intvector{ /** 1986-06  */
+                to:intvector{ /** 1986-06-01  */
                     117,
                     -1884180928,
                 }
@@ -1530,9 +1662,9 @@ supplementalData:table(nofallback){
         GS{
             {
                 id{"GBP"}
-                from:intvector{ /** 1908  */
+                from:intvector{ /** 1908-01-01  */
                     -456,
-                    1890686976,
+                    1890746976,
                 }
             }
         }
@@ -1631,7 +1763,7 @@ supplementalData:table(nofallback){
                     154,
                     -1130410880,
                 }
-                to:intvector{ /** 1995-01  */
+                to:intvector{ /** 1995-01-01  */
                     183,
                     -1355522464,
                 }
@@ -1696,16 +1828,16 @@ supplementalData:table(nofallback){
         IE{
             {
                 id{"EUR"}
-                from:intvector{ /** 1999  */
+                from:intvector{ /** 1999-01-01  */
                     213,
-                    320765952,
+                    320825952,
                 }
             }
             {
                 id{"IEP"}
-                from:intvector{ /** 1922  */
+                from:intvector{ /** 1922-01-01  */
                     -353,
-                    1358655488,
+                    1358715488,
                 }
                 to:intvector{ /** 2002-02-09  */
                     235,
@@ -1714,13 +1846,13 @@ supplementalData:table(nofallback){
             }
             {
                 id{"GBP"}
-                from:intvector{ /** 1800  */
+                from:intvector{ /** 1800-01-01  */
                     -1250,
-                    -248247296,
+                    -248187296,
                 }
-                to:intvector{ /** 1922  */
+                to:intvector{ /** 1922-01-01  */
                     -353,
-                    1358655488,
+                    1358715488,
                 }
             }
         }
@@ -1728,6 +1860,17 @@ supplementalData:table(nofallback){
             {
                 id{"ILS"}
                 from:intvector{ /** 1985-09-04  */
+                    110,
+                    1198937440,
+                }
+            }
+            {
+                id{"ILR"}
+                from:intvector{ /** 1980-02-22  */
+                    73,
+                    -480259904,
+                }
+                to:intvector{ /** 1985-09-04  */
                     110,
                     1198937440,
                 }
@@ -1827,6 +1970,17 @@ supplementalData:table(nofallback){
                 }
             }
             {
+                id{"ISJ"}
+                from:intvector{ /** 1918-12-01  */
+                    -383,
+                    -316972928,
+                }
+                to:intvector{ /** 1981-01-01  */
+                    80,
+                    -737090976,
+                }
+            }
+            {
                 id{"DKK"}
                 from:intvector{ /** 1873-05-27  */
                     -713,
@@ -1848,7 +2002,7 @@ supplementalData:table(nofallback){
             }
             {
                 id{"ITL"}
-                from:intvector{ /** 1862-8-24  */
+                from:intvector{ /** 1862-08-24  */
                     -794,
                     -237654272,
                 }
@@ -1861,9 +2015,9 @@ supplementalData:table(nofallback){
         JE{
             {
                 id{"GBP"}
-                from:intvector{ /** 1837  */
+                from:intvector{ /** 1837-01-01  */
                     -978,
-                    -869751808,
+                    -869691808,
                 }
             }
         }
@@ -1888,7 +2042,7 @@ supplementalData:table(nofallback){
         JP{
             {
                 id{"JPY"}
-                from:intvector{ /** 1871-06  */
+                from:intvector{ /** 1871-06-01  */
                     -728,
                     -1696015808,
                 }
@@ -1987,6 +2141,28 @@ supplementalData:table(nofallback){
                     1720230464,
                 }
             }
+            {
+                id{"KRH"}
+                from:intvector{ /** 1953-02-15  */
+                    -125,
+                    1623032000,
+                }
+                to:intvector{ /** 1962-06-10  */
+                    -59,
+                    1720230464,
+                }
+            }
+            {
+                id{"KRO"}
+                from:intvector{ /** 1945-08-15  */
+                    -184,
+                    -1729304832,
+                }
+                to:intvector{ /** 1953-02-15  */
+                    -125,
+                    1623032000,
+                }
+            }
         }
         KW{
             {
@@ -2000,9 +2176,9 @@ supplementalData:table(nofallback){
         KY{
             {
                 id{"KYD"}
-                from:intvector{ /** 1971  */
+                from:intvector{ /** 1971-01-01  */
                     7,
-                    1471228928,
+                    1471288928,
                 }
             }
             {
@@ -2011,9 +2187,9 @@ supplementalData:table(nofallback){
                     -8,
                     -865888928,
                 }
-                to:intvector{ /** 1971  */
+                to:intvector{ /** 1971-01-01  */
                     7,
-                    1471228928,
+                    1471288928,
                 }
             }
         }
@@ -2056,7 +2232,7 @@ supplementalData:table(nofallback){
         LI{
             {
                 id{"CHF"}
-                from:intvector{ /** 1921-02  */
+                from:intvector{ /** 1921-02-01  */
                     -361,
                     -112453440,
                 }
@@ -2106,7 +2282,7 @@ supplementalData:table(nofallback){
             }
             {
                 id{"LTT"}
-                from:intvector{ /** 1992-10-1  */
+                from:intvector{ /** 1992-10-01  */
                     161,
                     -1560101952,
                 }
@@ -2117,7 +2293,7 @@ supplementalData:table(nofallback){
             }
             {
                 id{"SUR"}
-                from:intvector{ /** 1961-1-1  */
+                from:intvector{ /** 1961-01-01  */
                     -67,
                     -528898464,
                 }
@@ -2195,6 +2371,17 @@ supplementalData:table(nofallback){
                     2120150976,
                 }
             }
+            {
+                id{"MAF"}
+                from:intvector{ /** 1881-01-01  */
+                    -654,
+                    390271584,
+                }
+                to:intvector{ /** 1959-10-17  */
+                    -81,
+                    2120150976,
+                }
+            }
         }
         MC{
             {
@@ -2215,11 +2402,33 @@ supplementalData:table(nofallback){
                     1908405440,
                 }
             }
+            {
+                id{"MCF"}
+                from:intvector{ /** 1960-01-01  */
+                    -74,
+                    -2086527392,
+                }
+                to:intvector{ /** 2002-02-17  */
+                    235,
+                    1908405440,
+                }
+            }
         }
         MD{
             {
                 id{"MDL"}
                 from:intvector{ /** 1993-11-29  */
+                    169,
+                    -1878180320,
+                }
+            }
+            {
+                id{"MDC"}
+                from:intvector{ /** 1992-06-01  */
+                    161,
+                    -1560341952,
+                }
+                to:intvector{ /** 1993-11-29  */
                     169,
                     -1878180320,
                 }
@@ -2299,9 +2508,9 @@ supplementalData:table(nofallback){
         MH{
             {
                 id{"USD"}
-                from:intvector{ /** 1944  */
+                from:intvector{ /** 1944-01-01  */
                     -192,
-                    -202046464,
+                    -201986464,
                 }
             }
         }
@@ -2309,6 +2518,17 @@ supplementalData:table(nofallback){
             {
                 id{"MKD"}
                 from:intvector{ /** 1993-05-20  */
+                    169,
+                    1638826976,
+                }
+            }
+            {
+                id{"MKN"}
+                from:intvector{ /** 1992-04-26  */
+                    162,
+                    599538048,
+                }
+                to:intvector{ /** 1993-05-20  */
                     169,
                     1638826976,
                 }
@@ -2368,7 +2588,7 @@ supplementalData:table(nofallback){
         MN{
             {
                 id{"MNT"}
-                from:intvector{ /** 1915-03  */
+                from:intvector{ /** 1915-03-01  */
                     -405,
                     -522632416,
                 }
@@ -2377,18 +2597,18 @@ supplementalData:table(nofallback){
         MO{
             {
                 id{"MOP"}
-                from:intvector{ /** 1901  */
+                from:intvector{ /** 1901-01-01  */
                     -507,
-                    95619072,
+                    95679072,
                 }
             }
         }
         MP{
             {
                 id{"USD"}
-                from:intvector{ /** 1944  */
+                from:intvector{ /** 1944-01-01  */
                     -192,
-                    -202046464,
+                    -201986464,
                 }
             }
         }
@@ -2509,9 +2729,9 @@ supplementalData:table(nofallback){
             }
             {
                 id{"MXP"}
-                from:intvector{ /** 1822  */
+                from:intvector{ /** 1822-01-01  */
                     -1088,
-                    -1808949248,
+                    -1808889248,
                 }
                 to:intvector{ /** 1992-12-31  */
                     162,
@@ -2522,7 +2742,7 @@ supplementalData:table(nofallback){
         MY{
             {
                 id{"MYR"}
-                from:intvector{ /** 1963-9-16  */
+                from:intvector{ /** 1963-09-16  */
                     -52,
                     -584927904,
                 }
@@ -2561,26 +2781,30 @@ supplementalData:table(nofallback){
         }
         NA{
             {
+                id{"NAD"}
+                from:intvector{ /** 1993-01-01  */
+                    168,
+                    -3013024,
+                }
+            }
+            {
                 id{"ZAR"}
                 from:intvector{ /** 1961-02-14  */
                     -66,
                     594361536,
                 }
-            }
-            {
-                id{"NAD"}
-                from:intvector{ /** 1993  */
+                to:intvector{ /** 1993-01-01  */
                     168,
-                    -3073024,
+                    -3013024,
                 }
             }
         }
         NC{
             {
                 id{"XPF"}
-                from:intvector{ /** 1985  */
+                from:intvector{ /** 1985-01-01  */
                     110,
-                    939197440,
+                    939257440,
                 }
             }
         }
@@ -2634,16 +2858,16 @@ supplementalData:table(nofallback){
         NL{
             {
                 id{"EUR"}
-                from:intvector{ /** 1999-1-1  */
+                from:intvector{ /** 1999-01-01  */
                     213,
                     320825952,
                 }
             }
             {
                 id{"NLG"}
-                from:intvector{ /** 1813  */
+                from:intvector{ /** 1813-01-01  */
                     -1154,
-                    1957059584,
+                    1957119584,
                 }
                 to:intvector{ /** 2002-02-28  */
                     235,
@@ -2661,7 +2885,7 @@ supplementalData:table(nofallback){
             }
             {
                 id{"SEK"}
-                from:intvector{ /** 1873-5-27  */
+                from:intvector{ /** 1873-05-27  */
                     -713,
                     -715785248,
                 }
@@ -2674,16 +2898,16 @@ supplementalData:table(nofallback){
         NP{
             {
                 id{"NPR"}
-                from:intvector{ /** 1933  */
+                from:intvector{ /** 1933-01-01  */
                     -272,
-                    621504512,
+                    621564512,
                 }
             }
             {
                 id{"INR"}
-                from:intvector{ /** 1870  */
+                from:intvector{ /** 1870-01-01  */
                     -735,
-                    1127362560,
+                    1127422560,
                 }
                 to:intvector{ /** 1966-10-17  */
                     -30,
@@ -2891,9 +3115,9 @@ supplementalData:table(nofallback){
             }
             {
                 id{"ESP"}
-                from:intvector{ /** 1800  */
+                from:intvector{ /** 1800-01-01  */
                     -1250,
-                    -248247296,
+                    -248187296,
                 }
                 to:intvector{ /** 1898-12-10  */
                     -529,
@@ -2933,7 +3157,7 @@ supplementalData:table(nofallback){
                     -147,
                     208612512,
                 }
-                to:intvector{ /** 1967-06  */
+                to:intvector{ /** 1967-06-01  */
                     -23,
                     -204759488,
                 }
@@ -2962,16 +3186,16 @@ supplementalData:table(nofallback){
         PW{
             {
                 id{"USD"}
-                from:intvector{ /** 1944  */
+                from:intvector{ /** 1944-01-01  */
                     -192,
-                    -202046464,
+                    -201986464,
                 }
             }
         }
         PY{
             {
                 id{"PYG"}
-                from:intvector{ /** 1943-11  */
+                from:intvector{ /** 1943-11-01  */
                     -199,
                     -1672615392,
                 }
@@ -3127,7 +3351,7 @@ supplementalData:table(nofallback){
         SC{
             {
                 id{"SCR"}
-                from:intvector{ /** 1903-11  */
+                from:intvector{ /** 1903-11-01  */
                     -493,
                     -1256230368,
                 }
@@ -3158,7 +3382,7 @@ supplementalData:table(nofallback){
                     -96,
                     -1600266880,
                 }
-                to:intvector{ /** 1998-06  */
+                to:intvector{ /** 1998-06-01  */
                     205,
                     -1150102976,
                 }
@@ -3189,7 +3413,7 @@ supplementalData:table(nofallback){
         SE{
             {
                 id{"SEK"}
-                from:intvector{ /** 1873-5-27  */
+                from:intvector{ /** 1873-05-27  */
                     -713,
                     -715785248,
                 }
@@ -3255,10 +3479,21 @@ supplementalData:table(nofallback){
         }
         SK{
             {
+                id{"EUR"}
+                from:intvector{ /** 2009-01-01  */
+                    286,
+                    -1887553952,
+                }
+            }
+            {
                 id{"SKK"}
                 from:intvector{ /** 1992-12-31  */
                     162,
                     1032018048,
+                }
+                to:intvector{ /** 2009-01-01  */
+                    286,
+                    -1887553952,
                 }
             }
             {
@@ -3386,15 +3621,19 @@ supplementalData:table(nofallback){
         }
         SV{
             {
+                id{"USD"}
+                from:intvector{ /** 2001-01-01  */
+                    227,
+                    -945283488,
+                }
+            }
+            {
                 id{"SVC"}
                 from:intvector{ /** 1919-11-11  */
                     -375,
                     2018196000,
                 }
-            }
-            {
-                id{"USD"}
-                from:intvector{ /** 2001-01-01  */
+                to:intvector{ /** 2001-01-01  */
                     227,
                     -945283488,
                 }
@@ -3493,6 +3732,17 @@ supplementalData:table(nofallback){
                     -428772416,
                 }
             }
+            {
+                id{"RUR"}
+                from:intvector{ /** 1991-12-25  */
+                    154,
+                    -957610880,
+                }
+                to:intvector{ /** 1995-05-10  */
+                    183,
+                    -577682464,
+                }
+            }
         }
         TK{
             {
@@ -3536,10 +3786,21 @@ supplementalData:table(nofallback){
         }
         TM{
             {
+                id{"TMT"}
+                from:intvector{ /** 2009-01-01  */
+                    286,
+                    -1887553952,
+                }
+            }
+            {
                 id{"TMM"}
                 from:intvector{ /** 1993-11-01  */
                     168,
                     -2413024,
+                }
+                to:intvector{ /** 2009-01-01  */
+                    286,
+                    -1887553952,
                 }
             }
             {
@@ -3630,9 +3891,9 @@ supplementalData:table(nofallback){
         TT{
             {
                 id{"TTD"}
-                from:intvector{ /** 1964  */
+                from:intvector{ /** 1964-01-01  */
                     -45,
-                    -410238976,
+                    -410178976,
                 }
             }
         }
@@ -3695,7 +3956,7 @@ supplementalData:table(nofallback){
             }
             {
                 id{"SUR"}
-                from:intvector{ /** 1961-1-1  */
+                from:intvector{ /** 1961-01-01  */
                     -67,
                     -528898464,
                 }
@@ -3728,18 +3989,18 @@ supplementalData:table(nofallback){
         UM{
             {
                 id{"USD"}
-                from:intvector{ /** 1944  */
+                from:intvector{ /** 1944-01-01  */
                     -192,
-                    -202046464,
+                    -201986464,
                 }
             }
         }
         US{
             {
                 id{"USD"}
-                from:intvector{ /** 1792  */
+                from:intvector{ /** 1792-01-01  */
                     -1308,
-                    694023168,
+                    694083168,
                 }
             }
         }
@@ -3824,29 +4085,29 @@ supplementalData:table(nofallback){
         VG{
             {
                 id{"USD"}
-                from:intvector{ /** 1833  */
+                from:intvector{ /** 1833-01-01  */
                     -1007,
-                    1748867072,
+                    1748927072,
                 }
             }
             {
                 id{"GBP"}
-                from:intvector{ /** 1833  */
+                from:intvector{ /** 1833-01-01  */
                     -1007,
-                    1748867072,
+                    1748927072,
                 }
-                to:intvector{ /** 1959  */
+                to:intvector{ /** 1959-01-01  */
                     -81,
-                    737150976,
+                    737210976,
                 }
             }
         }
         VI{
             {
                 id{"USD"}
-                from:intvector{ /** 1837  */
+                from:intvector{ /** 1837-01-01  */
                     -978,
-                    -869751808,
+                    -869691808,
                 }
             }
         }
@@ -3854,6 +4115,17 @@ supplementalData:table(nofallback){
             {
                 id{"VND"}
                 from:intvector{ /** 1985-09-14  */
+                    110,
+                    2062937440,
+                }
+            }
+            {
+                id{"VNN"}
+                from:intvector{ /** 1978-05-03  */
+                    58,
+                    -769170464,
+                }
+                to:intvector{ /** 1985-09-14  */
                     110,
                     2062937440,
                 }
@@ -3892,6 +4164,19 @@ supplementalData:table(nofallback){
                 from:intvector{ /** 1990-05-22  */
                     147,
                     1606507488,
+                }
+            }
+        }
+        YD{
+            {
+                id{"YDD"}
+                from:intvector{ /** 1965-04-01  */
+                    -37,
+                    1147629952,
+                }
+                to:intvector{ /** 1996-01-01  */
+                    191,
+                    115706464,
                 }
             }
         }
@@ -4005,8 +4290,41 @@ supplementalData:table(nofallback){
         }
         ZW{
             {
+                id{"ZWL"}
+                from:intvector{ /** 2009-02-02  */
+                    286,
+                    -1801093952,
+                }
+            }
+            {
+                id{"ZWR"}
+                from:intvector{ /** 2008-08-01  */
+                    279,
+                    850204416,
+                }
+                to:intvector{ /** 2009-02-02  */
+                    286,
+                    -1801093952,
+                }
+            }
+            {
                 id{"ZWD"}
                 from:intvector{ /** 1980-04-18  */
+                    73,
+                    -825739904,
+                }
+                to:intvector{ /** 2008-08-01  */
+                    279,
+                    850204416,
+                }
+            }
+            {
+                id{"RHD"}
+                from:intvector{ /** 1970-02-17  */
+                    0,
+                    1382520000,
+                }
+                to:intvector{ /** 1980-04-18  */
                     73,
                     -825739904,
                 }
@@ -4025,6 +4343,18 @@ supplementalData:table(nofallback){
      */
     CurrencyMeta{
         ADP:intvector{
+            0,
+            0,
+        }
+        AFN:intvector{
+            0,
+            0,
+        }
+        ALL:intvector{
+            0,
+            0,
+        }
+        AMD:intvector{
             0,
             0,
         }
@@ -4052,6 +4382,14 @@ supplementalData:table(nofallback){
             0,
             0,
         }
+        COP:intvector{
+            0,
+            0,
+        }
+        CRC:intvector{
+            0,
+            0,
+        }
         DEFAULT:intvector{
             2,
             0,
@@ -4068,8 +4406,28 @@ supplementalData:table(nofallback){
             0,
             0,
         }
+        GYD:intvector{
+            0,
+            0,
+        }
+        HUF:intvector{
+            0,
+            0,
+        }
+        IDR:intvector{
+            0,
+            0,
+        }
         IQD:intvector{
-            3,
+            0,
+            0,
+        }
+        IRR:intvector{
+            0,
+            0,
+        }
+        ISK:intvector{
+            0,
             0,
         }
         ITL:intvector{
@@ -4088,12 +4446,24 @@ supplementalData:table(nofallback){
             0,
             0,
         }
+        KPW:intvector{
+            0,
+            0,
+        }
         KRW:intvector{
             0,
             0,
         }
         KWD:intvector{
             3,
+            0,
+        }
+        LAK:intvector{
+            0,
+            0,
+        }
+        LBP:intvector{
+            0,
             0,
         }
         LUF:intvector{
@@ -4112,15 +4482,59 @@ supplementalData:table(nofallback){
             0,
             0,
         }
+        MMK:intvector{
+            0,
+            0,
+        }
+        MNT:intvector{
+            0,
+            0,
+        }
+        MRO:intvector{
+            0,
+            0,
+        }
+        MUR:intvector{
+            0,
+            0,
+        }
         OMR:intvector{
             3,
+            0,
+        }
+        PKR:intvector{
+            0,
             0,
         }
         PYG:intvector{
             0,
             0,
         }
+        RSD:intvector{
+            0,
+            0,
+        }
         RWF:intvector{
+            0,
+            0,
+        }
+        SLL:intvector{
+            0,
+            0,
+        }
+        SOS:intvector{
+            0,
+            0,
+        }
+        STD:intvector{
+            0,
+            0,
+        }
+        SYP:intvector{
+            0,
+            0,
+        }
+        TMM:intvector{
             0,
             0,
         }
@@ -4129,6 +4543,22 @@ supplementalData:table(nofallback){
             0,
         }
         TRL:intvector{
+            0,
+            0,
+        }
+        TZS:intvector{
+            0,
+            0,
+        }
+        UGX:intvector{
+            0,
+            0,
+        }
+        UZS:intvector{
+            0,
+            0,
+        }
+        VND:intvector{
             0,
             0,
         }
@@ -4148,97 +4578,697 @@ supplementalData:table(nofallback){
             0,
             0,
         }
-    }
-    calendarData{
-        buddhist{
-            "TH",
+        YER:intvector{
+            0,
+            0,
         }
-        chinese{
-            "CN",
-            "CX",
-            "HK",
-            "MO",
-            "SG",
-            "TW",
+        ZMK:intvector{
+            0,
+            0,
         }
-        coptic{
-            "EG",
-        }
-        ethiopic{
-            "ET",
-        }
-        gregorian{
-            "all",
-        }
-        hebrew{
-            "IL",
-        }
-        islamic{
-            "AE",
-            "BH",
-            "DJ",
-            "DZ",
-            "EG",
-            "EH",
-            "ER",
-            "IL",
-            "IQ",
-            "JO",
-            "KM",
-            "KW",
-            "LB",
-            "LY",
-            "MA",
-            "MR",
-            "OM",
-            "PS",
-            "QA",
-            "SA",
-            "SD",
-            "SY",
-            "TD",
-            "TN",
-            "YE",
-            "AF",
-            "IR",
-        }
-        islamic-civil{
-            "AE",
-            "BH",
-            "DJ",
-            "DZ",
-            "EG",
-            "EH",
-            "ER",
-            "IL",
-            "IQ",
-            "JO",
-            "KM",
-            "KW",
-            "LB",
-            "LY",
-            "MA",
-            "MR",
-            "OM",
-            "PS",
-            "QA",
-            "SA",
-            "SD",
-            "SY",
-            "TD",
-            "TN",
-            "YE",
-            "AF",
-            "IR",
-        }
-        japanese{
-            "JP",
-        }
-        persian{
-            "AF",
-            "IR",
+        ZWD:intvector{
+            0,
+            0,
         }
     }
+    bcp47KeywordMappings{
+        calendar{
+            ethiopic-amete-alem{"ethiopaa"}
+            gregorian{"gregory"}
+            islamic-civil{"islamicc"}
+        }
+        colalternate{
+            non-ignorable{"nonignore"}
+        }
+        colbackwards{
+            no{"false"}
+            yes{"true"}
+        }
+        colcasefirst{
+            no{"false"}
+        }
+        colcaselevel{
+            no{"false"}
+            yes{"true"}
+        }
+        colhiraganaquaternary{
+            no{"false"}
+            yes{"true"}
+        }
+        collation{
+            digits-after{"digitaft"}
+            gb2312han{"gb2312"}
+            phonebook{"phonebk"}
+        }
+        colnormalization{
+            no{"false"}
+            yes{"true"}
+        }
+        colnumeric{
+            no{"false"}
+            yes{"true"}
+        }
+        colstrength{
+            identical{"identic"}
+            primary{"level1"}
+            quaternary{"level4"}
+            secondary{"level2"}
+            tertiary{"level3"}
+        }
+        key{
+            calendar{"ca"}
+            colalternate{"ka"}
+            colbackwards{"kb"}
+            colcasefirst{"kf"}
+            colcaselevel{"kc"}
+            colhiraganaquaternary{"kh"}
+            collation{"co"}
+            colnormalization{"kk"}
+            colnumeric{"kn"}
+            colstrength{"ks"}
+            currency{"cu"}
+            numbers{"nu"}
+            timezone{"tz"}
+            variabletop{"vt"}
+        }
+        timezone{
+            "africa:abidjan"{"ciabj"}
+            "africa:accra"{"ghacc"}
+            "africa:addis_ababa"{"etadd"}
+            "africa:algiers"{"dzalg"}
+            "africa:asmera"{"erasm"}
+            "africa:bamako"{"mlbko"}
+            "africa:bangui"{"cfbgf"}
+            "africa:banjul"{"gmbjl"}
+            "africa:bissau"{"gwoxb"}
+            "africa:blantyre"{"mwblz"}
+            "africa:brazzaville"{"cgbzv"}
+            "africa:bujumbura"{"bibjm"}
+            "africa:cairo"{"egcai"}
+            "africa:casablanca"{"macas"}
+            "africa:ceuta"{"esceu"}
+            "africa:conakry"{"gncky"}
+            "africa:dakar"{"sndkr"}
+            "africa:dar_es_salaam"{"tzdar"}
+            "africa:djibouti"{"djjib"}
+            "africa:douala"{"cmdla"}
+            "africa:el_aaiun"{"eheai"}
+            "africa:freetown"{"slfna"}
+            "africa:gaborone"{"bwgbe"}
+            "africa:harare"{"zwhre"}
+            "africa:johannesburg"{"zajnb"}
+            "africa:kampala"{"ugkla"}
+            "africa:khartoum"{"sdkrt"}
+            "africa:kigali"{"rwkgl"}
+            "africa:kinshasa"{"cdfih"}
+            "africa:lagos"{"nglos"}
+            "africa:libreville"{"galbv"}
+            "africa:lome"{"tglfw"}
+            "africa:luanda"{"aolad"}
+            "africa:lubumbashi"{"cdfbm"}
+            "africa:lusaka"{"zmlun"}
+            "africa:malabo"{"gqssg"}
+            "africa:maputo"{"mzmpm"}
+            "africa:maseru"{"lsmsu"}
+            "africa:mbabane"{"szqmn"}
+            "africa:mogadishu"{"somgq"}
+            "africa:monrovia"{"lrmlw"}
+            "africa:nairobi"{"kenbo"}
+            "africa:ndjamena"{"tdndj"}
+            "africa:niamey"{"nenim"}
+            "africa:nouakchott"{"mrnkc"}
+            "africa:ouagadougou"{"bfoua"}
+            "africa:porto-novo"{"bjptn"}
+            "africa:sao_tome"{"sttms"}
+            "africa:tripoli"{"lytip"}
+            "africa:tunis"{"tntun"}
+            "africa:windhoek"{"nawdh"}
+            "america:adak"{"usadk"}
+            "america:anchorage"{"usanc"}
+            "america:anguilla"{"aiaxa"}
+            "america:antigua"{"aganu"}
+            "america:araguaina"{"braux"}
+            "america:argentina:la_rioja"{"arirj"}
+            "america:argentina:rio_gallegos"{"arrgl"}
+            "america:argentina:salta"{"arsla"}
+            "america:argentina:san_juan"{"aruaq"}
+            "america:argentina:san_luis"{"arluq"}
+            "america:argentina:tucuman"{"artuc"}
+            "america:argentina:ushuaia"{"arush"}
+            "america:aruba"{"awaua"}
+            "america:asuncion"{"pyasu"}
+            "america:bahia"{"brssa"}
+            "america:barbados"{"bbbgi"}
+            "america:belem"{"brbel"}
+            "america:belize"{"bzbze"}
+            "america:blanc-sablon"{"caybx"}
+            "america:boa_vista"{"brbvb"}
+            "america:bogota"{"cobog"}
+            "america:boise"{"usboi"}
+            "america:buenos_aires"{"arbue"}
+            "america:cambridge_bay"{"caycb"}
+            "america:campo_grande"{"brcgr"}
+            "america:cancun"{"mxcun"}
+            "america:caracas"{"veccs"}
+            "america:catamarca"{"arctc"}
+            "america:cayenne"{"gfcay"}
+            "america:cayman"{"kygec"}
+            "america:chicago"{"uschi"}
+            "america:chihuahua"{"mxchi"}
+            "america:coral_harbour"{"cayzs"}
+            "america:cordoba"{"arcor"}
+            "america:costa_rica"{"crsjo"}
+            "america:cuiaba"{"brcgb"}
+            "america:curacao"{"ancur"}
+            "america:danmarkshavn"{"gldkshvn"}
+            "america:dawson"{"cayda"}
+            "america:dawson_creek"{"caydq"}
+            "america:denver"{"usden"}
+            "america:detroit"{"usdet"}
+            "america:dominica"{"dmdom"}
+            "america:edmonton"{"caedm"}
+            "america:eirunepe"{"brern"}
+            "america:el_salvador"{"svsal"}
+            "america:fortaleza"{"brfor"}
+            "america:glace_bay"{"caglb"}
+            "america:godthab"{"glgoh"}
+            "america:goose_bay"{"cagoo"}
+            "america:grand_turk"{"tcgdt"}
+            "america:grenada"{"gdgnd"}
+            "america:guadeloupe"{"gpbbr"}
+            "america:guatemala"{"gtgua"}
+            "america:guayaquil"{"ecgye"}
+            "america:guyana"{"gygeo"}
+            "america:halifax"{"cahal"}
+            "america:havana"{"cuhav"}
+            "america:hermosillo"{"mxhmo"}
+            "america:indiana:knox"{"usknx"}
+            "america:indiana:marengo"{"usaeg"}
+            "america:indiana:petersburg"{"uswsq"}
+            "america:indiana:tell_city"{"ustel"}
+            "america:indiana:vevay"{"usinvev"}
+            "america:indiana:vincennes"{"usoea"}
+            "america:indiana:winamac"{"uswlz"}
+            "america:indianapolis"{"usind"}
+            "america:inuvik"{"cayev"}
+            "america:iqaluit"{"caiql"}
+            "america:jamaica"{"jmkin"}
+            "america:jujuy"{"arjuj"}
+            "america:juneau"{"usjnu"}
+            "america:kentucky:monticello"{"usmoc"}
+            "america:la_paz"{"bolpb"}
+            "america:lima"{"pelim"}
+            "america:los_angeles"{"uslax"}
+            "america:louisville"{"uslui"}
+            "america:maceio"{"brmcz"}
+            "america:managua"{"nimga"}
+            "america:manaus"{"brmao"}
+            "america:marigot"{"gpmsb"}
+            "america:martinique"{"mqfdf"}
+            "america:mazatlan"{"mxmzt"}
+            "america:mendoza"{"armdz"}
+            "america:menominee"{"usmnm"}
+            "america:merida"{"mxmid"}
+            "america:mexico_city"{"mxmex"}
+            "america:miquelon"{"pmmqc"}
+            "america:moncton"{"camon"}
+            "america:monterrey"{"mxmty"}
+            "america:montevideo"{"uymvd"}
+            "america:montreal"{"camtr"}
+            "america:montserrat"{"msmni"}
+            "america:nassau"{"bsnas"}
+            "america:new_york"{"usnyc"}
+            "america:nipigon"{"cathu"}
+            "america:nome"{"usome"}
+            "america:noronha"{"brfen"}
+            "america:north_dakota:center"{"usndcnt"}
+            "america:north_dakota:new_salem"{"usndnsl"}
+            "america:panama"{"papty"}
+            "america:pangnirtung"{"capnt"}
+            "america:paramaribo"{"srpbm"}
+            "america:phoenix"{"usphx"}
+            "america:port-au-prince"{"htpap"}
+            "america:port_of_spain"{"ttpos"}
+            "america:porto_velho"{"brpvh"}
+            "america:puerto_rico"{"prsju"}
+            "america:rainy_river"{"caffs"}
+            "america:rankin_inlet"{"cayek"}
+            "america:recife"{"brrec"}
+            "america:regina"{"careg"}
+            "america:resolute"{"careb"}
+            "america:rio_branco"{"brrbr"}
+            "america:santarem"{"brstm"}
+            "america:santiago"{"clscl"}
+            "america:santo_domingo"{"dosdq"}
+            "america:sao_paulo"{"brsao"}
+            "america:scoresbysund"{"globy"}
+            "america:shiprock"{"usnavajo"}
+            "america:st_barthelemy"{"gpsbh"}
+            "america:st_johns"{"casjf"}
+            "america:st_kitts"{"knbas"}
+            "america:st_lucia"{"lccas"}
+            "america:st_thomas"{"vistt"}
+            "america:st_vincent"{"vcsvd"}
+            "america:swift_current"{"cayyn"}
+            "america:tegucigalpa"{"hntgu"}
+            "america:thule"{"glthu"}
+            "america:thunder_bay"{"cathu"}
+            "america:tijuana"{"mxtij"}
+            "america:toronto"{"cator"}
+            "america:tortola"{"vgtov"}
+            "america:vancouver"{"cavan"}
+            "america:whitehorse"{"cayxy"}
+            "america:winnipeg"{"cawnp"}
+            "america:yakutat"{"usyak"}
+            "america:yellowknife"{"cayzf"}
+            "antarctica:casey"{"aqcas"}
+            "antarctica:davis"{"aqdav"}
+            "antarctica:dumontdurville"{"aqddu"}
+            "antarctica:mawson"{"aqmaw"}
+            "antarctica:mcmurdo"{"aqmcm"}
+            "antarctica:palmer"{"aqplm"}
+            "antarctica:rothera"{"aqrot"}
+            "antarctica:south_pole"{"aqams"}
+            "antarctica:syowa"{"aqsyw"}
+            "antarctica:vostok"{"aqvos"}
+            "arctic:longyearbyen"{"sjlyr"}
+            "asia:aden"{"yeade"}
+            "asia:almaty"{"kzala"}
+            "asia:amman"{"joamm"}
+            "asia:anadyr"{"rudyr"}
+            "asia:aqtau"{"kzaau"}
+            "asia:aqtobe"{"kzakx"}
+            "asia:ashgabat"{"tmasb"}
+            "asia:baghdad"{"iqbgw"}
+            "asia:bahrain"{"bhbah"}
+            "asia:baku"{"azbak"}
+            "asia:bangkok"{"thbkk"}
+            "asia:beirut"{"lbbey"}
+            "asia:bishkek"{"kgfru"}
+            "asia:brunei"{"bnbwn"}
+            "asia:calcutta"{"inccu"}
+            "asia:choibalsan"{"mncoq"}
+            "asia:chongqing"{"cnckg"}
+            "asia:colombo"{"lkcmb"}
+            "asia:damascus"{"sydam"}
+            "asia:dhaka"{"bddac"}
+            "asia:dili"{"tldil"}
+            "asia:dubai"{"aedxb"}
+            "asia:dushanbe"{"tjdyu"}
+            "asia:gaza"{"gaza"}
+            "asia:harbin"{"cnhrb"}
+            "asia:hong_kong"{"hkhkg"}
+            "asia:hovd"{"mnhvd"}
+            "asia:irkutsk"{"ruikt"}
+            "asia:jakarta"{"idjkt"}
+            "asia:jayapura"{"iddjj"}
+            "asia:jerusalem"{"jeruslm"}
+            "asia:kabul"{"afkbl"}
+            "asia:kamchatka"{"rupkc"}
+            "asia:karachi"{"pkkhi"}
+            "asia:kashgar"{"cnkhg"}
+            "asia:katmandu"{"npktm"}
+            "asia:krasnoyarsk"{"rukra"}
+            "asia:kuala_lumpur"{"mykul"}
+            "asia:kuching"{"mykch"}
+            "asia:kuwait"{"kwkwi"}
+            "asia:macau"{"momfm"}
+            "asia:magadan"{"rugdx"}
+            "asia:makassar"{"idmak"}
+            "asia:manila"{"phmnl"}
+            "asia:muscat"{"ommct"}
+            "asia:nicosia"{"cynic"}
+            "asia:novosibirsk"{"ruovb"}
+            "asia:omsk"{"ruoms"}
+            "asia:oral"{"kzura"}
+            "asia:phnom_penh"{"khpnh"}
+            "asia:pontianak"{"idpnk"}
+            "asia:pyongyang"{"kpfnj"}
+            "asia:qatar"{"qadoh"}
+            "asia:qyzylorda"{"kzkzo"}
+            "asia:rangoon"{"mmrgn"}
+            "asia:riyadh"{"saruh"}
+            "asia:saigon"{"vnsgn"}
+            "asia:sakhalin"{"ruuus"}
+            "asia:samarkand"{"uzskd"}
+            "asia:seoul"{"krsel"}
+            "asia:shanghai"{"cnsha"}
+            "asia:singapore"{"sgsin"}
+            "asia:taipei"{"twtpe"}
+            "asia:tashkent"{"uztas"}
+            "asia:tbilisi"{"getbs"}
+            "asia:tehran"{"irthr"}
+            "asia:thimphu"{"btthi"}
+            "asia:tokyo"{"jptyo"}
+            "asia:ulaanbaatar"{"mnuln"}
+            "asia:urumqi"{"cnurc"}
+            "asia:vientiane"{"lavte"}
+            "asia:vladivostok"{"ruvvo"}
+            "asia:yakutsk"{"ruyks"}
+            "asia:yekaterinburg"{"ruyek"}
+            "asia:yerevan"{"amevn"}
+            "atlantic:azores"{"ptpdl"}
+            "atlantic:bermuda"{"bmbda"}
+            "atlantic:canary"{"eslpa"}
+            "atlantic:cape_verde"{"cvrai"}
+            "atlantic:faeroe"{"fotho"}
+            "atlantic:madeira"{"ptfnc"}
+            "atlantic:reykjavik"{"isrey"}
+            "atlantic:south_georgia"{"gsgrv"}
+            "atlantic:st_helena"{"shshn"}
+            "atlantic:stanley"{"fkpsy"}
+            "australia:adelaide"{"auadl"}
+            "australia:brisbane"{"aubne"}
+            "australia:broken_hill"{"aubhq"}
+            "australia:currie"{"aukns"}
+            "australia:darwin"{"audrw"}
+            "australia:eucla"{"aueuc"}
+            "australia:hobart"{"auhba"}
+            "australia:lindeman"{"auldc"}
+            "australia:lord_howe"{"auldh"}
+            "australia:melbourne"{"aumel"}
+            "australia:perth"{"auper"}
+            "australia:sydney"{"ausyd"}
+            "etc:gmt"{"utc"}
+            "etc:gmt+1"{"utcw01"}
+            "etc:gmt+10"{"utcw10"}
+            "etc:gmt+11"{"utcw11"}
+            "etc:gmt+12"{"utcw12"}
+            "etc:gmt+2"{"utcw02"}
+            "etc:gmt+3"{"utcw03"}
+            "etc:gmt+4"{"utcw04"}
+            "etc:gmt+5"{"utcw05"}
+            "etc:gmt+6"{"utcw06"}
+            "etc:gmt+7"{"utcw07"}
+            "etc:gmt+8"{"utcw08"}
+            "etc:gmt+9"{"utcw09"}
+            "etc:gmt-1"{"utce01"}
+            "etc:gmt-10"{"utce10"}
+            "etc:gmt-11"{"utce11"}
+            "etc:gmt-12"{"utce12"}
+            "etc:gmt-13"{"utce13"}
+            "etc:gmt-14"{"utce14"}
+            "etc:gmt-2"{"utce02"}
+            "etc:gmt-3"{"utce03"}
+            "etc:gmt-4"{"utce04"}
+            "etc:gmt-5"{"utce05"}
+            "etc:gmt-6"{"utce06"}
+            "etc:gmt-7"{"utce07"}
+            "etc:gmt-8"{"utce08"}
+            "etc:gmt-9"{"utce09"}
+            "etc:unknown"{"unk"}
+            "europe:amsterdam"{"nlams"}
+            "europe:andorra"{"adalv"}
+            "europe:athens"{"grath"}
+            "europe:belgrade"{"rsbeg"}
+            "europe:berlin"{"deber"}
+            "europe:bratislava"{"skbts"}
+            "europe:brussels"{"bebru"}
+            "europe:bucharest"{"robuh"}
+            "europe:budapest"{"hubud"}
+            "europe:chisinau"{"mdkiv"}
+            "europe:copenhagen"{"dkcph"}
+            "europe:dublin"{"iedub"}
+            "europe:gibraltar"{"gigib"}
+            "europe:guernsey"{"gggci"}
+            "europe:helsinki"{"fihel"}
+            "europe:isle_of_man"{"imdgs"}
+            "europe:istanbul"{"trist"}
+            "europe:jersey"{"jesth"}
+            "europe:kaliningrad"{"rukgd"}
+            "europe:kiev"{"uaiev"}
+            "europe:lisbon"{"ptlis"}
+            "europe:ljubljana"{"silju"}
+            "europe:london"{"gblon"}
+            "europe:luxembourg"{"lulux"}
+            "europe:madrid"{"esmad"}
+            "europe:malta"{"mtmla"}
+            "europe:mariehamn"{"fimhq"}
+            "europe:minsk"{"bymsq"}
+            "europe:monaco"{"mcmon"}
+            "europe:moscow"{"rumow"}
+            "europe:oslo"{"noosl"}
+            "europe:paris"{"frpar"}
+            "europe:podgorica"{"metgd"}
+            "europe:prague"{"czprg"}
+            "europe:riga"{"lvrix"}
+            "europe:rome"{"itrom"}
+            "europe:samara"{"rukuf"}
+            "europe:san_marino"{"smsai"}
+            "europe:sarajevo"{"basjj"}
+            "europe:simferopol"{"uasip"}
+            "europe:skopje"{"mkskp"}
+            "europe:sofia"{"bgsof"}
+            "europe:stockholm"{"sesto"}
+            "europe:tallinn"{"eetll"}
+            "europe:tirane"{"altia"}
+            "europe:uzhgorod"{"uauzh"}
+            "europe:vaduz"{"livdz"}
+            "europe:vatican"{"vavat"}
+            "europe:vienna"{"atvie"}
+            "europe:vilnius"{"ltvno"}
+            "europe:volgograd"{"ruvog"}
+            "europe:warsaw"{"plwaw"}
+            "europe:zagreb"{"hrzag"}
+            "europe:zaporozhye"{"uaozh"}
+            "europe:zurich"{"chzrh"}
+            "indian:antananarivo"{"mgtnr"}
+            "indian:chagos"{"iodga"}
+            "indian:christmas"{"cxxch"}
+            "indian:cocos"{"cccck"}
+            "indian:comoro"{"kmyva"}
+            "indian:kerguelen"{"tfpfr"}
+            "indian:mahe"{"scmaw"}
+            "indian:maldives"{"mvmle"}
+            "indian:mauritius"{"muplu"}
+            "indian:mayotte"{"ytmam"}
+            "indian:reunion"{"rereu"}
+            "pacific:apia"{"wsapw"}
+            "pacific:auckland"{"nzakl"}
+            "pacific:chatham"{"nzcht"}
+            "pacific:easter"{"clipc"}
+            "pacific:efate"{"vuvli"}
+            "pacific:enderbury"{"kipho"}
+            "pacific:fakaofo"{"tkfko"}
+            "pacific:fiji"{"fjsuv"}
+            "pacific:funafuti"{"tvfun"}
+            "pacific:galapagos"{"ecgps"}
+            "pacific:gambier"{"pfgmr"}
+            "pacific:guadalcanal"{"sbhir"}
+            "pacific:guam"{"gugum"}
+            "pacific:honolulu"{"ushnl"}
+            "pacific:johnston"{"umjon"}
+            "pacific:kiritimati"{"kicxi"}
+            "pacific:kosrae"{"fmksa"}
+            "pacific:kwajalein"{"mhkwa"}
+            "pacific:majuro"{"mhmaj"}
+            "pacific:marquesas"{"pfnhv"}
+            "pacific:midway"{"ummdy"}
+            "pacific:nauru"{"nrinu"}
+            "pacific:niue"{"nuiue"}
+            "pacific:norfolk"{"nfnlk"}
+            "pacific:noumea"{"ncnou"}
+            "pacific:pago_pago"{"asppg"}
+            "pacific:palau"{"pwror"}
+            "pacific:pitcairn"{"pnpcn"}
+            "pacific:ponape"{"fmpni"}
+            "pacific:port_moresby"{"pgpom"}
+            "pacific:rarotonga"{"ckrar"}
+            "pacific:saipan"{"mpspn"}
+            "pacific:tahiti"{"pfppt"}
+            "pacific:tarawa"{"kitrw"}
+            "pacific:tongatapu"{"totbu"}
+            "pacific:truk"{"fmtkk"}
+            "pacific:wake"{"umawk"}
+            "pacific:wallis"{"wfmau"}
+        }
+    }
+    calendarPreferenceData{
+        001{
+            "gregorian",
+        }
+        AE{
+            "gregorian",
+            "islamic",
+            "islamic-civil",
+        }
+        AF{
+            "gregorian",
+            "persian",
+            "islamic",
+            "islamic-civil",
+        }
+        BH{
+            "gregorian",
+            "islamic",
+            "islamic-civil",
+        }
+        CN{
+            "gregorian",
+            "chinese",
+        }
+        CX{
+            "gregorian",
+            "chinese",
+        }
+        DJ{
+            "gregorian",
+            "islamic",
+            "islamic-civil",
+        }
+        DZ{
+            "gregorian",
+            "islamic",
+            "islamic-civil",
+        }
+        EG{
+            "gregorian",
+            "coptic",
+            "islamic",
+            "islamic-civil",
+        }
+        EH{
+            "gregorian",
+            "islamic",
+            "islamic-civil",
+        }
+        ER{
+            "gregorian",
+            "islamic",
+            "islamic-civil",
+        }
+        ET{
+            "gregorian",
+            "ethiopic",
+        }
+        HK{
+            "gregorian",
+            "chinese",
+        }
+        IL{
+            "gregorian",
+            "hebrew",
+            "islamic",
+            "islamic-civil",
+        }
+        IN{
+            "gregorian",
+            "indian",
+        }
+        IQ{
+            "gregorian",
+            "islamic",
+            "islamic-civil",
+        }
+        IR{
+            "gregorian",
+            "persian",
+            "islamic",
+            "islamic-civil",
+        }
+        JO{
+            "gregorian",
+            "islamic",
+            "islamic-civil",
+        }
+        JP{
+            "gregorian",
+            "japanese",
+        }
+        KM{
+            "gregorian",
+            "islamic",
+            "islamic-civil",
+        }
+        KW{
+            "gregorian",
+            "islamic",
+            "islamic-civil",
+        }
+        LB{
+            "gregorian",
+            "islamic",
+            "islamic-civil",
+        }
+        LY{
+            "gregorian",
+            "islamic",
+            "islamic-civil",
+        }
+        MA{
+            "gregorian",
+            "islamic",
+            "islamic-civil",
+        }
+        MO{
+            "gregorian",
+            "chinese",
+        }
+        MR{
+            "gregorian",
+            "islamic",
+            "islamic-civil",
+        }
+        OM{
+            "gregorian",
+            "islamic",
+            "islamic-civil",
+        }
+        PS{
+            "gregorian",
+            "islamic",
+            "islamic-civil",
+        }
+        QA{
+            "gregorian",
+            "islamic",
+            "islamic-civil",
+        }
+        SA{
+            "gregorian",
+            "islamic",
+            "islamic-civil",
+        }
+        SD{
+            "gregorian",
+            "islamic",
+            "islamic-civil",
+        }
+        SG{
+            "gregorian",
+            "chinese",
+        }
+        SY{
+            "gregorian",
+            "islamic",
+            "islamic-civil",
+        }
+        TD{
+            "gregorian",
+            "islamic",
+            "islamic-civil",
+        }
+        TH{
+            "buddhist",
+            "gregorian",
+        }
+        TN{
+            "gregorian",
+            "islamic",
+            "islamic-civil",
+        }
+        TW{
+            "gregorian",
+            "roc",
+            "chinese",
+        }
+        YE{
+            "gregorian",
+            "islamic",
+            "islamic-civil",
+        }
+    }
+    cldrVersion{"1.7.1"}
     languageData{
         aa{
             primary{
@@ -4249,6 +5279,7 @@ supplementalData:table(nofallback){
             secondary{
                 territories{
                     "DJ",
+                    "ET",
                 }
             }
         }
@@ -4287,6 +5318,20 @@ supplementalData:table(nofallback){
             secondary{
                 territories{
                     "ID",
+                }
+            }
+        }
+        ach{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
+        ada{
+            primary{
+                scripts{
+                    "Latn",
                 }
             }
         }
@@ -4351,6 +5396,20 @@ supplementalData:table(nofallback){
                 }
             }
         }
+        ale{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
+        alt{
+            primary{
+                scripts{
+                    "Cyrl",
+                }
+            }
+        }
         am{
             primary{
                 scripts{
@@ -4365,6 +5424,20 @@ supplementalData:table(nofallback){
             primary{
                 scripts{
                     "Latn",
+                }
+            }
+        }
+        an{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
+        anp{
+            primary{
+                scripts{
+                    "Deva",
                 }
             }
         }
@@ -4402,8 +5475,32 @@ supplementalData:table(nofallback){
                 }
             }
             secondary{
+                scripts{
+                    "Syrc",
+                }
                 territories{
                     "IR",
+                }
+            }
+        }
+        arn{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
+        arp{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
+        arw{
+            secondary{
+                scripts{
+                    "Latn",
                 }
             }
         }
@@ -4501,6 +5598,7 @@ supplementalData:table(nofallback){
             }
             secondary{
                 territories{
+                    "IR",
                     "PK",
                 }
             }
@@ -4520,6 +5618,13 @@ supplementalData:table(nofallback){
                 }
             }
         }
+        bas{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
         bbc{
             primary{
                 scripts{
@@ -4532,6 +5637,13 @@ supplementalData:table(nofallback){
                 }
                 territories{
                     "ID",
+                }
+            }
+        }
+        bci{
+            secondary{
+                territories{
+                    "CI",
                 }
             }
         }
@@ -4549,6 +5661,13 @@ supplementalData:table(nofallback){
                 }
                 territories{
                     "BY",
+                }
+            }
+        }
+        bej{
+            primary{
+                scripts{
+                    "Arab",
                 }
             }
         }
@@ -4581,7 +5700,12 @@ supplementalData:table(nofallback){
         bft{
             primary{
                 scripts{
-                    "Deva",
+                    "Arab",
+                }
+            }
+            secondary{
+                scripts{
+                    "Tibt",
                 }
             }
         }
@@ -4666,6 +5790,13 @@ supplementalData:table(nofallback){
                 }
             }
         }
+        bik{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
         bin{
             primary{
                 scripts{
@@ -4700,7 +5831,19 @@ supplementalData:table(nofallback){
         bku{
             primary{
                 scripts{
+                    "Latn",
+                }
+            }
+            secondary{
+                scripts{
                     "Buhd",
+                }
+            }
+        }
+        bla{
+            primary{
+                scripts{
+                    "Latn",
                 }
             }
         }
@@ -4739,13 +5882,6 @@ supplementalData:table(nofallback){
                 }
             }
         }
-        bqi{
-            secondary{
-                territories{
-                    "IR",
-                }
-            }
-        }
         br{
             primary{
                 scripts{
@@ -4781,6 +5917,13 @@ supplementalData:table(nofallback){
             primary{
                 scripts{
                     "Deva",
+                }
+            }
+        }
+        bua{
+            primary{
+                scripts{
+                    "Cyrl",
                 }
             }
         }
@@ -4855,6 +5998,20 @@ supplementalData:table(nofallback){
                 }
             }
         }
+        cad{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
+        car{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
         cch{
             primary{
                 scripts{
@@ -4866,6 +6023,11 @@ supplementalData:table(nofallback){
             primary{
                 scripts{
                     "Beng",
+                }
+            }
+            secondary{
+                scripts{
+                    "Cakm",
                 }
             }
         }
@@ -4928,6 +6090,32 @@ supplementalData:table(nofallback){
                 }
             }
         }
+        chn{
+            secondary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
+        cho{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
+        chp{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+            secondary{
+                scripts{
+                    "Cans",
+                }
+            }
+        }
         chr{
             primary{
                 scripts{
@@ -4936,10 +6124,21 @@ supplementalData:table(nofallback){
                 }
             }
         }
+        chy{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
         cja{
-            secondary{
+            primary{
                 scripts{
                     "Cham",
+                }
+            }
+            secondary{
+                scripts{
                     "Deva",
                 }
             }
@@ -4987,7 +6186,7 @@ supplementalData:table(nofallback){
             }
         }
         cpe{
-            primary{
+            secondary{
                 scripts{
                     "Latn",
                 }
@@ -4998,6 +6197,13 @@ supplementalData:table(nofallback){
                 scripts{
                     "Cans",
                     "Latn",
+                }
+            }
+        }
+        crh{
+            primary{
+                scripts{
+                    "Cyrl",
                 }
             }
         }
@@ -5013,6 +6219,13 @@ supplementalData:table(nofallback){
                 }
             }
         }
+        crs{
+            secondary{
+                territories{
+                    "SC",
+                }
+            }
+        }
         cs{
             primary{
                 scripts{
@@ -5020,6 +6233,13 @@ supplementalData:table(nofallback){
                 }
                 territories{
                     "CZ",
+                }
+            }
+        }
+        csb{
+            secondary{
+                scripts{
+                    "Latn",
                 }
             }
         }
@@ -5077,6 +6297,13 @@ supplementalData:table(nofallback){
                 }
             }
         }
+        dak{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
         dar{
             primary{
                 scripts{
@@ -5115,6 +6342,25 @@ supplementalData:table(nofallback){
                 }
             }
         }
+        del{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
+        den{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+            secondary{
+                scripts{
+                    "Cans",
+                }
+            }
+        }
         dgr{
             primary{
                 scripts{
@@ -5126,6 +6372,13 @@ supplementalData:table(nofallback){
             secondary{
                 territories{
                     "IN",
+                }
+            }
+        }
+        din{
+            primary{
+                scripts{
+                    "Latn",
                 }
             }
         }
@@ -5163,6 +6416,13 @@ supplementalData:table(nofallback){
             }
         }
         dsb{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
+        dua{
             primary{
                 scripts{
                     "Latn",
@@ -5210,6 +6470,7 @@ supplementalData:table(nofallback){
             secondary{
                 territories{
                     "GH",
+                    "TG",
                 }
             }
         }
@@ -5220,6 +6481,13 @@ supplementalData:table(nofallback){
                 }
                 territories{
                     "NG",
+                }
+            }
+        }
+        eka{
+            primary{
+                scripts{
+                    "Latn",
                 }
             }
         }
@@ -5237,7 +6505,7 @@ supplementalData:table(nofallback){
         emk{
             primary{
                 scripts{
-                    "Deva",
+                    "Nkoo",
                 }
             }
             secondary{
@@ -5291,6 +6559,7 @@ supplementalData:table(nofallback){
                     "LC",
                     "LR",
                     "LS",
+                    "MG",
                     "MH",
                     "MP",
                     "MS",
@@ -5335,10 +6604,15 @@ supplementalData:table(nofallback){
                 }
             }
             secondary{
+                scripts{
+                    "Dsrt",
+                    "Shaw",
+                }
                 territories{
                     "BE",
                     "DE",
                     "ES",
+                    "ET",
                     "FR",
                     "IN",
                     "IT",
@@ -5430,6 +6704,13 @@ supplementalData:table(nofallback){
                 }
             }
         }
+        ewo{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
         fa{
             primary{
                 scripts{
@@ -5458,6 +6739,20 @@ supplementalData:table(nofallback){
                 }
             }
         }
+        fat{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
+        ff{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
         fi{
             primary{
                 scripts{
@@ -5480,6 +6775,11 @@ supplementalData:table(nofallback){
                 }
                 territories{
                     "PH",
+                }
+            }
+            secondary{
+                scripts{
+                    "Tglg",
                 }
             }
         }
@@ -5603,6 +6903,13 @@ supplementalData:table(nofallback){
                 }
             }
         }
+        fuq{
+            secondary{
+                territories{
+                    "NE",
+                }
+            }
+        }
         fur{
             primary{
                 scripts{
@@ -5659,7 +6966,29 @@ supplementalData:table(nofallback){
         gag{
             primary{
                 scripts{
+                    "Latn",
+                }
+            }
+            secondary{
+                scripts{
                     "Cyrl",
+                }
+                territories{
+                    "MD",
+                }
+            }
+        }
+        gay{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
+        gba{
+            primary{
+                scripts{
+                    "Arab",
                 }
             }
         }
@@ -5783,6 +7112,13 @@ supplementalData:table(nofallback){
             secondary{
                 scripts{
                     "Goth",
+                }
+            }
+        }
+        grb{
+            primary{
+                scripts{
+                    "Latn",
                 }
             }
         }
@@ -6054,6 +7390,13 @@ supplementalData:table(nofallback){
                 }
             }
         }
+        hup{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
         hy{
             primary{
                 scripts{
@@ -6064,8 +7407,22 @@ supplementalData:table(nofallback){
                 }
             }
         }
+        hz{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
         ia{
             secondary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
+        iba{
+            primary{
                 scripts{
                     "Latn",
                 }
@@ -6111,11 +7468,13 @@ supplementalData:table(nofallback){
         ii{
             primary{
                 scripts{
-                    "Latn",
                     "Yiii",
                 }
             }
             secondary{
+                scripts{
+                    "Latn",
+                }
                 territories{
                     "CN",
                 }
@@ -6194,7 +7553,6 @@ supplementalData:table(nofallback){
             }
             secondary{
                 scripts{
-                    "Cyrl",
                     "Latn",
                 }
                 territories{
@@ -6210,6 +7568,20 @@ supplementalData:table(nofallback){
                 }
                 territories{
                     "JP",
+                }
+            }
+        }
+        jpr{
+            primary{
+                scripts{
+                    "Hebr",
+                }
+            }
+        }
+        jrb{
+            primary{
+                scripts{
+                    "Hebr",
                 }
             }
         }
@@ -6254,6 +7626,13 @@ supplementalData:table(nofallback){
             secondary{
                 territories{
                     "DZ",
+                }
+            }
+        }
+        kac{
+            primary{
+                scripts{
+                    "Mymr",
                 }
             }
         }
@@ -6309,6 +7688,13 @@ supplementalData:table(nofallback){
                 }
             }
         }
+        kea{
+            secondary{
+                territories{
+                    "CV",
+                }
+            }
+        }
         kfo{
             primary{
                 scripts{
@@ -6331,6 +7717,11 @@ supplementalData:table(nofallback){
             }
         }
         kg{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
             secondary{
                 territories{
                     "CD",
@@ -6414,6 +7805,9 @@ supplementalData:table(nofallback){
                 }
             }
             secondary{
+                scripts{
+                    "Arab",
+                }
                 territories{
                     "CN",
                 }
@@ -6635,6 +8029,13 @@ supplementalData:table(nofallback){
                 }
             }
         }
+        kut{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
         kv{
             primary{
                 scripts{
@@ -6683,6 +8084,13 @@ supplementalData:table(nofallback){
                 }
             }
         }
+        lab{
+            secondary{
+                scripts{
+                    "Lina",
+                }
+            }
+        }
         lad{
             primary{
                 scripts{
@@ -6699,6 +8107,20 @@ supplementalData:table(nofallback){
             secondary{
                 territories{
                     "PK",
+                }
+            }
+        }
+        laj{
+            secondary{
+                territories{
+                    "UG",
+                }
+            }
+        }
+        lam{
+            secondary{
+                scripts{
+                    "Latn",
                 }
             }
         }
@@ -6732,7 +8154,7 @@ supplementalData:table(nofallback){
             }
         }
         lep{
-            secondary{
+            primary{
                 scripts{
                     "Lepc",
                 }
@@ -6831,6 +8253,13 @@ supplementalData:table(nofallback){
                 }
             }
         }
+        loz{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
         lrc{
             secondary{
                 territories{
@@ -6872,6 +8301,20 @@ supplementalData:table(nofallback){
                 }
             }
         }
+        lui{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
+        lun{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
         luo{
             primary{
                 scripts{
@@ -6884,8 +8327,15 @@ supplementalData:table(nofallback){
                 }
             }
         }
-        lut{
+        lus{
             primary{
+                scripts{
+                    "Beng",
+                }
+            }
+        }
+        lut{
+            secondary{
                 scripts{
                     "Latn",
                 }
@@ -6959,8 +8409,25 @@ supplementalData:table(nofallback){
                 }
             }
             secondary{
+                scripts{
+                    "Bugi",
+                }
                 territories{
                     "ID",
+                }
+            }
+        }
+        man{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
+        mas{
+            primary{
+                scripts{
+                    "Latn",
                 }
             }
         }
@@ -6989,6 +8456,11 @@ supplementalData:table(nofallback){
             }
         }
         mdr{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
             secondary{
                 scripts{
                     "Bugi",
@@ -7063,6 +8535,13 @@ supplementalData:table(nofallback){
                 }
             }
         }
+        mic{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
         min{
             primary{
                 scripts{
@@ -7115,7 +8594,7 @@ supplementalData:table(nofallback){
             }
         }
         mnc{
-            primary{
+            secondary{
                 scripts{
                     "Mong",
                 }
@@ -7128,6 +8607,9 @@ supplementalData:table(nofallback){
                 }
             }
             secondary{
+                scripts{
+                    "Mtei",
+                }
                 territories{
                     "IN",
                 }
@@ -7147,7 +8629,7 @@ supplementalData:table(nofallback){
                 }
             }
         }
-        mo{
+        moh{
             primary{
                 scripts{
                     "Latn",
@@ -7221,16 +8703,17 @@ supplementalData:table(nofallback){
                 }
             }
         }
-        muw{
+        mus{
             primary{
                 scripts{
-                    "Beng",
-                    "Deva",
+                    "Latn",
                 }
             }
-            secondary{
-                territories{
-                    "IN",
+        }
+        mwl{
+            primary{
+                scripts{
+                    "Latn",
                 }
             }
         }
@@ -7238,6 +8721,11 @@ supplementalData:table(nofallback){
             primary{
                 scripts{
                     "Deva",
+                }
+            }
+            secondary{
+                territories{
+                    "IN",
                 }
             }
         }
@@ -7367,6 +8855,13 @@ supplementalData:table(nofallback){
             secondary{
                 territories{
                     "MZ",
+                }
+            }
+        }
+        nia{
+            primary{
+                scripts{
+                    "Latn",
                 }
             }
         }
@@ -7502,6 +8997,20 @@ supplementalData:table(nofallback){
                 }
             }
         }
+        nyo{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
+        nzi{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
         oc{
             primary{
                 scripts{
@@ -7511,6 +9020,18 @@ supplementalData:table(nofallback){
             secondary{
                 territories{
                     "FR",
+                }
+            }
+        }
+        oj{
+            primary{
+                scripts{
+                    "Cans",
+                }
+            }
+            secondary{
+                scripts{
+                    "Latn",
                 }
             }
         }
@@ -7549,6 +9070,13 @@ supplementalData:table(nofallback){
             secondary{
                 territories{
                     "GE",
+                }
+            }
+        }
+        osa{
+            primary{
+                scripts{
+                    "Latn",
                 }
             }
         }
@@ -7736,6 +9264,27 @@ supplementalData:table(nofallback){
                 }
             }
         }
+        raj{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
+        rap{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
+        rar{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
         rcf{
             primary{
                 scripts{
@@ -7852,6 +9401,13 @@ supplementalData:table(nofallback){
                 }
             }
         }
+        rup{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
         rw{
             primary{
                 scripts{
@@ -7875,6 +9431,13 @@ supplementalData:table(nofallback){
                 }
             }
         }
+        sad{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
         sah{
             primary{
                 scripts{
@@ -7891,6 +9454,7 @@ supplementalData:table(nofallback){
             secondary{
                 scripts{
                     "Hebr",
+                    "Samr",
                 }
             }
         }
@@ -7907,6 +9471,11 @@ supplementalData:table(nofallback){
             }
         }
         sat{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
             secondary{
                 scripts{
                     "Beng",
@@ -7916,6 +9485,13 @@ supplementalData:table(nofallback){
                 }
                 territories{
                     "IN",
+                }
+            }
+        }
+        sc{
+            primary{
+                scripts{
+                    "Latn",
                 }
             }
         }
@@ -7982,7 +9558,7 @@ supplementalData:table(nofallback){
             }
         }
         sel{
-            primary{
+            secondary{
                 scripts{
                     "Cyrl",
                 }
@@ -8052,6 +9628,13 @@ supplementalData:table(nofallback){
             secondary{
                 territories{
                     "RS",
+                }
+            }
+        }
+        skr{
+            secondary{
+                territories{
+                    "PK",
                 }
             }
         }
@@ -8146,6 +9729,7 @@ supplementalData:table(nofallback){
             }
             secondary{
                 scripts{
+                    "Arab",
                     "Osma",
                 }
                 territories{
@@ -8155,7 +9739,7 @@ supplementalData:table(nofallback){
             }
         }
         son{
-            primary{
+            secondary{
                 scripts{
                     "Latn",
                 }
@@ -8175,11 +9759,11 @@ supplementalData:table(nofallback){
                 }
                 territories{
                     "AL",
+                    "MK",
                 }
             }
             secondary{
                 territories{
-                    "MK",
                     "RS",
                 }
             }
@@ -8228,10 +9812,6 @@ supplementalData:table(nofallback){
                 }
                 territories{
                     "SZ",
-                }
-            }
-            secondary{
-                territories{
                     "ZA",
                 }
             }
@@ -8256,6 +9836,11 @@ supplementalData:table(nofallback){
                     "ID",
                 }
             }
+            secondary{
+                scripts{
+                    "Sund",
+                }
+            }
         }
         suk{
             primary{
@@ -8278,6 +9863,9 @@ supplementalData:table(nofallback){
             secondary{
                 scripts{
                     "Arab",
+                }
+                territories{
+                    "GN",
                 }
             }
         }
@@ -8321,6 +9909,9 @@ supplementalData:table(nofallback){
                 }
             }
             secondary{
+                scripts{
+                    "Latn",
+                }
                 territories{
                     "YT",
                 }
@@ -8432,6 +10023,20 @@ supplementalData:table(nofallback){
                 }
             }
         }
+        teo{
+            secondary{
+                territories{
+                    "UG",
+                }
+            }
+        }
+        ter{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
         tet{
             primary{
                 scripts{
@@ -8483,6 +10088,11 @@ supplementalData:table(nofallback){
             primary{
                 scripts{
                     "Ethi",
+                }
+            }
+            secondary{
+                territories{
+                    "ER",
                 }
             }
         }
@@ -8538,6 +10148,13 @@ supplementalData:table(nofallback){
                 }
             }
         }
+        tli{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
         tmh{
             primary{
                 scripts{
@@ -8566,6 +10183,13 @@ supplementalData:table(nofallback){
                 }
             }
         }
+        tog{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
         tpi{
             primary{
                 scripts{
@@ -8587,6 +10211,9 @@ supplementalData:table(nofallback){
                 }
             }
             secondary{
+                scripts{
+                    "Arab",
+                }
                 territories{
                     "DE",
                     "MK",
@@ -8632,6 +10259,13 @@ supplementalData:table(nofallback){
                 }
             }
         }
+        tsi{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
         tt{
             primary{
                 scripts{
@@ -8667,6 +10301,11 @@ supplementalData:table(nofallback){
             primary{
                 scripts{
                     "Latn",
+                }
+            }
+            secondary{
+                territories{
+                    "MW",
                 }
             }
         }
@@ -8823,6 +10462,27 @@ supplementalData:table(nofallback){
                 }
             }
         }
+        unr{
+            primary{
+                scripts{
+                    "Beng",
+                    "Deva",
+                }
+            }
+            secondary{
+                territories{
+                    "IN",
+                }
+            }
+        }
+        unx{
+            primary{
+                scripts{
+                    "Beng",
+                    "Deva",
+                }
+            }
+        }
         ur{
             primary{
                 scripts{
@@ -8852,7 +10512,7 @@ supplementalData:table(nofallback){
             }
         }
         vai{
-            secondary{
+            primary{
                 scripts{
                     "Vaii",
                 }
@@ -8878,6 +10538,9 @@ supplementalData:table(nofallback){
                 }
             }
             secondary{
+                scripts{
+                    "Hani",
+                }
                 territories{
                     "US",
                 }
@@ -8891,6 +10554,13 @@ supplementalData:table(nofallback){
             }
         }
         vo{
+            secondary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
+        vot{
             secondary{
                 scripts{
                     "Latn",
@@ -8925,6 +10595,13 @@ supplementalData:table(nofallback){
             secondary{
                 territories{
                     "PH",
+                }
+            }
+        }
+        was{
+            primary{
+                scripts{
+                    "Latn",
                 }
             }
         }
@@ -9061,12 +10738,22 @@ supplementalData:table(nofallback){
         za{
             primary{
                 scripts{
-                    "Hani",
+                    "Latn",
                 }
             }
             secondary{
+                scripts{
+                    "Hans",
+                }
                 territories{
                     "CN",
+                }
+            }
+        }
+        zap{
+            primary{
+                scripts{
+                    "Latn",
                 }
             }
         }
@@ -9074,6 +10761,13 @@ supplementalData:table(nofallback){
             primary{
                 scripts{
                     "Blis",
+                }
+            }
+        }
+        zen{
+            secondary{
+                scripts{
+                    "Tfng",
                 }
             }
         }
@@ -9114,6 +10808,20 @@ supplementalData:table(nofallback){
                 }
             }
         }
+        zun{
+            primary{
+                scripts{
+                    "Latn",
+                }
+            }
+        }
+        zza{
+            primary{
+                scripts{
+                    "Arab",
+                }
+            }
+        }
     }
     mapTimezones{
         metazones{
@@ -9133,7 +10841,6 @@ supplementalData:table(nofallback){
             "meta:Africa_Eastern_ET"{"Africa/Addis_Ababa"}
             "meta:Africa_Eastern_KM"{"Indian/Comoro"}
             "meta:Africa_Eastern_MG"{"Indian/Antananarivo"}
-            "meta:Africa_Eastern_SD"{"Africa/Khartoum"}
             "meta:Africa_Eastern_SO"{"Africa/Mogadishu"}
             "meta:Africa_Eastern_TZ"{"Africa/Dar_es_Salaam"}
             "meta:Africa_Eastern_UG"{"Africa/Kampala"}
@@ -9166,7 +10873,6 @@ supplementalData:table(nofallback){
             "meta:America_Central_GT"{"America/Guatemala"}
             "meta:America_Central_HN"{"America/Tegucigalpa"}
             "meta:America_Central_MX"{"America/Mexico_City"}
-            "meta:America_Central_NI"{"America/Managua"}
             "meta:America_Central_SV"{"America/El_Salvador"}
             "meta:America_Eastern_001"{"America/New_York"}
             "meta:America_Eastern_BS"{"America/Nassau"}
@@ -9203,7 +10909,6 @@ supplementalData:table(nofallback){
             "meta:Atlantic_BB"{"America/Barbados"}
             "meta:Atlantic_BM"{"America/Bermuda"}
             "meta:Atlantic_DM"{"America/Dominica"}
-            "meta:Atlantic_DO"{"America/Santo_Domingo"}
             "meta:Atlantic_GD"{"America/Grenada"}
             "meta:Atlantic_GL"{"America/Thule"}
             "meta:Atlantic_GP"{"America/Guadaloupe"}
@@ -9265,7 +10970,6 @@ supplementalData:table(nofallback){
             "meta:Europe_Central_CZ"{"Europe/Prague"}
             "meta:Europe_Central_DE"{"Europe/Berlin"}
             "meta:Europe_Central_DK"{"Europe/Copenhagen"}
-            "meta:Europe_Central_DZ"{"Africa/Algiers"}
             "meta:Europe_Central_ES"{"Europe/Madrid"}
             "meta:Europe_Central_GI"{"Europe/Gibraltar"}
             "meta:Europe_Central_HR"{"Europe/Zagreb"}
@@ -9287,26 +10991,15 @@ supplementalData:table(nofallback){
             "meta:Europe_Central_TN"{"Africa/Tunis"}
             "meta:Europe_Eastern_001"{"Europe/Bucharest"}
             "meta:Europe_Eastern_BG"{"Europe/Sofia"}
-            "meta:Europe_Eastern_BY"{"Europe/Minsk"}
             "meta:Europe_Eastern_CY"{"Asia/Nicosia"}
-            "meta:Europe_Eastern_EE"{"Europe/Tallinn"}
             "meta:Europe_Eastern_EG"{"Africa/Cairo"}
             "meta:Europe_Eastern_FI"{"Europe/Helsinki"}
             "meta:Europe_Eastern_GR"{"Europe/Athens"}
             "meta:Europe_Eastern_JO"{"Asia/Amman"}
             "meta:Europe_Eastern_LB"{"Asia/Beirut"}
-            "meta:Europe_Eastern_LT"{"Europe/Vilnius"}
-            "meta:Europe_Eastern_LV"{"Europe/Riga"}
-            "meta:Europe_Eastern_LY"{"Africa/Tripoli"}
-            "meta:Europe_Eastern_MD"{"Europe/Chisinau"}
-            "meta:Europe_Eastern_PS"{"Asia/Gaza"}
-            "meta:Europe_Eastern_RU"{"Europe/Kaliningrad"}
             "meta:Europe_Eastern_SY"{"Asia/Damascus"}
-            "meta:Europe_Eastern_UA"{"Europe/Kiev"}
             "meta:Europe_Western_001"{"Atlantic/Canary"}
-            "meta:Europe_Western_EH"{"Africa/El_Aaiun"}
             "meta:Europe_Western_FO"{"Atlantic/Faeroe"}
-            "meta:Europe_Western_MA"{"Africa/Casablanca"}
             "meta:Falkland_001"{"Atlantic/Stanley"}
             "meta:Fiji_001"{"Pacific/Fiji"}
             "meta:French_Guiana_001"{"America/Cayenne"}
@@ -9317,7 +11010,6 @@ supplementalData:table(nofallback){
             "meta:GMT_CI"{"Africa/Abidjan"}
             "meta:GMT_GB"{"Europe/London"}
             "meta:GMT_GH"{"Africa/Accra"}
-            "meta:GMT_GL"{"America/Danmarkshavn"}
             "meta:GMT_GM"{"Africa/Banjul"}
             "meta:GMT_GN"{"Africa/Conakry"}
             "meta:GMT_GW"{"Africa/Bissau"}
@@ -9429,6 +11121,7 @@ supplementalData:table(nofallback){
             "meta:Sverdlovsk_001"{"Asia/Yekaterinburg"}
             "meta:Syowa_001"{"Antarctica/Syowa"}
             "meta:Tahiti_001"{"Pacific/Tahiti"}
+            "meta:Taipei_001"{"Asia/Taipei"}
             "meta:Tajikistan_001"{"Asia/Dushanbe"}
             "meta:Tashkent_001"{"Asia/Tashkent"}
             "meta:Tbilisi_001"{"Asia/Tbilisi"}
@@ -9455,89 +11148,1354 @@ supplementalData:table(nofallback){
             "meta:Yukon_001"{"America/Yakutat"}
         }
         windows{
-            "Africa:Cairo"{"Egypt"}
-            "Africa:Casablanca"{"Greenwich"}
-            "Africa:Johannesburg"{"South Africa"}
-            "Africa:Lagos"{"W. Central Africa"}
-            "Africa:Nairobi"{"E. Africa"}
-            "Africa:Windhoek"{"Namibia"}
-            "America:Anchorage"{"Alaskan"}
-            "America:Bogota"{"SA Pacific"}
-            "America:Buenos_Aires"{"SA Eastern"}
-            "America:Caracas"{"SA Western"}
-            "America:Chicago"{"Central"}
-            "America:Chihuahua"{"Mexico Standard Time 2"}
-            "America:Denver"{"Mountain"}
-            "America:Godthab"{"Greenland"}
-            "America:Guatemala"{"Central America"}
-            "America:Halifax"{"Atlantic"}
-            "America:Indianapolis"{"US Eastern"}
-            "America:Los_Angeles"{"Pacific"}
-            "America:Manaus"{"Central Brazilian"}
-            "America:Mexico_City"{"Mexico"}
-            "America:Montevideo"{"Montevideo"}
-            "America:New_York"{"Eastern"}
-            "America:Noronha"{"Mid-Atlantic"}
-            "America:Phoenix"{"US Mountain"}
-            "America:Regina"{"Canada Central"}
-            "America:Santiago"{"Pacific SA"}
-            "America:Sao_Paulo"{"E. South America"}
-            "America:St_Johns"{"Newfoundland"}
-            "America:Tijuana"{"Pacific Standard Time (Mexico)"}
-            "Asia:Amman"{"Jordan"}
-            "Asia:Baghdad"{"Arabic"}
-            "Asia:Baku"{"Azerbaijan"}
-            "Asia:Bangkok"{"SE Asia"}
-            "Asia:Beirut"{"Middle East"}
-            "Asia:Calcutta"{"India"}
-            "Asia:Colombo"{"Sri Lanka"}
-            "Asia:Dhaka"{"Central Asia"}
-            "Asia:Jerusalem"{"Israel"}
-            "Asia:Kabul"{"Afghanistan"}
-            "Asia:Karachi"{"West Asia"}
-            "Asia:Katmandu"{"Nepal"}
-            "Asia:Krasnoyarsk"{"North Asia"}
-            "Asia:Muscat"{"Arabian"}
-            "Asia:Novosibirsk"{"N. Central Asia"}
-            "Asia:Rangoon"{"Myanmar"}
-            "Asia:Riyadh"{"Arab"}
-            "Asia:Seoul"{"Korea"}
-            "Asia:Shanghai"{"China"}
-            "Asia:Singapore"{"Singapore"}
-            "Asia:Taipei"{"Taipei"}
-            "Asia:Tbilisi"{"Georgian"}
-            "Asia:Tehran"{"Iran"}
-            "Asia:Tokyo"{"Tokyo"}
-            "Asia:Ulaanbaatar"{"North Asia East"}
-            "Asia:Vladivostok"{"Vladivostok"}
-            "Asia:Yakutsk"{"Yakutsk"}
-            "Asia:Yekaterinburg"{"Ekaterinburg"}
-            "Asia:Yerevan"{"Caucasus"}
-            "Atlantic:Azores"{"Azores"}
-            "Atlantic:Cape_Verde"{"Cape Verde"}
-            "Australia:Adelaide"{"Cen. Australia"}
-            "Australia:Brisbane"{"E. Australia"}
-            "Australia:Darwin"{"AUS Central"}
-            "Australia:Hobart"{"Tasmania"}
-            "Australia:Perth"{"W. Australia"}
-            "Australia:Sydney"{"AUS Eastern"}
-            "Europe:Berlin"{"W. Europe"}
-            "Europe:Helsinki"{"FLE"}
-            "Europe:Istanbul"{"GTB"}
-            "Europe:London"{"GMT"}
-            "Europe:Minsk"{"E. Europe"}
-            "Europe:Moscow"{"Russian"}
-            "Europe:Paris"{"Romance"}
-            "Europe:Prague"{"Central Europe"}
-            "Europe:Warsaw"{"Central European"}
-            "Pacific:Apia"{"Samoa"}
-            "Pacific:Auckland"{"New Zealand"}
-            "Pacific:Fiji"{"Fiji"}
-            "Pacific:Guadalcanal"{"Central Pacific"}
-            "Pacific:Guam"{"West Pacific"}
-            "Pacific:Honolulu"{"Hawaiian"}
-            "Pacific:Kwajalein"{"Dateline"}
-            "Pacific:Tongatapu"{"Tonga"}
+            "AUS Central Standard Time"{"Australia/Darwin"}
+            "AUS Eastern Standard Time"{"Australia/Sydney"}
+            "Afghanistan Standard Time"{"Asia/Kabul"}
+            "Alaskan Standard Time"{"America/Anchorage"}
+            "Arab Standard Time"{"Asia/Riyadh"}
+            "Arabian Standard Time"{"Asia/Dubai"}
+            "Arabic Standard Time"{"Asia/Baghdad"}
+            "Argentina Standard Time"{"America/Buenos_Aires"}
+            "Armenian Standard Time"{"Asia/Yerevan"}
+            "Atlantic Standard Time"{"America/Halifax"}
+            "Azerbaijan Standard Time"{"Asia/Baku"}
+            "Azores Standard Time"{"Atlantic/Azores"}
+            "Canada Central Standard Time"{"America/Regina"}
+            "Cape Verde Standard Time"{"Atlantic/Cape_Verde"}
+            "Caucasus Standard Time"{"Asia/Yerevan"}
+            "Cen. Australia Standard Time"{"Australia/Adelaide"}
+            "Central America Standard Time"{"America/Guatemala"}
+            "Central Asia Standard Time"{"Asia/Dhaka"}
+            "Central Brazilian Standard Time"{"America/Manaus"}
+            "Central Europe Standard Time"{"Europe/Budapest"}
+            "Central European Standard Time"{"Europe/Warsaw"}
+            "Central Pacific Standard Time"{"Pacific/Guadalcanal"}
+            "Central Standard Time (Mexico)"{"America/Mexico_City"}
+            "Central Standard Time"{"America/Chicago"}
+            "China Standard Time"{"Asia/Shanghai"}
+            "Dateline Standard Time"{"Etc/GMT+12"}
+            "E. Africa Standard Time"{"Africa/Nairobi"}
+            "E. Australia Standard Time"{"Australia/Brisbane"}
+            "E. Europe Standard Time"{"Europe/Minsk"}
+            "E. South America Standard Time"{"America/Sao_Paulo"}
+            "Eastern Standard Time"{"America/New_York"}
+            "Egypt Standard Time"{"Africa/Cairo"}
+            "Ekaterinburg Standard Time"{"Asia/Yekaterinburg"}
+            "FLE Standard Time"{"Europe/Kiev"}
+            "Fiji Standard Time"{"Pacific/Fiji"}
+            "GMT Standard Time"{"Europe/London"}
+            "GTB Standard Time"{"Europe/Istanbul"}
+            "Georgian Standard Time"{"Etc/GMT-3"}
+            "Greenland Standard Time"{"America/Godthab"}
+            "Greenwich Standard Time"{"Atlantic/Reykjavik"}
+            "Hawaiian Standard Time"{"Pacific/Honolulu"}
+            "India Standard Time"{"Asia/Calcutta"}
+            "Iran Standard Time"{"Asia/Tehran"}
+            "Israel Standard Time"{"Asia/Jerusalem"}
+            "Jordan Standard Time"{"Asia/Amman"}
+            "Korea Standard Time"{"Asia/Seoul"}
+            "Mauritius Standard Time"{"Indian/Mauritius"}
+            "Mexico Standard Time 2"{"America/Chihuahua"}
+            "Mexico Standard Time"{"America/Mexico_City"}
+            "Mid-Atlantic Standard Time"{"Atlantic/South_Georgia"}
+            "Middle East Standard Time"{"Asia/Beirut"}
+            "Montevideo Standard Time"{"America/Montevideo"}
+            "Morocco Standard Time"{"Africa/Casablanca"}
+            "Mountain Standard Time (Mexico)"{"America/Chihuahua"}
+            "Mountain Standard Time"{"America/Denver"}
+            "Myanmar Standard Time"{"Asia/Rangoon"}
+            "N. Central Asia Standard Time"{"Asia/Novosibirsk"}
+            "Namibia Standard Time"{"Africa/Windhoek"}
+            "Nepal Standard Time"{"Asia/Katmandu"}
+            "New Zealand Standard Time"{"Pacific/Auckland"}
+            "Newfoundland Standard Time"{"America/St_Johns"}
+            "North Asia East Standard Time"{"Asia/Irkutsk"}
+            "North Asia Standard Time"{"Asia/Krasnoyarsk"}
+            "Pacific SA Standard Time"{"America/Santiago"}
+            "Pacific Standard Time (Mexico)"{"America/Tijuana"}
+            "Pacific Standard Time"{"America/Los_Angeles"}
+            "Pakistan Standard Time"{"Asia/Karachi"}
+            "Romance Standard Time"{"Europe/Paris"}
+            "Russian Standard Time"{"Europe/Moscow"}
+            "SA Eastern Standard Time"{"Etc/GMT+3"}
+            "SA Pacific Standard Time"{"America/Bogota"}
+            "SA Western Standard Time"{"America/La_Paz"}
+            "SE Asia Standard Time"{"Asia/Bangkok"}
+            "Samoa Standard Time"{"Pacific/Apia"}
+            "Singapore Standard Time"{"Asia/Singapore"}
+            "South Africa Standard Time"{"Africa/Johannesburg"}
+            "Sri Lanka Standard Time"{"Asia/Colombo"}
+            "Taipei Standard Time"{"Asia/Taipei"}
+            "Tasmania Standard Time"{"Australia/Hobart"}
+            "Tokyo Standard Time"{"Asia/Tokyo"}
+            "Tonga Standard Time"{"Pacific/Tongatapu"}
+            "US Eastern Standard Time"{"Etc/GMT+5"}
+            "US Mountain Standard Time"{"America/Phoenix"}
+            "Venezuela Standard Time"{"America/Caracas"}
+            "Vladivostok Standard Time"{"Asia/Vladivostok"}
+            "W. Australia Standard Time"{"Australia/Perth"}
+            "W. Central Africa Standard Time"{"Africa/Lagos"}
+            "W. Europe Standard Time"{"Europe/Berlin"}
+            "West Asia Standard Time"{"Asia/Tashkent"}
+            "West Pacific Standard Time"{"Pacific/Port_Moresby"}
+            "Yakutsk Standard Time"{"Asia/Yakutsk"}
+        }
+    }
+    /**
+     * Map from territory codes to ITU telephone codes.
+     * NOTE: This is not true locale data; it exists only in ROOT
+     */
+    telephoneCodeData{
+        001{
+            {
+                code{"388"}
+            }
+            {
+                code{"800"}
+            }
+            {
+                code{"808"}
+            }
+            {
+                code{"870"}
+            }
+            {
+                code{"871"}
+            }
+            {
+                code{"872"}
+            }
+            {
+                code{"873"}
+            }
+            {
+                code{"874"}
+            }
+            {
+                code{"878"}
+            }
+            {
+                code{"881"}
+            }
+            {
+                code{"882"}
+            }
+            {
+                code{"883"}
+            }
+            {
+                code{"888"}
+            }
+            {
+                code{"979"}
+            }
+            {
+                code{"991"}
+            }
+        }
+        AC{
+            {
+                code{"247"}
+            }
+        }
+        AD{
+            {
+                code{"376"}
+            }
+        }
+        AE{
+            {
+                code{"971"}
+            }
+        }
+        AF{
+            {
+                code{"93"}
+            }
+        }
+        AG{
+            {
+                code{"1"}
+            }
+        }
+        AI{
+            {
+                code{"1"}
+            }
+        }
+        AL{
+            {
+                code{"355"}
+            }
+        }
+        AM{
+            {
+                code{"374"}
+            }
+        }
+        AN{
+            {
+                code{"599"}
+            }
+        }
+        AO{
+            {
+                code{"244"}
+            }
+        }
+        AQ{
+            {
+                code{"672"}
+            }
+        }
+        AR{
+            {
+                code{"54"}
+            }
+        }
+        AS{
+            {
+                code{"1"}
+            }
+        }
+        AT{
+            {
+                code{"43"}
+            }
+        }
+        AU{
+            {
+                code{"61"}
+            }
+        }
+        AW{
+            {
+                code{"297"}
+            }
+        }
+        AX{
+            {
+                code{"358"}
+            }
+        }
+        AZ{
+            {
+                code{"994"}
+            }
+        }
+        BA{
+            {
+                code{"387"}
+            }
+        }
+        BB{
+            {
+                code{"1"}
+            }
+        }
+        BD{
+            {
+                code{"880"}
+            }
+        }
+        BE{
+            {
+                code{"32"}
+            }
+        }
+        BF{
+            {
+                code{"226"}
+            }
+        }
+        BG{
+            {
+                code{"359"}
+            }
+        }
+        BH{
+            {
+                code{"973"}
+            }
+        }
+        BI{
+            {
+                code{"257"}
+            }
+        }
+        BJ{
+            {
+                code{"229"}
+            }
+        }
+        BL{
+            {
+                code{"590"}
+            }
+        }
+        BM{
+            {
+                code{"1"}
+            }
+        }
+        BN{
+            {
+                code{"673"}
+            }
+        }
+        BO{
+            {
+                code{"591"}
+            }
+        }
+        BR{
+            {
+                code{"55"}
+            }
+        }
+        BS{
+            {
+                code{"1"}
+            }
+        }
+        BT{
+            {
+                code{"975"}
+            }
+        }
+        BW{
+            {
+                code{"267"}
+            }
+        }
+        BY{
+            {
+                code{"375"}
+            }
+        }
+        BZ{
+            {
+                code{"501"}
+            }
+        }
+        CA{
+            {
+                code{"1"}
+            }
+        }
+        CC{
+            {
+                code{"61"}
+            }
+        }
+        CD{
+            {
+                code{"243"}
+            }
+        }
+        CF{
+            {
+                code{"236"}
+            }
+        }
+        CG{
+            {
+                code{"242"}
+            }
+        }
+        CH{
+            {
+                code{"41"}
+            }
+        }
+        CI{
+            {
+                code{"225"}
+            }
+        }
+        CK{
+            {
+                code{"682"}
+            }
+        }
+        CL{
+            {
+                code{"56"}
+            }
+        }
+        CM{
+            {
+                code{"237"}
+            }
+        }
+        CN{
+            {
+                code{"86"}
+            }
+        }
+        CO{
+            {
+                code{"57"}
+            }
+        }
+        CR{
+            {
+                code{"506"}
+            }
+        }
+        CU{
+            {
+                code{"53"}
+            }
+        }
+        CV{
+            {
+                code{"238"}
+            }
+        }
+        CX{
+            {
+                code{"61"}
+            }
+        }
+        CY{
+            {
+                code{"357"}
+            }
+        }
+        CZ{
+            {
+                code{"420"}
+            }
+        }
+        DE{
+            {
+                code{"49"}
+            }
+        }
+        DJ{
+            {
+                code{"253"}
+            }
+        }
+        DK{
+            {
+                code{"45"}
+            }
+        }
+        DM{
+            {
+                code{"1"}
+            }
+        }
+        DO{
+            {
+                code{"1"}
+            }
+        }
+        DZ{
+            {
+                code{"213"}
+            }
+        }
+        EC{
+            {
+                code{"593"}
+            }
+        }
+        EE{
+            {
+                code{"372"}
+            }
+        }
+        EG{
+            {
+                code{"20"}
+            }
+        }
+        ER{
+            {
+                code{"291"}
+            }
+        }
+        ES{
+            {
+                code{"34"}
+            }
+        }
+        ET{
+            {
+                code{"251"}
+            }
+        }
+        FI{
+            {
+                code{"358"}
+            }
+        }
+        FJ{
+            {
+                code{"679"}
+            }
+        }
+        FK{
+            {
+                code{"500"}
+            }
+        }
+        FM{
+            {
+                code{"691"}
+            }
+        }
+        FO{
+            {
+                code{"298"}
+            }
+        }
+        FR{
+            {
+                code{"33"}
+            }
+        }
+        GA{
+            {
+                code{"241"}
+            }
+        }
+        GB{
+            {
+                code{"44"}
+            }
+        }
+        GD{
+            {
+                code{"1"}
+            }
+        }
+        GE{
+            {
+                code{"995"}
+            }
+        }
+        GF{
+            {
+                code{"594"}
+            }
+        }
+        GG{
+            {
+                code{"44"}
+            }
+        }
+        GH{
+            {
+                code{"233"}
+            }
+        }
+        GI{
+            {
+                code{"350"}
+            }
+        }
+        GL{
+            {
+                code{"299"}
+            }
+        }
+        GM{
+            {
+                code{"220"}
+            }
+        }
+        GN{
+            {
+                code{"224"}
+            }
+        }
+        GP{
+            {
+                code{"590"}
+            }
+        }
+        GQ{
+            {
+                code{"240"}
+            }
+        }
+        GR{
+            {
+                code{"30"}
+            }
+        }
+        GT{
+            {
+                code{"502"}
+            }
+        }
+        GU{
+            {
+                code{"1"}
+            }
+        }
+        GW{
+            {
+                code{"245"}
+            }
+        }
+        GY{
+            {
+                code{"592"}
+            }
+        }
+        HK{
+            {
+                code{"852"}
+            }
+        }
+        HN{
+            {
+                code{"504"}
+            }
+        }
+        HR{
+            {
+                code{"385"}
+            }
+        }
+        HT{
+            {
+                code{"509"}
+            }
+        }
+        HU{
+            {
+                code{"36"}
+            }
+        }
+        ID{
+            {
+                code{"62"}
+            }
+        }
+        IE{
+            {
+                code{"353"}
+            }
+        }
+        IL{
+            {
+                code{"972"}
+            }
+        }
+        IM{
+            {
+                code{"44"}
+            }
+        }
+        IN{
+            {
+                code{"91"}
+            }
+        }
+        IO{
+            {
+                code{"246"}
+            }
+        }
+        IQ{
+            {
+                code{"964"}
+            }
+        }
+        IR{
+            {
+                code{"98"}
+            }
+        }
+        IS{
+            {
+                code{"354"}
+            }
+        }
+        IT{
+            {
+                code{"39"}
+            }
+        }
+        JE{
+            {
+                code{"44"}
+            }
+        }
+        JM{
+            {
+                code{"1"}
+            }
+        }
+        JO{
+            {
+                code{"962"}
+            }
+        }
+        JP{
+            {
+                code{"81"}
+            }
+        }
+        KE{
+            {
+                code{"254"}
+            }
+        }
+        KG{
+            {
+                code{"996"}
+            }
+        }
+        KH{
+            {
+                code{"855"}
+            }
+        }
+        KI{
+            {
+                code{"686"}
+            }
+        }
+        KM{
+            {
+                code{"269"}
+            }
+        }
+        KN{
+            {
+                code{"1"}
+            }
+        }
+        KP{
+            {
+                code{"850"}
+            }
+        }
+        KR{
+            {
+                code{"82"}
+            }
+        }
+        KW{
+            {
+                code{"965"}
+            }
+        }
+        KY{
+            {
+                code{"1"}
+            }
+        }
+        KZ{
+            {
+                code{"7"}
+            }
+        }
+        LA{
+            {
+                code{"856"}
+            }
+        }
+        LB{
+            {
+                code{"961"}
+            }
+        }
+        LC{
+            {
+                code{"1"}
+            }
+        }
+        LI{
+            {
+                code{"423"}
+            }
+        }
+        LK{
+            {
+                code{"94"}
+            }
+        }
+        LR{
+            {
+                code{"231"}
+            }
+        }
+        LS{
+            {
+                code{"266"}
+            }
+        }
+        LT{
+            {
+                code{"370"}
+            }
+        }
+        LU{
+            {
+                code{"352"}
+            }
+        }
+        LV{
+            {
+                code{"371"}
+            }
+        }
+        LY{
+            {
+                code{"218"}
+            }
+        }
+        MA{
+            {
+                code{"212"}
+            }
+        }
+        MC{
+            {
+                code{"377"}
+            }
+        }
+        MD{
+            {
+                code{"373"}
+            }
+        }
+        ME{
+            {
+                code{"382"}
+            }
+        }
+        MG{
+            {
+                code{"261"}
+            }
+        }
+        MH{
+            {
+                code{"692"}
+            }
+        }
+        MK{
+            {
+                code{"389"}
+            }
+        }
+        ML{
+            {
+                code{"223"}
+            }
+        }
+        MM{
+            {
+                code{"95"}
+            }
+        }
+        MN{
+            {
+                code{"976"}
+            }
+        }
+        MO{
+            {
+                code{"853"}
+            }
+        }
+        MP{
+            {
+                code{"1"}
+            }
+        }
+        MQ{
+            {
+                code{"596"}
+            }
+        }
+        MR{
+            {
+                code{"222"}
+            }
+        }
+        MS{
+            {
+                code{"1"}
+            }
+        }
+        MT{
+            {
+                code{"356"}
+            }
+        }
+        MU{
+            {
+                code{"230"}
+            }
+        }
+        MV{
+            {
+                code{"960"}
+            }
+        }
+        MW{
+            {
+                code{"265"}
+            }
+        }
+        MX{
+            {
+                code{"52"}
+            }
+        }
+        MY{
+            {
+                code{"60"}
+            }
+        }
+        MZ{
+            {
+                code{"258"}
+            }
+        }
+        NA{
+            {
+                code{"264"}
+            }
+        }
+        NC{
+            {
+                code{"687"}
+            }
+        }
+        NE{
+            {
+                code{"227"}
+            }
+        }
+        NF{
+            {
+                code{"672"}
+            }
+        }
+        NG{
+            {
+                code{"234"}
+            }
+        }
+        NI{
+            {
+                code{"505"}
+            }
+        }
+        NL{
+            {
+                code{"31"}
+            }
+        }
+        NO{
+            {
+                code{"47"}
+            }
+        }
+        NP{
+            {
+                code{"977"}
+            }
+        }
+        NR{
+            {
+                code{"674"}
+            }
+        }
+        NU{
+            {
+                code{"683"}
+            }
+        }
+        NZ{
+            {
+                code{"64"}
+            }
+        }
+        OM{
+            {
+                code{"968"}
+            }
+        }
+        PA{
+            {
+                code{"507"}
+            }
+        }
+        PE{
+            {
+                code{"51"}
+            }
+        }
+        PF{
+            {
+                code{"689"}
+            }
+        }
+        PG{
+            {
+                code{"675"}
+            }
+        }
+        PH{
+            {
+                code{"63"}
+            }
+        }
+        PK{
+            {
+                code{"92"}
+            }
+        }
+        PL{
+            {
+                code{"48"}
+            }
+        }
+        PM{
+            {
+                code{"508"}
+            }
+        }
+        PR{
+            {
+                code{"1"}
+            }
+        }
+        PS{
+            {
+                code{"972"}
+            }
+            {
+                alt{"limitedAvailability"}
+                code{"970"}
+            }
+        }
+        PT{
+            {
+                code{"351"}
+            }
+        }
+        PW{
+            {
+                code{"680"}
+            }
+        }
+        PY{
+            {
+                code{"595"}
+            }
+        }
+        QA{
+            {
+                code{"974"}
+            }
+        }
+        RE{
+            {
+                code{"262"}
+            }
+        }
+        RO{
+            {
+                code{"40"}
+            }
+        }
+        RS{
+            {
+                code{"381"}
+            }
+        }
+        RU{
+            {
+                code{"7"}
+            }
+        }
+        RW{
+            {
+                code{"250"}
+            }
+        }
+        SA{
+            {
+                code{"966"}
+            }
+        }
+        SB{
+            {
+                code{"677"}
+            }
+        }
+        SC{
+            {
+                code{"248"}
+            }
+        }
+        SD{
+            {
+                code{"249"}
+            }
+        }
+        SE{
+            {
+                code{"46"}
+            }
+        }
+        SG{
+            {
+                code{"65"}
+            }
+        }
+        SH{
+            {
+                code{"290"}
+            }
+        }
+        SI{
+            {
+                code{"386"}
+            }
+        }
+        SJ{
+            {
+                code{"47"}
+            }
+        }
+        SK{
+            {
+                code{"421"}
+            }
+        }
+        SL{
+            {
+                code{"232"}
+            }
+        }
+        SM{
+            {
+                code{"378"}
+            }
+        }
+        SN{
+            {
+                code{"221"}
+            }
+        }
+        SO{
+            {
+                code{"252"}
+            }
+        }
+        SR{
+            {
+                code{"597"}
+            }
+        }
+        ST{
+            {
+                code{"239"}
+            }
+        }
+        SV{
+            {
+                code{"503"}
+            }
+        }
+        SY{
+            {
+                code{"963"}
+            }
+        }
+        SZ{
+            {
+                code{"268"}
+            }
+        }
+        TC{
+            {
+                code{"1"}
+            }
+        }
+        TD{
+            {
+                code{"235"}
+            }
+        }
+        TF{
+            {
+                code{"262"}
+            }
+        }
+        TG{
+            {
+                code{"228"}
+            }
+        }
+        TH{
+            {
+                code{"66"}
+            }
+        }
+        TJ{
+            {
+                code{"992"}
+            }
+        }
+        TK{
+            {
+                code{"690"}
+            }
+        }
+        TL{
+            {
+                code{"670"}
+            }
+        }
+        TM{
+            {
+                code{"993"}
+            }
+        }
+        TN{
+            {
+                code{"216"}
+            }
+        }
+        TO{
+            {
+                code{"676"}
+            }
+        }
+        TR{
+            {
+                code{"90"}
+            }
+        }
+        TT{
+            {
+                code{"1"}
+            }
+        }
+        TV{
+            {
+                code{"688"}
+            }
+        }
+        TW{
+            {
+                code{"886"}
+            }
+        }
+        TZ{
+            {
+                code{"255"}
+            }
+        }
+        UA{
+            {
+                code{"380"}
+            }
+        }
+        UG{
+            {
+                code{"256"}
+            }
+        }
+        US{
+            {
+                code{"1"}
+            }
+        }
+        UY{
+            {
+                code{"598"}
+            }
+        }
+        UZ{
+            {
+                code{"998"}
+            }
+        }
+        VA{
+            {
+                code{"39"}
+            }
+        }
+        VC{
+            {
+                code{"1"}
+            }
+        }
+        VE{
+            {
+                code{"58"}
+            }
+        }
+        VG{
+            {
+                code{"1"}
+            }
+        }
+        VI{
+            {
+                code{"1"}
+            }
+        }
+        VN{
+            {
+                code{"84"}
+            }
+        }
+        VU{
+            {
+                code{"678"}
+            }
+        }
+        WF{
+            {
+                code{"681"}
+            }
+        }
+        WS{
+            {
+                code{"685"}
+            }
+        }
+        YE{
+            {
+                code{"967"}
+            }
+        }
+        YT{
+            {
+                code{"262"}
+            }
+        }
+        ZA{
+            {
+                code{"27"}
+            }
+        }
+        ZM{
+            {
+                code{"260"}
+            }
+        }
+        ZW{
+            {
+                code{"263"}
+            }
         }
     }
     territoryContainment{
@@ -9952,51 +12910,64 @@ supplementalData:table(nofallback){
     }
     zoneFormatting{
         "Africa:Abidjan"{
+            canonical{"Africa/Abidjan"}
             territory{"CI"}
         }
         "Africa:Accra"{
+            canonical{"Africa/Accra"}
             territory{"GH"}
         }
         "Africa:Addis_Ababa"{
+            canonical{"Africa/Addis_Ababa"}
             territory{"ET"}
             aliases{
                 "EAT",
             }
         }
         "Africa:Algiers"{
+            canonical{"Africa/Algiers"}
             territory{"DZ"}
         }
         "Africa:Asmera"{
+            canonical{"Africa/Asmera"}
             territory{"ER"}
             aliases{
                 "Africa/Asmara",
             }
         }
         "Africa:Bamako"{
+            canonical{"Africa/Bamako"}
             territory{"ML"}
             aliases{
                 "Africa/Timbuktu",
             }
         }
         "Africa:Bangui"{
+            canonical{"Africa/Bangui"}
             territory{"CF"}
         }
         "Africa:Banjul"{
+            canonical{"Africa/Banjul"}
             territory{"GM"}
         }
         "Africa:Bissau"{
+            canonical{"Africa/Bissau"}
             territory{"GW"}
         }
         "Africa:Blantyre"{
+            canonical{"Africa/Blantyre"}
             territory{"MW"}
         }
         "Africa:Brazzaville"{
+            canonical{"Africa/Brazzaville"}
             territory{"CG"}
         }
         "Africa:Bujumbura"{
+            canonical{"Africa/Bujumbura"}
             territory{"BI"}
         }
         "Africa:Cairo"{
+            canonical{"Africa/Cairo"}
             territory{"EG"}
             aliases{
                 "Egypt",
@@ -10004,126 +12975,165 @@ supplementalData:table(nofallback){
             }
         }
         "Africa:Casablanca"{
+            canonical{"Africa/Casablanca"}
             territory{"MA"}
         }
         "Africa:Ceuta"{
+            canonical{"Africa/Ceuta"}
             territory{"ES"}
         }
         "Africa:Conakry"{
+            canonical{"Africa/Conakry"}
             territory{"GN"}
         }
         "Africa:Dakar"{
+            canonical{"Africa/Dakar"}
             territory{"SN"}
         }
         "Africa:Dar_es_Salaam"{
+            canonical{"Africa/Dar_es_Salaam"}
             territory{"TZ"}
         }
         "Africa:Djibouti"{
+            canonical{"Africa/Djibouti"}
             territory{"DJ"}
         }
         "Africa:Douala"{
+            canonical{"Africa/Douala"}
             territory{"CM"}
         }
         "Africa:El_Aaiun"{
+            canonical{"Africa/El_Aaiun"}
             territory{"EH"}
         }
         "Africa:Freetown"{
+            canonical{"Africa/Freetown"}
             territory{"SL"}
         }
         "Africa:Gaborone"{
+            canonical{"Africa/Gaborone"}
             territory{"BW"}
         }
         "Africa:Harare"{
+            canonical{"Africa/Harare"}
             territory{"ZW"}
             aliases{
                 "CAT",
             }
         }
         "Africa:Johannesburg"{
+            canonical{"Africa/Johannesburg"}
             territory{"ZA"}
         }
         "Africa:Kampala"{
+            canonical{"Africa/Kampala"}
             territory{"UG"}
         }
         "Africa:Khartoum"{
+            canonical{"Africa/Khartoum"}
             territory{"SD"}
         }
         "Africa:Kigali"{
+            canonical{"Africa/Kigali"}
             territory{"RW"}
         }
         "Africa:Kinshasa"{
+            canonical{"Africa/Kinshasa"}
             territory{"CD"}
         }
         "Africa:Lagos"{
+            canonical{"Africa/Lagos"}
             territory{"NG"}
         }
         "Africa:Libreville"{
+            canonical{"Africa/Libreville"}
             territory{"GA"}
         }
         "Africa:Lome"{
+            canonical{"Africa/Lome"}
             territory{"TG"}
         }
         "Africa:Luanda"{
+            canonical{"Africa/Luanda"}
             territory{"AO"}
         }
         "Africa:Lubumbashi"{
+            canonical{"Africa/Lubumbashi"}
             territory{"CD"}
         }
         "Africa:Lusaka"{
+            canonical{"Africa/Lusaka"}
             territory{"ZM"}
         }
         "Africa:Malabo"{
+            canonical{"Africa/Malabo"}
             territory{"GQ"}
         }
         "Africa:Maputo"{
+            canonical{"Africa/Maputo"}
             territory{"MZ"}
         }
         "Africa:Maseru"{
+            canonical{"Africa/Maseru"}
             territory{"LS"}
         }
         "Africa:Mbabane"{
+            canonical{"Africa/Mbabane"}
             territory{"SZ"}
         }
         "Africa:Mogadishu"{
+            canonical{"Africa/Mogadishu"}
             territory{"SO"}
         }
         "Africa:Monrovia"{
+            canonical{"Africa/Monrovia"}
             territory{"LR"}
         }
         "Africa:Nairobi"{
+            canonical{"Africa/Nairobi"}
             territory{"KE"}
         }
         "Africa:Ndjamena"{
+            canonical{"Africa/Ndjamena"}
             territory{"TD"}
         }
         "Africa:Niamey"{
+            canonical{"Africa/Niamey"}
             territory{"NE"}
         }
         "Africa:Nouakchott"{
+            canonical{"Africa/Nouakchott"}
             territory{"MR"}
         }
         "Africa:Ouagadougou"{
+            canonical{"Africa/Ouagadougou"}
             territory{"BF"}
         }
         "Africa:Porto-Novo"{
+            canonical{"Africa/Porto-Novo"}
             territory{"BJ"}
         }
         "Africa:Sao_Tome"{
+            canonical{"Africa/Sao_Tome"}
             territory{"ST"}
         }
         "Africa:Tripoli"{
+            canonical{"Africa/Tripoli"}
             territory{"LY"}
             aliases{
                 "Libya",
             }
         }
         "Africa:Tunis"{
+            canonical{"Africa/Tunis"}
             territory{"TN"}
         }
         "Africa:Windhoek"{
+            canonical{"Africa/Windhoek"}
             territory{"NA"}
         }
         "America:Adak"{
+            canonical{"America/Adak"}
             territory{"US"}
             aliases{
                 "America/Atka",
@@ -10131,6 +13141,7 @@ supplementalData:table(nofallback){
             }
         }
         "America:Anchorage"{
+            canonical{"America/Anchorage"}
             territory{"US"}
             aliases{
                 "SystemV/YST9YDT",
@@ -10139,78 +13150,110 @@ supplementalData:table(nofallback){
             }
         }
         "America:Anguilla"{
+            canonical{"America/Anguilla"}
             territory{"AI"}
         }
         "America:Antigua"{
+            canonical{"America/Antigua"}
             territory{"AG"}
         }
         "America:Araguaina"{
+            canonical{"America/Araguaina"}
             territory{"BR"}
         }
         "America:Argentina:La_Rioja"{
+            canonical{"America/Argentina/La_Rioja"}
             territory{"AR"}
         }
         "America:Argentina:Rio_Gallegos"{
+            canonical{"America/Argentina/Rio_Gallegos"}
+            territory{"AR"}
+        }
+        "America:Argentina:Salta"{
+            canonical{"America/Argentina/Salta"}
             territory{"AR"}
         }
         "America:Argentina:San_Juan"{
+            canonical{"America/Argentina/San_Juan"}
+            territory{"AR"}
+        }
+        "America:Argentina:San_Luis"{
+            canonical{"America/Argentina/San_Luis"}
             territory{"AR"}
         }
         "America:Argentina:Tucuman"{
+            canonical{"America/Argentina/Tucuman"}
             territory{"AR"}
         }
         "America:Argentina:Ushuaia"{
+            canonical{"America/Argentina/Ushuaia"}
             territory{"AR"}
         }
         "America:Aruba"{
+            canonical{"America/Aruba"}
             territory{"AW"}
         }
         "America:Asuncion"{
+            canonical{"America/Asuncion"}
             territory{"PY"}
         }
         "America:Bahia"{
+            canonical{"America/Bahia"}
             territory{"BR"}
         }
         "America:Barbados"{
+            canonical{"America/Barbados"}
             territory{"BB"}
         }
         "America:Belem"{
+            canonical{"America/Belem"}
             territory{"BR"}
         }
         "America:Belize"{
+            canonical{"America/Belize"}
             territory{"BZ"}
         }
         "America:Blanc-Sablon"{
+            canonical{"America/Blanc-Sablon"}
             territory{"CA"}
         }
         "America:Boa_Vista"{
+            canonical{"America/Boa_Vista"}
             territory{"BR"}
         }
         "America:Bogota"{
+            canonical{"America/Bogota"}
             territory{"CO"}
         }
         "America:Boise"{
+            canonical{"America/Boise"}
             territory{"US"}
         }
         "America:Buenos_Aires"{
+            canonical{"America/Buenos_Aires"}
             territory{"AR"}
             aliases{
                 "America/Argentina/Buenos_Aires",
             }
         }
         "America:Cambridge_Bay"{
+            canonical{"America/Cambridge_Bay"}
             territory{"CA"}
         }
         "America:Campo_Grande"{
+            canonical{"America/Campo_Grande"}
             territory{"BR"}
         }
         "America:Cancun"{
+            canonical{"America/Cancun"}
             territory{"MX"}
         }
         "America:Caracas"{
+            canonical{"America/Caracas"}
             territory{"VE"}
         }
         "America:Catamarca"{
+            canonical{"America/Catamarca"}
             territory{"AR"}
             aliases{
                 "America/Argentina/Catamarca",
@@ -10218,12 +13261,15 @@ supplementalData:table(nofallback){
             }
         }
         "America:Cayenne"{
+            canonical{"America/Cayenne"}
             territory{"GF"}
         }
         "America:Cayman"{
+            canonical{"America/Cayman"}
             territory{"KY"}
         }
         "America:Chicago"{
+            canonical{"America/Chicago"}
             territory{"US"}
             aliases{
                 "CST6CDT",
@@ -10233,15 +13279,18 @@ supplementalData:table(nofallback){
             }
         }
         "America:Chihuahua"{
+            canonical{"America/Chihuahua"}
             territory{"MX"}
         }
         "America:Coral_Harbour"{
+            canonical{"America/Coral_Harbour"}
             territory{"CA"}
             aliases{
                 "America/Atikokan",
             }
         }
         "America:Cordoba"{
+            canonical{"America/Cordoba"}
             territory{"AR"}
             aliases{
                 "America/Argentina/Cordoba",
@@ -10249,24 +13298,31 @@ supplementalData:table(nofallback){
             }
         }
         "America:Costa_Rica"{
+            canonical{"America/Costa_Rica"}
             territory{"CR"}
         }
         "America:Cuiaba"{
+            canonical{"America/Cuiaba"}
             territory{"BR"}
         }
         "America:Curacao"{
+            canonical{"America/Curacao"}
             territory{"AN"}
         }
         "America:Danmarkshavn"{
+            canonical{"America/Danmarkshavn"}
             territory{"GL"}
         }
         "America:Dawson"{
+            canonical{"America/Dawson"}
             territory{"CA"}
         }
         "America:Dawson_Creek"{
+            canonical{"America/Dawson_Creek"}
             territory{"CA"}
         }
         "America:Denver"{
+            canonical{"America/Denver"}
             territory{"US"}
             aliases{
                 "MST7MDT",
@@ -10275,57 +13331,73 @@ supplementalData:table(nofallback){
             }
         }
         "America:Detroit"{
+            canonical{"America/Detroit"}
             territory{"US"}
             aliases{
                 "US/Michigan",
             }
         }
         "America:Dominica"{
+            canonical{"America/Dominica"}
             territory{"DM"}
         }
         "America:Edmonton"{
+            canonical{"America/Edmonton"}
             territory{"CA"}
             aliases{
                 "Canada/Mountain",
             }
         }
         "America:Eirunepe"{
+            canonical{"America/Eirunepe"}
             territory{"BR"}
         }
         "America:El_Salvador"{
+            canonical{"America/El_Salvador"}
             territory{"SV"}
         }
         "America:Fortaleza"{
+            canonical{"America/Fortaleza"}
             territory{"BR"}
         }
         "America:Glace_Bay"{
+            canonical{"America/Glace_Bay"}
             territory{"CA"}
         }
         "America:Godthab"{
+            canonical{"America/Godthab"}
             territory{"GL"}
         }
         "America:Goose_Bay"{
+            canonical{"America/Goose_Bay"}
             territory{"CA"}
         }
         "America:Grand_Turk"{
+            canonical{"America/Grand_Turk"}
             territory{"TC"}
         }
         "America:Grenada"{
+            canonical{"America/Grenada"}
             territory{"GD"}
         }
         "America:Guadeloupe"{
+            canonical{"America/Guadeloupe"}
             territory{"GP"}
         }
         "America:Guatemala"{
+            canonical{"America/Guatemala"}
             territory{"GT"}
         }
         "America:Guayaquil"{
+            canonical{"America/Guayaquil"}
             territory{"EC"}
         }
         "America:Guyana"{
+            canonical{"America/Guyana"}
             territory{"GY"}
         }
         "America:Halifax"{
+            canonical{"America/Halifax"}
             territory{"CA"}
             aliases{
                 "Canada/Atlantic",
@@ -10333,15 +13405,18 @@ supplementalData:table(nofallback){
             }
         }
         "America:Havana"{
+            canonical{"America/Havana"}
             territory{"CU"}
             aliases{
                 "Cuba",
             }
         }
         "America:Hermosillo"{
+            canonical{"America/Hermosillo"}
             territory{"MX"}
         }
         "America:Indiana:Knox"{
+            canonical{"America/Indiana/Knox"}
             territory{"US"}
             aliases{
                 "America/Knox_IN",
@@ -10349,24 +13424,31 @@ supplementalData:table(nofallback){
             }
         }
         "America:Indiana:Marengo"{
+            canonical{"America/Indiana/Marengo"}
             territory{"US"}
         }
         "America:Indiana:Petersburg"{
+            canonical{"America/Indiana/Petersburg"}
             territory{"US"}
         }
         "America:Indiana:Tell_City"{
+            canonical{"America/Indiana/Tell_City"}
             territory{"US"}
         }
         "America:Indiana:Vevay"{
+            canonical{"America/Indiana/Vevay"}
             territory{"US"}
         }
         "America:Indiana:Vincennes"{
+            canonical{"America/Indiana/Vincennes"}
             territory{"US"}
         }
         "America:Indiana:Winamac"{
+            canonical{"America/Indiana/Winamac"}
             territory{"US"}
         }
         "America:Indianapolis"{
+            canonical{"America/Indianapolis"}
             territory{"US"}
             aliases{
                 "America/Fort_Wayne",
@@ -10376,36 +13458,45 @@ supplementalData:table(nofallback){
             }
         }
         "America:Inuvik"{
+            canonical{"America/Inuvik"}
             territory{"CA"}
         }
         "America:Iqaluit"{
+            canonical{"America/Iqaluit"}
             territory{"CA"}
         }
         "America:Jamaica"{
+            canonical{"America/Jamaica"}
             territory{"JM"}
             aliases{
                 "Jamaica",
             }
         }
         "America:Jujuy"{
+            canonical{"America/Jujuy"}
             territory{"AR"}
             aliases{
                 "America/Argentina/Jujuy",
             }
         }
         "America:Juneau"{
+            canonical{"America/Juneau"}
             territory{"US"}
         }
         "America:Kentucky:Monticello"{
+            canonical{"America/Kentucky/Monticello"}
             territory{"US"}
         }
         "America:La_Paz"{
+            canonical{"America/La_Paz"}
             territory{"BO"}
         }
         "America:Lima"{
+            canonical{"America/Lima"}
             territory{"PE"}
         }
         "America:Los_Angeles"{
+            canonical{"America/Los_Angeles"}
             territory{"US"}
             aliases{
                 "PST8PDT",
@@ -10416,72 +13507,94 @@ supplementalData:table(nofallback){
             }
         }
         "America:Louisville"{
+            canonical{"America/Louisville"}
             territory{"US"}
             aliases{
                 "America/Kentucky/Louisville",
             }
         }
         "America:Maceio"{
+            canonical{"America/Maceio"}
             territory{"BR"}
         }
         "America:Managua"{
+            canonical{"America/Managua"}
             territory{"NI"}
         }
         "America:Manaus"{
+            canonical{"America/Manaus"}
             territory{"BR"}
             aliases{
                 "Brazil/West",
             }
         }
+        "America:Marigot"{
+            canonical{"America/Marigot"}
+            territory{"MF"}
+        }
         "America:Martinique"{
+            canonical{"America/Martinique"}
             territory{"MQ"}
         }
         "America:Mazatlan"{
+            canonical{"America/Mazatlan"}
             territory{"MX"}
             aliases{
                 "Mexico/BajaSur",
             }
         }
         "America:Mendoza"{
+            canonical{"America/Mendoza"}
             territory{"AR"}
             aliases{
                 "America/Argentina/Mendoza",
             }
         }
         "America:Menominee"{
+            canonical{"America/Menominee"}
             territory{"US"}
         }
         "America:Merida"{
+            canonical{"America/Merida"}
             territory{"MX"}
         }
         "America:Mexico_City"{
+            canonical{"America/Mexico_City"}
             territory{"MX"}
             aliases{
                 "Mexico/General",
             }
         }
         "America:Miquelon"{
+            canonical{"America/Miquelon"}
             territory{"PM"}
         }
         "America:Moncton"{
+            canonical{"America/Moncton"}
             territory{"CA"}
         }
         "America:Monterrey"{
+            canonical{"America/Monterrey"}
             territory{"MX"}
         }
         "America:Montevideo"{
+            canonical{"America/Montevideo"}
             territory{"UY"}
         }
         "America:Montreal"{
+            canonical{"America/Montreal"}
             territory{"CA"}
         }
         "America:Montserrat"{
+            canonical{"America/Montserrat"}
             territory{"MS"}
         }
         "America:Nassau"{
+            canonical{"America/Nassau"}
             territory{"BS"}
         }
         "America:New_York"{
+            canonical{"America/New_York"}
             territory{"US"}
             aliases{
                 "EST5EDT",
@@ -10490,33 +13603,42 @@ supplementalData:table(nofallback){
             }
         }
         "America:Nipigon"{
+            canonical{"America/Nipigon"}
             territory{"CA"}
         }
         "America:Nome"{
+            canonical{"America/Nome"}
             territory{"US"}
         }
         "America:Noronha"{
+            canonical{"America/Noronha"}
             territory{"BR"}
             aliases{
                 "Brazil/DeNoronha",
             }
         }
         "America:North_Dakota:Center"{
+            canonical{"America/North_Dakota/Center"}
             territory{"US"}
         }
         "America:North_Dakota:New_Salem"{
+            canonical{"America/North_Dakota/New_Salem"}
             territory{"US"}
         }
         "America:Panama"{
+            canonical{"America/Panama"}
             territory{"PA"}
         }
         "America:Pangnirtung"{
+            canonical{"America/Pangnirtung"}
             territory{"CA"}
         }
         "America:Paramaribo"{
+            canonical{"America/Paramaribo"}
             territory{"SR"}
         }
         "America:Phoenix"{
+            canonical{"America/Phoenix"}
             territory{"US"}
             aliases{
                 "US/Arizona",
@@ -10524,30 +13646,38 @@ supplementalData:table(nofallback){
             }
         }
         "America:Port_of_Spain"{
+            canonical{"America/Port_of_Spain"}
             territory{"TT"}
         }
         "America:Port-au-Prince"{
+            canonical{"America/Port-au-Prince"}
             territory{"HT"}
         }
         "America:Porto_Velho"{
+            canonical{"America/Porto_Velho"}
             territory{"BR"}
         }
         "America:Puerto_Rico"{
+            canonical{"America/Puerto_Rico"}
             territory{"PR"}
             aliases{
                 "PRT",
             }
         }
         "America:Rainy_River"{
+            canonical{"America/Rainy_River"}
             territory{"CA"}
         }
         "America:Rankin_Inlet"{
+            canonical{"America/Rankin_Inlet"}
             territory{"CA"}
         }
         "America:Recife"{
+            canonical{"America/Recife"}
             territory{"BR"}
         }
         "America:Regina"{
+            canonical{"America/Regina"}
             territory{"CA"}
             aliases{
                 "Canada/East-Saskatchewan",
@@ -10555,25 +13685,34 @@ supplementalData:table(nofallback){
             }
         }
         "America:Resolute"{
+            canonical{"America/Resolute"}
             territory{"CA"}
         }
         "America:Rio_Branco"{
+            canonical{"America/Rio_Branco"}
             territory{"BR"}
             aliases{
                 "America/Porto_Acre",
                 "Brazil/Acre",
             }
         }
+        "America:Santarem"{
+            canonical{"America/Santarem"}
+            territory{"BR"}
+        }
         "America:Santiago"{
+            canonical{"America/Santiago"}
             territory{"CL"}
             aliases{
                 "Chile/Continental",
             }
         }
         "America:Santo_Domingo"{
+            canonical{"America/Santo_Domingo"}
             territory{"DO"}
         }
         "America:Sao_Paulo"{
+            canonical{"America/Sao_Paulo"}
             territory{"BR"}
             aliases{
                 "Brazil/East",
@@ -10581,15 +13720,22 @@ supplementalData:table(nofallback){
             }
         }
         "America:Scoresbysund"{
+            canonical{"America/Scoresbysund"}
             territory{"GL"}
         }
         "America:Shiprock"{
+            canonical{"America/Shiprock"}
             territory{"US"}
             aliases{
                 "Navajo",
             }
         }
+        "America:St_Barthelemy"{
+            canonical{"America/St_Barthelemy"}
+            territory{"BL"}
+        }
         "America:St_Johns"{
+            canonical{"America/St_Johns"}
             territory{"CA"}
             aliases{
                 "Canada/Newfoundland",
@@ -10597,33 +13743,42 @@ supplementalData:table(nofallback){
             }
         }
         "America:St_Kitts"{
+            canonical{"America/St_Kitts"}
             territory{"KN"}
         }
         "America:St_Lucia"{
+            canonical{"America/St_Lucia"}
             territory{"LC"}
         }
         "America:St_Thomas"{
+            canonical{"America/St_Thomas"}
             territory{"VI"}
             aliases{
                 "America/Virgin",
             }
         }
         "America:St_Vincent"{
+            canonical{"America/St_Vincent"}
             territory{"VC"}
         }
         "America:Swift_Current"{
+            canonical{"America/Swift_Current"}
             territory{"CA"}
         }
         "America:Tegucigalpa"{
+            canonical{"America/Tegucigalpa"}
             territory{"HN"}
         }
         "America:Thule"{
+            canonical{"America/Thule"}
             territory{"GL"}
         }
         "America:Thunder_Bay"{
+            canonical{"America/Thunder_Bay"}
             territory{"CA"}
         }
         "America:Tijuana"{
+            canonical{"America/Tijuana"}
             territory{"MX"}
             aliases{
                 "America/Ensenada",
@@ -10631,138 +13786,180 @@ supplementalData:table(nofallback){
             }
         }
         "America:Toronto"{
+            canonical{"America/Toronto"}
             territory{"CA"}
             aliases{
                 "Canada/Eastern",
             }
         }
         "America:Tortola"{
+            canonical{"America/Tortola"}
             territory{"VG"}
         }
         "America:Vancouver"{
+            canonical{"America/Vancouver"}
             territory{"CA"}
             aliases{
                 "Canada/Pacific",
             }
         }
         "America:Whitehorse"{
+            canonical{"America/Whitehorse"}
             territory{"CA"}
             aliases{
                 "Canada/Yukon",
             }
         }
         "America:Winnipeg"{
+            canonical{"America/Winnipeg"}
             territory{"CA"}
             aliases{
                 "Canada/Central",
             }
         }
         "America:Yakutat"{
+            canonical{"America/Yakutat"}
             territory{"US"}
         }
         "America:Yellowknife"{
+            canonical{"America/Yellowknife"}
             territory{"CA"}
         }
         "Antarctica:Casey"{
+            canonical{"Antarctica/Casey"}
             territory{"AQ"}
         }
         "Antarctica:Davis"{
+            canonical{"Antarctica/Davis"}
             territory{"AQ"}
         }
         "Antarctica:DumontDUrville"{
+            canonical{"Antarctica/DumontDUrville"}
             territory{"AQ"}
         }
         "Antarctica:Mawson"{
+            canonical{"Antarctica/Mawson"}
             territory{"AQ"}
         }
         "Antarctica:McMurdo"{
+            canonical{"Antarctica/McMurdo"}
             territory{"AQ"}
         }
         "Antarctica:Palmer"{
+            canonical{"Antarctica/Palmer"}
             territory{"AQ"}
         }
         "Antarctica:Rothera"{
+            canonical{"Antarctica/Rothera"}
             territory{"AQ"}
         }
         "Antarctica:South_Pole"{
+            canonical{"Antarctica/South_Pole"}
             territory{"AQ"}
         }
         "Antarctica:Syowa"{
+            canonical{"Antarctica/Syowa"}
             territory{"AQ"}
         }
         "Antarctica:Vostok"{
+            canonical{"Antarctica/Vostok"}
             territory{"AQ"}
         }
         "Arctic:Longyearbyen"{
+            canonical{"Arctic/Longyearbyen"}
             territory{"SJ"}
+            aliases{
+                "Atlantic/Jan_Mayen",
+            }
         }
         "Asia:Aden"{
+            canonical{"Asia/Aden"}
             territory{"YE"}
         }
         "Asia:Almaty"{
+            canonical{"Asia/Almaty"}
             territory{"KZ"}
         }
         "Asia:Amman"{
+            canonical{"Asia/Amman"}
             territory{"JO"}
         }
         "Asia:Anadyr"{
+            canonical{"Asia/Anadyr"}
             territory{"RU"}
         }
         "Asia:Aqtau"{
+            canonical{"Asia/Aqtau"}
             territory{"KZ"}
         }
         "Asia:Aqtobe"{
+            canonical{"Asia/Aqtobe"}
             territory{"KZ"}
         }
         "Asia:Ashgabat"{
+            canonical{"Asia/Ashgabat"}
             territory{"TM"}
             aliases{
                 "Asia/Ashkhabad",
             }
         }
         "Asia:Baghdad"{
+            canonical{"Asia/Baghdad"}
             territory{"IQ"}
         }
         "Asia:Bahrain"{
+            canonical{"Asia/Bahrain"}
             territory{"BH"}
         }
         "Asia:Baku"{
+            canonical{"Asia/Baku"}
             territory{"AZ"}
         }
         "Asia:Bangkok"{
+            canonical{"Asia/Bangkok"}
             territory{"TH"}
         }
         "Asia:Beirut"{
+            canonical{"Asia/Beirut"}
             territory{"LB"}
         }
         "Asia:Bishkek"{
+            canonical{"Asia/Bishkek"}
             territory{"KG"}
         }
         "Asia:Brunei"{
+            canonical{"Asia/Brunei"}
             territory{"BN"}
         }
         "Asia:Calcutta"{
+            canonical{"Asia/Calcutta"}
             territory{"IN"}
             aliases{
+                "Asia/Kolkata",
                 "IST",
             }
         }
         "Asia:Choibalsan"{
+            canonical{"Asia/Choibalsan"}
             territory{"MN"}
         }
         "Asia:Chongqing"{
+            canonical{"Asia/Chongqing"}
             territory{"CN"}
             aliases{
                 "Asia/Chungking",
             }
         }
         "Asia:Colombo"{
+            canonical{"Asia/Colombo"}
             territory{"LK"}
         }
         "Asia:Damascus"{
+            canonical{"Asia/Damascus"}
             territory{"SY"}
         }
         "Asia:Dhaka"{
+            canonical{"Asia/Dhaka"}
             territory{"BD"}
             aliases{
                 "Asia/Dacca",
@@ -10770,39 +13967,50 @@ supplementalData:table(nofallback){
             }
         }
         "Asia:Dili"{
+            canonical{"Asia/Dili"}
             territory{"TL"}
         }
         "Asia:Dubai"{
+            canonical{"Asia/Dubai"}
             territory{"AE"}
         }
         "Asia:Dushanbe"{
+            canonical{"Asia/Dushanbe"}
             territory{"TJ"}
         }
         "Asia:Gaza"{
+            canonical{"Asia/Gaza"}
             territory{"PS"}
         }
         "Asia:Harbin"{
+            canonical{"Asia/Harbin"}
             territory{"CN"}
         }
         "Asia:Hong_Kong"{
+            canonical{"Asia/Hong_Kong"}
             territory{"HK"}
             aliases{
                 "Hongkong",
             }
         }
         "Asia:Hovd"{
+            canonical{"Asia/Hovd"}
             territory{"MN"}
         }
         "Asia:Irkutsk"{
+            canonical{"Asia/Irkutsk"}
             territory{"RU"}
         }
         "Asia:Jakarta"{
+            canonical{"Asia/Jakarta"}
             territory{"ID"}
         }
         "Asia:Jayapura"{
+            canonical{"Asia/Jayapura"}
             territory{"ID"}
         }
         "Asia:Jerusalem"{
+            canonical{"Asia/Jerusalem"}
             territory{"IL"}
             aliases{
                 "Asia/Tel_Aviv",
@@ -10810,111 +14018,145 @@ supplementalData:table(nofallback){
             }
         }
         "Asia:Kabul"{
+            canonical{"Asia/Kabul"}
             territory{"AF"}
         }
         "Asia:Kamchatka"{
+            canonical{"Asia/Kamchatka"}
             territory{"RU"}
         }
         "Asia:Karachi"{
+            canonical{"Asia/Karachi"}
             territory{"PK"}
             aliases{
                 "PLT",
             }
         }
         "Asia:Kashgar"{
+            canonical{"Asia/Kashgar"}
             territory{"CN"}
         }
         "Asia:Katmandu"{
+            canonical{"Asia/Katmandu"}
             territory{"NP"}
+            aliases{
+                "Asia/Kathmandu",
+            }
         }
         "Asia:Krasnoyarsk"{
+            canonical{"Asia/Krasnoyarsk"}
             territory{"RU"}
         }
         "Asia:Kuala_Lumpur"{
+            canonical{"Asia/Kuala_Lumpur"}
             territory{"MY"}
         }
         "Asia:Kuching"{
+            canonical{"Asia/Kuching"}
             territory{"MY"}
         }
         "Asia:Kuwait"{
+            canonical{"Asia/Kuwait"}
             territory{"KW"}
         }
         "Asia:Macau"{
+            canonical{"Asia/Macau"}
             territory{"MO"}
             aliases{
                 "Asia/Macao",
             }
         }
         "Asia:Magadan"{
+            canonical{"Asia/Magadan"}
             territory{"RU"}
         }
         "Asia:Makassar"{
+            canonical{"Asia/Makassar"}
             territory{"ID"}
             aliases{
                 "Asia/Ujung_Pandang",
             }
         }
         "Asia:Manila"{
+            canonical{"Asia/Manila"}
             territory{"PH"}
         }
         "Asia:Muscat"{
+            canonical{"Asia/Muscat"}
             territory{"OM"}
         }
         "Asia:Nicosia"{
+            canonical{"Asia/Nicosia"}
             territory{"CY"}
             aliases{
                 "Europe/Nicosia",
             }
         }
         "Asia:Novosibirsk"{
+            canonical{"Asia/Novosibirsk"}
             territory{"RU"}
         }
         "Asia:Omsk"{
+            canonical{"Asia/Omsk"}
             territory{"RU"}
         }
         "Asia:Oral"{
+            canonical{"Asia/Oral"}
             territory{"KZ"}
         }
         "Asia:Phnom_Penh"{
+            canonical{"Asia/Phnom_Penh"}
             territory{"KH"}
         }
         "Asia:Pontianak"{
+            canonical{"Asia/Pontianak"}
             territory{"ID"}
         }
         "Asia:Pyongyang"{
+            canonical{"Asia/Pyongyang"}
             territory{"KP"}
         }
         "Asia:Qatar"{
+            canonical{"Asia/Qatar"}
             territory{"QA"}
         }
         "Asia:Qyzylorda"{
+            canonical{"Asia/Qyzylorda"}
             territory{"KZ"}
         }
         "Asia:Rangoon"{
+            canonical{"Asia/Rangoon"}
             territory{"MM"}
         }
         "Asia:Riyadh"{
+            canonical{"Asia/Riyadh"}
             territory{"SA"}
         }
         "Asia:Saigon"{
+            canonical{"Asia/Saigon"}
             territory{"VN"}
             aliases{
+                "Asia/Ho_Chi_Minh",
                 "VST",
             }
         }
         "Asia:Sakhalin"{
+            canonical{"Asia/Sakhalin"}
             territory{"RU"}
         }
         "Asia:Samarkand"{
+            canonical{"Asia/Samarkand"}
             territory{"UZ"}
         }
         "Asia:Seoul"{
+            canonical{"Asia/Seoul"}
             territory{"KR"}
             aliases{
                 "ROK",
             }
         }
         "Asia:Shanghai"{
+            canonical{"Asia/Shanghai"}
             territory{"CN"}
             aliases{
                 "PRC",
@@ -10922,36 +14164,43 @@ supplementalData:table(nofallback){
             }
         }
         "Asia:Singapore"{
+            canonical{"Asia/Singapore"}
             territory{"SG"}
             aliases{
                 "Singapore",
             }
         }
         "Asia:Taipei"{
+            canonical{"Asia/Taipei"}
             territory{"TW"}
             aliases{
                 "ROC",
             }
         }
         "Asia:Tashkent"{
+            canonical{"Asia/Tashkent"}
             territory{"UZ"}
         }
         "Asia:Tbilisi"{
+            canonical{"Asia/Tbilisi"}
             territory{"GE"}
         }
         "Asia:Tehran"{
+            canonical{"Asia/Tehran"}
             territory{"IR"}
             aliases{
                 "Iran",
             }
         }
         "Asia:Thimphu"{
+            canonical{"Asia/Thimphu"}
             territory{"BT"}
             aliases{
                 "Asia/Thimbu",
             }
         }
         "Asia:Tokyo"{
+            canonical{"Asia/Tokyo"}
             territory{"JP"}
             aliases{
                 "Japan",
@@ -10959,93 +14208,112 @@ supplementalData:table(nofallback){
             }
         }
         "Asia:Ulaanbaatar"{
+            canonical{"Asia/Ulaanbaatar"}
             territory{"MN"}
             aliases{
                 "Asia/Ulan_Bator",
             }
         }
         "Asia:Urumqi"{
+            canonical{"Asia/Urumqi"}
             territory{"CN"}
         }
         "Asia:Vientiane"{
+            canonical{"Asia/Vientiane"}
             territory{"LA"}
         }
         "Asia:Vladivostok"{
+            canonical{"Asia/Vladivostok"}
             territory{"RU"}
         }
         "Asia:Yakutsk"{
+            canonical{"Asia/Yakutsk"}
             territory{"RU"}
         }
         "Asia:Yekaterinburg"{
+            canonical{"Asia/Yekaterinburg"}
             territory{"RU"}
         }
         "Asia:Yerevan"{
+            canonical{"Asia/Yerevan"}
             territory{"AM"}
             aliases{
                 "NET",
             }
         }
         "Atlantic:Azores"{
+            canonical{"Atlantic/Azores"}
             territory{"PT"}
         }
         "Atlantic:Bermuda"{
+            canonical{"Atlantic/Bermuda"}
             territory{"BM"}
         }
         "Atlantic:Canary"{
+            canonical{"Atlantic/Canary"}
             territory{"ES"}
         }
         "Atlantic:Cape_Verde"{
+            canonical{"Atlantic/Cape_Verde"}
             territory{"CV"}
         }
         "Atlantic:Faeroe"{
+            canonical{"Atlantic/Faeroe"}
             territory{"FO"}
             aliases{
                 "Atlantic/Faroe",
             }
         }
-        "Atlantic:Jan_Mayen"{
-            territory{"SJ"}
-        }
         "Atlantic:Madeira"{
+            canonical{"Atlantic/Madeira"}
             territory{"PT"}
         }
         "Atlantic:Reykjavik"{
+            canonical{"Atlantic/Reykjavik"}
             territory{"IS"}
             aliases{
                 "Iceland",
             }
         }
         "Atlantic:South_Georgia"{
+            canonical{"Atlantic/South_Georgia"}
             territory{"GS"}
         }
         "Atlantic:St_Helena"{
+            canonical{"Atlantic/St_Helena"}
             territory{"SH"}
         }
         "Atlantic:Stanley"{
+            canonical{"Atlantic/Stanley"}
             territory{"FK"}
         }
         "Australia:Adelaide"{
+            canonical{"Australia/Adelaide"}
             territory{"AU"}
             aliases{
                 "Australia/South",
             }
         }
         "Australia:Brisbane"{
+            canonical{"Australia/Brisbane"}
             territory{"AU"}
             aliases{
                 "Australia/Queensland",
             }
         }
         "Australia:Broken_Hill"{
+            canonical{"Australia/Broken_Hill"}
             territory{"AU"}
             aliases{
                 "Australia/Yancowinna",
             }
         }
         "Australia:Currie"{
+            canonical{"Australia/Currie"}
             territory{"AU"}
         }
         "Australia:Darwin"{
+            canonical{"Australia/Darwin"}
             territory{"AU"}
             aliases{
                 "Australia/North",
@@ -11053,36 +14321,43 @@ supplementalData:table(nofallback){
             }
         }
         "Australia:Eucla"{
+            canonical{"Australia/Eucla"}
             territory{"AU"}
         }
         "Australia:Hobart"{
+            canonical{"Australia/Hobart"}
             territory{"AU"}
             aliases{
                 "Australia/Tasmania",
             }
         }
         "Australia:Lindeman"{
+            canonical{"Australia/Lindeman"}
             territory{"AU"}
         }
         "Australia:Lord_Howe"{
+            canonical{"Australia/Lord_Howe"}
             territory{"AU"}
             aliases{
                 "Australia/LHI",
             }
         }
         "Australia:Melbourne"{
+            canonical{"Australia/Melbourne"}
             territory{"AU"}
             aliases{
                 "Australia/Victoria",
             }
         }
         "Australia:Perth"{
+            canonical{"Australia/Perth"}
             territory{"AU"}
             aliases{
                 "Australia/West",
             }
         }
         "Australia:Sydney"{
+            canonical{"Australia/Sydney"}
             territory{"AU"}
             aliases{
                 "Australia/ACT",
@@ -11092,6 +14367,7 @@ supplementalData:table(nofallback){
             }
         }
         "Etc:GMT"{
+            canonical{"Etc/GMT"}
             territory{"001"}
             aliases{
                 "Etc/GMT+0",
@@ -11114,63 +14390,82 @@ supplementalData:table(nofallback){
             }
         }
         "Etc:GMT-1"{
+            canonical{"Etc/GMT-1"}
             territory{"001"}
         }
         "Etc:GMT-2"{
+            canonical{"Etc/GMT-2"}
             territory{"001"}
         }
         "Etc:GMT-3"{
+            canonical{"Etc/GMT-3"}
             territory{"001"}
         }
         "Etc:GMT-4"{
+            canonical{"Etc/GMT-4"}
             territory{"001"}
         }
         "Etc:GMT-5"{
+            canonical{"Etc/GMT-5"}
             territory{"001"}
         }
         "Etc:GMT-6"{
+            canonical{"Etc/GMT-6"}
             territory{"001"}
         }
         "Etc:GMT-7"{
+            canonical{"Etc/GMT-7"}
             territory{"001"}
         }
         "Etc:GMT-8"{
+            canonical{"Etc/GMT-8"}
             territory{"001"}
         }
         "Etc:GMT-9"{
+            canonical{"Etc/GMT-9"}
             territory{"001"}
         }
         "Etc:GMT-10"{
+            canonical{"Etc/GMT-10"}
             territory{"001"}
         }
         "Etc:GMT-11"{
+            canonical{"Etc/GMT-11"}
             territory{"001"}
         }
         "Etc:GMT-12"{
+            canonical{"Etc/GMT-12"}
             territory{"001"}
         }
         "Etc:GMT-13"{
+            canonical{"Etc/GMT-13"}
             territory{"001"}
         }
         "Etc:GMT-14"{
+            canonical{"Etc/GMT-14"}
             territory{"001"}
         }
         "Etc:GMT+1"{
+            canonical{"Etc/GMT+1"}
             territory{"001"}
         }
         "Etc:GMT+2"{
+            canonical{"Etc/GMT+2"}
             territory{"001"}
         }
         "Etc:GMT+3"{
+            canonical{"Etc/GMT+3"}
             territory{"001"}
         }
         "Etc:GMT+4"{
+            canonical{"Etc/GMT+4"}
             territory{"001"}
             aliases{
                 "SystemV/AST4",
             }
         }
         "Etc:GMT+5"{
+            canonical{"Etc/GMT+5"}
             territory{"001"}
             aliases{
                 "EST",
@@ -11178,12 +14473,14 @@ supplementalData:table(nofallback){
             }
         }
         "Etc:GMT+6"{
+            canonical{"Etc/GMT+6"}
             territory{"001"}
             aliases{
                 "SystemV/CST6",
             }
         }
         "Etc:GMT+7"{
+            canonical{"Etc/GMT+7"}
             territory{"001"}
             aliases{
                 "MST",
@@ -11191,18 +14488,21 @@ supplementalData:table(nofallback){
             }
         }
         "Etc:GMT+8"{
+            canonical{"Etc/GMT+8"}
             territory{"001"}
             aliases{
                 "SystemV/PST8",
             }
         }
         "Etc:GMT+9"{
+            canonical{"Etc/GMT+9"}
             territory{"001"}
             aliases{
                 "SystemV/YST9",
             }
         }
         "Etc:GMT+10"{
+            canonical{"Etc/GMT+10"}
             territory{"001"}
             aliases{
                 "HST",
@@ -11210,69 +14510,89 @@ supplementalData:table(nofallback){
             }
         }
         "Etc:GMT+11"{
+            canonical{"Etc/GMT+11"}
             territory{"001"}
         }
         "Etc:GMT+12"{
+            canonical{"Etc/GMT+12"}
             territory{"001"}
         }
         "Etc:Unknown"{
+            canonical{"Etc/Unknown"}
             territory{"001"}
         }
         "Europe:Amsterdam"{
+            canonical{"Europe/Amsterdam"}
             territory{"NL"}
         }
         "Europe:Andorra"{
+            canonical{"Europe/Andorra"}
             territory{"AD"}
         }
         "Europe:Athens"{
+            canonical{"Europe/Athens"}
             territory{"GR"}
         }
         "Europe:Belgrade"{
+            canonical{"Europe/Belgrade"}
             territory{"RS"}
         }
         "Europe:Berlin"{
+            canonical{"Europe/Berlin"}
             territory{"DE"}
         }
         "Europe:Bratislava"{
+            canonical{"Europe/Bratislava"}
             territory{"SK"}
         }
         "Europe:Brussels"{
+            canonical{"Europe/Brussels"}
             territory{"BE"}
         }
         "Europe:Bucharest"{
+            canonical{"Europe/Bucharest"}
             territory{"RO"}
         }
         "Europe:Budapest"{
+            canonical{"Europe/Budapest"}
             territory{"HU"}
         }
         "Europe:Chisinau"{
+            canonical{"Europe/Chisinau"}
             territory{"MD"}
             aliases{
                 "Europe/Tiraspol",
             }
         }
         "Europe:Copenhagen"{
+            canonical{"Europe/Copenhagen"}
             territory{"DK"}
         }
         "Europe:Dublin"{
+            canonical{"Europe/Dublin"}
             territory{"IE"}
             aliases{
                 "Eire",
             }
         }
         "Europe:Gibraltar"{
+            canonical{"Europe/Gibraltar"}
             territory{"GI"}
         }
         "Europe:Guernsey"{
+            canonical{"Europe/Guernsey"}
             territory{"GG"}
         }
         "Europe:Helsinki"{
+            canonical{"Europe/Helsinki"}
             territory{"FI"}
         }
         "Europe:Isle_of_Man"{
+            canonical{"Europe/Isle_of_Man"}
             territory{"IM"}
         }
         "Europe:Istanbul"{
+            canonical{"Europe/Istanbul"}
             territory{"TR"}
             aliases{
                 "Asia/Istanbul",
@@ -11280,24 +14600,30 @@ supplementalData:table(nofallback){
             }
         }
         "Europe:Jersey"{
+            canonical{"Europe/Jersey"}
             territory{"JE"}
         }
         "Europe:Kaliningrad"{
+            canonical{"Europe/Kaliningrad"}
             territory{"RU"}
         }
         "Europe:Kiev"{
+            canonical{"Europe/Kiev"}
             territory{"UA"}
         }
         "Europe:Lisbon"{
+            canonical{"Europe/Lisbon"}
             territory{"PT"}
             aliases{
                 "Portugal",
             }
         }
         "Europe:Ljubljana"{
+            canonical{"Europe/Ljubljana"}
             territory{"SI"}
         }
         "Europe:London"{
+            canonical{"Europe/London"}
             territory{"GB"}
             aliases{
                 "Europe/Belfast",
@@ -11306,150 +14632,195 @@ supplementalData:table(nofallback){
             }
         }
         "Europe:Luxembourg"{
+            canonical{"Europe/Luxembourg"}
             territory{"LU"}
         }
         "Europe:Madrid"{
+            canonical{"Europe/Madrid"}
             territory{"ES"}
         }
         "Europe:Malta"{
+            canonical{"Europe/Malta"}
             territory{"MT"}
         }
         "Europe:Mariehamn"{
+            canonical{"Europe/Mariehamn"}
             territory{"AX"}
         }
         "Europe:Minsk"{
+            canonical{"Europe/Minsk"}
             territory{"BY"}
         }
         "Europe:Monaco"{
+            canonical{"Europe/Monaco"}
             territory{"MC"}
         }
         "Europe:Moscow"{
+            canonical{"Europe/Moscow"}
             territory{"RU"}
             aliases{
                 "W-SU",
             }
         }
         "Europe:Oslo"{
+            canonical{"Europe/Oslo"}
             territory{"NO"}
         }
         "Europe:Paris"{
+            canonical{"Europe/Paris"}
             territory{"FR"}
             aliases{
                 "ECT",
             }
         }
         "Europe:Podgorica"{
+            canonical{"Europe/Podgorica"}
             territory{"ME"}
         }
         "Europe:Prague"{
+            canonical{"Europe/Prague"}
             territory{"CZ"}
         }
         "Europe:Riga"{
+            canonical{"Europe/Riga"}
             territory{"LV"}
         }
         "Europe:Rome"{
+            canonical{"Europe/Rome"}
             territory{"IT"}
         }
         "Europe:Samara"{
+            canonical{"Europe/Samara"}
             territory{"RU"}
         }
         "Europe:San_Marino"{
+            canonical{"Europe/San_Marino"}
             territory{"SM"}
         }
         "Europe:Sarajevo"{
+            canonical{"Europe/Sarajevo"}
             territory{"BA"}
         }
         "Europe:Simferopol"{
+            canonical{"Europe/Simferopol"}
             territory{"UA"}
         }
         "Europe:Skopje"{
+            canonical{"Europe/Skopje"}
             territory{"MK"}
         }
         "Europe:Sofia"{
+            canonical{"Europe/Sofia"}
             territory{"BG"}
         }
         "Europe:Stockholm"{
+            canonical{"Europe/Stockholm"}
             territory{"SE"}
         }
         "Europe:Tallinn"{
+            canonical{"Europe/Tallinn"}
             territory{"EE"}
         }
         "Europe:Tirane"{
+            canonical{"Europe/Tirane"}
             territory{"AL"}
         }
         "Europe:Uzhgorod"{
+            canonical{"Europe/Uzhgorod"}
             territory{"UA"}
         }
         "Europe:Vaduz"{
+            canonical{"Europe/Vaduz"}
             territory{"LI"}
         }
         "Europe:Vatican"{
+            canonical{"Europe/Vatican"}
             territory{"VA"}
         }
         "Europe:Vienna"{
+            canonical{"Europe/Vienna"}
             territory{"AT"}
         }
         "Europe:Vilnius"{
+            canonical{"Europe/Vilnius"}
             territory{"LT"}
         }
         "Europe:Volgograd"{
+            canonical{"Europe/Volgograd"}
             territory{"RU"}
         }
         "Europe:Warsaw"{
+            canonical{"Europe/Warsaw"}
             territory{"PL"}
             aliases{
                 "Poland",
             }
         }
         "Europe:Zagreb"{
+            canonical{"Europe/Zagreb"}
             territory{"HR"}
         }
         "Europe:Zaporozhye"{
+            canonical{"Europe/Zaporozhye"}
             territory{"UA"}
         }
         "Europe:Zurich"{
+            canonical{"Europe/Zurich"}
             territory{"CH"}
         }
         "Indian:Antananarivo"{
+            canonical{"Indian/Antananarivo"}
             territory{"MG"}
         }
         "Indian:Chagos"{
+            canonical{"Indian/Chagos"}
             territory{"IO"}
         }
         "Indian:Christmas"{
+            canonical{"Indian/Christmas"}
             territory{"CX"}
         }
         "Indian:Cocos"{
+            canonical{"Indian/Cocos"}
             territory{"CC"}
         }
         "Indian:Comoro"{
+            canonical{"Indian/Comoro"}
             territory{"KM"}
         }
         "Indian:Kerguelen"{
+            canonical{"Indian/Kerguelen"}
             territory{"TF"}
         }
         "Indian:Mahe"{
+            canonical{"Indian/Mahe"}
             territory{"SC"}
         }
         "Indian:Maldives"{
+            canonical{"Indian/Maldives"}
             territory{"MV"}
         }
         "Indian:Mauritius"{
+            canonical{"Indian/Mauritius"}
             territory{"MU"}
         }
         "Indian:Mayotte"{
+            canonical{"Indian/Mayotte"}
             territory{"YT"}
         }
         "Indian:Reunion"{
+            canonical{"Indian/Reunion"}
             territory{"RE"}
         }
         "Pacific:Apia"{
+            canonical{"Pacific/Apia"}
             territory{"WS"}
             aliases{
                 "MIT",
             }
         }
         "Pacific:Auckland"{
+            canonical{"Pacific/Auckland"}
             territory{"NZ"}
             aliases{
                 "NZ",
@@ -11457,90 +14828,114 @@ supplementalData:table(nofallback){
             }
         }
         "Pacific:Chatham"{
+            canonical{"Pacific/Chatham"}
             territory{"NZ"}
             aliases{
                 "NZ-CHAT",
             }
         }
         "Pacific:Easter"{
+            canonical{"Pacific/Easter"}
             territory{"CL"}
             aliases{
                 "Chile/EasterIsland",
             }
         }
         "Pacific:Efate"{
+            canonical{"Pacific/Efate"}
             territory{"VU"}
         }
         "Pacific:Enderbury"{
+            canonical{"Pacific/Enderbury"}
             territory{"KI"}
         }
         "Pacific:Fakaofo"{
+            canonical{"Pacific/Fakaofo"}
             territory{"TK"}
         }
         "Pacific:Fiji"{
+            canonical{"Pacific/Fiji"}
             territory{"FJ"}
         }
         "Pacific:Funafuti"{
+            canonical{"Pacific/Funafuti"}
             territory{"TV"}
         }
         "Pacific:Galapagos"{
+            canonical{"Pacific/Galapagos"}
             territory{"EC"}
         }
         "Pacific:Gambier"{
+            canonical{"Pacific/Gambier"}
             territory{"PF"}
         }
         "Pacific:Guadalcanal"{
+            canonical{"Pacific/Guadalcanal"}
             territory{"SB"}
             aliases{
                 "SST",
             }
         }
         "Pacific:Guam"{
+            canonical{"Pacific/Guam"}
             territory{"GU"}
         }
         "Pacific:Honolulu"{
+            canonical{"Pacific/Honolulu"}
             territory{"US"}
             aliases{
                 "US/Hawaii",
             }
         }
         "Pacific:Johnston"{
+            canonical{"Pacific/Johnston"}
             territory{"UM"}
         }
         "Pacific:Kiritimati"{
+            canonical{"Pacific/Kiritimati"}
             territory{"KI"}
         }
         "Pacific:Kosrae"{
+            canonical{"Pacific/Kosrae"}
             territory{"FM"}
         }
         "Pacific:Kwajalein"{
+            canonical{"Pacific/Kwajalein"}
             territory{"MH"}
             aliases{
                 "Kwajalein",
             }
         }
         "Pacific:Majuro"{
+            canonical{"Pacific/Majuro"}
             territory{"MH"}
         }
         "Pacific:Marquesas"{
+            canonical{"Pacific/Marquesas"}
             territory{"PF"}
         }
         "Pacific:Midway"{
+            canonical{"Pacific/Midway"}
             territory{"UM"}
         }
         "Pacific:Nauru"{
+            canonical{"Pacific/Nauru"}
             territory{"NR"}
         }
         "Pacific:Niue"{
+            canonical{"Pacific/Niue"}
             territory{"NU"}
         }
         "Pacific:Norfolk"{
+            canonical{"Pacific/Norfolk"}
             territory{"NF"}
         }
         "Pacific:Noumea"{
+            canonical{"Pacific/Noumea"}
             territory{"NC"}
         }
         "Pacific:Pago_Pago"{
+            canonical{"Pacific/Pago_Pago"}
             territory{"AS"}
             aliases{
                 "Pacific/Samoa",
@@ -11548,42 +14943,54 @@ supplementalData:table(nofallback){
             }
         }
         "Pacific:Palau"{
+            canonical{"Pacific/Palau"}
             territory{"PW"}
         }
         "Pacific:Pitcairn"{
+            canonical{"Pacific/Pitcairn"}
             territory{"PN"}
         }
         "Pacific:Ponape"{
+            canonical{"Pacific/Ponape"}
             territory{"FM"}
         }
         "Pacific:Port_Moresby"{
+            canonical{"Pacific/Port_Moresby"}
             territory{"PG"}
         }
         "Pacific:Rarotonga"{
+            canonical{"Pacific/Rarotonga"}
             territory{"CK"}
         }
         "Pacific:Saipan"{
+            canonical{"Pacific/Saipan"}
             territory{"MP"}
         }
         "Pacific:Tahiti"{
+            canonical{"Pacific/Tahiti"}
             territory{"PF"}
         }
         "Pacific:Tarawa"{
+            canonical{"Pacific/Tarawa"}
             territory{"KI"}
         }
         "Pacific:Tongatapu"{
+            canonical{"Pacific/Tongatapu"}
             territory{"TO"}
         }
         "Pacific:Truk"{
+            canonical{"Pacific/Truk"}
             territory{"FM"}
             aliases{
                 "Pacific/Yap",
             }
         }
         "Pacific:Wake"{
+            canonical{"Pacific/Wake"}
             territory{"UM"}
         }
         "Pacific:Wallis"{
+            canonical{"Pacific/Wallis"}
             territory{"WF"}
         }
         multizone{
@@ -11611,7 +15018,6 @@ supplementalData:table(nofallback){
             "PF",
             "PT",
             "RU",
-            "SJ",
             "UA",
             "UM",
             "US",

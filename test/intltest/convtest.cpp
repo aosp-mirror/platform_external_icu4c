@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2003-2007, International Business Machines
+*   Copyright (C) 2003-2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -185,7 +185,7 @@ ConversionTest::TestToUnicode() {
         delete dataModule;
     }
     else {
-        errln("Failed: could not load test conversion data");
+        dataerrln("Could not load test conversion data");
     }
 }
 
@@ -338,7 +338,7 @@ ConversionTest::TestFromUnicode() {
         delete dataModule;
     }
     else {
-        errln("Failed: could not load test conversion data");
+        dataerrln("Could not load test conversion data");
     }
 }
 
@@ -417,7 +417,7 @@ ConversionTest::TestGetUnicodeSet() {
 
                 cnv=cnv_open(charset, errorCode);
                 if(U_FAILURE(errorCode)) {
-                    errln("error opening \"%s\" for conversion/getUnicodeSet test case %d - %s",
+                    errcheckln(errorCode, "error opening \"%s\" for conversion/getUnicodeSet test case %d - %s",
                             charset, i, u_errorName(errorCode));
                     errorCode=U_ZERO_ERROR;
                     continue;
@@ -462,15 +462,17 @@ ConversionTest::TestGetUnicodeSet() {
         delete dataModule;
     }
     else {
-        errln("Failed: could not load test conversion data");
+        dataerrln("Could not load test conversion data");
     }
 }
 
-static void U_EXPORT2
+
+U_CDECL_BEGIN
+static void U_CALLCONV
 getUnicodeSetCallback(const void *context,
-                      UConverterFromUnicodeArgs *fromUArgs,
-                      const UChar* codeUnits,
-                      int32_t length,
+                      UConverterFromUnicodeArgs * /*fromUArgs*/,
+                      const UChar* /*codeUnits*/,
+                      int32_t /*length*/,
                       UChar32 codePoint,
                       UConverterCallbackReason reason,
                       UErrorCode *pErrorCode) {
@@ -479,6 +481,7 @@ getUnicodeSetCallback(const void *context,
         *pErrorCode=U_ZERO_ERROR;                    // skip
     }  // else ignore the reset, close and clone calls.
 }
+U_CDECL_END
 
 // Compare ucnv_getUnicodeSet() with the set of characters that can be converted.
 void
@@ -549,7 +552,7 @@ ConversionTest::TestGetUnicodeSet2() {
         UErrorCode errorCode=U_ZERO_ERROR;
         UConverter *cnv=cnv_open(cnvNames[i], errorCode);
         if(U_FAILURE(errorCode)) {
-            errln("failed to open converter %s - %s", cnvNames[i], u_errorName(errorCode));
+            errcheckln(errorCode, "failed to open converter %s - %s", cnvNames[i], u_errorName(errorCode));
             continue;
         }
         UnicodeSet expected;
@@ -636,6 +639,8 @@ ConversionTest::TestGetUnicodeSet2() {
                 }
             }
         }
+
+        ucnv_close(cnv);
     }
 
     delete [] s0;
@@ -942,7 +947,7 @@ ConversionTest::ToUnicodeCase(ConversionCase &cc, UConverterToUCallback callback
     errorCode=U_ZERO_ERROR;
     cnv=cnv_open(cc.charset, errorCode);
     if(U_FAILURE(errorCode)) {
-        errln("toUnicode[%d](%s cb=\"%s\" fb=%d flush=%d) ucnv_open() failed - %s",
+        errcheckln(errorCode, "toUnicode[%d](%s cb=\"%s\" fb=%d flush=%d) ucnv_open() failed - %s",
                 cc.caseNr, cc.charset, cc.cbopt, cc.fallbacks, cc.finalFlush, u_errorName(errorCode));
         return FALSE;
     }
@@ -1349,7 +1354,7 @@ ConversionTest::FromUnicodeCase(ConversionCase &cc, UConverterFromUCallback call
     errorCode=U_ZERO_ERROR;
     cnv=cnv_open(cc.charset, errorCode);
     if(U_FAILURE(errorCode)) {
-        errln("fromUnicode[%d](%s cb=\"%s\" fb=%d flush=%d) ucnv_open() failed - %s",
+        errcheckln(errorCode, "fromUnicode[%d](%s cb=\"%s\" fb=%d flush=%d) ucnv_open() failed - %s",
                 cc.caseNr, cc.charset, cc.cbopt, cc.fallbacks, cc.finalFlush, u_errorName(errorCode));
         return FALSE;
     }

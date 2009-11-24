@@ -1,9 +1,14 @@
 /*
 ******************************************************************************
-* Copyright (C) 1996-2007, International Business Machines Corporation and
+* Copyright (C) 1996-2009, International Business Machines Corporation and
 * others. All Rights Reserved.
 ******************************************************************************
 */
+
+/**
+ * \file 
+ * \brief C++ API: RuleBasedCollator class provides the simple implementation of Collator.
+ */
 
 /**
 * File tblcoll.h
@@ -56,10 +61,6 @@
 
 #include "unicode/utypes.h"
 
-/**
- * \file 
- * \brief C++ API: RuleBasedCollator class provides the simple implementation of Collator.
- */
  
 #if !UCONFIG_NO_COLLATION
 
@@ -386,6 +387,21 @@ public:
     virtual UCollationResult compare(const UChar* source, int32_t sourceLength,
                                       const UChar* target, int32_t targetLength,
                                       UErrorCode &status) const;
+
+    /**
+     * Compares two strings using the Collator.
+     * Returns whether the first one compares less than/equal to/greater than
+     * the second one.
+     * This version takes UCharIterator input.
+     * @param sIter the first ("source") string iterator
+     * @param tIter the second ("target") string iterator
+     * @param status ICU status
+     * @return UCOL_LESS, UCOL_EQUAL or UCOL_GREATER
+     * @draft ICU 4.2
+     */
+    virtual UCollationResult compare(UCharIterator &sIter,
+                                     UCharIterator &tIter,
+                                     UErrorCode &status) const;
 
     /**
     * Transforms a specified region of the string into a series of characters
@@ -803,9 +819,10 @@ protected:
     * Used internally by registraton to define the requested and valid locales.
     * @param requestedLocale the requsted locale
     * @param validLocale the valid locale
+    * @param actualLocale the actual locale
     * @internal
     */
-    virtual void setLocales(const Locale& requestedLocale, const Locale& validLocale);
+    virtual void setLocales(const Locale& requestedLocale, const Locale& validLocale, const Locale& actualLocale);
 
 private:
 

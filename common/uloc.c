@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 1997-2007, International Business Machines
+*   Copyright (C) 1997-2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *
@@ -146,7 +146,7 @@ static const char * const LANGUAGES[] = {
     "lah", "lam", "lb",  "lez", "lg",  "li",  "ln",  "lo",  "lol",
     "loz", "lt",  "lu",  "lua", "lui", "lun", "luo", "lus",
     "lv",  "mad", "mag", "mai", "mak", "man", "map", "mas",
-    "mdf", "mdr", "men", "mg",  "mga", "mh",  "mi",  "mic", "min",
+    "mdf", "mdr", "men", "mfe", "mg",  "mga", "mh",  "mi",  "mic", "min",
     "mis", "mk",  "mkh", "ml",  "mn",  "mnc", "mni", "mno",
     "mo",  "moh", "mos", "mr",  "ms",  "mt",  "mul", "mun",
     "mus", "mwl", "mwr", "my",  "myn", "myv", "na",  "nah", "nai", "nap",
@@ -165,7 +165,7 @@ static const char * const LANGUAGES[] = {
     "srn", "srr", "ss",  "ssa", "st",  "su",  "suk", "sus", "sux",
     "sv",  "sw",  "syc", "syr", "ta",  "tai", "te",  "tem", "ter",
     "tet", "tg",  "th",  "ti",  "tig", "tiv", "tk",  "tkl",
-    "tl",  "tlh", "tli", "tmh", "tn",  "to",  "tog", "tpi", "tr",
+    "tl",  "tlh", "tli", "tmh", "tn",  "to",  "tog", "tpi", "tr", "trv",
     "ts",  "tsi", "tt",  "tum", "tup", "tut", "tvl", "tw",
     "ty",  "tyv", "udm", "ug",  "uga", "uk",  "umb", "und", "ur",
     "uz",  "vai", "ve",  "vi",  "vo",  "vot", "wa",  "wak",
@@ -232,8 +232,8 @@ static const char * const LANGUAGES_3[] = {
     "enm", "epo", "spa", "est", "eus", "ewo", "fas",
 /*  "fan", "fat", "ff",  "fi",  "fil", "fiu", "fj",  "fo",  "fon",    */
     "fan", "fat", "ful", "fin", "fil", "fiu", "fij", "fao", "fon",
-/*  "fr",  "frm", "fro", "fur", "frr", "frs", "fy",  "ga",  "gaa", "gay",    */
-    "fra", "frm", "fro", "fur", "frr", "frs", "fry", "gle", "gaa", "gay",
+/*  "fr",  "frm", "fro", "frr", "frs", "fur", "fy",  "ga",  "gaa", "gay",    */
+    "fra", "frm", "fro", "frr", "frs", "fur", "fry", "gle", "gaa", "gay",
 /*  "gba", "gd",  "gem", "gez", "gil", "gl",  "gmh", "gn",     */
     "gba", "gla", "gem", "gez", "gil", "glg", "gmh", "grn",
 /*  "goh", "gon", "gor", "got", "grb", "grc", "gsw", "gu",  "gv",     */
@@ -262,8 +262,8 @@ static const char * const LANGUAGES_3[] = {
     "loz", "lit", "lub", "lua", "lui", "lun", "luo", "lus",
 /*  "lv",  "mad", "mag", "mai", "mak", "man", "map", "mas",    */
     "lav", "mad", "mag", "mai", "mak", "man", "map", "mas",
-/*  "mdf", "mdr", "men", "mg",  "mga", "mh",  "mi",  "mic", "min",    */
-    "mdf", "mdr", "men", "mlg", "mga", "mah", "mri", "mic", "min",
+/*  "mdf", "mdr", "men", "mfe", "mg",  "mga", "mh",  "mi",  "mic", "min",    */
+    "mdf", "mdr", "men", "mfe", "mlg", "mga", "mah", "mri", "mic", "min",
 /*  "mis", "mk",  "mkh", "ml",  "mn",  "mnc", "mni", "mno",    */
     "mis", "mkd", "mkh", "mal", "mon", "mnc", "mni", "mno",
 /*  "mo",  "moh", "mos", "mr",  "ms",  "mt",  "mul", "mun",    */
@@ -300,8 +300,8 @@ static const char * const LANGUAGES_3[] = {
     "swe", "swa", "syc", "syr", "tam", "tai", "tel", "tem", "ter",
 /*  "tet", "tg",  "th",  "ti",  "tig", "tiv", "tk",  "tkl",    */
     "tet", "tgk", "tha", "tir", "tig", "tiv", "tuk", "tkl",
-/*  "tl",  "tlh", "tli", "tmh", "tn",  "to",  "tog", "tpi", "tr",     */
-    "tgl", "tlh", "tli", "tmh", "tsn", "ton", "tog", "tpi", "tur",
+/*  "tl",  "tlh", "tli", "tmh", "tn",  "to",  "tog", "tpi", "tr", "trv",    */
+    "tgl", "tlh", "tli", "tmh", "tsn", "ton", "tog", "tpi", "tur", "trv",
 /*  "ts",  "tsi", "tt",  "tum", "tup", "tut", "tvl", "tw",     */
     "tso", "tsi", "tat", "tum", "tup", "tut", "tvl", "twi",
 /*  "ty",  "tyv", "udm", "ug",  "uga", "uk",  "umb", "und", "ur",     */
@@ -490,7 +490,7 @@ static const CanonicalizationMap CANONICALIZE_MAP[] = {
     { "cel_GAULISH",    "cel__GAULISH", NULL, NULL }, /* registered name */
     { "de_1901",        "de__1901", NULL, NULL }, /* registered name */
     { "de_1906",        "de__1906", NULL, NULL }, /* registered name */
-    { "de__PHONEBOOK",  "de", "collation", "phonebook" },
+    { "de__PHONEBOOK",  "de", "collation", "phonebook" }, /* Old ICU name */
     { "de_AT_PREEURO",  "de_AT", "currency", "ATS" },
     { "de_DE_PREEURO",  "de_DE", "currency", "DEM" },
     { "de_LU_PREEURO",  "de_LU", "currency", "LUF" },
@@ -499,7 +499,7 @@ static const CanonicalizationMap CANONICALIZE_MAP[] = {
     { "en_SCOUSE",      "en__SCOUSE", NULL, NULL }, /* registered name */
     { "en_BE_PREEURO",  "en_BE", "currency", "BEF" },
     { "en_IE_PREEURO",  "en_IE", "currency", "IEP" },
-    { "es__TRADITIONAL", "es", "collation", "traditional" },
+    { "es__TRADITIONAL", "es", "collation", "traditional" }, /* Old ICU name */
     { "es_ES_PREEURO",  "es_ES", "currency", "ESP" },
     { "eu_ES_PREEURO",  "eu_ES", "currency", "ESP" },
     { "fi_FI_PREEURO",  "fi_FI", "currency", "FIM" },
@@ -508,22 +508,23 @@ static const CanonicalizationMap CANONICALIZE_MAP[] = {
     { "fr_LU_PREEURO",  "fr_LU", "currency", "LUF" },
     { "ga_IE_PREEURO",  "ga_IE", "currency", "IEP" },
     { "gl_ES_PREEURO",  "gl_ES", "currency", "ESP" },
-    { "hi__DIRECT",     "hi", "collation", "direct" },
+    { "hi__DIRECT",     "hi", "collation", "direct" }, /* Old ICU name */
     { "it_IT_PREEURO",  "it_IT", "currency", "ITL" },
-    { "ja_JP_TRADITIONAL", "ja_JP", "calendar", "japanese" },
+    { "ja_JP_TRADITIONAL", "ja_JP", "calendar", "japanese" }, /* Old ICU name */
     { "nb_NO_NY",       "nn_NO", NULL, NULL },  /* "markus said this was ok" :-) */
     { "nl_BE_PREEURO",  "nl_BE", "currency", "BEF" },
     { "nl_NL_PREEURO",  "nl_NL", "currency", "NLG" },
     { "pt_PT_PREEURO",  "pt_PT", "currency", "PTE" },
     { "sl_ROZAJ",       "sl__ROZAJ", NULL, NULL }, /* registered name */
-    { "sr_SP_CYRL",     "sr_Cyrl_CS", NULL, NULL }, /* .NET name */
-    { "sr_SP_LATN",     "sr_Latn_CS", NULL, NULL }, /* .NET name */
-    { "sr_YU_CYRILLIC", "sr_Cyrl_CS", NULL, NULL }, /* Linux name */
+    { "sr_SP_CYRL",     "sr_Cyrl_RS", NULL, NULL }, /* .NET name */
+    { "sr_SP_LATN",     "sr_Latn_RS", NULL, NULL }, /* .NET name */
+    { "sr_YU_CYRILLIC", "sr_Cyrl_RS", NULL, NULL }, /* Linux name */
+    { "th_TH_TRADITIONAL", "th_TH", "calendar", "buddhist" }, /* Old ICU name */
     { "uz_UZ_CYRILLIC", "uz_Cyrl_UZ", NULL, NULL }, /* Linux name */
     { "uz_UZ_CYRL",     "uz_Cyrl_UZ", NULL, NULL }, /* .NET name */
     { "uz_UZ_LATN",     "uz_Latn_UZ", NULL, NULL }, /* .NET name */
     { "zh_CHS",         "zh_Hans", NULL, NULL }, /* .NET name */
-    { "zh_CHT",         "zh_Hant", NULL, NULL }, /* .NET name TODO: This should be zh_Hant once the locale structure is fixed. */
+    { "zh_CHT",         "zh_Hant", NULL, NULL }, /* .NET name */
     { "zh_GAN",         "zh__GAN", NULL, NULL }, /* registered name */
     { "zh_GUOYU",       "zh", NULL, NULL }, /* registered name */
     { "zh_HAKKA",       "zh__HAKKA", NULL, NULL }, /* registered name */
@@ -532,10 +533,18 @@ static const CanonicalizationMap CANONICALIZE_MAP[] = {
     { "zh_WUU",         "zh__WUU", NULL, NULL }, /* registered name */
     { "zh_XIANG",       "zh__XIANG", NULL, NULL }, /* registered name */
     { "zh_YUE",         "zh__YUE", NULL, NULL }, /* registered name */
-    { "th_TH_TRADITIONAL", "th_TH", "calendar", "buddhist" },
-    { "hi_IN_TRADITIONAL", "hi_IN", "calendar", "indian" },
-    { "zh_TW_STROKE",   "zh_Hant_TW", "collation", "stroke" },
-    { "zh__PINYIN",     "zh", "collation", "pinyin" }
+};
+
+typedef struct VariantMap {
+    const char *variant;          /* input ID */
+    const char *keyword;     /* keyword, or NULL if none */
+    const char *value;       /* keyword value, or NULL if kw==NULL */
+} VariantMap;
+
+static const VariantMap VARIANT_MAP[] = {
+    { "EURO",   "currency", "EUR" },
+    { "PINYIN", "collation", "pinyin" }, /* Solaris variant */
+    { "STROKE", "collation", "stroke" }  /* Solaris variant */
 };
 
 /* ### Keywords **************************************************/
@@ -1379,7 +1388,8 @@ _getVariant(const char *localeID,
  */
 static int32_t
 _deleteVariant(char* variants, int32_t variantsLen,
-               const char* toDelete, int32_t toDeleteLen) {
+               const char* toDelete, int32_t toDeleteLen)
+{
     int32_t delta = 0; /* number of chars deleted */
     for (;;) {
         UBool flag = FALSE;
@@ -1388,7 +1398,8 @@ _deleteVariant(char* variants, int32_t variantsLen,
         }
         if (uprv_strncmp(variants, toDelete, toDeleteLen) == 0 &&
             (variantsLen == toDeleteLen ||
-             (flag=(variants[toDeleteLen] == '_')))) {
+             (flag=(variants[toDeleteLen] == '_'))))
+        {
             int32_t d = toDeleteLen + (flag?1:0);
             variantsLen -= d;
             delta += d;
@@ -1469,26 +1480,31 @@ static const UEnumeration gKeywordsEnum = {
 U_CAPI UEnumeration* U_EXPORT2
 uloc_openKeywordList(const char *keywordList, int32_t keywordListSize, UErrorCode* status)
 {
-  UKeywordsContext *myContext = NULL;
-  UEnumeration *result = NULL;
+    UKeywordsContext *myContext = NULL;
+    UEnumeration *result = NULL;
 
-  if(U_FAILURE(*status)) {
-    return NULL;
-  }
-  result = (UEnumeration *)uprv_malloc(sizeof(UEnumeration));
-  uprv_memcpy(result, &gKeywordsEnum, sizeof(UEnumeration));
-  myContext = uprv_malloc(sizeof(UKeywordsContext));
-  if (myContext == NULL) {
-    *status = U_MEMORY_ALLOCATION_ERROR;
-    uprv_free(result);
-    return NULL;
-  }
-  myContext->keywords = (char *)uprv_malloc(keywordListSize+1);
-  uprv_memcpy(myContext->keywords, keywordList, keywordListSize);
-  myContext->keywords[keywordListSize] = 0;
-  myContext->current = myContext->keywords;
-  result->context = myContext;
-  return result;
+    if(U_FAILURE(*status)) {
+        return NULL;
+    }
+    result = (UEnumeration *)uprv_malloc(sizeof(UEnumeration));
+    /* Null pointer test */
+    if (result == NULL) {
+        *status = U_MEMORY_ALLOCATION_ERROR;
+        return NULL;
+    }
+    uprv_memcpy(result, &gKeywordsEnum, sizeof(UEnumeration));
+    myContext = uprv_malloc(sizeof(UKeywordsContext));
+    if (myContext == NULL) {
+        *status = U_MEMORY_ALLOCATION_ERROR;
+        uprv_free(result);
+        return NULL;
+    }
+    myContext->keywords = (char *)uprv_malloc(keywordListSize+1);
+    uprv_memcpy(myContext->keywords, keywordList, keywordListSize);
+    myContext->keywords[keywordListSize] = 0;
+    myContext->current = myContext->keywords;
+    result->context = myContext;
+    return result;
 }
 
 U_CAPI UEnumeration* U_EXPORT2
@@ -1569,7 +1585,6 @@ _canonicalize(const char* localeID,
     const char* addValue = NULL;
     char* name;
     char* variant = NULL; /* pointer into name, or NULL */
-    int32_t sawEuro = 0;
 
     if (U_FAILURE(*err)) {
         return 0;
@@ -1713,11 +1728,25 @@ _canonicalize(const char* localeID,
             }
         }
 
-        /* Check for EURO variants. */
-        sawEuro = _deleteVariant(variant, uprv_min(variantSize, (nameCapacity-len)), "EURO", 4);
-        len -= sawEuro;
-        if (sawEuro > 0 && name[len-1] == '_') { /* delete trailing '_' */
-            --len;
+        /* Handle generic variants first */
+        if (variant) {
+            for (j=0; j<(int32_t)(sizeof(VARIANT_MAP)/sizeof(VARIANT_MAP[0])); j++) {
+                const char* variantToCompare = VARIANT_MAP[j].variant;
+                int32_t n = (int32_t)uprv_strlen(variantToCompare);
+                int32_t variantLen = _deleteVariant(variant, uprv_min(variantSize, (nameCapacity-len)), variantToCompare, n);
+                len -= variantLen;
+                if (variantLen > 0) {
+                    if (name[len-1] == '_') { /* delete trailing '_' */
+                        --len;
+                    }
+                    addKeyword = VARIANT_MAP[j].keyword;
+                    addValue = VARIANT_MAP[j].value;
+                    break;
+                }
+            }
+            if (name[len-1] == '_') { /* delete trailing '_' */
+                --len;
+            }
         }
 
         /* Look up the ID in the canonicalization map */
@@ -1729,16 +1758,12 @@ _canonicalize(const char* localeID,
                     break; /* Don't remap "" if keywords present */
                 }
                 len = _copyCount(name, nameCapacity, CANONICALIZE_MAP[j].canonicalID);
-                addKeyword = CANONICALIZE_MAP[j].keyword;
-                addValue = CANONICALIZE_MAP[j].value;
+                if (CANONICALIZE_MAP[j].keyword) {
+                    addKeyword = CANONICALIZE_MAP[j].keyword;
+                    addValue = CANONICALIZE_MAP[j].value;
+                }
                 break;
             }
-        }
-
-        /* Explicit EURO variant overrides keyword in CANONICALIZE_MAP */
-        if (sawEuro > 0) {
-            addKeyword = "currency";
-            addValue = "EUR";
         }
     }
 
@@ -2190,13 +2215,18 @@ _getStringOrCopyKey(const char *path, const char *locale,
             ures_close(rb);
         }
     } else {
-        /* second-level item, use special fallback */
-        s=_res_getTableStringWithFallback(path, locale,
-                                           tableKey, 
-                                           subTableKey,
-                                           itemKey,
-                                           &length,
-                                           pErrorCode);
+        /* Language code should not be a number. If it is, set the error code. */
+        if (!uprv_strncmp(tableKey, "Languages", 9) && uprv_strtol(itemKey, NULL, 10)) {
+            *pErrorCode = U_MISSING_RESOURCE_ERROR;
+        } else {
+            /* second-level item, use special fallback */
+            s=_res_getTableStringWithFallback(path, locale,
+                                               tableKey, 
+                                               subTableKey,
+                                               itemKey,
+                                               &length,
+                                               pErrorCode);
+        }
     }
     if(U_SUCCESS(*pErrorCode)) {
         int32_t copyLength=uprv_min(length, destCapacity);
@@ -2647,7 +2677,7 @@ static void _load_installedLocales()
     UMTX_CHECK(NULL, _installedLocales != NULL, localesLoaded);
     
     if (localesLoaded == FALSE) {
-        UResourceBundle *index = NULL;
+        UResourceBundle *indexLocale = NULL;
         UResourceBundle installed;
         UErrorCode status = U_ZERO_ERROR;
         char ** temp;
@@ -2655,33 +2685,35 @@ static void _load_installedLocales()
         int32_t localeCount;
         
         ures_initStackObject(&installed);
-        index = ures_openDirect(NULL, _kIndexLocaleName, &status);
-        ures_getByKey(index, _kIndexTag, &installed, &status);
+        indexLocale = ures_openDirect(NULL, _kIndexLocaleName, &status);
+        ures_getByKey(indexLocale, _kIndexTag, &installed, &status);
         
         if(U_SUCCESS(status)) {
             localeCount = ures_getSize(&installed);
             temp = (char **) uprv_malloc(sizeof(char*) * (localeCount+1));
-            
-            ures_resetIterator(&installed);
-            while(ures_hasNext(&installed)) {
-                ures_getNextString(&installed, NULL, (const char **)&temp[i++], &status);
-            }
-            temp[i] = NULL;
-            
-            umtx_lock(NULL);
-            if (_installedLocales == NULL)
-            {
-                _installedLocales = temp;
-                _installedLocalesCount = localeCount;
-                temp = NULL;
-                ucln_common_registerCleanup(UCLN_COMMON_ULOC, uloc_cleanup);
-            } 
-            umtx_unlock(NULL);
+            /* Check for null pointer */
+            if (temp != NULL) {
+                ures_resetIterator(&installed);
+                while(ures_hasNext(&installed)) {
+                    ures_getNextString(&installed, NULL, (const char **)&temp[i++], &status);
+                }
+                temp[i] = NULL;
 
-            uprv_free(temp);
-            ures_close(&installed);
+                umtx_lock(NULL);
+                if (_installedLocales == NULL)
+                {
+                    _installedLocalesCount = localeCount;
+                    _installedLocales = temp;
+                    temp = NULL;
+                    ucln_common_registerCleanup(UCLN_COMMON_ULOC, uloc_cleanup);
+                } 
+                umtx_unlock(NULL);
+
+                uprv_free(temp);
+            }
         }
-        ures_close(index);
+        ures_close(&installed);
+        ures_close(indexLocale);
     }
 }
 
@@ -2802,6 +2834,78 @@ uloc_acceptLanguageCompare(const void *context, const void *a, const void *b)
     return rc;
 }
 
+static ULayoutType
+_uloc_getOrientationHelper(const char* localeId,
+                           const char* key,
+                           UErrorCode *status)
+{
+    ULayoutType result = ULOC_LAYOUT_UNKNOWN;
+
+    if (!U_FAILURE(*status)) {
+        int32_t length = 0;
+        char localeBuffer[ULOC_FULLNAME_CAPACITY];
+
+        uloc_canonicalize(localeId, localeBuffer, sizeof(localeBuffer), status);
+
+        if (!U_FAILURE(*status)) {
+            const UChar* const value =
+                _res_getTableStringWithFallback(
+                    NULL,
+                    localeBuffer,
+                    "layout",
+                    NULL,
+                    key,
+                    &length,
+                    status);
+
+            if (!U_FAILURE(*status) && length != 0) {
+                switch(value[0])
+                {
+                case 0x0062: /* 'b' */
+                    result = ULOC_LAYOUT_BTT;
+                    break;
+                case 0x006C: /* 'l' */
+                    result = ULOC_LAYOUT_LTR;
+                    break;
+                case 0x0072: /* 'r' */
+                    result = ULOC_LAYOUT_RTL;
+                    break;
+                case 0x0074: /* 't' */
+                    result = ULOC_LAYOUT_TTB;
+                    break;
+                default:
+                    *status = U_INTERNAL_PROGRAM_ERROR;
+                    break;
+                }
+            }
+        }
+    }
+
+    return result;
+}
+
+U_DRAFT ULayoutType U_EXPORT2
+uloc_getCharacterOrientation(const char* localeId,
+                             UErrorCode *status)
+{
+    return _uloc_getOrientationHelper(localeId, "characters", status);
+}
+
+/**
+ * Get the layout line orientation for the specified locale.
+ * 
+ * @param localeID locale name
+ * @param status Error status
+ * @return an enum indicating the layout orientation for lines.
+ * @stable ICU 4.0
+ */
+U_DRAFT ULayoutType U_EXPORT2
+uloc_getLineOrientation(const char* localeId,
+                        UErrorCode *status)
+{
+    return _uloc_getOrientationHelper(localeId, "lines", status);
+}
+
 /* 
 mt-mt, ja;q=0.76, en-us;q=0.95, en;q=0.92, en-gb;q=0.89, fr;q=0.87, iu-ca;q=0.84, iu;q=0.82, ja-jp;q=0.79, mt;q=0.97, de-de;q=0.74, de;q=0.71, es;q=0.68, it-it;q=0.66, it;q=0.63, vi-vn;q=0.61, vi;q=0.58, nl-nl;q=0.55, nl;q=0.53
 */
@@ -2825,6 +2929,7 @@ uloc_acceptLanguageFromHTTP(char *result, int32_t resultAvailable, UAcceptResult
     int32_t i;
     int32_t l = (int32_t)uprv_strlen(httpAcceptLanguage);
     int32_t jSize;
+    char *tempstr; /* Use for null pointer check */
 
     j = smallBuffer;
     jSize = sizeof(smallBuffer)/sizeof(smallBuffer[0]);
@@ -2865,7 +2970,13 @@ uloc_acceptLanguageFromHTTP(char *result, int32_t resultAvailable, UAcceptResult
         /* eat spaces prior to semi */
         for(t=(paramEnd-1);(paramEnd>s)&&isspace(*t);t--)
             ;
-        j[n].locale = uprv_strndup(s,(int32_t)((t+1)-s));
+        /* Check for null pointer from uprv_strndup */
+        tempstr = uprv_strndup(s,(int32_t)((t+1)-s));
+        if (tempstr == NULL) {
+            *status = U_MEMORY_ALLOCATION_ERROR;
+            return -1;
+        }
+        j[n].locale = tempstr;
         uloc_canonicalize(j[n].locale,tmp,sizeof(tmp)/sizeof(tmp[0]),status);
         if(strcmp(j[n].locale,tmp)) {
             uprv_free(j[n].locale);
@@ -2912,6 +3023,12 @@ uloc_acceptLanguageFromHTTP(char *result, int32_t resultAvailable, UAcceptResult
         return -1;
     }
     strs = uprv_malloc((size_t)(sizeof(strs[0])*n));
+    /* Check for null pointer */
+    if (strs == NULL) {
+        uprv_free(j); /* Free to avoid memory leak */
+        *status = U_MEMORY_ALLOCATION_ERROR;
+        return -1;
+    }
     for(i=0;i<n;i++) {
 #if defined(ULOC_DEBUG)
         /*fprintf(stderr,"%d: s <%s> q <%g>\n", i, j[i].locale, j[i].q);*/
@@ -3041,6 +3158,1220 @@ uloc_acceptLanguage(char *result, int32_t resultAvailable,
     }
     uprv_free(fallbackList);
     return -1;
+}
+
+
+/**
+ * This function looks for the localeID in the likelySubtags resource.
+ *
+ * @param localeID The tag to find.
+ * @param buffer A buffer to hold the matching entry
+ * @param bufferLength The length of the output buffer
+ * @return A pointer to "buffer" if found, or a null pointer if not.
+ */
+static const char*  U_CALLCONV
+findLikelySubtags(const char* localeID,
+                  char* buffer,
+                  int32_t bufferLength,
+                  UErrorCode* err) {
+    const char* result = NULL;
+
+    if (!U_FAILURE(*err)) {
+        int32_t resLen = 0;
+        const UChar* s = NULL;
+        UErrorCode tmpErr = U_ZERO_ERROR;
+        UResourceBundle* subtags = ures_openDirect(NULL, "likelySubtags", &tmpErr);
+        if (U_SUCCESS(tmpErr)) {
+            s = ures_getStringByKey(subtags, localeID, &resLen, &tmpErr);
+
+            if (U_FAILURE(tmpErr)) {
+                /*
+                 * If a resource is missing, it's not really an error, it's
+                 * just that we don't have any data for that particular locale ID.
+                 */
+                if (tmpErr != U_MISSING_RESOURCE_ERROR) {
+                    *err = tmpErr;
+                }
+            }
+            else if (resLen >= bufferLength) {
+                /* The buffer should never overflow. */
+                *err = U_INTERNAL_PROGRAM_ERROR;
+            }
+            else {
+                u_UCharsToChars(s, buffer, resLen + 1);
+                result = buffer;
+            }
+
+            ures_close(subtags);
+        } else {
+            *err = tmpErr;
+        }
+    }
+
+    return result;
+}
+
+/**
+ * Append a tag to a buffer, adding the separator if necessary.  The buffer
+ * must be large enough to contain the resulting tag plus any separator
+ * necessary. The tag must not be a zero-length string.
+ *
+ * @param tag The tag to add.
+ * @param tagLength The length of the tag.
+ * @param buffer The output buffer.
+ * @param bufferLength The length of the output buffer.  This is an input/ouput parameter.
+ **/
+static void U_CALLCONV
+appendTag(
+    const char* tag,
+    int32_t tagLength,
+    char* buffer,
+    int32_t* bufferLength) {
+
+    if (*bufferLength > 0) {
+        buffer[*bufferLength] = '_';
+        ++(*bufferLength);
+    }
+
+    uprv_memmove(
+        &buffer[*bufferLength],
+        tag,
+        tagLength);
+
+    *bufferLength += tagLength;
+}
+
+/**
+ * These are the canonical strings for unknown languages, scripts and regions.
+ **/
+static const char* const unknownLanguage = "und";
+static const char* const unknownScript = "Zzzz";
+static const char* const unknownRegion = "ZZ";
+
+/**
+ * Create a tag string from the supplied parameters.  The lang, script and region
+ * parameters may be NULL pointers. If they are, their corresponding length parameters
+ * must be less than or equal to 0.
+ *
+ * If any of the language, script or region parameters are empty, and the alternateTags
+ * parameter is not NULL, it will be parsed for potential language, script and region tags
+ * to be used when constructing the new tag.  If the alternateTags parameter is NULL, or
+ * it contains no language tag, the default tag for the unknown language is used.
+ *
+ * If the length of the new string exceeds the capacity of the output buffer, 
+ * the function copies as many bytes to the output buffer as it can, and returns
+ * the error U_BUFFER_OVERFLOW_ERROR.
+ *
+ * If an illegal argument is provided, the function returns the error
+ * U_ILLEGAL_ARGUMENT_ERROR.
+ *
+ * Note that this function can return the warning U_STRING_NOT_TERMINATED_WARNING if
+ * the tag string fits in the output buffer, but the null terminator doesn't.
+ *
+ * @param lang The language tag to use.
+ * @param langLength The length of the language tag.
+ * @param script The script tag to use.
+ * @param scriptLength The length of the script tag.
+ * @param region The region tag to use.
+ * @param regionLength The length of the region tag.
+ * @param trailing Any trailing data to append to the new tag.
+ * @param trailingLength The length of the trailing data.
+ * @param alternateTags A string containing any alternate tags.
+ * @param tag The output buffer.
+ * @param tagCapacity The capacity of the output buffer.
+ * @param err A pointer to a UErrorCode for error reporting.
+ * @return The length of the tag string, which may be greater than tagCapacity, or -1 on error.
+ **/
+static int32_t U_CALLCONV
+createTagStringWithAlternates(
+    const char* lang,
+    int32_t langLength,
+    const char* script,
+    int32_t scriptLength,
+    const char* region,
+    int32_t regionLength,
+    const char* trailing,
+    int32_t trailingLength,
+    const char* alternateTags,
+    char* tag,
+    int32_t tagCapacity,
+    UErrorCode* err) {
+
+    if (U_FAILURE(*err)) {
+        goto error;
+    }
+    else if (tag == NULL ||
+             tagCapacity <= 0 ||
+             langLength >= ULOC_LANG_CAPACITY ||
+             scriptLength >= ULOC_SCRIPT_CAPACITY ||
+             regionLength >= ULOC_COUNTRY_CAPACITY) {
+        goto error;
+    }
+    else {
+        /**
+         * ULOC_FULLNAME_CAPACITY will provide enough capacity
+         * that we can build a string that contains the language,
+         * script and region code without worrying about overrunning
+         * the user-supplied buffer.
+         **/
+        char tagBuffer[ULOC_FULLNAME_CAPACITY];
+        int32_t tagLength = 0;
+        int32_t capacityRemaining = tagCapacity;
+        UBool regionAppended = FALSE;
+
+        if (langLength > 0) {
+            appendTag(
+                lang,
+                langLength,
+                tagBuffer,
+                &tagLength);
+        }
+        else if (alternateTags == NULL) {
+            /*
+             * Append the value for an unknown language, if
+             * we found no language.
+             */
+            appendTag(
+                unknownLanguage,
+                uprv_strlen(unknownLanguage),
+                tagBuffer,
+                &tagLength);
+        }
+        else {
+            /*
+             * Parse the alternateTags string for the language.
+             */
+            char alternateLang[ULOC_LANG_CAPACITY];
+            int32_t alternateLangLength = sizeof(alternateLang);
+
+            alternateLangLength =
+                uloc_getLanguage(
+                    alternateTags,
+                    alternateLang,
+                    alternateLangLength,
+                    err);
+            if(U_FAILURE(*err) ||
+                alternateLangLength >= ULOC_LANG_CAPACITY) {
+                goto error;
+            }
+            else if (alternateLangLength == 0) {
+                /*
+                 * Append the value for an unknown language, if
+                 * we found no language.
+                 */
+                appendTag(
+                    unknownLanguage,
+                    uprv_strlen(unknownLanguage),
+                    tagBuffer,
+                    &tagLength);
+            }
+            else {
+                appendTag(
+                    alternateLang,
+                    alternateLangLength,
+                    tagBuffer,
+                    &tagLength);
+            }
+        }
+
+        if (scriptLength > 0) {
+            appendTag(
+                script,
+                scriptLength,
+                tagBuffer,
+                &tagLength);
+        }
+        else if (alternateTags != NULL) {
+            /*
+             * Parse the alternateTags string for the script.
+             */
+            char alternateScript[ULOC_SCRIPT_CAPACITY];
+
+            const int32_t alternateScriptLength =
+                uloc_getScript(
+                    alternateTags,
+                    alternateScript,
+                    sizeof(alternateScript),
+                    err);
+
+            if (U_FAILURE(*err) ||
+                alternateScriptLength >= ULOC_SCRIPT_CAPACITY) {
+                goto error;
+            }
+            else if (alternateScriptLength > 0) {
+                appendTag(
+                    alternateScript,
+                    alternateScriptLength,
+                    tagBuffer,
+                    &tagLength);
+            }
+        }
+
+        if (regionLength > 0) {
+            appendTag(
+                region,
+                regionLength,
+                tagBuffer,
+                &tagLength);
+
+            regionAppended = TRUE;
+        }
+        else if (alternateTags != NULL) {
+            /*
+             * Parse the alternateTags string for the region.
+             */
+            char alternateRegion[ULOC_COUNTRY_CAPACITY];
+
+            const int32_t alternateRegionLength =
+                uloc_getCountry(
+                    alternateTags,
+                    alternateRegion,
+                    sizeof(alternateRegion),
+                    err);
+            if (U_FAILURE(*err) ||
+                alternateRegionLength >= ULOC_COUNTRY_CAPACITY) {
+                goto error;
+            }
+            else if (alternateRegionLength > 0) {
+                appendTag(
+                    alternateRegion,
+                    alternateRegionLength,
+                    tagBuffer,
+                    &tagLength);
+
+                regionAppended = TRUE;
+            }
+        }
+
+        {
+            const int32_t toCopy =
+                tagLength >= tagCapacity ? tagCapacity : tagLength;
+
+            /**
+             * Copy the partial tag from our internal buffer to the supplied
+             * target.
+             **/
+            uprv_memcpy(
+                tag,
+                tagBuffer,
+                toCopy);
+
+            capacityRemaining -= toCopy;
+        }
+
+        if (trailingLength > 0) {
+            if (capacityRemaining > 0 && !regionAppended) {
+                tag[tagLength++] = '_';
+                --capacityRemaining;
+            }
+
+            if (capacityRemaining > 0) {
+                /*
+                 * Copy the trailing data into the supplied buffer.  Use uprv_memmove, since we
+                 * don't know if the user-supplied buffers overlap.
+                 */
+                const int32_t toCopy =
+                    trailingLength >= capacityRemaining ? capacityRemaining : trailingLength;
+
+                uprv_memmove(
+                    &tag[tagLength],
+                    trailing,
+                    toCopy);
+            }
+        }
+
+        tagLength += trailingLength;
+
+        return u_terminateChars(
+                    tag,
+                    tagCapacity,
+                    tagLength,
+                    err);
+    }
+
+error:
+
+    /**
+     * An overflow indicates the locale ID passed in
+     * is ill-formed.  If we got here, and there was
+     * no previous error, it's an implicit overflow.
+     **/
+    if (*err ==  U_BUFFER_OVERFLOW_ERROR ||
+        U_SUCCESS(*err)) {
+        *err = U_ILLEGAL_ARGUMENT_ERROR;
+    }
+
+    return -1;
+}
+
+/**
+ * Create a tag string from the supplied parameters.  The lang, script and region
+ * parameters may be NULL pointers. If they are, their corresponding length parameters
+ * must be less than or equal to 0.  If the lang parameter is an empty string, the
+ * default value for an unknown language is written to the output buffer.
+ *
+ * If the length of the new string exceeds the capacity of the output buffer, 
+ * the function copies as many bytes to the output buffer as it can, and returns
+ * the error U_BUFFER_OVERFLOW_ERROR.
+ *
+ * If an illegal argument is provided, the function returns the error
+ * U_ILLEGAL_ARGUMENT_ERROR.
+ *
+ * @param lang The language tag to use.
+ * @param langLength The length of the language tag.
+ * @param script The script tag to use.
+ * @param scriptLength The length of the script tag.
+ * @param region The region tag to use.
+ * @param regionLength The length of the region tag.
+ * @param trailing Any trailing data to append to the new tag.
+ * @param trailingLength The length of the trailing data.
+ * @param tag The output buffer.
+ * @param tagCapacity The capacity of the output buffer.
+ * @param err A pointer to a UErrorCode for error reporting.
+ * @return The length of the tag string, which may be greater than tagCapacity.
+ **/
+static int32_t U_CALLCONV
+createTagString(
+    const char* lang,
+    int32_t langLength,
+    const char* script,
+    int32_t scriptLength,
+    const char* region,
+    int32_t regionLength,
+    const char* trailing,
+    int32_t trailingLength,
+    char* tag,
+    int32_t tagCapacity,
+    UErrorCode* err)
+{
+    return createTagStringWithAlternates(
+                lang,
+                langLength,
+                script,
+                scriptLength,
+                region,
+                regionLength,
+                trailing,
+                trailingLength,
+                NULL,
+                tag,
+                tagCapacity,
+                err);
+}
+
+/**
+ * Parse the language, script, and region subtags from a tag string, and copy the
+ * results into the corresponding output parameters. The buffers are null-terminated,
+ * unless overflow occurs.
+ *
+ * The langLength, scriptLength, and regionLength parameters are input/output
+ * parameters, and must contain the capacity of their corresponding buffers on
+ * input.  On output, they will contain the actual length of the buffers, not
+ * including the null terminator.
+ *
+ * If the length of any of the output subtags exceeds the capacity of the corresponding
+ * buffer, the function copies as many bytes to the output buffer as it can, and returns
+ * the error U_BUFFER_OVERFLOW_ERROR.  It will not parse any more subtags once overflow
+ * occurs.
+ *
+ * If an illegal argument is provided, the function returns the error
+ * U_ILLEGAL_ARGUMENT_ERROR.
+ *
+ * @param localeID The locale ID to parse.
+ * @param lang The language tag buffer.
+ * @param langLength The length of the language tag.
+ * @param script The script tag buffer.
+ * @param scriptLength The length of the script tag.
+ * @param region The region tag buffer.
+ * @param regionLength The length of the region tag.
+ * @param err A pointer to a UErrorCode for error reporting.
+ * @return The number of chars of the localeID parameter consumed.
+ **/
+static int32_t U_CALLCONV
+parseTagString(
+    const char* localeID,
+    char* lang,
+    int32_t* langLength,
+    char* script,
+    int32_t* scriptLength,
+    char* region,
+    int32_t* regionLength,
+    UErrorCode* err)
+{
+    const char* position = localeID;
+    int32_t subtagLength = 0;
+
+    if(U_FAILURE(*err) ||
+       localeID == NULL ||
+       lang == NULL ||
+       langLength == NULL ||
+       script == NULL ||
+       scriptLength == NULL ||
+       region == NULL ||
+       regionLength == NULL) {
+        goto error;
+    }
+
+    subtagLength = _getLanguage(position, lang, *langLength, &position);
+    u_terminateChars(lang, *langLength, subtagLength, err);
+
+    /*
+     * Note that we explicit consider U_STRING_NOT_TERMINATED_WARNING
+     * to be an error, because it indicates the user-supplied tag is
+     * not well-formed.
+     */
+    if(U_FAILURE(*err)) {
+        goto error;
+    }
+
+    *langLength = subtagLength;
+
+    /*
+     * If no language was present, use the value of unknownLanguage
+     * instead.  Otherwise, move past any separator.
+     */
+    if (*langLength == 0) {
+        uprv_strcpy(
+            lang,
+            unknownLanguage);
+        *langLength = uprv_strlen(lang);
+    }
+    else if (_isIDSeparator(*position)) {
+        ++position;
+    }
+
+    subtagLength = _getScript(position, script, *scriptLength, &position);
+    u_terminateChars(script, *scriptLength, subtagLength, err);
+
+    if(U_FAILURE(*err)) {
+        goto error;
+    }
+
+    *scriptLength = subtagLength;
+
+    if (*scriptLength > 0) {
+        if (uprv_strnicmp(script, unknownScript, *scriptLength) == 0) {
+            /**
+             * If the script part is the "unknown" script, then don't return it.
+             **/
+            *scriptLength = 0;
+        }
+
+        /*
+         * Move past any separator.
+         */
+        if (_isIDSeparator(*position)) {
+            ++position;
+        }    
+    }
+
+    subtagLength = _getCountry(position, region, *regionLength, &position);
+    u_terminateChars(region, *regionLength, subtagLength, err);
+
+    if(U_FAILURE(*err)) {
+        goto error;
+    }
+
+    *regionLength = subtagLength;
+
+    if (*regionLength > 0) {
+        if (uprv_strnicmp(region, unknownRegion, *regionLength) == 0) {
+            /**
+             * If the region part is the "unknown" region, then don't return it.
+             **/
+            *regionLength = 0;
+        }
+    }
+
+exit:
+
+    return (int32_t)(position - localeID);
+
+error:
+
+    /**
+     * If we get here, we have no explicit error, it's the result of an
+     * illegal argument.
+     **/
+    if (!U_FAILURE(*err)) {
+        *err = U_ILLEGAL_ARGUMENT_ERROR;
+    }
+
+    goto exit;
+}
+
+static int32_t U_CALLCONV
+createLikelySubtagsString(
+    const char* lang,
+    int32_t langLength,
+    const char* script,
+    int32_t scriptLength,
+    const char* region,
+    int32_t regionLength,
+    const char* variants,
+    int32_t variantsLength,
+    char* tag,
+    int32_t tagCapacity,
+    UErrorCode* err)
+{
+    /**
+     * ULOC_FULLNAME_CAPACITY will provide enough capacity
+     * that we can build a string that contains the language,
+     * script and region code without worrying about overrunning
+     * the user-supplied buffer.
+     **/
+    char tagBuffer[ULOC_FULLNAME_CAPACITY];
+    char likelySubtagsBuffer[ULOC_FULLNAME_CAPACITY];
+    int32_t tagBufferLength = 0;
+
+    if(U_FAILURE(*err)) {
+        goto error;
+    }
+
+    /**
+     * Try the language with the script and region first.
+     **/
+    if (scriptLength > 0 && regionLength > 0) {
+
+        const char* likelySubtags = NULL;
+
+        tagBufferLength = createTagString(
+            lang,
+            langLength,
+            script,
+            scriptLength,
+            region,
+            regionLength,
+            NULL,
+            0,
+            tagBuffer,
+            sizeof(tagBuffer),
+            err);
+        if(U_FAILURE(*err)) {
+            goto error;
+        }
+
+        likelySubtags =
+            findLikelySubtags(
+                tagBuffer,
+                likelySubtagsBuffer,
+                sizeof(likelySubtagsBuffer),
+                err);
+        if(U_FAILURE(*err)) {
+            goto error;
+        }
+
+        if (likelySubtags != NULL) {
+            /* Always use the language tag from the
+               maximal string, since it may be more
+               specific than the one provided. */
+            return createTagStringWithAlternates(
+                        NULL,
+                        0,
+                        NULL,
+                        0,
+                        NULL,
+                        0,
+                        variants,
+                        variantsLength,
+                        likelySubtags,
+                        tag,
+                        tagCapacity,
+                        err);
+        }
+    }
+
+    /**
+     * Try the language with just the script.
+     **/
+    if (scriptLength > 0) {
+
+        const char* likelySubtags = NULL;
+
+        tagBufferLength = createTagString(
+            lang,
+            langLength,
+            script,
+            scriptLength,
+            NULL,
+            0,
+            NULL,
+            0,
+            tagBuffer,
+            sizeof(tagBuffer),
+            err);
+        if(U_FAILURE(*err)) {
+            goto error;
+        }
+
+        likelySubtags =
+            findLikelySubtags(
+                tagBuffer,
+                likelySubtagsBuffer,
+                sizeof(likelySubtagsBuffer),
+                err);
+        if(U_FAILURE(*err)) {
+            goto error;
+        }
+
+        if (likelySubtags != NULL) {
+            /* Always use the language tag from the
+               maximal string, since it may be more
+               specific than the one provided. */
+            return createTagStringWithAlternates(
+                        NULL,
+                        0,
+                        NULL,
+                        0,
+                        region,
+                        regionLength,
+                        variants,
+                        variantsLength,
+                        likelySubtags,
+                        tag,
+                        tagCapacity,
+                        err);
+        }
+    }
+
+    /**
+     * Try the language with just the region.
+     **/
+    if (regionLength > 0) {
+
+        const char* likelySubtags = NULL;
+
+        createTagString(
+            lang,
+            langLength,
+            NULL,
+            0,
+            region,
+            regionLength,
+            NULL,
+            0,
+            tagBuffer,
+            sizeof(tagBuffer),
+            err);
+        if(U_FAILURE(*err)) {
+            goto error;
+        }
+
+        likelySubtags =
+            findLikelySubtags(
+                tagBuffer,
+                likelySubtagsBuffer,
+                sizeof(likelySubtagsBuffer),
+                err);
+        if(U_FAILURE(*err)) {
+            goto error;
+        }
+
+        if (likelySubtags != NULL) {
+            /* Always use the language tag from the
+               maximal string, since it may be more
+               specific than the one provided. */
+            return createTagStringWithAlternates(
+                        NULL,
+                        0,
+                        script,
+                        scriptLength,
+                        NULL,
+                        0,
+                        variants,
+                        variantsLength,
+                        likelySubtags,
+                        tag,
+                        tagCapacity,
+                        err);
+        }
+    }
+
+    /**
+     * Finally, try just the language.
+     **/
+    {
+        const char* likelySubtags = NULL;
+
+        createTagString(
+            lang,
+            langLength,
+            NULL,
+            0,
+            NULL,
+            0,
+            NULL,
+            0,
+            tagBuffer,
+            sizeof(tagBuffer),
+            err);
+        if(U_FAILURE(*err)) {
+            goto error;
+        }
+
+        likelySubtags =
+            findLikelySubtags(
+                tagBuffer,
+                likelySubtagsBuffer,
+                sizeof(likelySubtagsBuffer),
+                err);
+        if(U_FAILURE(*err)) {
+            goto error;
+        }
+
+        if (likelySubtags != NULL) {
+            /* Always use the language tag from the
+               maximal string, since it may be more
+               specific than the one provided. */
+            return createTagStringWithAlternates(
+                        NULL,
+                        0,
+                        script,
+                        scriptLength,
+                        region,
+                        regionLength,
+                        variants,
+                        variantsLength,
+                        likelySubtags,
+                        tag,
+                        tagCapacity,
+                        err);
+        }
+    }
+
+    return u_terminateChars(
+                tag,
+                tagCapacity,
+                0,
+                err);
+
+error:
+
+    if (!U_FAILURE(*err)) {
+        *err = U_ILLEGAL_ARGUMENT_ERROR;
+    }
+
+    return -1;
+}
+
+static int32_t
+_uloc_addLikelySubtags(const char*    localeID,
+         char* maximizedLocaleID,
+         int32_t maximizedLocaleIDCapacity,
+         UErrorCode* err)
+{
+    char lang[ULOC_LANG_CAPACITY];
+    int32_t langLength = sizeof(lang);
+    char script[ULOC_SCRIPT_CAPACITY];
+    int32_t scriptLength = sizeof(script);
+    char region[ULOC_COUNTRY_CAPACITY];
+    int32_t regionLength = sizeof(region);
+    const char* trailing = "";
+    int32_t trailingLength = 0;
+    int32_t trailingIndex = 0;
+    int32_t resultLength = 0;
+
+    if(U_FAILURE(*err)) {
+        goto error;
+    }
+    else if (localeID == NULL ||
+             maximizedLocaleID == NULL ||
+             maximizedLocaleIDCapacity <= 0) {
+        goto error;
+    }
+
+    trailingIndex = parseTagString(
+        localeID,
+        lang,
+        &langLength,
+        script,
+        &scriptLength,
+        region,
+        &regionLength,
+        err);
+    if(U_FAILURE(*err)) {
+        /* Overflow indicates an illegal argument error */
+        if (*err == U_BUFFER_OVERFLOW_ERROR) {
+            *err = U_ILLEGAL_ARGUMENT_ERROR;
+        }
+
+        goto error;
+    }
+
+    /* Find the length of the trailing portion. */
+    trailing = &localeID[trailingIndex];
+    trailingLength = uprv_strlen(trailing);
+
+    resultLength =
+        createLikelySubtagsString(
+            lang,
+            langLength,
+            script,
+            scriptLength,
+            region,
+            regionLength,
+            trailing,
+            trailingLength,
+            maximizedLocaleID,
+            maximizedLocaleIDCapacity,
+            err);
+
+    if (resultLength == 0) {
+        const int32_t localIDLength =
+            uprv_strlen(localeID);
+
+        /*
+         * If we get here, we need to return localeID.
+         */
+        uprv_memcpy(
+            maximizedLocaleID,
+            localeID,
+            localIDLength <= maximizedLocaleIDCapacity ? 
+                localIDLength : maximizedLocaleIDCapacity);
+
+        resultLength =
+            u_terminateChars(
+                maximizedLocaleID,
+                maximizedLocaleIDCapacity,
+                localIDLength,
+                err);
+    }
+
+    return resultLength;
+
+error:
+
+    if (!U_FAILURE(*err)) {
+        *err = U_ILLEGAL_ARGUMENT_ERROR;
+    }
+
+    return -1;
+}
+
+static int32_t
+_uloc_minimizeSubtags(const char*    localeID,
+         char* minimizedLocaleID,
+         int32_t minimizedLocaleIDCapacity,
+         UErrorCode* err)
+{
+    /**
+     * ULOC_FULLNAME_CAPACITY will provide enough capacity
+     * that we can build a string that contains the language,
+     * script and region code without worrying about overrunning
+     * the user-supplied buffer.
+     **/
+    char maximizedTagBuffer[ULOC_FULLNAME_CAPACITY];
+    int32_t maximizedTagBufferLength = sizeof(maximizedTagBuffer);
+
+    char lang[ULOC_LANG_CAPACITY];
+    int32_t langLength = sizeof(lang);
+    char script[ULOC_SCRIPT_CAPACITY];
+    int32_t scriptLength = sizeof(script);
+    char region[ULOC_COUNTRY_CAPACITY];
+    int32_t regionLength = sizeof(region);
+    const char* trailing = "";
+    int32_t trailingLength = 0;
+    int32_t trailingIndex = 0;
+
+    if(U_FAILURE(*err)) {
+        goto error;
+    }
+    else if (localeID == NULL ||
+             minimizedLocaleID == NULL ||
+             minimizedLocaleIDCapacity <= 0) {
+        goto error;
+    }
+
+    trailingIndex =
+        parseTagString(
+            localeID,
+            lang,
+            &langLength,
+            script,
+            &scriptLength,
+            region,
+            &regionLength,
+            err);
+    if(U_FAILURE(*err)) {
+
+        /* Overflow indicates an illegal argument error */
+        if (*err == U_BUFFER_OVERFLOW_ERROR) {
+            *err = U_ILLEGAL_ARGUMENT_ERROR;
+        }
+
+        goto error;
+    }
+
+    /* Find the spot where the variants begin, if any. */
+    trailing = &localeID[trailingIndex];
+    trailingLength = uprv_strlen(trailing);
+
+    createTagString(
+        lang,
+        langLength,
+        script,
+        scriptLength,
+        region,
+        regionLength,
+        NULL,
+        0,
+        maximizedTagBuffer,
+        maximizedTagBufferLength,
+        err);
+    if(U_FAILURE(*err)) {
+        goto error;
+    }
+
+    /**
+     * First, we need to first get the maximization
+     * from AddLikelySubtags.
+     **/
+    maximizedTagBufferLength =
+        uloc_addLikelySubtags(
+            maximizedTagBuffer,
+            maximizedTagBuffer,
+            maximizedTagBufferLength,
+            err);
+
+    if(U_FAILURE(*err)) {
+        goto error;
+    }
+
+    /**
+     * Start first with just the language.
+     **/
+    {
+        char tagBuffer[ULOC_FULLNAME_CAPACITY];
+
+        const int32_t tagBufferLength =
+            createLikelySubtagsString(
+                lang,
+                langLength,
+                NULL,
+                0,
+                NULL,
+                0,
+                NULL,
+                0,
+                tagBuffer,
+                sizeof(tagBuffer),
+                err);
+
+        if(U_FAILURE(*err)) {
+            goto error;
+        }
+        else if (uprv_strnicmp(
+                    maximizedTagBuffer,
+                    tagBuffer,
+                    tagBufferLength) == 0) {
+
+            return createTagString(
+                        lang,
+                        langLength,
+                        NULL,
+                        0,
+                        NULL,
+                        0,
+                        trailing,
+                        trailingLength,
+                        minimizedLocaleID,
+                        minimizedLocaleIDCapacity,
+                        err);
+        }
+    }
+
+    /**
+     * Next, try the language and region.
+     **/
+    if (regionLength > 0) {
+
+        char tagBuffer[ULOC_FULLNAME_CAPACITY];
+
+        const int32_t tagBufferLength =
+            createLikelySubtagsString(
+                lang,
+                langLength,
+                NULL,
+                0,
+                region,
+                regionLength,
+                NULL,
+                0,
+                tagBuffer,
+                sizeof(tagBuffer),
+                err);
+
+        if(U_FAILURE(*err)) {
+            goto error;
+        }
+        else if (uprv_strnicmp(
+                    maximizedTagBuffer,
+                    tagBuffer,
+                    tagBufferLength) == 0) {
+
+            return createTagString(
+                        lang,
+                        langLength,
+                        NULL,
+                        0,
+                        region,
+                        regionLength,
+                        trailing,
+                        trailingLength,
+                        minimizedLocaleID,
+                        minimizedLocaleIDCapacity,
+                        err);
+        }
+    }
+
+    /**
+     * Finally, try the language and script.  This is our last chance,
+     * since trying with all three subtags would only yield the
+     * maximal version that we already have.
+     **/
+    if (scriptLength > 0 && regionLength > 0) {
+        char tagBuffer[ULOC_FULLNAME_CAPACITY];
+
+        const int32_t tagBufferLength =
+            createLikelySubtagsString(
+                lang,
+                langLength,
+                script,
+                scriptLength,
+                NULL,
+                0,
+                NULL,
+                0,
+                tagBuffer,
+                sizeof(tagBuffer),
+                err);
+
+        if(U_FAILURE(*err)) {
+            goto error;
+        }
+        else if (uprv_strnicmp(
+                    maximizedTagBuffer,
+                    tagBuffer,
+                    tagBufferLength) == 0) {
+
+            return createTagString(
+                        lang,
+                        langLength,
+                        script,
+                        scriptLength,
+                        NULL,
+                        0,
+                        trailing,
+                        trailingLength,
+                        minimizedLocaleID,
+                        minimizedLocaleIDCapacity,
+                        err);
+        }
+    }
+
+    {
+        /**
+         * If we got here, return the locale ID parameter.
+         **/
+        const int32_t localeIDLength = uprv_strlen(localeID);
+
+        uprv_memcpy(
+            minimizedLocaleID,
+            localeID,
+            localeIDLength <= minimizedLocaleIDCapacity ? 
+                localeIDLength : minimizedLocaleIDCapacity);
+
+        return u_terminateChars(
+                    minimizedLocaleID,
+                    minimizedLocaleIDCapacity,
+                    localeIDLength,
+                    err);
+    }
+
+error:
+
+    if (!U_FAILURE(*err)) {
+        *err = U_ILLEGAL_ARGUMENT_ERROR;
+    }
+
+    return -1;
+
+
+}
+
+static UBool
+do_canonicalize(const char*    localeID,
+         char* buffer,
+         int32_t bufferCapacity,
+         UErrorCode* err)
+{
+    uloc_canonicalize(
+        localeID,
+        buffer,
+        bufferCapacity,
+        err);
+
+    if (*err == U_STRING_NOT_TERMINATED_WARNING ||
+        *err == U_BUFFER_OVERFLOW_ERROR) {
+        *err = U_ILLEGAL_ARGUMENT_ERROR;
+
+        return FALSE;
+    }
+    else if (U_FAILURE(*err)) {
+
+        return FALSE;
+    }
+    else {
+        return TRUE;
+    }
+}
+
+U_DRAFT int32_t U_EXPORT2
+uloc_addLikelySubtags(const char*    localeID,
+         char* maximizedLocaleID,
+         int32_t maximizedLocaleIDCapacity,
+         UErrorCode* err)
+{
+    char localeBuffer[ULOC_FULLNAME_CAPACITY];
+
+    if (!do_canonicalize(
+        localeID,
+        localeBuffer,
+        sizeof(localeBuffer),
+        err)) {
+        return -1;
+    }
+    else {
+        return _uloc_addLikelySubtags(
+                    localeBuffer,
+                    maximizedLocaleID,
+                    maximizedLocaleIDCapacity,
+                    err);
+    }    
+}
+
+U_DRAFT int32_t U_EXPORT2
+uloc_minimizeSubtags(const char*    localeID,
+         char* minimizedLocaleID,
+         int32_t minimizedLocaleIDCapacity,
+         UErrorCode* err)
+{
+    char localeBuffer[ULOC_FULLNAME_CAPACITY];
+
+    if (!do_canonicalize(
+        localeID,
+        localeBuffer,
+        sizeof(localeBuffer),
+        err)) {
+        return -1;
+    }
+    else {
+        return _uloc_minimizeSubtags(
+                    localeBuffer,
+                    minimizedLocaleID,
+                    minimizedLocaleIDCapacity,
+                    err);
+    }    
 }
 
 /*eof*/

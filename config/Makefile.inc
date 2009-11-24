@@ -34,8 +34,8 @@ datadir = ${prefix}/share
 sbindir = ${exec_prefix}/sbin
 
 # about the ICU version
-VERSION = 3.8
-UNICODE_VERSION = 5.0
+VERSION = 4.2
+UNICODE_VERSION = 5.1
 
 # The prefix for ICU libraries, normally 'icu'
 ICUPREFIX = icu
@@ -186,8 +186,8 @@ INSTALL_SCRIPT = ${INSTALL}
 LDFLAGS =  $(RPATHLDFLAGS)
 LIBS = -lpthread -lm  
 LIB_M = 
-LIB_VERSION = 38.0
-LIB_VERSION_MAJOR = 38
+LIB_VERSION = 42.0
+LIB_VERSION_MAJOR = 42
 MKINSTALLDIRS = $(SHELL) $(pkgdatadir)/mkinstalldirs
 RANLIB = ranlib
 RMV = rm -rf
@@ -218,7 +218,7 @@ pkglibdir = $(libdir)/$(PACKAGE)$(ICULIBSUFFIX)/$(VERSION)
 
 # The basename of the ICU data file (i.e. icudt21b )
 ICUDATA_CHAR = l
-ICUDATA_NAME = icudt38l
+ICUDATA_NAME = icudt42l
 
 # Defaults for pkgdata's mode and directories
 # The default data dir changes depending on what packaging mode 

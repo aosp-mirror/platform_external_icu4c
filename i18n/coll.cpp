@@ -1,6 +1,6 @@
 /*
  ******************************************************************************
- * Copyright (C) 1996-2007, International Business Machines Corporation and   *
+ * Copyright (C) 1996-2009, International Business Machines Corporation and   *
  * others. All Rights Reserved.                                               *
  ******************************************************************************
  */
@@ -49,6 +49,7 @@
 #include "umutex.h"
 #include "servloc.h"
 #include "ustrenum.h"
+#include "uresimp.h"
 #include "ucln_in.h"
 
 static U_NAMESPACE_QUALIFIER Locale* availableLocaleList = NULL;
@@ -176,8 +177,8 @@ public:
             Locale canonicalLocale("");
             Locale currentLocale("");
             
-            result->setLocales(lkey.canonicalLocale(canonicalLocale), 
-                LocaleUtility::initLocaleFromName(*actualReturn, currentLocale));
+            LocaleUtility::initLocaleFromName(*actualReturn, currentLocale);
+            result->setLocales(lkey.canonicalLocale(canonicalLocale), currentLocale, currentLocale);
         }
         return result;
     }
@@ -280,8 +281,8 @@ static UBool isAvailableLocaleListInitialized(UErrorCode &status) {
                 umtx_lock(NULL);
                 if (availableLocaleList == NULL)
                 {
-                    availableLocaleList = temp;
                     availableLocaleListCount = localeCount;
+                    availableLocaleList = temp;
                     temp = NULL;
                     ucln_i18n_registerCleanup(UCLN_I18N_COLLATOR, collator_cleanup);
                 } 
@@ -325,7 +326,7 @@ Collator* U_EXPORT2 Collator::createInstance(const Locale& desiredLocale,
         // correctly already, and we don't want to overwrite it. (TODO
         // remove in 3.0) [aliu]
         if (*actualLoc.getName() != 0) {
-            result->setLocales(desiredLocale, actualLoc);
+            result->setLocales(desiredLocale, actualLoc, actualLoc);
         }
         return result;
     }
@@ -348,7 +349,7 @@ Collator* Collator::makeInstance(const Locale&  desiredLocale,
     // non-table-based Collator in some other way, when it sees that it needs 
     // to.
     // The specific caution is this: RuleBasedCollator(Locale&) will ALWAYS 
-    // return a valid collation object, if the system if functioning properly.  
+    // return a valid collation object, if the system is functioning properly.  
     // The reason is that it will fall back, use the default locale, and even 
     // use the built-in default collation rules. THEREFORE, createInstance() 
     // should in general ONLY CALL RuleBasedCollator(Locale&) IF IT KNOWS IN 
@@ -427,6 +428,28 @@ Collator::EComparisonResult Collator::compare(const UChar* source, int32_t sourc
 {
     UErrorCode ec = U_ZERO_ERROR;
     return (Collator::EComparisonResult)compare(source, sourceLength, target, targetLength, ec);
+}
+
+UCollationResult Collator::compare(UCharIterator &/*sIter*/,
+                                   UCharIterator &/*tIter*/,
+                                   UErrorCode &status) const {
+    if(U_SUCCESS(status)) {
+        // Not implemented in the base class.
+        status = U_UNSUPPORTED_ERROR;
+    }
+    return UCOL_EQUAL;
+}
+
+UCollationResult Collator::compareUTF8(const StringPiece &source,
+                                       const StringPiece &target,
+                                       UErrorCode &status) const {
+    if(U_FAILURE(status)) {
+        return UCOL_EQUAL;
+    }
+    UCharIterator sIter, tIter;
+    uiter_setUTF8(&sIter, source.data(), source.length());
+    uiter_setUTF8(&tIter, target.data(), target.length());
+    return compare(sIter, tIter, status);
 }
 
 UBool Collator::equals(const UnicodeString& source, 
@@ -552,7 +575,7 @@ int32_t U_EXPORT2 Collator::getBound(const uint8_t       *source,
 }
 
 void
-Collator::setLocales(const Locale& /* requestedLocale */, const Locale& /* validLocale */) {
+Collator::setLocales(const Locale& /* requestedLocale */, const Locale& /* validLocale */, const Locale& /*actualLocale*/) {
 }
 
 UnicodeSet *Collator::getTailoredSet(UErrorCode &status) const
@@ -705,7 +728,9 @@ public:
     virtual StringEnumeration * clone() const
     {
         CollationLocaleListEnumeration *result = new CollationLocaleListEnumeration();
-        result->index = index;
+        if (result) {
+            result->index = index;
+        }
         return result;
     }
 
@@ -775,6 +800,19 @@ StringEnumeration* U_EXPORT2
 Collator::getKeywordValues(const char *keyword, UErrorCode& status) {
     // This is a wrapper over ucol_getKeywordValues
     UEnumeration* uenum = ucol_getKeywordValues(keyword, &status);
+    if (U_FAILURE(status)) {
+        uenum_close(uenum);
+        return NULL;
+    }
+    return new UStringEnumeration(uenum);
+}
+
+StringEnumeration* U_EXPORT2
+Collator::getKeywordValuesForLocale(const char* key, const Locale& locale,
+                                    UBool commonlyUsed, UErrorCode& status) {
+    // This is a wrapper over ucol_getKeywordValuesForLocale
+    UEnumeration *uenum = ucol_getKeywordValuesForLocale(key, locale.getName(),
+                                                        commonlyUsed, &status);
     if (U_FAILURE(status)) {
         uenum_close(uenum);
         return NULL;

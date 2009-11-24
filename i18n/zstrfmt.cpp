@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 2007-2008, International Business Machines Corporation and    *
+* Copyright (C) 2007-2009, International Business Machines Corporation and    *
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 */
@@ -149,7 +149,8 @@ getTimeZoneTranslationType(TimeZoneTranslationTypeIndex typeIdx) {
         case ZSIDX_SHORT_DAYLIGHT:
             type = DAYLIGHT_SHORT;
             break;
-       
+        default:
+            break;
     }
     return type;
 }
@@ -584,7 +585,12 @@ ZoneStringFormat::ZoneStringFormat(const Locale &locale, UErrorCode &status)
         // Skip non-canonical IDs
         UnicodeString utzid(tzid, -1, US_INV);
         UnicodeString canonicalID;
-        ZoneMeta::getCanonicalID(utzid, canonicalID);
+        TimeZone::getCanonicalID(utzid, canonicalID, status);
+        if (U_FAILURE(status)) {
+            // Ignore unknown ID - we should not get here, but just in case.
+            status = U_ZERO_ERROR;
+            continue;
+        }
         if (utzid != canonicalID) {
             continue;
         }
@@ -624,9 +630,7 @@ ZoneStringFormat::ZoneStringFormat(const Locale &locale, UErrorCode &status)
         UnicodeString city;
         UnicodeString countryCode;
         ZoneMeta::getCanonicalCountry(utzid, countryCode);
-        if (countryCode.isEmpty()) {
-            zstrarray[ZSIDX_LOCATION] = NULL;
-        } else {
+        if (!countryCode.isEmpty()) {
             const UChar* tmpCity = getZoneStringFromBundle(zoneItem, gExemplarCityTag);
             if (tmpCity != NULL) {
                 city.setTo(TRUE, tmpCity, -1);
@@ -666,6 +670,42 @@ ZoneStringFormat::ZoneStringFormat(const Locale &locale, UErrorCode &status)
             location.append((UChar)0).truncate(locLen);
 
             zstrarray[ZSIDX_LOCATION] = location.getTerminatedBuffer();
+        } else {
+            if (uprv_strlen(tzid) > 4 && uprv_strncmp(tzid, "Etc/", 4) == 0) {
+                // "Etc/xxx" is not associated with a specific location, so localized
+                // GMT format is always used as generic location format.
+                zstrarray[ZSIDX_LOCATION] = NULL;
+            } else {
+                // When a new time zone ID, which is actually associated with a specific
+                // location, is added in tzdata, but the current CLDR data does not have
+                // the information yet, ICU creates a generic location string based on
+                // the ID.  This implementation supports canonical time zone round trip
+                // with format pattern "VVVV".  See #6602 for the details.
+                UnicodeString loc(utzid);
+                int32_t slashIdx = loc.lastIndexOf((UChar)0x2f);
+                if (slashIdx == -1) {
+                    // A time zone ID without slash in the tz database is not
+                    // associated with a specific location.  For instances,
+                    // MET, CET, EET and WET fall into this category.
+                    // In this case, we still use GMT format as fallback.
+                    zstrarray[ZSIDX_LOCATION] = NULL;
+                } else {
+                    FieldPosition fpos;
+                    Formattable params[] = {
+                        Formattable(loc)
+                    };
+                    regionFmt->format(params, 1, location, fpos, status);
+                    if (U_FAILURE(status)) {
+                        goto error_cleanup;
+                    }
+                    // Workaround for reducing UMR warning in Purify.
+                    // Append NULL before calling getTerminatedBuffer()
+                    int32_t locLen = location.length();
+                    location.append((UChar)0).truncate(locLen);
+
+                    zstrarray[ZSIDX_LOCATION] = location.getTerminatedBuffer();
+                }
+            }
         }
 
         UBool commonlyUsed = isCommonlyUsed(zoneItem);
@@ -935,7 +975,12 @@ ZoneStringFormat::createZoneStringsArray(UDate date, int32_t &rowCount, int32_t 
         }
         UnicodeString utzid(tzid);
         UnicodeString canonicalID;
-        ZoneMeta::getCanonicalID(UnicodeString(tzid), canonicalID);
+        TimeZone::getCanonicalID(UnicodeString(tzid), canonicalID, status);
+        if (U_FAILURE(status)) {
+            // Ignore unknown ID - we should not get here, but just in case.
+            status = U_ZERO_ERROR;
+            continue;
+        }
         if (utzid == canonicalID) {
             canonicalIDs.addElement(new UnicodeString(utzid), status);
             if (U_FAILURE(status)) {
@@ -1063,8 +1108,11 @@ ZoneStringFormat::getString(const UnicodeString &tzid, TimeZoneTranslationTypeIn
     // ICU's own array does not have entries for aliases
     UnicodeString canonicalID;
     UErrorCode status = U_ZERO_ERROR;
-    ZoneMeta::getCanonicalID(tzid, canonicalID);
-
+    TimeZone::getCanonicalID(tzid, canonicalID, status);
+    if (U_FAILURE(status)) {
+        // Unknown ID, but users might have their own data.
+        canonicalID.setTo(tzid);
+    }
     if (fTzidToStrings.count() > 0) {
         ZoneStrings *zstrings = (ZoneStrings*)fTzidToStrings.get(canonicalID);
         if (zstrings != NULL) {
@@ -1082,6 +1130,8 @@ ZoneStringFormat::getString(const UnicodeString &tzid, TimeZoneTranslationTypeIn
                     if (!commonlyUsedOnly || zstrings->isShortFormatCommonlyUsed()) {
                         zstrings->getString(typeIdx, result);
                     }
+                    break;
+                default:
                     break;
             }
         }
@@ -1108,6 +1158,8 @@ ZoneStringFormat::getString(const UnicodeString &tzid, TimeZoneTranslationTypeIn
                             mzstrings->getString(typeIdx, result);
                         }
                         break;
+                    default:
+                        break;
                 }
             }
         }
@@ -1129,7 +1181,12 @@ ZoneStringFormat::getGenericString(const Calendar &cal, UBool isShort, UBool com
 
     // ICU's own array does not have entries for aliases
     UnicodeString canonicalID;
-    ZoneMeta::getCanonicalID(tzid, canonicalID);
+    TimeZone::getCanonicalID(tzid, canonicalID, status);
+    if (U_FAILURE(status)) {
+        // Unknown ID, but users might have their own data.
+        status = U_ZERO_ERROR;
+        canonicalID.setTo(tzid);
+    }
 
     ZoneStrings *zstrings = NULL;
     if (fTzidToStrings.count() > 0) {
@@ -1284,7 +1341,11 @@ ZoneStringFormat::getGenericPartialLocationString(const UnicodeString &tzid, UBo
 
     UnicodeString canonicalID;
     UErrorCode status = U_ZERO_ERROR;
-    ZoneMeta::getCanonicalID(tzid, canonicalID);
+    TimeZone::getCanonicalID(tzid, canonicalID, status);
+    if (U_FAILURE(status)) {
+        // Unknown ID, so no corresponding meta data.
+        return result;
+    }
 
     UnicodeString mzid;
     ZoneMeta::getMetazoneID(canonicalID, date, mzid);

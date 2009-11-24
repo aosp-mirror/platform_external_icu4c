@@ -1,6 +1,6 @@
 /*
  **********************************************************************
- *   Copyright (C) 2002-2007, International Business Machines
+ *   Copyright (C) 2002-2009, International Business Machines
  *   Corporation and others.  All Rights Reserved.
  **********************************************************************
  */
@@ -251,7 +251,21 @@ static const le_bool complexTable[scriptCodeCount] = {
     FALSE,  /* Sgnw */
     FALSE,  /* Sund */
     FALSE,  /* Moon */
-    FALSE   /* Mtei */
+    FALSE,  /* Mtei */
+    FALSE,  /* Armi */
+    FALSE,  /* Avst */
+    FALSE,  /* Cakm */
+    FALSE,  /* Kore */
+    FALSE,  /* Kthi */
+    FALSE,  /* Mani */
+    FALSE,  /* Phli */
+    FALSE,  /* Phlp */
+    FALSE,  /* Phlv */
+    FALSE,  /* Prti */
+    FALSE,  /* Samr */
+    FALSE,  /* Tavt */
+    FALSE,  /* Zmth */
+    FALSE   /* Zsym */
 };
 
 
@@ -331,7 +345,11 @@ ParagraphLayout::ParagraphLayout(const LEUnicode chars[], le_int32 count,
 
     fStyleRunLimits = LE_NEW_ARRAY(le_int32, fStyleRunCount);
     fStyleIndices   = LE_NEW_ARRAY(le_int32, fStyleRunCount * styleCount);
-    
+    if ((fStyleRunLimits == NULL) || (fStyleIndices == NULL)) {
+        status = LE_MEMORY_ALLOCATION_ERROR;
+        return;
+    }
+
     styleRuns.getRuns(fStyleRunLimits, fStyleIndices);
 
     // now build a LayoutEngine for each style run...
@@ -339,6 +357,26 @@ ParagraphLayout::ParagraphLayout(const LEUnicode chars[], le_int32 count,
     le_int32 run, runStart;
 
     fStyleRunInfo = LE_NEW_ARRAY(StyleRunInfo, fStyleRunCount);
+    if (fStyleRunInfo == NULL) {
+        status = LE_MEMORY_ALLOCATION_ERROR;
+        return;
+    }
+    else {
+        // initialize
+        for (runStart = 0, run = 0; run < fStyleRunCount; run += 1) {
+            fStyleRunInfo[run].font = NULL;
+            fStyleRunInfo[run].runBase = 0;
+            fStyleRunInfo[run].runLimit = 0;
+            fStyleRunInfo[run].script = (UScriptCode)0;
+            fStyleRunInfo[run].locale = NULL;
+            fStyleRunInfo[run].level = 0;
+            fStyleRunInfo[run].glyphBase = 0;
+            fStyleRunInfo[run].engine = NULL;
+            fStyleRunInfo[run].glyphCount = 0;
+            fStyleRunInfo[run].glyphs = NULL;
+            fStyleRunInfo[run].positions = NULL;
+        }
+    }
 
     fGlyphCount = 0;
     for (runStart = 0, run = 0; run < fStyleRunCount; run += 1) {
@@ -352,9 +390,17 @@ ParagraphLayout::ParagraphLayout(const LEUnicode chars[], le_int32 count,
 
         fStyleRunInfo[run].engine = LayoutEngine::layoutEngineFactory(fStyleRunInfo[run].font,
             fStyleRunInfo[run].script, getLanguageCode(fStyleRunInfo[run].locale), layoutStatus);
+        if (LE_FAILURE(layoutStatus)) {
+            status = layoutStatus;
+            return;
+        }
 
         fStyleRunInfo[run].glyphCount = fStyleRunInfo[run].engine->layoutChars(fChars, runStart, fStyleRunLimits[run] - runStart, fCharCount,
             fStyleRunInfo[run].level & 1, 0, 0, layoutStatus);
+        if (LE_FAILURE(layoutStatus)) {
+            status = layoutStatus;
+            return;
+        }
 
         runStart = fStyleRunLimits[run];
         styleIndices += styleCount;
@@ -372,6 +418,11 @@ ParagraphLayout::ParagraphLayout(const LEUnicode chars[], le_int32 count,
     fGlyphToCharMap    = LE_NEW_ARRAY(le_int32, fGlyphCount + 1);
     fCharToMinGlyphMap = LE_NEW_ARRAY(le_int32, fCharCount + 1);
     fCharToMaxGlyphMap = LE_NEW_ARRAY(le_int32, fCharCount + 1);
+    if ((fGlyphWidths == NULL) || (fGlyphToCharMap == NULL) || 
+        (fCharToMinGlyphMap == NULL) || (fCharToMaxGlyphMap == NULL)) {
+        status = LE_MEMORY_ALLOCATION_ERROR;
+        return;
+    }
 
     le_int32 glyph;
 
@@ -382,10 +433,29 @@ ParagraphLayout::ParagraphLayout(const LEUnicode chars[], le_int32 count,
 
         fStyleRunInfo[run].glyphs = LE_NEW_ARRAY(LEGlyphID, glyphCount);
         fStyleRunInfo[run].positions = LE_NEW_ARRAY(float, glyphCount * 2 + 2);
+        if ((fStyleRunInfo[run].glyphs == NULL) || 
+            (fStyleRunInfo[run].positions == NULL)) {
+            status = LE_MEMORY_ALLOCATION_ERROR;
+            return;
+        }
 
         engine->getGlyphs(fStyleRunInfo[run].glyphs, layoutStatus);
+        if (LE_FAILURE(layoutStatus)) {
+            status = layoutStatus;
+            return;
+        }
+
         engine->getGlyphPositions(fStyleRunInfo[run].positions, layoutStatus);
+        if (LE_FAILURE(layoutStatus)) {
+            status = layoutStatus;
+            return;
+        }
+
         engine->getCharIndices(&fGlyphToCharMap[glyphBase], runStart, layoutStatus);
+        if (LE_FAILURE(layoutStatus)) {
+            status = layoutStatus;
+            return;
+        }
 
         for (glyph = 0; glyph < glyphCount; glyph += 1) {
             fGlyphWidths[glyphBase + glyph] = fStyleRunInfo[run].positions[glyph * 2 + 2] - fStyleRunInfo[run].positions[glyph * 2];
@@ -755,30 +825,71 @@ struct LanguageMap
 
 static const LanguageMap languageMap[] =
 {
+    {"afr", afkLanguageCode}, // Afrikaans
     {"ara", araLanguageCode}, // Arabic
     {"asm", asmLanguageCode}, // Assamese
+    {"bel", belLanguageCode}, // Belarussian
     {"ben", benLanguageCode}, // Bengali
+    {"bod", tibLanguageCode}, // Tibetan
+    {"bul", bgrLanguageCode}, // Bulgarian
+    {"cat", catLanguageCode}, // Catalan
+    {"ces", csyLanguageCode}, // Czech
+    {"che", cheLanguageCode}, // Chechen
+    {"cop", copLanguageCode}, // Coptic
+    {"cym", welLanguageCode}, // Welsh
+    {"dan", danLanguageCode}, // Danish
+    {"deu", deuLanguageCode}, // German
+    {"dzo", dznLanguageCode}, // Dzongkha
+    {"ell", ellLanguageCode}, // Greek
+    {"eng", engLanguageCode}, // English
+    {"est", etiLanguageCode}, // Estonian
+    {"eus", euqLanguageCode}, // Basque
     {"fas", farLanguageCode}, // Farsi
+    {"fin", finLanguageCode}, // Finnish
+    {"fra", fraLanguageCode}, // French
+    {"gle", gaeLanguageCode}, // Irish Gaelic
     {"guj", gujLanguageCode}, // Gujarati
+    {"hau", hauLanguageCode}, // Hausa
     {"heb", iwrLanguageCode}, // Hebrew
     {"hin", hinLanguageCode}, // Hindi
+    {"hrv", hrvLanguageCode}, // Croatian
+    {"hun", hunLanguageCode}, // Hungarian
+    {"hye", hyeLanguageCode}, // Armenian
+    {"ind", indLanguageCode}, // Indonesian
+    {"ita", itaLanguageCode}, // Italian
     {"jpn", janLanguageCode}, // Japanese
     {"kan", kanLanguageCode}, // Kannada
     {"kas", kshLanguageCode}, // Kashmiri
+    {"khm", khmLanguageCode}, // Khmer
     {"kok", kokLanguageCode}, // Konkani
     {"kor", korLanguageCode}, // Korean
 //  {"mal_XXX", malLanguageCode}, // Malayalam - Traditional
     {"mal", mlrLanguageCode}, // Malayalam - Reformed
     {"mar", marLanguageCode}, // Marathi
+    {"mlt", mtsLanguageCode}, // Maltese
     {"mni", mniLanguageCode}, // Manipuri
+    {"mon", mngLanguageCode}, // Mongolian
+    {"nep", nepLanguageCode}, // Nepali
     {"ori", oriLanguageCode}, // Oriya
+    {"pol", plkLanguageCode}, // Polish
+    {"por", ptgLanguageCode}, // Portuguese
+    {"pus", pasLanguageCode}, // Pashto
+    {"ron", romLanguageCode}, // Romanian
+    {"rus", rusLanguageCode}, // Russian
     {"san", sanLanguageCode}, // Sanskrit
-    {"snd", sndLanguageCode}, // Sindhi
     {"sin", snhLanguageCode}, // Sinhalese
+    {"slk", skyLanguageCode}, // Slovak
+    {"snd", sndLanguageCode}, // Sindhi
+    {"slv", slvLanguageCode}, // Slovenian
+    {"spa", espLanguageCode}, // Spanish
+    {"sqi", sqiLanguageCode}, // Albanian
+    {"srp", srbLanguageCode}, // Serbian
+    {"swe", sveLanguageCode}, // Swedish
     {"syr", syrLanguageCode}, // Syriac
     {"tam", tamLanguageCode}, // Tamil
     {"tel", telLanguageCode}, // Telugu
     {"tha", thaLanguageCode}, // Thai
+    {"tur", trkLanguageCode}, // Turkish
     {"urd", urdLanguageCode}, // Urdu
     {"yid", jiiLanguageCode}, // Yiddish
 //  {"zhp", zhpLanguageCode}, // Chinese - Phonetic
@@ -813,7 +924,7 @@ le_int32 ParagraphLayout::getLanguageCode(const Locale *locale)
 
     return nullLanguageCode;
 }
-#elif
+#else
 
 // TODO - dummy implementation for right now...
 le_int32 ParagraphLayout::getLanguageCode(const Locale *locale)

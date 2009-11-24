@@ -1,6 +1,6 @@
 /*
  *******************************************************************************
- * Copyright (C) 1997-2007, International Business Machines Corporation and    *
+ * Copyright (C) 1997-2009, International Business Machines Corporation and    *
  * others. All Rights Reserved.                                                *
  *******************************************************************************
  *
@@ -966,7 +966,7 @@ SimpleTimeZone::decodeEndRule(UErrorCode& status)
 
 UBool
 SimpleTimeZone::getNextTransition(UDate base, UBool inclusive, TimeZoneTransition& result) /*const*/ {
-    if (startMonth == 0) {
+    if (!useDaylight) {
         return FALSE;
     }
 
@@ -1000,7 +1000,7 @@ SimpleTimeZone::getNextTransition(UDate base, UBool inclusive, TimeZoneTransitio
 
 UBool
 SimpleTimeZone::getPreviousTransition(UDate base, UBool inclusive, TimeZoneTransition& result) /*const*/ {
-    if (startMonth == 0) {
+    if (!useDaylight) {
         return FALSE;
     }
 
@@ -1070,7 +1070,7 @@ SimpleTimeZone::initTransitionRules(UErrorCode& status) {
     UnicodeString tzid;
     getID(tzid);
 
-    if (startMonth != 0) {
+    if (useDaylight) {
         DateTimeRule* dtRule;
         DateTimeRule::TimeRuleType timeRuleType;
         UDate firstStdStart, firstDstStart;
@@ -1095,9 +1095,21 @@ SimpleTimeZone::initTransitionRules(UErrorCode& status) {
             status = U_INVALID_STATE_ERROR;
             return;
         }
+        // Check for Null pointer
+        if (dtRule == NULL) {
+        	status = U_MEMORY_ALLOCATION_ERROR;
+        	return;
+        }
         // For now, use ID + "(DST)" as the name
         dstRule = new AnnualTimeZoneRule(tzid+DST_STR, getRawOffset(), getDSTSavings(),
             dtRule, startYear, AnnualTimeZoneRule::MAX_YEAR);
+        
+        // Check for Null pointer
+        if (dstRule == NULL) {
+        	status = U_MEMORY_ALLOCATION_ERROR;
+        	deleteTransitionRules();
+        	return;
+        }
  
         // Calculate the first DST start time
         dstRule->getFirstStart(getRawOffset(), 0, firstDstStart);
@@ -1119,9 +1131,23 @@ SimpleTimeZone::initTransitionRules(UErrorCode& status) {
             dtRule = new DateTimeRule(endMonth, endDay, endDayOfWeek, false, endTime, timeRuleType);
             break;
         }
+        
+        // Check for Null pointer
+        if (dtRule == NULL) {
+        	status = U_MEMORY_ALLOCATION_ERROR;
+        	deleteTransitionRules();
+        	return;
+        }
         // For now, use ID + "(STD)" as the name
         stdRule = new AnnualTimeZoneRule(tzid+STD_STR, getRawOffset(), 0,
             dtRule, startYear, AnnualTimeZoneRule::MAX_YEAR);
+        
+        //Check for Null pointer
+        if (stdRule == NULL) {
+        	status = U_MEMORY_ALLOCATION_ERROR;
+        	deleteTransitionRules();
+        	return;
+        }
 
         // Calculate the first STD start time
         stdRule->getFirstStart(getRawOffset(), dstRule->getDSTSavings(), firstStdStart);
@@ -1134,17 +1160,30 @@ SimpleTimeZone::initTransitionRules(UErrorCode& status) {
             initialRule = new InitialTimeZoneRule(tzid+STD_STR, getRawOffset(), 0);
             firstTransition = new TimeZoneTransition(firstDstStart, *initialRule, *dstRule);
         }
+        // Check for null pointers.
+        if (initialRule == NULL || firstTransition == NULL) {
+        	status = U_MEMORY_ALLOCATION_ERROR;
+        	deleteTransitionRules();
+        	return;
+        }
         
     } else {
         // Create a TimeZoneRule for initial time
         initialRule = new InitialTimeZoneRule(tzid, getRawOffset(), 0);
+        // Check for null pointer.
+        if (initialRule == NULL) {
+        	status = U_MEMORY_ALLOCATION_ERROR;
+        	deleteTransitionRules();
+        	return;
+        }
     }
+
     transitionRulesInitialized = true;
 }
 
 int32_t
 SimpleTimeZone::countTransitionRules(UErrorCode& /*status*/) /*const*/ {
-    return (startMonth == 0) ? 0 : 2;
+    return (useDaylight) ? 2 : 0;
 }
 
 void

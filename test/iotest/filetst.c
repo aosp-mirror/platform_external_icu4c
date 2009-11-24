@@ -1,16 +1,16 @@
 /*
-**********************************************************************
-*   Copyright (C) 2004-2006, International Business Machines
-*   Corporation and others.  All Rights Reserved.
-**********************************************************************
-*   file name:  filetst.c
-*   encoding:   US-ASCII
-*   tab size:   8 (not used)
-*   indentation:4
-*
-*   created on: 2004apr06
-*   created by: George Rhoten
-*/
+ **********************************************************************
+ *   Copyright (C) 2004-2008, International Business Machines
+ *   Corporation and others.  All Rights Reserved.
+ **********************************************************************
+ *   file name:  filetst.c
+ *   encoding:   US-ASCII
+ *   tab size:   8 (not used)
+ *   indentation:4
+ *
+ *   created on: 2004apr06
+ *   created by: George Rhoten
+ */
 
 #include "iotest.h"
 #include "unicode/ustdio.h"
@@ -18,8 +18,9 @@
 #include "unicode/uloc.h"
 
 #include <string.h>
+#include <stdlib.h>
 
-const char STANDARD_TEST_FILE[] = "iotest-c.txt";
+const char *STANDARD_TEST_FILE = "iotest-c.txt";
 
 
 #if !UCONFIG_NO_FORMATTING
@@ -233,6 +234,8 @@ static void TestFileFromICU(UFILE *myFile) {
     }
 
     u_fgets(myUString, 4, myFile);
+    myString[2] = '!';
+    myString[3] = '!';
     u_austrncpy(myString, myUString, sizeof(myUString)/sizeof(*myUString));
     if (myString == NULL || strcmp(myString, "\t\n") != 0) {
         log_err("u_fgets got \"%s\"\n", myString);
@@ -1428,6 +1431,78 @@ static void TestUnicodeFormat(void)
 #endif
 }
 
+static void TestFileWriteRetval(const char * a_pszEncoding) { 
+    UChar * buffer; 
+    UFILE * myFile; 
+    int32_t count; 
+    int32_t expected = 10000; /* test with large data to test internal buffer looping */ 
+    UChar   testChar = 0xBEEF; 
+
+    if (!*a_pszEncoding || 0 == strcmp(a_pszEncoding, "ASCII")) { 
+        testChar = 'A'; /* otherwise read test will fail */ 
+    } 
+
+    buffer = (UChar*) malloc(expected * sizeof(UChar)); 
+    if (!buffer) { 
+        log_err("Out of memory\n"); 
+        return; 
+    } 
+
+    /* write */ 
+    myFile = u_fopen(STANDARD_TEST_FILE, "w", NULL, a_pszEncoding); 
+    if (!myFile) { 
+        free(buffer); 
+        log_err("Test file can't be opened for write\n"); 
+        return; 
+    } 
+    u_memset(buffer, testChar, expected); 
+    count = u_file_write(buffer, expected, myFile); 
+    u_fclose(myFile); 
+    if (count != expected) { 
+        free(buffer); 
+        log_err("u_file_write returned incorrect number of characters written\n"); 
+        return; 
+    } 
+
+    free(buffer); 
+    buffer = NULL; 
+
+    /* read */ 
+    myFile = u_fopen(STANDARD_TEST_FILE, "r", NULL, a_pszEncoding); 
+    if (!myFile) { 
+        log_err("Test file can't be opened for read\n"); 
+        return; 
+    } 
+    for (count = 0; count < expected; ++count) { 
+        if (u_fgetc(myFile) != testChar) { 
+            log_err("u_fgetc returned unexpected character\n"); 
+            u_fclose(myFile); 
+            return; 
+        } 
+    } 
+    if (u_fgetc(myFile) != U_EOF) { 
+        log_err("u_fgetc did not return expected EOF\n"); 
+        u_fclose(myFile); 
+        return; 
+        } 
+    u_fclose(myFile); 
+} 
+
+static void TestFileWriteRetvalUTF16(void) { 
+    TestFileWriteRetval("UTF-16"); 
+} 
+
+static void TestFileWriteRetvalUTF8(void) { 
+    TestFileWriteRetval("UTF-8"); 
+} 
+
+static void TestFileWriteRetvalASCII(void) { 
+    TestFileWriteRetval("ASCII"); 
+} 
+
+static void TestFileWriteRetvalNONE(void) { 
+    TestFileWriteRetval(""); 
+} 
 
 U_CFUNC void
 addFileTest(TestNode** root) {
@@ -1442,6 +1517,10 @@ addFileTest(TestNode** root) {
     addTest(root, &TestfgetsNewLineCount, "file/TestfgetsNewLineCount");
     addTest(root, &TestFgetsLineBuffering, "file/TestFgetsLineBuffering");
     addTest(root, &TestCodepage, "file/TestCodepage");
+    addTest(root, &TestFileWriteRetvalUTF16, "file/TestFileWriteRetvalUTF16");
+    addTest(root, &TestFileWriteRetvalUTF8, "file/TestFileWriteRetvalUTF8");
+    addTest(root, &TestFileWriteRetvalASCII, "file/TestFileWriteRetvalASCII");
+    addTest(root, &TestFileWriteRetvalNONE, "file/TestFileWriteRetvalNONE");
 #if !UCONFIG_NO_FORMATTING
     addTest(root, &TestCodepageAndLocale, "file/TestCodepageAndLocale");
     addTest(root, &TestFprintfFormat, "file/TestFprintfFormat");

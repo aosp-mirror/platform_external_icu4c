@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 2007, International Business Machines Corporation and
+ * Copyright (c) 2007-2009, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -98,7 +98,9 @@ T_CTEST_API int32_t  T_CTEST_EXPORT2 udbg_enumByString(UDebugEnumType type, cons
     // initialize array
     udbg_enumString(type,0);
     // search
+   /// printf("type=%d\n", type); fflush(stdout);
     for(int i=0;i<udbg_enumCount(type);i++) {
+//    printf("i=%d/%d\n", i, udbg_enumCount(type)); fflush(stdout);
         if(string == (strs[type][i])) {
             return i;
         }
@@ -116,6 +118,18 @@ udbg_stoi(const UnicodeString &s)
     u_UCharsToChars(u, ch, len);
     ch[len] = 0; /* include terminating \0 */
     return atoi(ch);
+}
+
+
+T_CTEST_API double 
+udbg_stod(const UnicodeString &s)
+{
+    char ch[256];
+    const UChar *u = s.getBuffer();
+    int32_t len = s.length();
+    u_UCharsToChars(u, ch, len);
+    ch[len] = 0; /* include terminating \0 */
+    return atof(ch);
 }
 
 T_CTEST_API UnicodeString *

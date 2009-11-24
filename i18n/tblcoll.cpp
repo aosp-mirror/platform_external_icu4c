@@ -1,6 +1,6 @@
 /*
  ******************************************************************************
- * Copyright (C) 1996-2007, International Business Machines Corporation and   *
+ * Copyright (C) 1996-2009, International Business Machines Corporation and   *
  * others. All Rights Reserved.                                               *
  ******************************************************************************
  */
@@ -126,8 +126,8 @@ RuleBasedCollator::RuleBasedCollator(const UnicodeString& rules,
         decompositionMode,
         status);
 }
-RuleBasedCollator::RuleBasedCollator(const uint8_t *bin, int32_t length, 
-                    const RuleBasedCollator *base, 
+RuleBasedCollator::RuleBasedCollator(const uint8_t *bin, int32_t length,
+                    const RuleBasedCollator *base,
                     UErrorCode &status) :
 dataIsOwned(TRUE),
 isWriteThroughAlias(FALSE)
@@ -303,7 +303,7 @@ void RuleBasedCollator::getRules(UColRuleOption delta, UnicodeString &buffer)
             ucol_getRulesEx(ucollator, delta, rules, rulesize);
             buffer.setTo(rules, rulesize);
             uprv_free(rules);
-        } else { // couldn't allocate 
+        } else { // couldn't allocate
             buffer.remove();
         }
     }
@@ -389,6 +389,16 @@ UCollationResult RuleBasedCollator::compare(
     if(U_SUCCESS(status)) {
         return ucol_strcoll(ucollator, source.getBuffer(), source.length(),
                                        target.getBuffer(), target.length());
+    } else {
+        return UCOL_EQUAL;
+    }
+}
+
+UCollationResult RuleBasedCollator::compare(UCharIterator &sIter,
+                                            UCharIterator &tIter,
+                                            UErrorCode &status) const {
+    if(U_SUCCESS(status)) {
+        return ucol_strcollIter(ucollator, &sIter, &tIter, &status);
     } else {
         return UCOL_EQUAL;
     }
@@ -534,10 +544,13 @@ Collator* RuleBasedCollator::safeClone(void)
     }
 
     RuleBasedCollator *result = new RuleBasedCollator();
-    result->ucollator = ucol;
-    result->dataIsOwned = TRUE;
-    result->isWriteThroughAlias = FALSE;
-    setRuleStringFromCollator();
+    // Null pointer check
+    if (result != NULL) {
+	    result->ucollator = ucol;
+	    result->dataIsOwned = TRUE;
+	    result->isWriteThroughAlias = FALSE;
+	    setRuleStringFromCollator();
+    }
 
     return result;
 }
@@ -587,7 +600,7 @@ int32_t RuleBasedCollator::hashCode() const
 * return the locale of this collator
 */
 const Locale RuleBasedCollator::getLocale(ULocDataLocaleType type, UErrorCode &status) const {
-    const char *result = ucol_getLocale(ucollator, type, &status);
+    const char *result = ucol_getLocaleByType(ucollator, type, &status);
     if(result == NULL) {
         Locale res("");
         res.setToBogus();
@@ -598,18 +611,18 @@ const Locale RuleBasedCollator::getLocale(ULocDataLocaleType type, UErrorCode &s
 }
 
 void
-RuleBasedCollator::setLocales(const Locale& requestedLocale, const Locale& validLocale) {
+RuleBasedCollator::setLocales(const Locale& requestedLocale, const Locale& validLocale, const Locale& actualLocale) {
     checkOwned();
-    size_t rlen = uprv_strlen(requestedLocale.getName());
-    char* rloc  = (char *)uprv_malloc((rlen+1)*sizeof(char));
+    char* rloc  = uprv_strdup(requestedLocale.getName());
     if (rloc) {
-        uprv_strcpy(rloc, requestedLocale.getName());
-        size_t vlen = uprv_strlen(validLocale.getName());
-        char* vloc = (char*)uprv_malloc((vlen+1)*sizeof(char));
+        char* vloc = uprv_strdup(validLocale.getName());
         if (vloc) {
-            uprv_strcpy(vloc, validLocale.getName());
-            ucol_setReqValidLocales(ucollator, rloc, vloc);
-            return;
+            char* aloc = uprv_strdup(actualLocale.getName());
+            if (aloc) {
+                ucol_setReqValidLocales(ucollator, rloc, vloc, aloc);
+                return;
+            }
+            uprv_free(vloc);
         }
         uprv_free(rloc);
     }
@@ -670,7 +683,7 @@ RuleBasedCollator::RuleBasedCollator(const Locale& desiredLocale,
     }
 }
 
-void 
+void
 RuleBasedCollator::setUCollator(const char *locale,
                                 UErrorCode &status)
 {

@@ -1,6 +1,6 @@
 /*
 ***************************************************************************
-*   Copyright (C) 1999-2007 International Business Machines Corporation   *
+*   Copyright (C) 1999-2008 International Business Machines Corporation   *
 *   and others. All rights reserved.                                      *
 ***************************************************************************
 */
@@ -41,9 +41,11 @@ static UBool fTrace = FALSE;
 
 U_NAMESPACE_BEGIN
 
+// The state number of the starting state
+#define START_STATE 1
 
-static const int16_t START_STATE = 1;     // The state number of the starting state
-static const int16_t STOP_STATE  = 0;     // The state-transition value indicating "stop"
+// The state-transition value indicating "stop"
+#define STOP_STATE  0
 
 
 UOBJECT_DEFINE_RTTI_IMPLEMENTATION(RuleBasedBreakIterator)
@@ -61,6 +63,20 @@ RuleBasedBreakIterator::RuleBasedBreakIterator(RBBIDataHeader* data, UErrorCode 
 {
     init();
     fData = new RBBIDataWrapper(data, status); // status checked in constructor
+    if (U_FAILURE(status)) {return;}
+    if(fData == 0) {
+        status = U_MEMORY_ALLOCATION_ERROR;
+        return;
+    }
+}
+
+/**
+ * Same as above but does not adopt memory
+ */
+RuleBasedBreakIterator::RuleBasedBreakIterator(const RBBIDataHeader* data, enum EDontAdopt, UErrorCode &status)
+{
+    init();
+    fData = new RBBIDataWrapper(data, RBBIDataWrapper::kDontAdopt, status); // status checked in constructor
     if (U_FAILURE(status)) {return;}
     if(fData == 0) {
         status = U_MEMORY_ALLOCATION_ERROR;
@@ -99,7 +115,7 @@ RuleBasedBreakIterator::RuleBasedBreakIterator( const UnicodeString  &rules,
     init();
     if (U_FAILURE(status)) {return;}
     RuleBasedBreakIterator *bi = (RuleBasedBreakIterator *)
-        RBBIRuleBuilder::createRuleBasedBreakIterator(rules, parseError, status);
+        RBBIRuleBuilder::createRuleBasedBreakIterator(rules, &parseError, status);
     // Note:  This is a bit awkward.  The RBBI ruleBuilder has a factory method that
     //        creates and returns a complete RBBI.  From here, in a constructor, we
     //        can't just return the object created by the builder factory, hence
@@ -321,8 +337,12 @@ void RuleBasedBreakIterator::setText(UText *ut, UErrorCode &status) {
     //   we can come to signaling a failure.
     //   (GetText() is obsolete, this failure is sort of OK)
     if (fDCharIter == NULL) {
-        static UChar c = 0;
+        static const UChar c = 0;
         fDCharIter = new UCharCharacterIterator(&c, 0);
+        if (fDCharIter == NULL) {
+            status = U_MEMORY_ALLOCATION_ERROR;
+            return;
+        }
     }
 
     if (fCharIter!=fSCharIter && fCharIter!=fDCharIter) {
@@ -1714,7 +1734,7 @@ getLanguageBreakEngineFromFactory(UChar32 c, int32_t breakType)
     
     if (needsInit) {
         UStack  *factories = new UStack(_deleteFactory, NULL, status);
-        if (U_SUCCESS(status)) {
+        if (factories != NULL && U_SUCCESS(status)) {
             ICULanguageBreakFactory *builtIn = new ICULanguageBreakFactory(status);
             factories->push(builtIn, status);
 #ifdef U_LOCAL_SERVICE_HOOK
@@ -1764,7 +1784,7 @@ RuleBasedBreakIterator::getLanguageBreakEngine(UChar32 c) {
     
     if (fLanguageBreakEngines == NULL) {
         fLanguageBreakEngines = new UStack(status);
-        if (U_FAILURE(status)) {
+        if (fLanguageBreakEngines == NULL || U_FAILURE(status)) {
             delete fLanguageBreakEngines;
             fLanguageBreakEngines = 0;
             return NULL;

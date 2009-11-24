@@ -29,10 +29,10 @@ sysconfdir = ${prefix}/etc
 # Package information
 
 PACKAGE = icu
-VERSION = 3.8
+VERSION = 4.2
 UNICODE_VERSION = 5.0
-SO_TARGET_VERSION = 38.0
-SO_TARGET_VERSION_MAJOR = 38
+SO_TARGET_VERSION = 42.0
+SO_TARGET_VERSION_MAJOR = 42
 
 # The ICU data external name is usually icudata; the entry point name is
 # the version-dependent name (for no particular reason except it was easier
@@ -41,7 +41,7 @@ SO_TARGET_VERSION_MAJOR = 38
 
 ICUDATA_DIR = ${prefix}/share/$(PACKAGE)$(ICULIBSUFFIX)/$(VERSION)
 
-ICUDATA_BASENAME_VERSION = $(ICUPREFIX)dt38
+ICUDATA_BASENAME_VERSION = $(ICUPREFIX)dt42
 ICUDATA_ENTRY_POINT = $(ICUDATA_BASENAME_VERSION)
 ICUDATA_CHAR = l
 ICUDATA_PLATFORM_NAME = $(ICUDATA_BASENAME_VERSION)$(ICUDATA_CHAR)
