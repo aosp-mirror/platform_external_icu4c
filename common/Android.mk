@@ -1,9 +1,25 @@
+# Copyright (C) 2008 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
 LOCAL_PATH:= $(call my-dir)
-include $(CLEAR_VARS)
 
-# LOCAL_ARM_MODE := arm
+#
+# Common definitions.
+#
 
-LOCAL_SRC_FILES:= \
+src_files := \
 	cmemory.c          cstring.c          \
 	cwchar.c           locmap.c           \
 	punycode.c         putil.c            \
@@ -39,17 +55,12 @@ LOCAL_SRC_FILES:= \
 	ustring.c          ustrtrns.c         \
 	ustr_wcs.c         utf_impl.c         \
 	utrace.c           utrie.c            \
-	utypes.c           wintz.c            \
-	utrie2.c           utrie2_builder.c   \
-	propsvec.c         ulist.c            \
-	uloc_tag.c
+ 	utypes.c           wintz.c            \
+ 	utrie2.c           utrie2_builder.c   \
+ 	propsvec.c         ulist.c            \
+ 	uloc_tag.c
 
-ifneq ($(TARGET_SIMULATOR),true)
-LOCAL_SRC_FILES += \
-	noser.c
-endif
-
-LOCAL_SRC_FILES += \
+src_files += \
         bmpset.cpp      unisetspan.cpp   \
 	brkeng.cpp      brkiter.cpp      \
 	caniter.cpp     chariter.cpp     \
@@ -79,29 +90,55 @@ LOCAL_SRC_FILES += \
 	usprep.cpp      ustack.cpp       \
 	ustrenum.cpp    utext.cpp        \
 	util.cpp        util_props.cpp   \
-	uvector.cpp     uvectr32.cpp     \
-	errorcode.cpp                    \
-	bytestream.cpp stringpiece.cpp   \
-	mutex.cpp       dtintrv.cpp      \
-	ucnvsel.cpp
+ 	uvector.cpp     uvectr32.cpp     \
+ 	errorcode.cpp                    \
+ 	bytestream.cpp stringpiece.cpp   \
+ 	mutex.cpp       dtintrv.cpp      \
+ 	ucnvsel.cpp
 
-LOCAL_C_INCLUDES +=       \
-	$(LOCAL_PATH)         \
+c_includes := \
+	$(LOCAL_PATH) \
 	$(LOCAL_PATH)/../i18n
 
-LOCAL_CFLAGS  += -D_REENTRANT -DPIC -DU_COMMON_IMPLEMENTATION -fPIC 
-LOCAL_CFLAGS  +=  -O3
 
-ifneq ($(TARGET_SIMULATOR),true)
-# TODO: Rename ARM_FLAG to something else. Even better, based on
-# the usage of this in the files, it should probably be replaced with
-# HAVE_ANDROID_OS
-LOCAL_CFLAGS += -DARM_FLAG
-endif
+#
+# Build for the target (device).
+#
+
+include $(CLEAR_VARS)
+
+LOCAL_SRC_FILES := $(src_files)
+LOCAL_C_INCLUDES := $(c_includes)
+
+LOCAL_CFLAGS += -D_REENTRANT -DPIC -DU_COMMON_IMPLEMENTATION -fPIC
+LOCAL_CFLAGS += -O3
 
 LOCAL_SHARED_LIBRARIES += libicudata
-LOCAL_LDLIBS           += -lpthread -lm
+LOCAL_LDLIBS += -lpthread -lm
 
 LOCAL_MODULE := libicuuc
 
 include $(BUILD_SHARED_LIBRARY)
+
+
+#
+# Build for the host.
+#
+
+ifeq ($(WITH_HOST_DALVIK),true)
+
+    include $(CLEAR_VARS)
+
+    LOCAL_SRC_FILES := $(src_files)
+    LOCAL_C_INCLUDES := $(c_includes)
+
+    LOCAL_CFLAGS += -D_REENTRANT -DU_COMMON_IMPLEMENTATION
+
+    LOCAL_SHARED_LIBRARIES += libicudata
+    LOCAL_LDLIBS += -lpthread -lm
+
+    LOCAL_MODULE := libicuuc
+
+    include $(BUILD_HOST_SHARED_LIBRARY)
+
+endif

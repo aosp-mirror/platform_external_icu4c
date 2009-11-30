@@ -618,7 +618,7 @@ extern U_IMPORT char *U_TZNAME[];
 #include <tzfile.h>
 #define TZZONEINFO      (TZDIR "/")
 /* BEGIN Android-added */
-#elif defined(U_ANDROID_OS)
+#elif defined(HAVE_ANDROID_OS)
 #define TZDEFAULT       ""
 #define TZZONEINFO      "/system/usr/share/zoneinfo/"
 /* END Android-added */

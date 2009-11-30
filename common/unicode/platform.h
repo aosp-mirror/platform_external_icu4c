@@ -29,13 +29,6 @@
 #define U_LINUX
 #endif
 
-/* BEGIN android-changed */
-/* Define Android platform */
-#ifndef U_ANDROID_OS
-#define U_ANDROID_OS
-#endif
-/* END android-changed */
-
 /**
  * \def U_HAVE_DIRENT_H
  * Define whether dirent.h is available */
@@ -74,7 +67,7 @@
  * U_HAVE_STD_STRING to 1.
  * @draft ICU 4.2
  */
-#ifdef U_ANDROID_OS
+#ifdef HAVE_ANDROID_OS
 #define U_HAVE_STD_STRING 0
 #else
 #ifndef U_HAVE_STD_STRING
@@ -264,8 +257,13 @@ typedef unsigned int uint32_t;
 /*===========================================================================*/
 /** @{ Information about wchar support                                           */
 /*===========================================================================*/
-
-#ifdef ARM_FLAG
+// BEGIN android-note
+// We changed "ARM_FLAG" to "HAVE_ANDROID_OS" immediately below.
+// Consensus seems to be that the intent of ARM_FLAG is actually that
+// it represent whether we are compiling for Android, and if that's
+// the case then we might as well use the standard definition instead.
+// END android-note
+#if HAVE_ANDROID_OS
 #define U_HAVE_WCHAR_H      0
 #define U_SIZEOF_WCHAR_T    1
 
@@ -316,7 +314,10 @@ typedef unsigned int uint32_t;
 /*===========================================================================*/
 /** @{ Information about POSIX support                                           */
 /*===========================================================================*/
-#ifndef ARM_FLAG
+// BEGIN android-note
+// See Android comment above.
+// END android-note
+#if !HAVE_ANDROID_OS
 #define U_HAVE_NL_LANGINFO          1
 
 #ifndef U_HAVE_NL_LANGINFO_CODESET
@@ -329,7 +330,7 @@ typedef unsigned int uint32_t;
 #define U_NL_LANGINFO_CODESET       CODESET
 #endif
 
-#ifndef ARM_FLAG
+#if !HAVE_ANDROID_OS
 #if 1
 #define U_TZSET         tzset
 #endif

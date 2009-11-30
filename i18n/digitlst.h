@@ -205,6 +205,17 @@ public:
     // This code is unused.
     //UBool isLONG_MIN(void) const;
 
+    // BEGIN android-changed
+    // Public round() method for BigDecimal format.
+    // Revert this change after ICU4C supports BigDecimal.
+    /**
+     * Round the representation to the given number of digits.
+     * @param maximumDigits The maximum number of digits to be shown.
+     * Upon return, count will be less than or equal to maximumDigits.
+     */
+    void round(int32_t maximumDigits);
+    // END android-changed
+
 public:
     /**
      * These data members are intentionally public and can be set directly.
@@ -232,13 +243,6 @@ public:
     UBool                           fIsPositive;
     char                            *fDigits;
     DecimalFormat::ERoundingMode    fRoundingMode;
-
-    /**
-     * Round the representation to the given number of digits.
-     * @param maximumDigits The maximum number of digits to be shown.
-     * Upon return, count will be less than or equal to maximumDigits.
-     */
-    void round(int32_t maximumDigits);
 
 private:
 
