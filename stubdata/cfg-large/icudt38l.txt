@@ -198,6 +198,7 @@ iso-8859_11-2001.cnv
 iso-8859_14-1998.cnv
 iso-8859_16-2001.cnv
 macos-0_2-10.2.cnv
+macos-7_3-10.2.cnv
 windows-874-2000.cnv
 windows-936-2000.cnv
 windows-949-2000.cnv
