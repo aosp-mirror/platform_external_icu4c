@@ -200,7 +200,7 @@ pnames.icu
 res_index.res
 root.res
 supplementalData.res
-ucadata.icu
+coll/ucadata.icu
 zoneinfo.res
 numberingSystems.res
 plurals.res
