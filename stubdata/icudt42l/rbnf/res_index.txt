@@ -2,9 +2,19 @@
 res_index:table(nofallback) {
     InstalledLocales {
         de {""}
+
         en {""}
-        en_GB {""}
-	fr {""}
-	nl {""}
+
+        es {""}
+
+        fr {""}
+        fr_BE {""}
+        fr_CH {""}
+
+        it {""}
+
+        nl {""}
+
+        pl {""}
     }
 }

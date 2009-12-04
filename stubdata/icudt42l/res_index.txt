@@ -2,9 +2,12 @@
 res_index:table(nofallback) {
     CLDRVersion { "1.7" }
     InstalledLocales {
-	cs {""}
-	cs_CZ {""}
-	
+        ar {""}
+        cs {""}
+        cs_CZ {""}
+
+        da {""}
+        da_DK {""}
         de {""}
         de_AT {""}
         de_BE {""}
@@ -12,7 +15,9 @@ res_index:table(nofallback) {
         de_DE {""}
         de_LI {""}
         de_LU {""}
-	
+
+        el {""}
+        el_GR {""}
         en {""}
         en_AU {""}
         en_BE {""}
@@ -38,11 +43,53 @@ res_index:table(nofallback) {
         en_ZA {""}
         en_ZW {""}
 
-        fr {""}
-	fr_FR{""}
+        es {""}
+        es_ES {""}
+        es_US {""}
 
-	nl {""}
-	nl_BE {""}
-	nl_NL {""}
+        fi {""}
+        fr {""}
+        fr_BE {""}
+        fr_CA {""}
+        fr_CH {""}
+        fr_FR {""}
+        fr_LU {""}
+
+        fr_MC {""}
+        he {""}
+        hr {""}
+        hu {""}
+        id {""}
+        it {""}
+        it_CH {""}
+        it_IT {""}
+
+        ko {""}
+        ko_KR {""}
+        nb {""}
+        nb_NO {""}
+        nl {""}
+        nl_BE {""}
+        nl_NL {""}
+
+        pl {""}
+        pl_PL {""}
+        pt {""}
+        pt_BR {""}
+        pt_PT {""}
+        ro {""}
+        ru {""}
+        ru_RU {""}
+        sk {""}
+        sr {""}
+        sv {""}
+        sv_SE {""}
+        th {""}
+        tr {""}
+        tr_TR {""}
+        uk {""}
+        zh {""}
+        zh_CN {""}
+        zh_TW {""}
     }
 }
