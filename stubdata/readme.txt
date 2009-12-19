@@ -1,17 +1,36 @@
-This directory is used for building our Android
-ICU data file. Unfortunately this requires some
-manual tweaking, since the ICU build process is
-not (yet) completely integrated into the Android
-one. Fortunately it is supported by a script. :)
+This directory is used for building our Android ICU data file.
 
-Quick tour:
+1. To generate ICU data files:run the icu_dat_generator.py script.
+   The command is:
+     ./icu_dat_generator.py  <icu version> [-v] [-h]
+   For example:
+     ./icu_dat_generator.py  4.2
 
-- icudt42l/* contains the resources in unpacked
+2. To add a new resource to existing ICU data file: insert an entry to
+   icudtxx-<tag name>.txt under external/icu4c/stubdata diretory then
+   run the icu_dat_generator.py.
+   For example, to add French sort to icudt42l-us.dat, you need to
+   a. Add an entry, "coll/fr.res", into external/icu4c/stubdata/icudt42l-us.txt
+   b. run "./icu_dat_generator.py 4.2".
+
+3. To add a new ICU data file: add the <tag name> to datlist[] in
+   icu_dat_generator.py and add corresponding resource list to
+   icudtxxl<tag name>.txt. Then run the script icu_dat_generator.py to generate
+   dat files.
+   For example, to add icudt42l-latin.dat, you need to
+   a. Modify icu_dat_generator.py by adding "latin" into datlist.
+   b. Make a new file icudt42l-latin.txt to include the resource list.
+   c. run "./icu_dat_generator.py 4.2".
+
+Locale Resource Files:
+
+- icudt42l-all.dat contains the resources in packed
   form. It includes everything that comes with
-  a vanilla ICU 4.2 as well as a couple of
-  additional encodings required by Android.
+  a vanilla ICU 4.2. icu_dat_generator.py uses this file to generate
+  custom build dat files.
+
+- cnv/*.cnv are the additional encodings required by Android.
   These are
-  
   - gsm-03.38-2000.cnv
   - iso-8859_16-2001.cnv
   - docomo-shift_jis-2007.cnv
@@ -20,75 +39,13 @@ Quick tour:
   - softbank-jisx-208-2007.cnv
   - softbank-shift_jis-2007.cnv
 
-  Also, all character translation tables have
-  been created with the "--small" option, so
-  they use less space than in the vanilla ICU.
-
-- Each of the cfg-* directories contains a
-  different configuration for an ICU data file.
-  Each of these configurations consists of a
-  couple of files the directory structure of
-  which mimics the structure in icudt42l/*.
-  
-  - icudt42l.txt contains the main manifest of
-    our data file. It currently includes a lot
-    of character conversion tables, locale data
-    for various countries as well as timezone
-    information.
-
-  - Local manifest files named res_index.txt
-    are residing in the following directories:
-  
-    - icudt42l
-    - icudt42l/brkitr
-    - icudt42l/coll
-    - icudt42l/rbnf
-
-    These also need to be updated to reflect
-    any changes to the resources we want in
-    Android.
-  
-- The actual data files are named using the
-  same pattern, that is, icudt42l-<foo> is
-  the data file geenrated from cfg-<foo>. The
-  files currently need to be rebuilt manually
-  whenever one of the manifests changes (don't
-  forget to submit!). This can be conveniently
-  done by running the ./helper.sh script as
-  follows:
-  
-  ./helper foo
-  
-  Here, foo is the name of the configuration
-  to build.
-  
-  Note: The script assumes you have done
+Note:
+  1. The script assumes you have done
   envsetup.sh and choosecombo before, because
   it relies on an enviroment variable pointing
-  to the prebuilt tools. It also assumes the
-  directory contents are writable, so as a
-  Perforce user you might want to do a
-  
-  g4 edit ...
-  
-  before you run it.
+  to the prebuilt tools.
+  2. To add new charset conversion tables, the table
+  should be created with the "--small" option. So they
+  are built in compact mode and can be decompressed
+  when needed.
 
-- Currently we have these data files and
-  configurations:
-  
-  - default .... what we had in Android 1.0
-  - us-euro .... adds some Euro locales
-  - us-japan ... adds full Japanese locale
-                 and Docomo/KDDI/Softbank
-		 support
-
-  Note that very large data files are likely
-  to break the prelink map. So this needs to
-  be modified as well.
-  
-- The correct data file is chosen by the
-  build depending on the PRODUCT_LOCALES
-  variable. Note that is it possible you have
-  to touch something in this directory for
-  the build process to notice the changed
-  selection.
