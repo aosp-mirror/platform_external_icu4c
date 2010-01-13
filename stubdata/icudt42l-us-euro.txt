@@ -162,4 +162,5 @@ zoneinfo.res
 numberingSystems.res
 plurals.res
 metazoneInfo.res
+rfc3491.spp
 
