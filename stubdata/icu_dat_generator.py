@@ -128,6 +128,8 @@ def GenResIndex(dat_list_file_path):
       continue
     if line.find("res_index") >= 0:
       continue
+    if line.find("_.res") >= 0:
+      continue;
     start = line.find("brkitr/")
     if start >= 0:
       end = line.find(".res")
