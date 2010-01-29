@@ -70,6 +70,15 @@ DecimalFormatSymbols::DecimalFormatSymbols(const Locale& loc, UErrorCode& status
     initialize(locale, status);
 }
 
+// BEGIN android-added: we need a default constructor for performance.
+// -------------------------------------
+
+DecimalFormatSymbols::DecimalFormatSymbols()
+{
+    initialize();
+}
+// END android-added
+
 // -------------------------------------
 
 DecimalFormatSymbols::~DecimalFormatSymbols()

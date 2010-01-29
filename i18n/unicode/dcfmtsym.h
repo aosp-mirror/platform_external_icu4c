@@ -162,6 +162,11 @@ public:
      */
     DecimalFormatSymbols( UErrorCode& status);
 
+    // BEGIN android-added: we need a default constructor for performance.
+    // Proposed for ICU 4.8: http://icu-project.org/trac/ticket/7392
+    DecimalFormatSymbols();
+    // END android-added
+
     /**
      * Copy constructor.
      * @stable ICU 2.0
@@ -281,7 +286,9 @@ public:
     static UClassID U_EXPORT2 getStaticClassID();
 
 private:
-    DecimalFormatSymbols(); // default constructor not implemented
+    // BEGIN android-removed: we need a default constructor for performance.
+    // DecimalFormatSymbols(); // default constructor not implemented
+    // END android-removed
 
     /**
      * Initializes the symbols from the LocaleElements resource bundle.
