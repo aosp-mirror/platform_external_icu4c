@@ -137,7 +137,6 @@ it_CH.res
 it_IT.res
 ja.res
 ja_JP.res
-ja_JP_TRADITIONAL.res
 ko.res
 ko_KR.res
 nb.res
