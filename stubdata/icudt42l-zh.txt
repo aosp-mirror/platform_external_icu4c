@@ -195,6 +195,9 @@ windows-874-2000.cnv
 windows-936-2000.cnv
 windows-949-2000.cnv
 windows-950-2000.cnv
+noop-cns-11643.cnv
+noop-gb2312_gl.cnv
+noop-iso-ir-165.cnv
 
 cnvalias.icu
 coll/invuca.icu

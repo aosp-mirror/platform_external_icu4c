@@ -110,6 +110,9 @@ ibm-9447_P100-2002.cnv
 ibm-9448_X100-2005.cnv
 ibm-9449_P100-2002.cnv
 ibm-954_P101-2007.cnv
+noop-cns-11643.cnv
+noop-gb2312_gl.cnv
+noop-iso-ir-165.cnv
 coll/invuca.icu
 iso-8859_10-1998.cnv
 iso-8859_11-2001.cnv
