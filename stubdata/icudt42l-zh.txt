@@ -63,16 +63,6 @@ coll/zh_Hant_HK.res
 coll/res_index.res
 coll/root.res
 
-rbnf/de.res
-rbnf/en.res
-rbnf/es.res
-rbnf/fr.res
-rbnf/it.res
-rbnf/nl.res
-rbnf/pl.res
-rbnf/res_index.res
-rbnf/root.res
-
 ar.res
 cs.res
 cs_CZ.res

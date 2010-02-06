@@ -124,13 +124,6 @@ nl.res
 nl_BE.res
 nl_NL.res
 pnames.icu
-rbnf/de.res
-rbnf/en.res
-rbnf/es.res
-rbnf/fr.res
-rbnf/nl.res
-rbnf/res_index.res
-rbnf/root.res
 res_index.res
 root.res
 supplementalData.res

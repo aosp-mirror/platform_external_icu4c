@@ -20,8 +20,7 @@
 #    icu_dat_generator.py  icu-version [-v] [-h]
 #
 # Sample usage:
-#   $ANDROID_BUILD_TOP/external/icu4c/stubdata$ ./icu_dat_generator.py  4.2
-#   $ANDROID_BUILD_TOP/external/icu4c/stubdata$ ./icu_dat_generator.py  4.2 -v -h
+#   $ANDROID_BUILD_TOP/external/icu4c/stubdata$ ./icu_dat_generator.py  4.2 --verbose
 #
 #  Add new dat file:
 #    1. Add icudtxxl-<datname>.txt to $ANDROID_BUILD_TOP/external/icu4c/stubdata.
@@ -54,7 +53,7 @@ def GetIcuVersion(version_string):
 
 def PrintHelp():
   print "Usage:"
-  print "icu_dat_generator.py  icu-version [-v] [-h]"
+  print "icu_dat_generator.py  icu-version [-v|--verbose] [-h|--help]"
   print "Example:"
   print "$ANDROID_BUILD_TOP/external/icu4c/stubdata$ ./icu_dat_generator.py 4.2"
 
@@ -64,7 +63,7 @@ def InvokeIcuTool(tool, working_dir, args):
   command_list.extend(args)
 
   if VERBOSE:
-    command = " ".join(command_list)
+    command = "[%s] %s" % (working_dir, " ".join(command_list))
     print command
   
   ret = subprocess.call(command_list, cwd = working_dir)

@@ -54,16 +54,6 @@ coll/pl_PL.res
 coll/res_index.res
 coll/root.res
 
-rbnf/de.res
-rbnf/en.res
-rbnf/es.res
-rbnf/fr.res
-rbnf/it.res
-rbnf/nl.res
-rbnf/pl.res
-rbnf/res_index.res
-rbnf/root.res
-
 cs.res
 cs_CZ.res
 de.res

@@ -35,11 +35,6 @@ coll/ja_JP.res
 coll/res_index.res
 coll/root.res
 
-rbnf/en.res
-rbnf/ja.res
-rbnf/res_index.res
-rbnf/root.res
-
 en.res
 en_AU.res
 en_BE.res
