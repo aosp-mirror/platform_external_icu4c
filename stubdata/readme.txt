@@ -6,14 +6,14 @@ This directory is used for building our Android ICU data file.
    For example:
      ./icu_dat_generator.py  4.2
 
-2. To add a new resource to existing ICU data file: insert an entry to
-   icudtxx-<tag name>.txt under external/icu4c/stubdata diretory then
+2. To add a resource to Android ICU data file: insert an entry to
+   icudtxx-<tag name>.txt under external/icu4c/stubdata directory then
    run the icu_dat_generator.py.
    For example, to add French sort to icudt42l-us.dat, you need to
    a. Add an entry, "coll/fr.res", into external/icu4c/stubdata/icudt42l-us.txt
    b. run "./icu_dat_generator.py 4.2".
 
-3. To add a new ICU data file: add the <tag name> to datlist[] in
+3. To add a new Adnroid ICU data file: add the <tag name> to datlist[] in
    icu_dat_generator.py and add corresponding resource list to
    icudtxxl<tag name>.txt. Then run the script icu_dat_generator.py to generate
    dat files.
@@ -22,8 +22,29 @@ This directory is used for building our Android ICU data file.
    b. Make a new file icudt42l-latin.txt to include the resource list.
    c. run "./icu_dat_generator.py 4.2".
 
-Locale Resource Files:
+4. Add a new resource or modify existing ICU resource definition:
+   Note: This is a rare case. You should talk to ICU team first if it is a bug
+   in ICU resource or a feature enhancement before making such changes.
+   If you would like to add existing ICU resource to Android, please check #2.
+   a. Create or change the text format resource files under external/icu4c/data.
+   b. Make a temporary directory for ICU build.
+      i.e. mkdir external/icu4c/icuBuild
+   c. cd to ICU build directory.
+      i.e. cd external/icu4c/icuBuild
+   d. Run external/icu4c/runConfigureICU with "Linux" option to generate the
+      makefile.
+      i.e. $ANDROID_BUILD_TOP/external/icu4c/runConfigureICU Linux
+   e. make -j2
+   f. The new icudtxxl.dat is under data/out/tmp and the individual resources are
+      under data/out/build/icudtxxl
+      For example, you can find data/out/tmp/icudt42l.dat and data/out/build/icudt42l/*.res.
+   g. Copy the new icudtxxl.dat over $ANDROID_BUILD_TOP/external/icu4c/stubdata/icudtxxl-all.dat.
+      i.e. cp data/out/tmp/icudt42l.dat $ANDROID_BUILD_TOP/external/icu4c/stubdata/icudt42l-all.dat.
+   h. Check #1 or #2 to replace or add resource to ICU.
+   i. Clean up ICU build directory.
+   j. Discuss with icu-team how to include the change to public ICU.
 
+Locale Resource Files:
 - icudt42l-all.dat contains the resources in packed
   form. It includes everything that comes with
   a vanilla ICU 4.2. icu_dat_generator.py uses this file to generate
@@ -39,13 +60,36 @@ Locale Resource Files:
   - softbank-jisx-208-2007.cnv
   - softbank-shift_jis-2007.cnv
 
+- Text format ICU resource files are under external/icu4c/data directory.
+  Binary resource files are packaged in external/icu4c/stubdata/icudtxxl-all.dat.
+  If you have special need such as bug fxings or examining individual resource size,
+  you can run icupkg utility to extract icudtxxl-all.dat into a temporary directory.
+  For example:
+  cd $ANDROID_BUILD_TOP/external/icu4c/stubdata
+  cp icudt42l-all.dat icudt42l.dat
+  mkdir tempDir
+  $ANDROID_BUILD_TOP/prebuilt/linux-x86/icu-4.2/icupkg  icudt42l.dat -x "*" -d tempDir
+
+Run ICU tests:
+ICU tests are not part of Android build. If you change the ICU code or data,
+it is highly recommended to run ICU tests.
+ 1. Remove the flag "-R" in external/icu4c/data/Makefile.in.
+    "Reverse collation keys" tables are not included in ICU data on Android. To
+    pass ICU collation tests, you need to delete the flag "-R" in Makefile.in.
+    Search for " -R" under "### collation res" section in external/icu4c/data/Makefile.in,
+    delete all of them.
+ 2. Make a temporary directory for ICU build.
+    i.e. mkdir external/icu4c/icuBuild
+ 3. cd to ICU build directory.
+    i.e. cd external/icu4c/icuBuild
+ 4. Run external/icu4c/runConfigureICU with "Linux" option to generate the makefile.
+    i.e. $ANDROID_BUILD_TOP/external/icu4c/runConfigureICU Linux
+ 5. make -j2 check
+ 6. Check the result. Ignore the errors from tsconv.
+
 Note:
   1. The script assumes you have done
   envsetup.sh and choosecombo before, because
-  it relies on an enviroment variable pointing
+  it relies on an environment variable pointing
   to the prebuilt tools.
-  2. To add new charset conversion tables, the table
-  should be created with the "--small" option. So they
-  are built in compact mode and can be decompressed
-  when needed.
 
