@@ -200,6 +200,9 @@ softbank-shift_jis-2007.cnv
 noop-cns-11643.cnv
 noop-gb2312_gl.cnv
 noop-iso-ir-165.cnv
+ibm-1375_P100-2007.cnv
+ibm-1168_P100-2002.cnv
+gb18030.cnv
 
 cnvalias.icu
 coll/invuca.icu

@@ -143,6 +143,7 @@ windows-950-2000.cnv
 noop-cns-11643.cnv
 noop-gb2312_gl.cnv
 noop-iso-ir-165.cnv
+ibm-1168_P100-2002.cnv
 
 cnvalias.icu
 coll/invuca.icu
