@@ -62,7 +62,7 @@ UnicodeString toString(int32_t n);
         name = #test;                 \
         if (exec) {                   \
             logln(#test "---");       \
-            logln((UnicodeString)""); \
+            logln();                  \
             test();                   \
         }                             \
         break
@@ -71,6 +71,7 @@ class IntlTest : public TestLog {
 public:
 
     IntlTest();
+    // TestLog has a virtual destructor.
 
     virtual UBool runTest( char* name = NULL, char* par = NULL ); // not to be overidden
 
@@ -79,6 +80,7 @@ public:
     virtual UBool setQuick( UBool quick = TRUE );
     virtual UBool setLeaks( UBool leaks = TRUE );
     virtual UBool setWarnOnMissingData( UBool warn_on_missing_data = TRUE );
+    virtual int32_t setThreadCount( int32_t count = 1);
 
     virtual int32_t getErrors( void );
     virtual int32_t getDataErrors (void );
@@ -192,6 +194,7 @@ protected:
     UBool       quick;
     UBool       leaks;
     UBool       warn_on_missing_data;
+    int32_t     threadCount;
 
 private:
     UBool       LL_linestart;

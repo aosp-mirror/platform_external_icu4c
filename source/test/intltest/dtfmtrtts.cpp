@@ -1,6 +1,6 @@
 /***********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2009, International Business Machines Corporation
+ * Copyright (c) 1997-2010, International Business Machines Corporation
  * and others. All Rights Reserved.
  ***********************************************************************/
  
@@ -89,7 +89,10 @@ void DateFormatRoundTripTest::TestCentury()
     Locale locale("es_PA");
     UnicodeString pattern = "MM/dd/yy hh:mm:ss a z";
     SimpleDateFormat fmt(pattern, locale, status);
-    if(!assertSuccess("trying to construct", status))return;
+    if (U_FAILURE(status)) {
+        dataerrln("Fail: construct SimpleDateFormat: %s", u_errorName(status));
+        return;
+    }
     UDate date[] = {-55018555891590.05, 0, 0};
     UnicodeString result[2];
 
@@ -126,8 +129,10 @@ void DateFormatRoundTripTest::TestDateFormatRoundTrip()
     UErrorCode status = U_ZERO_ERROR;
 
     getFieldCal = Calendar::createInstance(status);
-    failure(status, "Calendar::createInstance");
-    if(!assertSuccess("trying to construct", status))return;
+    if (U_FAILURE(status)) {
+        dataerrln("Fail: Calendar::createInstance: %s", u_errorName(status));
+        return;
+    }
 
 
     int32_t locCount = 0;
@@ -376,10 +381,18 @@ void DateFormatRoundTripTest::test(DateFormat *fmt, const Locale &origLocale, UB
             int maxSmatch = 1;
             if (dmatch > maxDmatch) {
                 // Time-only pattern with zone information and a starting date in PST.
-                if(timeOnly && hasZoneDisplayName
-                        && fmt->getTimeZone().inDaylightTime(d[0], status) && ! failure(status, "TimeZone::inDST()")) {
-                    maxDmatch = 3;
-                    maxSmatch = 2;
+                if(timeOnly && hasZoneDisplayName) {
+                    int32_t startRaw, startDst;
+                    fmt->getTimeZone().getOffset(d[0], FALSE, startRaw, startDst, status);
+                    failure(status, "TimeZone::getOffset");
+                    // if the start offset is greater than the offset on Jan 1, 1970
+                    // in PST, then need one more round trip.  There are two cases
+                    // fall into this category.  The start date is 1) DST or
+                    // 2) LMT (GMT-07:52:58).
+                    if (startRaw + startDst > -28800000) {
+                        maxDmatch = 3;
+                        maxSmatch = 2;
+                    }
                 }
             }
 

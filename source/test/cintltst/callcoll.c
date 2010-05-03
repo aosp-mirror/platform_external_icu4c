@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2009, International Business Machines Corporation and
+ * Copyright (c) 1997-2010, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /*******************************************************************************
@@ -52,7 +52,6 @@
 #include "calldata.h"
 #include "cstring.h"
 #include "cmemory.h"
-#include "ucol_imp.h"
 
 /* set to 1 to test offsets in backAndForth() */
 #define TEST_OFFSETS 0
@@ -148,13 +147,14 @@ static char* U_EXPORT2 sortKeyToString(const UCollator *coll, const uint8_t *sor
     int32_t strength = UCOL_PRIMARY;
     uint32_t res_size = 0;
     UBool doneCase = FALSE;
+    UErrorCode errorCode = U_ZERO_ERROR;
 
     char *current = buffer;
     const uint8_t *currentSk = sortkey;
 
     uprv_strcpy(current, "[");
 
-    while(strength <= UCOL_QUATERNARY && strength <= coll->strength) {
+    while(strength <= UCOL_QUATERNARY && strength <= ucol_getStrength(coll)) {
         if(strength > UCOL_PRIMARY) {
             uprv_strcat(current, " . ");
         }
@@ -162,20 +162,20 @@ static char* U_EXPORT2 sortKeyToString(const UCollator *coll, const uint8_t *sor
             uprv_appendByteToHexString(current, *currentSk++);
             uprv_strcat(current, " ");
         }
-        if(coll->caseLevel == UCOL_ON && strength == UCOL_SECONDARY && doneCase == FALSE) {
+        if(ucol_getAttribute(coll, UCOL_CASE_LEVEL, &errorCode) == UCOL_ON && strength == UCOL_SECONDARY && doneCase == FALSE) {
             doneCase = TRUE;
-        } else if(coll->caseLevel == UCOL_OFF || doneCase == TRUE || strength != UCOL_SECONDARY) {
+        } else if(ucol_getAttribute(coll, UCOL_CASE_LEVEL, &errorCode) == UCOL_OFF || doneCase == TRUE || strength != UCOL_SECONDARY) {
             strength ++;
         }
         if (*currentSk) {
             uprv_appendByteToHexString(current, *currentSk++); /* This should print '01' */
         }
-        if(strength == UCOL_QUATERNARY && coll->alternateHandling == UCOL_NON_IGNORABLE) {
+        if(strength == UCOL_QUATERNARY && ucol_getAttribute(coll, UCOL_ALTERNATE_HANDLING, &errorCode) == UCOL_NON_IGNORABLE) {
             break;
         }
     }
 
-    if(coll->strength == UCOL_IDENTICAL) {
+    if(ucol_getStrength(coll) == UCOL_IDENTICAL) {
         uprv_strcat(current, " . ");
         while(*currentSk != 0) {
             uprv_appendByteToHexString(current, *currentSk++);
@@ -214,7 +214,7 @@ UBool hasCollationElements(const char *locName) {
 
   UErrorCode status = U_ZERO_ERROR;
 
-  UResourceBundle *loc = ures_open(U_ICUDATA_COLL, locName, &status);;
+  UResourceBundle *loc = ures_open(U_ICUDATA_NAME U_TREE_SEPARATOR_STRING "coll", locName, &status);;
 
   if(U_SUCCESS(status)) {
     status = U_ZERO_ERROR;
@@ -287,7 +287,7 @@ static void doTestVariant(UCollator* myCollation, const UChar source[], const UC
     }
 
     /* convert the strings to UTF-8 and do try comparing with char iterator */
-    if(QUICK <= 0) { /*!QUICK*/
+    if(getTestOption(QUICK_OPTION) <= 0) { /*!QUICK*/
       char utf8Source[256], utf8Target[256];
       int32_t utf8SourceLen = 0, utf8TargetLen = 0;
       u_strToUTF8(utf8Source, 256, &utf8SourceLen, source, sLen, &status);
@@ -329,7 +329,7 @@ static void doTestVariant(UCollator* myCollation, const UChar source[], const UC
       int32_t i = 0;
       int32_t partialSizes[] = { 3, 1, 2, 4, 8, 20, 80 }; /* just size 3 in the quick mode */
       int32_t partialSizesSize = 1;
-      if(QUICK <= 0) {
+      if(getTestOption(QUICK_OPTION) <= 0) {
         partialSizesSize = 7;
       }
       /*log_verbose("partial sortkey test piecesize=");*/
@@ -344,7 +344,7 @@ static void doTestVariant(UCollator* myCollation, const UChar source[], const UC
             aescstrdup(source,-1), aescstrdup(target,-1), partialSizes[i]);
         }
 
-        if(QUICK <= 0 && norm != UCOL_ON) {
+        if(getTestOption(QUICK_OPTION) <= 0 && norm != UCOL_ON) {
           /*log_verbose("N ");*/
           ucol_setAttribute(myCollation, UCOL_NORMALIZATION_MODE, UCOL_ON, &status);
           partialNormalizedSKResult = compareUsingPartials(myCollation, source, sLen, target, tLen, partialSizes[i], &status);
@@ -503,7 +503,10 @@ backAndForth(UCollationElements *iter)
 
     /* synwee : changed */
     while ((o = ucol_previous(iter, &status)) != UCOL_NULLORDER) {
-      int32_t offset = ucol_getOffset(iter);
+#if TEST_OFFSETS
+      int32_t offset = 
+#endif
+        ucol_getOffset(iter);
 
       index -= 1;
       if (o != orders[index].order) {

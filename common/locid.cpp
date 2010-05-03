@@ -1,6 +1,6 @@
 /*
  **********************************************************************
- *   Copyright (C) 1997-2008, International Business Machines
+ *   Copyright (C) 1997-2010, International Business Machines
  *   Corporation and others.  All Rights Reserved.
  **********************************************************************
 *
@@ -41,8 +41,6 @@
 
 #define LENGTHOF(array) (int32_t)(sizeof(array)/sizeof((array)[0]))
 
-static U_NAMESPACE_QUALIFIER Locale*  availableLocaleList = NULL;
-static int32_t  availableLocaleListCount;
 typedef enum ELocalePos {
     eENGLISH,
     eFRENCH,
@@ -63,6 +61,7 @@ typedef enum ELocalePos {
     eUS,
     eCANADA,
     eCANADA_FRENCH,
+    eROOT,
 
 
     //eDEFAULT,
@@ -92,12 +91,6 @@ deleteLocale(void *obj) {
 static UBool U_CALLCONV locale_cleanup(void)
 {
     U_NAMESPACE_USE
-
-    if (availableLocaleList) {
-        delete []availableLocaleList;
-        availableLocaleList = NULL;
-    }
-    availableLocaleListCount = 0;
 
     if (gLocaleCache) {
         delete [] gLocaleCache;
@@ -320,9 +313,7 @@ Locale::Locale( const   char * newLanguage,
     }
     else
     {
-        char togo_stack[ULOC_FULLNAME_CAPACITY];
-        char *togo;
-        char *togo_heap = NULL;
+        MaybeStackArray<char, ULOC_FULLNAME_CAPACITY> togo;
         int32_t size = 0;
         int32_t lsize = 0;
         int32_t csize = 0;
@@ -389,24 +380,18 @@ Locale::Locale( const   char * newLanguage,
 
         /*if the whole string is longer than our internal limit, we need
         to go to the heap for temporary buffers*/
-        if (size >= ULOC_FULLNAME_CAPACITY)
+        if (size >= togo.getCapacity())
         {
-            togo_heap = (char *)uprv_malloc(sizeof(char)*(size+1));
             // If togo_heap could not be created, initialize with default settings.
-            if (togo_heap == NULL) {
+            if (togo.resize(size+1) == NULL) {
                 init(NULL, FALSE);
             }
-            togo = togo_heap;
-        }
-        else
-        {
-            togo = togo_stack;
         }
 
         togo[0] = 0;
 
         // Now, copy it back.
-        p = togo;
+        p = togo.getAlias();
         if ( lsize != 0 )
         {
             uprv_strcpy(p, newLanguage);
@@ -450,11 +435,7 @@ Locale::Locale( const   char * newLanguage,
 
         // Parse it, because for example 'language' might really be a complete
         // string.
-        init(togo, FALSE);
-
-        if (togo_heap) {
-            uprv_free(togo_heap);
-        }
+        init(togo.getAlias(), FALSE);
     }
 }
 
@@ -510,7 +491,7 @@ Locale &Locale::operator=(const Locale &other)
     uprv_strcpy(script, other.script);
     uprv_strcpy(country, other.country);
 
-    /* The variantBegin is an offset into fullName, just copy it */
+    /* The variantBegin is an offset, just copy it */
     variantBegin = other.variantBegin;
     fIsBogus = other.fIsBogus;
     return *this;
@@ -666,6 +647,10 @@ Locale::setToBogus() {
         uprv_free(fullName);
         fullName = fullNameBuffer;
     }
+    if(baseName && baseName != baseNameBuffer) {
+        uprv_free(baseName);
+        baseName = NULL;
+    }
     *fullNameBuffer = 0;
     *language = 0;
     *script = 0;
@@ -754,249 +739,6 @@ Locale::getLCID() const
     return uloc_getLCID(fullName);
 }
 
-UnicodeString&
-Locale::getDisplayLanguage(UnicodeString& dispLang) const
-{
-    return this->getDisplayLanguage(getDefault(), dispLang);
-}
-
-/*We cannot make any assumptions on the size of the output display strings
-* Yet, since we are calling through to a C API, we need to set limits on
-* buffer size. For all the following getDisplay functions we first attempt
-* to fill up a stack allocated buffer. If it is to small we heap allocated
-* the exact buffer we need copy it to the UnicodeString and delete it*/
-
-UnicodeString&
-Locale::getDisplayLanguage(const Locale &displayLocale,
-                           UnicodeString &result) const {
-    UChar *buffer;
-    UErrorCode errorCode=U_ZERO_ERROR;
-    int32_t length;
-
-    buffer=result.getBuffer(ULOC_FULLNAME_CAPACITY);
-    if(buffer==0) {
-        result.truncate(0);
-        return result;
-    }
-
-    length=uloc_getDisplayLanguage(fullName, displayLocale.fullName,
-                                   buffer, result.getCapacity(),
-                                   &errorCode);
-    result.releaseBuffer(U_SUCCESS(errorCode) ? length : 0);
-
-    if(errorCode==U_BUFFER_OVERFLOW_ERROR) {
-        buffer=result.getBuffer(length);
-        if(buffer==0) {
-            result.truncate(0);
-            return result;
-        }
-        errorCode=U_ZERO_ERROR;
-        length=uloc_getDisplayLanguage(fullName, displayLocale.fullName,
-                                       buffer, result.getCapacity(),
-                                       &errorCode);
-        result.releaseBuffer(U_SUCCESS(errorCode) ? length : 0);
-    }
-
-    return result;
-}
-
-UnicodeString&
-Locale::getDisplayScript(UnicodeString& dispScript) const
-{
-    return this->getDisplayScript(getDefault(), dispScript);
-}
-
-UnicodeString&
-Locale::getDisplayScript(const Locale &displayLocale,
-                          UnicodeString &result) const {
-    UChar *buffer;
-    UErrorCode errorCode=U_ZERO_ERROR;
-    int32_t length;
-
-    buffer=result.getBuffer(ULOC_FULLNAME_CAPACITY);
-    if(buffer==0) {
-        result.truncate(0);
-        return result;
-    }
-
-    length=uloc_getDisplayScript(fullName, displayLocale.fullName,
-                                  buffer, result.getCapacity(),
-                                  &errorCode);
-    result.releaseBuffer(U_SUCCESS(errorCode) ? length : 0);
-
-    if(errorCode==U_BUFFER_OVERFLOW_ERROR) {
-        buffer=result.getBuffer(length);
-        if(buffer==0) {
-            result.truncate(0);
-            return result;
-        }
-        errorCode=U_ZERO_ERROR;
-        length=uloc_getDisplayScript(fullName, displayLocale.fullName,
-                                      buffer, result.getCapacity(),
-                                      &errorCode);
-        result.releaseBuffer(U_SUCCESS(errorCode) ? length : 0);
-    }
-
-    return result;
-}
-
-UnicodeString&
-Locale::getDisplayCountry(UnicodeString& dispCntry) const
-{
-    return this->getDisplayCountry(getDefault(), dispCntry);
-}
-
-UnicodeString&
-Locale::getDisplayCountry(const Locale &displayLocale,
-                          UnicodeString &result) const {
-    UChar *buffer;
-    UErrorCode errorCode=U_ZERO_ERROR;
-    int32_t length;
-
-    buffer=result.getBuffer(ULOC_FULLNAME_CAPACITY);
-    if(buffer==0) {
-        result.truncate(0);
-        return result;
-    }
-
-    length=uloc_getDisplayCountry(fullName, displayLocale.fullName,
-                                  buffer, result.getCapacity(),
-                                  &errorCode);
-    result.releaseBuffer(U_SUCCESS(errorCode) ? length : 0);
-
-    if(errorCode==U_BUFFER_OVERFLOW_ERROR) {
-        buffer=result.getBuffer(length);
-        if(buffer==0) {
-            result.truncate(0);
-            return result;
-        }
-        errorCode=U_ZERO_ERROR;
-        length=uloc_getDisplayCountry(fullName, displayLocale.fullName,
-                                      buffer, result.getCapacity(),
-                                      &errorCode);
-        result.releaseBuffer(U_SUCCESS(errorCode) ? length : 0);
-    }
-
-    return result;
-}
-
-UnicodeString&
-Locale::getDisplayVariant(UnicodeString& dispVar) const
-{
-    return this->getDisplayVariant(getDefault(), dispVar);
-}
-
-UnicodeString&
-Locale::getDisplayVariant(const Locale &displayLocale,
-                          UnicodeString &result) const {
-    UChar *buffer;
-    UErrorCode errorCode=U_ZERO_ERROR;
-    int32_t length;
-
-    buffer=result.getBuffer(ULOC_FULLNAME_CAPACITY);
-    if(buffer==0) {
-        result.truncate(0);
-        return result;
-    }
-
-    length=uloc_getDisplayVariant(fullName, displayLocale.fullName,
-                                  buffer, result.getCapacity(),
-                                  &errorCode);
-    result.releaseBuffer(U_SUCCESS(errorCode) ? length : 0);
-
-    if(errorCode==U_BUFFER_OVERFLOW_ERROR) {
-        buffer=result.getBuffer(length);
-        if(buffer==0) {
-            result.truncate(0);
-            return result;
-        }
-        errorCode=U_ZERO_ERROR;
-        length=uloc_getDisplayVariant(fullName, displayLocale.fullName,
-                                      buffer, result.getCapacity(),
-                                      &errorCode);
-        result.releaseBuffer(U_SUCCESS(errorCode) ? length : 0);
-    }
-
-    return result;
-}
-
-UnicodeString&
-Locale::getDisplayName( UnicodeString& name ) const
-{
-    return this->getDisplayName(getDefault(), name);
-}
-
-UnicodeString&
-Locale::getDisplayName(const Locale &displayLocale,
-                       UnicodeString &result) const {
-    UChar *buffer;
-    UErrorCode errorCode=U_ZERO_ERROR;
-    int32_t length;
-
-    buffer=result.getBuffer(ULOC_FULLNAME_CAPACITY);
-    if(buffer==0) {
-        result.truncate(0);
-        return result;
-    }
-
-    length=uloc_getDisplayName(fullName, displayLocale.fullName,
-                               buffer, result.getCapacity(),
-                               &errorCode);
-    result.releaseBuffer(U_SUCCESS(errorCode) ? length : 0);
-
-    if(errorCode==U_BUFFER_OVERFLOW_ERROR) {
-        buffer=result.getBuffer(length);
-        if(buffer==0) {
-            result.truncate(0);
-            return result;
-        }
-        errorCode=U_ZERO_ERROR;
-        length=uloc_getDisplayName(fullName, displayLocale.fullName,
-                                   buffer, result.getCapacity(),
-                                   &errorCode);
-        result.releaseBuffer(U_SUCCESS(errorCode) ? length : 0);
-    }
-
-    return result;
-}
-const Locale* U_EXPORT2
-Locale::getAvailableLocales(int32_t& count)
-{
-    // for now, there is a hardcoded list, so just walk through that list and set it up.
-    UBool needInit;
-    UMTX_CHECK(NULL, availableLocaleList == NULL, needInit);
-
-    if (needInit) {
-        int32_t locCount = uloc_countAvailable();
-        Locale *newLocaleList = 0;
-        if(locCount) {
-           newLocaleList = new Locale[locCount];
-        }
-        if (newLocaleList == NULL) {
-            count = 0;
-            return NULL;
-        }
-
-        count = locCount;
-
-        while(--locCount >= 0) {
-            newLocaleList[locCount].setFromPOSIXID(uloc_getAvailable(locCount));
-        }
-
-        umtx_lock(NULL);
-        if(availableLocaleList == 0) {
-            availableLocaleListCount = count;
-            availableLocaleList = newLocaleList;
-            newLocaleList = NULL;
-            ucln_common_registerCleanup(UCLN_COMMON_LOCALE, locale_cleanup);
-        }
-        umtx_unlock(NULL);
-        delete []newLocaleList;
-    }
-    count = availableLocaleListCount;
-    return availableLocaleList;
-}
-
 const char* const* U_EXPORT2 Locale::getISOCountries()
 {
     return uloc_getISOCountries();
@@ -1011,6 +753,12 @@ const char* const* U_EXPORT2 Locale::getISOLanguages()
 void Locale::setFromPOSIXID(const char *posixID)
 {
     init(posixID, TRUE);
+}
+
+const Locale & U_EXPORT2
+Locale::getRoot(void)
+{
+    return getLocale(eROOT);
 }
 
 const Locale & U_EXPORT2
@@ -1169,6 +917,7 @@ Locale::getLocaleCache(void)
         if (tLocaleCache == NULL) {
             return NULL;
         }
+	tLocaleCache[eROOT]          = Locale("");
         tLocaleCache[eENGLISH]       = Locale("en");
         tLocaleCache[eFRENCH]        = Locale("fr");
         tLocaleCache[eGERMAN]        = Locale("de");
@@ -1314,6 +1063,12 @@ Locale::getKeywordValue(const char* keywordName, char *buffer, int32_t bufLen, U
     return uloc_getKeywordValue(fullName, keywordName, buffer, bufLen, &status);
 }
 
+void
+Locale::setKeywordValue(const char* keywordName, const char* keywordValue, UErrorCode &status)
+{
+    uloc_setKeywordValue(keywordName, keywordValue, fullName, ULOC_FULLNAME_CAPACITY, &status);
+}
+
 const char *
 Locale::getBaseName() const
 {
@@ -1331,10 +1086,16 @@ Locale::getBaseName() const
             uloc_getBaseName(fullName, baseName, baseNameSize+1, &status);
         }
         baseName[baseNameSize] = 0;
+
+        // the computation of variantBegin leaves it equal to the length
+        // of fullName if there is no variant.  It should instead be
+        // the length of the baseName.  Patch around this for now.
+        if (variantBegin == uprv_strlen(fullName)) {
+          ((Locale*)this)->variantBegin = baseNameSize;
+        }
     }
     return baseName;
 }
-
 
 //eof
 U_NAMESPACE_END

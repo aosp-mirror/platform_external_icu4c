@@ -1,6 +1,6 @@
 // ***************************************************************************
 // *
-// * Copyright (C) 2004-2009 International Business Machines
+// * Copyright (C) 2004-2010 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // *
 // ***************************************************************************
@@ -10,6 +10,7 @@
 // root can't be used to validate the structure.
 // This file was generated from en.txt, and all ".*" were replaced with "".
 structLocale:table(nofallback){
+    %%ParentIsRoot:int{0}
     BreakDictionaryData:bin {00}
     Countries{
         001{""}
@@ -3862,6 +3863,8 @@ structLocale:table(nofallback){
         other{""}
     }
     ExemplarCharacters{""}
+    ExemplarCharactersCurrency{""}
+    ExemplarCharactersIndex{""}
     AuxExemplarCharacters{""}
     Keys{
         calendar{""}
@@ -4659,7 +4662,109 @@ structLocale:table(nofallback){
                     "",
                 }
             }
-        }
+             intervalFormats{
+                H{
+                    H{""}
+                    a{""}
+                }
+                Hm{
+                    H{""}
+                    a{""}
+                    m{""}
+                }
+                Hmv{
+                    H{""}
+                    a{""}
+                    m{""}
+                }
+                Hv{
+                    H{""}
+                    a{""}
+                }
+                M{
+                    M{""}
+                }
+                MEd{
+                    M{""}
+                    d{""}
+                }
+                MMM{
+                    M{""}
+                }
+                MMMEd{
+                    M{""}
+                    d{""}
+                }
+                MMMM{
+                    M{""}
+                }
+                MMMd{
+                    M{""}
+                    d{""}
+                }
+                Md{
+                    M{""}
+                    d{""}
+                }
+                d{
+                    d{""}
+                }
+                fallback{""}
+                h{
+                    a{""}
+                    h{""}
+                }
+                hm{
+                    a{""}
+                    h{""}
+                    m{""}
+                }
+                hmv{
+                    a{""}
+                    h{""}
+                    m{""}
+                }
+                hv{
+                    a{""}
+                    h{""}
+                }
+                y{
+                    y{""}
+                }
+                yM{
+                    M{""}
+                    y{""}
+                }
+                yMEd{
+                    M{""}
+                    d{""}
+                    y{""}
+                }
+                yMMM{
+                    M{""}
+                    y{""}
+                }
+                yMMMEd{
+                    M{""}
+                    d{""}
+                    y{""}
+                }
+                yMMMM{
+                    M{""}
+                    y{""}
+                }
+                yMMMd{
+                    M{""}
+                    d{""}
+                    y{""}
+                }
+                yMd{
+                    M{""}
+                    d{""}
+                    y{""}
+                }
+            }
+       }
         chinese{
             AmPmMarkers{
                 "",
@@ -4696,6 +4801,24 @@ structLocale:table(nofallback){
                 "A4",
             }
             intervalFormats{
+                H{
+                    H{""}
+                    a{""}
+                }
+                Hm{
+                    H{""}
+                    a{""}
+                    m{""}
+                }
+                Hmv{
+                    H{""}
+                    a{""}
+                    m{""}
+                }
+                Hv{
+                    H{""}
+                    a{""}
+                }
                 M{
                     M{""}
                 }
@@ -4908,6 +5031,24 @@ structLocale:table(nofallback){
                 }
             }
             intervalFormats{
+                H{
+                    H{""}
+                    a{""}
+                }
+                Hm{
+                    H{""}
+                    a{""}
+                    m{""}
+                }
+                Hmv{
+                    H{""}
+                    a{""}
+                    m{""}
+                }
+                Hv{
+                    H{""}
+                    a{""}
+                }
                 M{
                     M{""}
                 }
@@ -5062,6 +5203,24 @@ structLocale:table(nofallback){
                 }
             }
             intervalFormats{
+                H{
+                    H{""}
+                    a{""}
+                }
+                Hm{
+                    H{""}
+                    a{""}
+                    m{""}
+                }
+                Hmv{
+                    H{""}
+                    a{""}
+                    m{""}
+                }
+                Hv{
+                    H{""}
+                    a{""}
+                }
                 M{
                     M{""}
                 }
@@ -5404,6 +5563,24 @@ structLocale:table(nofallback){
                 }
             }
             intervalFormats{
+                H{
+                    H{""}
+                    a{""}
+                }
+                Hm{
+                    H{""}
+                    a{""}
+                    m{""}
+                }
+                Hmv{
+                    H{""}
+                    a{""}
+                    m{""}
+                }
+                Hv{
+                    H{""}
+                    a{""}
+                }
                 M{
                     M{""}
                 }
@@ -5676,6 +5853,24 @@ structLocale:table(nofallback){
                 }
             }
             intervalFormats{
+                H{
+                    H{""}
+                    a{""}
+                }
+                Hm{
+                    H{""}
+                    a{""}
+                    m{""}
+                }
+                Hmv{
+                    H{""}
+                    a{""}
+                    m{""}
+                }
+                Hv{
+                    H{""}
+                    a{""}
+                }
                 M{
                     M{""}
                 }
@@ -5777,6 +5972,7 @@ structLocale:table(nofallback){
                         "",
                         "",
                         "",
+                        "",
                     }
                     abbreviated{
                         "",
@@ -5792,8 +5988,10 @@ structLocale:table(nofallback){
                         "",
                         "",
                         "",
+                        "",
                     }
                     narrow{
+                        "",
                         "",
                         "",
                         "",
@@ -5824,8 +6022,10 @@ structLocale:table(nofallback){
                         "",
                         "",
                         "",
+                        "",
                     }
                     abbreviated{
+                        "",
                         "",
                         "",
                         "",
@@ -5842,6 +6042,7 @@ structLocale:table(nofallback){
                     }
                     default{""}
                     narrow{
+                        "",
                         "",
                         "",
                         "",
@@ -5906,6 +6107,24 @@ structLocale:table(nofallback){
                 }
             }
             intervalFormats{
+                H{
+                    H{""}
+                    a{""}
+                }
+                Hm{
+                    H{""}
+                    a{""}
+                    m{""}
+                }
+                Hmv{
+                    H{""}
+                    a{""}
+                    m{""}
+                }
+                Hv{
+                    H{""}
+                    a{""}
+                }
                 M{
                     M{""}
                 }
@@ -6134,6 +6353,24 @@ structLocale:table(nofallback){
                 }
             }
             intervalFormats{
+                H{
+                    H{""}
+                    a{""}
+                }
+                Hm{
+                    H{""}
+                    a{""}
+                    m{""}
+                }
+                Hmv{
+                    H{""}
+                    a{""}
+                    m{""}
+                }
+                Hv{
+                    H{""}
+                    a{""}
+                }
                 M{
                     M{""}
                 }
@@ -6362,6 +6599,24 @@ structLocale:table(nofallback){
                 }
             }
             intervalFormats{
+                H{
+                    H{""}
+                    a{""}
+                }
+                Hm{
+                    H{""}
+                    a{""}
+                    m{""}
+                }
+                Hmv{
+                    H{""}
+                    a{""}
+                    m{""}
+                }
+                Hv{
+                    H{""}
+                    a{""}
+                }
                 M{
                     M{""}
                 }
@@ -7342,6 +7597,24 @@ structLocale:table(nofallback){
                 }
             }
             intervalFormats{
+                H{
+                    H{""}
+                    a{""}
+                }
+                Hm{
+                    H{""}
+                    a{""}
+                    m{""}
+                }
+                Hmv{
+                    H{""}
+                    a{""}
+                    m{""}
+                }
+                Hv{
+                    H{""}
+                    a{""}
+                }
                 M{
                     M{""}
                 }
@@ -7431,6 +7704,14 @@ structLocale:table(nofallback){
         casing{""}
         characters{""}
         lines{""}
+    }
+    listPattern{
+        standard{
+            2{""}
+            end{""}
+            middle{""}
+            start{""}
+        }
     }
     localPatternChars{""}
     localeDisplayPattern{

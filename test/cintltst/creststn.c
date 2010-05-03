@@ -34,11 +34,10 @@
 #include "creststn.h"
 #include "unicode/ctest.h"
 #include "ucbuf.h"
+#include "ureslocs.h"
+
 static int32_t pass;
 static int32_t fail;
-
-static void TestCLDRVersion();
-
 
 /*****************************************************************************/
 /**
@@ -182,6 +181,7 @@ static void TestGetFunctionalEquivalent(void);
 static void TestCLDRStyleAliases(void);
 static void TestFallbackCodes(void);
 static void TestGetUTF8String(void);
+static void TestCLDRVersion(void);
 
 /***************************************************************************************/
 
@@ -190,13 +190,10 @@ static void TestGetUTF8String(void);
 void addNEWResourceBundleTest(TestNode** root)
 {
     addTest(root, &TestErrorCodes,            "tsutil/creststn/TestErrorCodes");
+#if !UCONFIG_NO_FILE_IO && !UCONFIG_NO_LEGACY_CONVERSION   
     addTest(root, &TestEmptyBundle,           "tsutil/creststn/TestEmptyBundle");
     addTest(root, &TestConstruction1,         "tsutil/creststn/TestConstruction1");
     addTest(root, &TestResourceBundles,       "tsutil/creststn/TestResourceBundles");
-    addTest(root, &TestFallback,              "tsutil/creststn/TestFallback");
-    addTest(root, &TestGetVersion,            "tsutil/creststn/TestGetVersion");
-    addTest(root, &TestGetVersionColl,        "tsutil/creststn/TestGetVersionColl");
-    addTest(root, &TestAliasConflict,         "tsutil/creststn/TestAliasConflict");
     addTest(root, &TestNewTypes,              "tsutil/creststn/TestNewTypes");
     addTest(root, &TestEmptyTypes,            "tsutil/creststn/TestEmptyTypes");
     addTest(root, &TestBinaryCollationData,   "tsutil/creststn/TestBinaryCollationData");
@@ -205,15 +202,20 @@ void addNEWResourceBundleTest(TestNode** root)
     addTest(root, &TestDecodedBundle,         "tsutil/creststn/TestDecodedBundle");
     addTest(root, &TestResourceLevelAliasing, "tsutil/creststn/TestResourceLevelAliasing");
     addTest(root, &TestDirectAccess,          "tsutil/creststn/TestDirectAccess"); 
+    addTest(root, &TestXPath,                 "tsutil/creststn/TestXPath");
+    addTest(root, &TestCLDRStyleAliases,      "tsutil/creststn/TestCLDRStyleAliases");
+    addTest(root, &TestFallbackCodes,         "tsutil/creststn/TestFallbackCodes");
+    addTest(root, &TestGetUTF8String,         "tsutil/creststn/TestGetUTF8String");
+    addTest(root, &TestCLDRVersion,           "tsutil/creststn/TestCLDRVersion");
+#endif
+    addTest(root, &TestFallback,              "tsutil/creststn/TestFallback");
+    addTest(root, &TestGetVersion,            "tsutil/creststn/TestGetVersion");
+    addTest(root, &TestGetVersionColl,        "tsutil/creststn/TestGetVersionColl");
+    addTest(root, &TestAliasConflict,         "tsutil/creststn/TestAliasConflict");
     addTest(root, &TestGetKeywordValues,      "tsutil/creststn/TestGetKeywordValues"); 
     addTest(root, &TestGetFunctionalEquivalent,"tsutil/creststn/TestGetFunctionalEquivalent");
     addTest(root, &TestJB3763,                "tsutil/creststn/TestJB3763");
-    addTest(root, &TestXPath,                 "tsutil/creststn/TestXPath"); 
-    addTest(root, &TestCLDRStyleAliases,      "tsutil/creststn/TestCLDRStyleAliases");
-    addTest(root, &TestFallbackCodes,         "tsutil/creststn/TestFallbackCodes");    
     addTest(root, &TestStackReuse,            "tsutil/creststn/TestStackReuse");
-    addTest(root, &TestGetUTF8String,         "tsutil/creststn/TestGetUTF8String");
-    addTest(root, &TestCLDRVersion,           "tsutil/creststn/TestCLDRVersion");
 }
 
 
@@ -258,28 +260,29 @@ static void TestErrorCodes(void) {
   checkStatus(__LINE__, U_USING_FALLBACK_WARNING, status);
   ures_close(r);
 
-  /* this bundle should return zero error, so it shouldn't change the status*/
+  /* this bundle should return zero error, so it shouldn't change the status */
   status = U_USING_DEFAULT_WARNING;
   r = ures_open(NULL, "ti_ER", &status);
   checkStatus(__LINE__, U_USING_DEFAULT_WARNING, status);
 
   /* we look up the resource which is aliased, but it lives in fallback */
+
   if(U_SUCCESS(status) && r != NULL) {
-    status = U_USING_DEFAULT_WARNING; 
-    r2 = ures_getByKey(r, "Languages", NULL, &status);  /* languages of 'ti' aliases to 'am' */
+    status = U_USING_DEFAULT_WARNING;
+    r2 = ures_getByKey(r, "LocaleScript", NULL, &status);  /* LocaleScript lives in ti */
     checkStatus(__LINE__, U_USING_FALLBACK_WARNING, status);
-  } 
+  }
   ures_close(r);
 
-  /* this bundle should return zero error, so it shouldn't change the status*/
+  /* this bundle should return zero error, so it shouldn't change the status */
   status = U_USING_DEFAULT_WARNING;
-  r = ures_open(NULL, "ti", &status);
+  r = ures_open(U_ICUDATA_REGION, "ti", &status);
   checkStatus(__LINE__, U_USING_DEFAULT_WARNING, status);
 
   /* we look up the resource which is aliased and at our level */
   if(U_SUCCESS(status) && r != NULL) {
-    status = U_USING_DEFAULT_WARNING; 
-    r2 = ures_getByKey(r, "Languages", r2, &status);
+    status = U_USING_DEFAULT_WARNING;
+    r2 = ures_getByKey(r, "Countries", r2, &status);
     checkStatus(__LINE__, U_USING_DEFAULT_WARNING, status);
   }
   ures_close(r);
@@ -291,33 +294,33 @@ static void TestErrorCodes(void) {
   ures_close(r2);
 
   /** Now, with the collation bundle **/
-  
+ 
   /* first bundle should return fallback warning */
   r = ures_open(U_ICUDATA_COLL, "sr_YU_VOJVODINA", &status);
   checkStatus(__LINE__, U_USING_FALLBACK_WARNING, status);
   ures_close(r);
 
-  /* this bundle should return zero error, so it shouldn't change the status*/
+  /* this bundle should return zero error, so it shouldn't change the status */
   status = U_USING_FALLBACK_WARNING;
   r = ures_open(U_ICUDATA_COLL, "sr", &status);
   checkStatus(__LINE__, U_USING_FALLBACK_WARNING, status);
 
   /* we look up the resource which is aliased  */
   if(U_SUCCESS(status) && r != NULL) {
-    status = U_USING_DEFAULT_WARNING; 
+    status = U_USING_DEFAULT_WARNING;
     r2 = ures_getByKey(r, "collations", NULL, &status);
     checkStatus(__LINE__, U_USING_DEFAULT_WARNING, status);
-  } 
+  }
   ures_close(r);
 
-  /* this bundle should return zero error, so it shouldn't change the status*/
+  /* this bundle should return zero error, so it shouldn't change the status */
   status = U_USING_DEFAULT_WARNING;
   r = ures_open(U_ICUDATA_COLL, "sr", &status);
   checkStatus(__LINE__, U_USING_DEFAULT_WARNING, status);
 
   /* we look up the resource which is aliased and at our level */
   if(U_SUCCESS(status) && r != NULL) {
-    status = U_USING_DEFAULT_WARNING; 
+    status = U_USING_DEFAULT_WARNING;
     r2 = ures_getByKey(r, "collations", r2, &status);
     checkStatus(__LINE__, U_USING_DEFAULT_WARNING, status);
   }
@@ -854,8 +857,8 @@ static void TestEmptyTypes() {
     }
     else {
         binResult=ures_getBinary(res, &len, &status);
-        if(!U_SUCCESS(status) || binResult != NULL || len != 0) {
-            log_err("Shouldn't get emptybin\n");
+        if(!U_SUCCESS(status) || len != 0) {
+            log_err("Couldn't get emptybin, or it's not empty\n");
         }
     }
 
@@ -871,7 +874,7 @@ static void TestEmptyTypes() {
     else {
         resArray=ures_getByIndex(res, 0, resArray, &status);
         if(U_SUCCESS(status) || resArray != NULL){
-            log_err("Shouldn't get emptyarray\n");
+            log_err("Shouldn't get emptyarray[0]\n");
         }
     }
 
@@ -887,7 +890,7 @@ static void TestEmptyTypes() {
     else {
         resArray=ures_getByIndex(res, 0, resArray, &status);
         if(U_SUCCESS(status) || resArray != NULL){
-            log_err("Shouldn't get emptytable\n");
+            log_err("Shouldn't get emptytable[0]\n");
         }
     }
 
@@ -2043,10 +2046,10 @@ static void TestFallback()
     ures_close(subResource);
 
     /* and this is a Fallback, to fr */
-    junk = tres_getString(fr_FR, -1, "Countries", &resultLen, &status);
+    junk = tres_getString(fr_FR, -1, "ExemplarCharacters", &resultLen, &status);
     if(status != U_USING_FALLBACK_WARNING)
     {
-        log_data_err("Expected U_USING_FALLBACK_ERROR when trying to get Countries from fr_FR, got %d\n", 
+        log_data_err("Expected U_USING_FALLBACK_ERROR when trying to get ExemplarCharacters from fr_FR, got %d\n", 
             status);
     }
     
@@ -2060,8 +2063,9 @@ static void TestFallback()
         UResourceBundle* myResB = ures_open(NULL,"no_NO_NY",&err);
         UResourceBundle* resLocID = ures_getByKey(myResB, "Version", NULL, &err);
         UResourceBundle* tResB;
+        UResourceBundle* zoneResource;
         const UChar* version = NULL;
-        static const UChar versionStr[] = { 0x0031, 0x002E, 0x0034, 0x0037, 0x0000};
+        static const UChar versionStr[] = { 0x0032, 0x002E, 0x0030, 0x002E, 0x0034, 0x0031, 0x002E, 0x0032, 0x0033, 0x0000};
 
         if(err != U_ZERO_ERROR){
             log_data_err("Expected U_ZERO_ERROR when trying to test no_NO_NY aliased to nn_NO for Version err=%s\n",u_errorName(err));
@@ -2076,14 +2080,15 @@ static void TestFallback()
             log_data_err("ures_getString(resLocID, &resultLen, &err) returned an unexpected version value. Expected '%s', but got '%s'\n",
                     x, g);
         }
-        tResB = ures_getByKey(myResB, "zoneStrings", NULL, &err);
+        zoneResource = ures_open(U_ICUDATA_ZONE, "no_NO_NY", &err);
+        tResB = ures_getByKey(zoneResource, "zoneStrings", NULL, &err);
         if(err != U_USING_FALLBACK_WARNING){
             log_err("Expected U_USING_FALLBACK_ERROR when trying to test no_NO_NY aliased with nn_NO_NY for zoneStrings err=%s\n",u_errorName(err));
         }
+        ures_close(tResB);
+        ures_close(zoneResource);
         ures_close(resLocID);
         ures_close(myResB);
-        ures_close(tResB);
-
     }
 
 }
@@ -2157,12 +2162,12 @@ static void TestResourceLevelAliasing(void) {
       string = tres_getString(tb, -1, NULL, &strLen, &status);
       
       if(seqLen != strLen || u_strncmp(sequence, string, seqLen) != 0) {
-        log_err("Referencing alias didn't get the right string\n");
+        log_err("Referencing alias didn't get the right string (1)\n");
       }
       
       string = tres_getString(aliasB, -1, "referencingalias", &strLen, &status);
       if(seqLen != strLen || u_strncmp(sequence, string, seqLen) != 0) {
-        log_err("Referencing alias didn't get the right string\n");
+        log_err("Referencing alias didn't get the right string (2)\n");
       }
       
       checkStatus(__LINE__, U_ZERO_ERROR, status);
@@ -2176,7 +2181,7 @@ static void TestResourceLevelAliasing(void) {
       if(U_FAILURE(status)) {
         log_err("%s trying to get string via separate getters\n", u_errorName(status));
       } else if(seqLen != strLen || u_strncmp(sequence, string, seqLen) != 0) {
-        log_err("Referencing alias didn't get the right string\n");
+        log_err("Referencing alias didn't get the right string (3)\n");
       }
       
 
@@ -2209,7 +2214,7 @@ static void TestResourceLevelAliasing(void) {
       string = tres_getString(tb, -1, NULL, &strLen, &status);
       
       if(U_FAILURE(status) || seqLen != strLen || u_strncmp(sequence, string, seqLen) != 0) {
-        log_err("Referencing alias didn't get the right string\n");
+        log_err("Referencing alias didn't get the right string (4)\n");
       }
       
       /* test indexed aliasing */
@@ -2218,11 +2223,11 @@ static void TestResourceLevelAliasing(void) {
       tb = ures_getByKey(tb, "zoneAlias2", tb, &status);
       string = tres_getString(tb, -1, NULL, &strLen, &status);
       
-      en = ures_findResource("en/zoneStrings/3/0", en, &status);
+      en = ures_findResource("/ICUDATA-zone/en/zoneStrings/3/0", en, &status);
       sequence = tres_getString(en, -1, NULL, &seqLen, &status);
       
       if(U_FAILURE(status) || seqLen != strLen || u_strncmp(sequence, string, seqLen) != 0) {
-        log_err("Referencing alias didn't get the right string\n");
+        log_err("Referencing alias didn't get the right string (5)\n");
       }
     }
     /* test getting aliased string by index */
@@ -2247,65 +2252,67 @@ static void TestResourceLevelAliasing(void) {
         const char *key = NULL;
         tb = ures_getByKey(aliasB, "testGetStringByKeyAliasing", tb, &status);
         if(U_FAILURE(status)) {
-            log_err("Couldn't get testGetStringByKeyAliasing resource\n");
-        }
-        for(i = 0; i < sizeof(strings)/sizeof(strings[0]); i++) {
-            result = tres_getString(tb, -1, keys[i], &resultLen, &status);
-            if(U_FAILURE(status)){
-                log_err("Fetching the resource with key %s failed. Error: %s\n", keys[i], u_errorName(status));
-                continue;
+          log_err("FAIL: Couldn't get testGetStringByKeyAliasing resource: %s\n", u_errorName(status));
+        } else {
+            for(i = 0; i < sizeof(strings)/sizeof(strings[0]); i++) {
+                result = tres_getString(tb, -1, keys[i], &resultLen, &status);
+                if(U_FAILURE(status)){
+                    log_err("(1) Fetching the resource with key %s failed. Error: %s\n", keys[i], u_errorName(status));
+                    continue;
+                }
+                uBufferLen = u_unescape(strings[i], uBuffer, 256);
+                if(resultLen != uBufferLen || u_strncmp(result, uBuffer, resultLen) != 0) {
+                  log_err("(1) Didn't get correct string while accessing alias table by key (%s)\n", keys[i]);
+                }
             }
-            uBufferLen = u_unescape(strings[i], uBuffer, 256);
-            if(resultLen != uBufferLen || u_strncmp(result, uBuffer, resultLen) != 0) {
-              log_err("Didn't get correct string while accesing alias table by key (%s)\n", keys[i]);
+            for(i = 0; i < sizeof(strings)/sizeof(strings[0]); i++) {
+                result = tres_getString(tb, i, NULL, &resultLen, &status); 
+                if(U_FAILURE(status)){
+                    log_err("(2) Fetching the resource with key %s failed. Error: %s\n", keys[i], u_errorName(status));
+                    continue;
+                }
+                uBufferLen = u_unescape(strings[i], uBuffer, 256);
+                if(result==NULL || resultLen != uBufferLen || u_strncmp(result, uBuffer, resultLen) != 0) {
+                  log_err("(2) Didn't get correct string while accesing alias table by index (%s)\n", strings[i]);
+                }
             }
-        }
-        for(i = 0; i < sizeof(strings)/sizeof(strings[0]); i++) {
-            result = tres_getString(tb, i, NULL, &resultLen, &status); 
-            if(U_FAILURE(status)){
-                log_err("Fetching the resource with key %s failed. Error: %s\n", keys[i], u_errorName(status));
-                continue;
-            }
-            uBufferLen = u_unescape(strings[i], uBuffer, 256);
-            if(result==NULL || resultLen != uBufferLen || u_strncmp(result, uBuffer, resultLen) != 0) {
-              log_err("Didn't get correct string while accesing alias table by index (%s)\n", strings[i]);
-            }
-        }
-        for(i = 0; i < sizeof(strings)/sizeof(strings[0]); i++) {
-            result = ures_getNextString(tb, &resultLen, &key, &status);
-            if(U_FAILURE(status)){
-                log_err("Fetching the resource with key %s failed. Error: %s\n", keys[i], u_errorName(status));
-                continue;
-            }
-            uBufferLen = u_unescape(strings[i], uBuffer, 256);
-            if(result==NULL || resultLen != uBufferLen || u_strncmp(result, uBuffer, resultLen) != 0) {
-              log_err("Didn't get correct string while iterating over alias table (%s)\n", strings[i]);
+            for(i = 0; i < sizeof(strings)/sizeof(strings[0]); i++) {
+                result = ures_getNextString(tb, &resultLen, &key, &status);
+                if(U_FAILURE(status)){
+                    log_err("(3) Fetching the resource with key %s failed. Error: %s\n", keys[i], u_errorName(status));
+                    continue;
+                }
+                uBufferLen = u_unescape(strings[i], uBuffer, 256);
+                if(result==NULL || resultLen != uBufferLen || u_strncmp(result, uBuffer, resultLen) != 0) {
+                  log_err("(3) Didn't get correct string while iterating over alias table (%s)\n", strings[i]);
+                }
             }
         }
         tb = ures_getByKey(aliasB, "testGetStringByIndexAliasing", tb, &status);
         if(U_FAILURE(status)) {
-            log_err("Couldn't get testGetStringByIndexAliasing resource\n");
-        }
-        for(i = 0; i < sizeof(strings)/sizeof(strings[0]); i++) {
-            result = tres_getString(tb, i, NULL, &resultLen, &status);
-            if(U_FAILURE(status)){
-                log_err("Fetching the resource with key %s failed. Error: %s\n", keys[i], u_errorName(status));
-                continue;
+          log_err("FAIL: Couldn't get testGetStringByIndexAliasing resource: %s\n", u_errorName(status));
+        } else {
+            for(i = 0; i < sizeof(strings)/sizeof(strings[0]); i++) {
+                result = tres_getString(tb, i, NULL, &resultLen, &status);
+                if(U_FAILURE(status)){
+                    log_err("Fetching the resource with key %s failed. Error: %s\n", keys[i], u_errorName(status));
+                    continue;
+                }
+                uBufferLen = u_unescape(strings[i], uBuffer, 256);
+                if(result==NULL || resultLen != uBufferLen || u_strncmp(result, uBuffer, resultLen) != 0) {
+                  log_err("Didn't get correct string while accesing alias by index in an array (%s)\n", strings[i]);
+                }
             }
-            uBufferLen = u_unescape(strings[i], uBuffer, 256);
-            if(result==NULL || resultLen != uBufferLen || u_strncmp(result, uBuffer, resultLen) != 0) {
-              log_err("Didn't get correct string while accesing alias by index in an array (%s)\n", strings[i]);
-            }
-        }
-        for(i = 0; i < sizeof(strings)/sizeof(strings[0]); i++) {
-            result = ures_getNextString(tb, &resultLen, &key, &status);
-            if(U_FAILURE(status)){
-                log_err("Fetching the resource with key %s failed. Error: %s\n", keys[i], u_errorName(status));
-                continue;
-            }
-            uBufferLen = u_unescape(strings[i], uBuffer, 256);
-            if(result==NULL || resultLen != uBufferLen || u_strncmp(result, uBuffer, resultLen) != 0) {
-              log_err("Didn't get correct string while iterating over aliases in an array (%s)\n", strings[i]);
+            for(i = 0; i < sizeof(strings)/sizeof(strings[0]); i++) {
+                result = ures_getNextString(tb, &resultLen, &key, &status);
+                if(U_FAILURE(status)){
+                    log_err("Fetching the resource with key %s failed. Error: %s\n", keys[i], u_errorName(status));
+                    continue;
+                }
+                uBufferLen = u_unescape(strings[i], uBuffer, 256);
+                if(result==NULL || resultLen != uBufferLen || u_strncmp(result, uBuffer, resultLen) != 0) {
+                  log_err("Didn't get correct string while iterating over aliases in an array (%s)\n", strings[i]);
+                }
             }
         }
     }
@@ -2370,7 +2377,7 @@ static void TestDirectAccess(void) {
         }
     }
     
-    t2 = ures_open(NULL, "sr", &status);
+    t2 = ures_open(U_ICUDATA_LANG, "sr", &status);
     if(U_FAILURE(status)) {
         log_err_status(status, "Couldn't open 'sr' resource bundle, error %s\n", u_errorName(status));
         log_data_err("No 'sr', no test - you have bigger problems than testing direct access. "
@@ -2956,7 +2963,7 @@ TestGetUTF8String() {
     ures_close(res);
 }
 
-void TestCLDRVersion() {
+static void TestCLDRVersion(void) {
   UVersionInfo zeroVersion;
   UVersionInfo testExpect;
   UVersionInfo testCurrent;
@@ -2983,9 +2990,6 @@ void TestCLDRVersion() {
   {
     UResourceBundle *res;
     const char *testdatapath;
-    char buffer8[16];
-    const char *s8;
-    int32_t length8;
 
     status = U_ZERO_ERROR;
     testdatapath = loadTestData(&status);
@@ -3012,16 +3016,15 @@ void TestCLDRVersion() {
 
   u_versionToString(testExpect,tmp);
   log_verbose("(data) ExpectCLDRVersionAtLeast { %s }\n", tmp); 
-  if(u_compareVersions(cldrVersion, testExpect) < 0) {
+  if(memcmp(cldrVersion, testExpect, sizeof(UVersionInfo)) < 0) {
     log_data_err("CLDR version is too old, expect at least %s.", tmp);
   }
   u_versionToString(testCurrent,tmp);
   log_verbose("(data) CurrentCLDRVersion { %s }\n", tmp); 
-  switch(u_compareVersions(cldrVersion, testCurrent)) {
+  switch(memcmp(cldrVersion, testCurrent, sizeof(UVersionInfo))) {
     case 0: break; /* OK- current. */
     case -1: log_info("CLDR version is behind 'current' (for testdata/root.txt) %s. Some things may fail.\n", tmp); break;
     case 1: log_info("CLDR version is ahead of 'current' (for testdata/root.txt) %s. Some things may fail.\n", tmp); break;
   }
 
 }
-

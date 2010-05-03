@@ -1,6 +1,6 @@
 //*******************************************************************************
 //
-//   Copyright (C) 2003-2009, International Business Machines
+//   Copyright (C) 2003-2010, International Business Machines
 //   Corporation and others.  All Rights Reserved.
 //
 //   file name:  conversion.txt
@@ -182,6 +182,8 @@ conversion:table(nofallback) {
           :intvector{ 0,1,1,1,1,2,3,8,11,13,14,14,14,14,15,16 },
           :int{1}, :int{0}, "", "&C", :bin{""}
         }
+        /*
+         * ICU 4.4 (ticket #7314) removes mappings for CNS 11643 planes 3..7
         {
           "ISO-2022-CN-EXT",
           :bin{ 4f1b4f4f1b242b494f1b4f4f4f4f1b204f },
@@ -189,6 +191,7 @@ conversion:table(nofallback) {
           :intvector{ 0,1,1,1,1,2,3,8,11,13,14,14,14,14,15,16 },
           :int{1}, :int{0}, "", "&C", :bin{""}
         }
+         */
         // Test ticket 5691: HZ with illegal tilde sequences.
         {
           "HZ",
@@ -510,6 +513,8 @@ conversion:table(nofallback) {
           :bin{ 1b2429410e4141 }, "\u4eae", :intvector{ 5 },
           :int{1}, :int{1}, "", ".", :bin{""}
         }
+        /*
+         * ICU 4.4 (ticket #7314) removes mappings for CNS 11643 planes 3..7
         // ISO-2022-CN-EXT with all subcharsets and shifts and with supplementary code points
         {
           "ISO-2022-CN-EXT",
@@ -518,6 +523,7 @@ conversion:table(nofallback) {
           :intvector{ 9, 15, 19, 29, 33, 33, 35 },
           :int{1}, :int{1}, "", ".", :bin{""}
         }
+         */
 
         // illegal and unsupported escape sequences
         // SS2 without designator: illegal
@@ -810,6 +816,141 @@ conversion:table(nofallback) {
           "\u260E\u260F",
           :intvector{ 4, 6 },
           :int{1}, :int{0}, "", ".", :bin{""}
+        }
+        
+        // Improve Code Coverage for BOCU-1
+        {
+          "BOCU-1",
+          :bin{ 91fbc555fd6349 },
+          "\u0041\ud841\ud888\udc81",
+          :intvector{ 0, 1, 4, 4 },
+          :int{1}, :int{0}, "", ".", :bin{""}
+        }
+        {
+          "BOCU-1",
+          :bin{ fbeda44ff0fe189bb821f05926 },
+          "\ufe88\ufe70\udbff\udfff\u0061",
+          :intvector{},
+          :int{1}, :int{0}, "", ".", :bin{""}
+        }
+        {
+          "BOCU-1",
+          :bin{ 5b4bccf9 },
+          "\u000b",
+          :intvector{},
+          :int{1}, :int{0}, "", "0", :bin{""}
+        }
+        {
+          "BOCU-1",
+          :bin{ fe0053c6 },
+          "\u0003\u0076",
+          :intvector{},
+          :int{1}, :int{0}, "", "0", :bin{""}
+        }
+
+        //Improve code coverage for SCSU
+        {
+          "SCSU",
+          :bin{ 0fd899dc7fd888dc99e041424361 },
+          "\ud899\udc7f\ud888\udc99\u0041\u0042\u0043\u0061",
+          :intvector{},
+          :int{1}, :int{0}, "", "0", :bin{""}
+        }
+        {
+          "SCSU",
+          :bin{ 41df1281035f10df1b03df1c88800bbfffff },
+          "\u0041\u00df\u0401\u015f\u00df\u01df\uf000\udbff\udfff",
+          :intvector{},
+          :int{1}, :int{0}, "", ".", :bin{""}
+        }
+        {
+          "SCSU",
+          :bin{ 1b9a1b541bb2411bfd1b0041 },
+          "",
+          :intvector{},
+          :int{1}, :int{0}, "", ".", :bin{""}
+        }
+        {
+          "SCSU",
+          :bin{ 0f6441b413a733f2 },
+          "\u6441\ub413\ua733",
+          :intvector{},
+          :int{1}, :int{0}, "illegal", ".", :bin{ f2 }
+        }
+
+        //Improve code coverage for MBCS
+        {
+          "*test5",
+          :bin{ 0506 },
+          "\ufffd\x06",
+          :intvector{},
+          :int{1}, :int{0}, "", "?", :bin{""}
+        }
+        {
+          "ibm-1390,swaplfnl",
+          :bin{ 430e4395ecc140400fc1e115 },
+          "\uff63\u30C8\u30C8\u309A\u3000\x41\u20ac\x0a",
+          :intvector{ 0, 2, 4, 4, 6, 9, 10, 11 },
+          :int{1}, :int{0}, "", "?", :bin{""}
+        }
+        /*
+         * ICU 4.4 (ticket #7314) removes mappings for CNS 11643 planes 3..7
+        {
+          "ISO-2022-CN-EXT",
+          :bin{ 1b242b4d1b4f66791b242b4d1b4f216a },
+          "\u3667",
+          :intvector{ 14 },
+          :int{1}, :int{0}, "", "0", :bin{""}
+        }
+         */
+        {
+          "*test1bmp",
+          :bin{ 060a05 },
+          "\u0066\ufffd\u0065",
+          :intvector{ 0, 2, 2 },
+          :int{0}, :int{1}, "", "?", :bin{""}
+        }
+        {
+          "*test1bmp",
+          :bin{ 060708 },
+          "\u0066",
+          :intvector{},
+          :int{1}, :int{0}, "invalid", ".", :bin{ 07 }
+        }
+        {
+          "*test5",
+          :bin{ 010304 },
+          "\u0034\ufffd",
+          :intvector{},
+          :int{1}, :int{0}, "", "?", :bin{""}
+        }
+        {
+          "*test1",
+          :bin{ 0a0b },
+          "",
+          :intvector{},
+          :int{1}, :int{0}, "", "0", :bin{""}
+        }
+        {
+          "*test1bmp",
+          :bin{ 0c06 },
+          "\u0066",
+          :intvector{},
+          :int{0}, :int{0}, "", ".", :bin{""}
+        }
+        {
+          "*test5",
+          :bin{ 0906 },
+          "\udbc8\udf45\u0006",
+          :intvector{},
+          :int{0}, :int{0}, "", ".", :bin{""}
+        }
+        {
+          "ibm-16684",
+          :bin{ 0e },
+          "",
+          :intvector{},
+          :int{0}, :int{0}, "illegal", ".", :bin{ 0e }
         }
       }
     }
@@ -1293,6 +1434,8 @@ conversion:table(nofallback) {
           :int{1}, :int{1}, "", ".", ""
         }
 
+        /*
+         * ICU 4.4 (ticket #7314) removes mappings for CNS 11643 planes 3..7
         // ISO-2022-CN-EXT with all subcharsets and shifts and with supplementary code points
         {
           "ISO-2022-CN-EXT",
@@ -1317,6 +1460,7 @@ conversion:table(nofallback) {
           :intvector{ 0,0,0,0,0,0,0,1,1,1,1,1,1,2,2,2,2,2,2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,4,4 },
           :int{0}, :int{1}, "", ".", ""
         }
+         */
 
         // windows-936 vs. ibm-1386
         {
@@ -1571,6 +1715,30 @@ conversion:table(nofallback) {
         { "EUC-JP", "\u0061\u4edd\u5bec\ud801\udc01\ud801\u0061\u00a2", :bin{ 61a1b88ff4aef4fef4fe618ee0 }, :intvector{ 0, 1, 1, 2, 2, 2, 3, 3, 5, 5, 6, 7, 7 }, :int{1}, :int{0}, "", "", "" }
         { "EUC-TW", "\u0061\u2295\u5BF2\ud801\udc01\ud801\u0061\u8706\u008a", :bin{ 61a2d38ea2dce561e6ca8a }, :intvector{ 0, 1, 1, 2, 2, 2, 2, 6, 7, 7, 8 }, :int{1}, :int{0}, "", "0", "" }
         { "EUC-TW", "\u0061\u2295\u5BF2\ud801\udc01\ud801\u0061\u8706\u008a", :bin{ 61a2d38ea2dce5fdfefdfe61e6ca8a }, :intvector{ 0, 1, 1, 2, 2, 2, 2, 3, 3, 5, 5, 6, 7, 7, 8 }, :int{1}, :int{0}, "", "", "" }
+        
+        // Code Coverage for BOCU-1
+        {
+          "BOCU-1",
+          "\u0041\ud841\ud888\udc81",
+          :bin{ 91fbc555fd6349 },
+          :intvector{ 0, 1, 1, 1, 2, 2, 2 },
+          :int{1}, :int{0}, "", ".", ""
+        }
+        {
+          "BOCU-1",
+          "\ufe88\ufe70\udbff\udfff\u0061",
+          :bin{ fbeda44ff0fe189bb821f05926 },
+          :intvector{},
+          :int{1}, :int{0}, "", ".", ""
+        }
+        // Improve code coverage for SCSU
+        {
+          "SCSU",
+          "\ud899\udc7f\ud977\ud888\udc99\ud888\u0041",
+          :bin{ 0fd899dc7fd888dc99e041 },
+          :intvector{},
+          :int{1}, :int{0}, "", "0", ""
+        }
       }
     }
 
@@ -1699,12 +1867,15 @@ conversion:table(nofallback) {
           "[\x0e\x0f\x1b\u4e29\uffe6-\U0010ffff]",
           :int{0}
         }
+        /*
+         * ICU 4.4 (ticket #7314) removes mappings for CNS 11643 planes 3..7
         {
           "ISO-2022-CN-EXT",
           "[\x00-\x0d\x10-\x1a\x1c-\x7f\u4e00-\u4e05\u9f98\ufe6b\u4e28-\u4e2b\U00020000\U00020003-\U00020005\U00029664]",
           "[\x0e\x0f\x1b\U00020001\U00020002\U0002a6d7-\U0010ffff]",
           :int{0}
         }
+         */
 
         // HZ
         {

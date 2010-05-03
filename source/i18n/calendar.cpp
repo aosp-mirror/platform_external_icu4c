@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 1997-2009, International Business Machines Corporation and    *
+* Copyright (C) 1997-2010, International Business Machines Corporation and    *
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 *
@@ -582,6 +582,7 @@ static const int32_t kCalendarLimits[UCAL_FIELD_COUNT][4] = {
 
 // Resource bundle tags read by this class
 static const char gDateTimeElements[] = "DateTimeElements";
+static const char gWeekend[] = "weekend";
 
 // Data flow in Calendar
 // ---------------------
@@ -651,7 +652,7 @@ fZone(0)
     if (fZone == NULL) {
         success = U_MEMORY_ALLOCATION_ERROR;
     }
-    setWeekCountData(Locale::getDefault(), NULL, success);
+    setWeekData(Locale::getDefault(), NULL, success);
 }
 
 // -------------------------------------
@@ -679,7 +680,7 @@ fZone(0)
     clear();    
     fZone = zone;
 
-    setWeekCountData(aLocale, NULL, success);
+    setWeekData(aLocale, NULL, success);
 }
 
 // -------------------------------------
@@ -700,7 +701,7 @@ fZone(0)
     if (fZone == NULL) {
     	success = U_MEMORY_ALLOCATION_ERROR;
     }
-    setWeekCountData(aLocale, NULL, success);
+    setWeekData(aLocale, NULL, success);
 }
 
 // -------------------------------------
@@ -742,6 +743,10 @@ Calendar::operator=(const Calendar &right)
         }
         fFirstDayOfWeek          = right.fFirstDayOfWeek;
         fMinimalDaysInFirstWeek  = right.fMinimalDaysInFirstWeek;
+        fWeekendOnset            = right.fWeekendOnset;
+        fWeekendOnsetMillis      = right.fWeekendOnsetMillis;
+        fWeekendCease            = right.fWeekendCease;
+        fWeekendCeaseMillis      = right.fWeekendCeaseMillis;
         fNextStamp               = right.fNextStamp;
     }
 
@@ -860,7 +865,7 @@ Calendar::createInstance(TimeZone* zone, const Locale& aLocale, UErrorCode& succ
 #ifdef U_DEBUG_CALSVC
         fprintf(stderr, "%p: setting week count data to locale %s, actual locale %s\n", c, (const char*)aLocale.getName(), (const char *)actualLoc.getName());
 #endif
-        c->setWeekCountData(aLocale, c->getType(), success);  // set the correct locale (this was an indirected calendar)
+        c->setWeekData(aLocale, c->getType(), success);  // set the correct locale (this was an indirected calendar)
     }
     else
 #endif /* UCONFIG_NO_SERVICE */
@@ -906,6 +911,10 @@ Calendar::isEquivalentTo(const Calendar& other) const
         fLenient                == other.fLenient &&
         fFirstDayOfWeek         == other.fFirstDayOfWeek &&
         fMinimalDaysInFirstWeek == other.fMinimalDaysInFirstWeek &&
+        fWeekendOnset           == other.fWeekendOnset &&
+        fWeekendOnsetMillis     == other.fWeekendOnsetMillis &&
+        fWeekendCease           == other.fWeekendCease &&
+        fWeekendCeaseMillis     == other.fWeekendCeaseMillis &&
         *fZone                  == *other.fZone;
 }
 
@@ -947,7 +956,8 @@ Calendar::getAvailableLocales(int32_t& count)
 
 // -------------------------------------
 
-StringEnumeration* U_EXPORT2 getKeywordValuesForLocale(const char* key,
+StringEnumeration* U_EXPORT2
+Calendar::getKeywordValuesForLocale(const char* key,
                     const Locale& locale, UBool commonlyUsed, UErrorCode& status)
 {
     // This is a wrapper over ucal_getKeywordValuesForLocale
@@ -1010,6 +1020,14 @@ Calendar::setTimeInMillis( double millis, UErrorCode& status ) {
     fTime = millis;
     fAreFieldsSet = fAreAllFieldsSet = FALSE;
     fIsTimeSet = fAreFieldsVirtuallySet = TRUE;
+
+    for (int32_t i=0; i<UCAL_FIELD_COUNT; ++i) {
+        fFields[i]     = 0;
+        fStamp[i]     = kUnset;
+        fIsSet[i]     = FALSE;
+    }
+    
+
 }
 
 // -------------------------------------
@@ -2092,6 +2110,105 @@ Calendar::getMinimalDaysInFirstWeek() const
     return fMinimalDaysInFirstWeek;
 }
 
+// -------------------------------------
+// weekend functions, just dummy implementations for now (for API freeze)
+
+UCalendarWeekdayType
+Calendar::getDayOfWeekType(UCalendarDaysOfWeek dayOfWeek, UErrorCode &status) const
+{
+    if (U_FAILURE(status)) {
+        return UCAL_WEEKDAY;
+    }
+    if (dayOfWeek < UCAL_SUNDAY || dayOfWeek > UCAL_SATURDAY) {
+        status = U_ILLEGAL_ARGUMENT_ERROR;
+        return UCAL_WEEKDAY;
+    }
+    if (fWeekendOnset < fWeekendCease) {
+        if (dayOfWeek < fWeekendOnset || dayOfWeek > fWeekendCease) {
+            return UCAL_WEEKDAY;
+        }
+    } else {
+        if (dayOfWeek > fWeekendCease && dayOfWeek < fWeekendOnset) {
+            return UCAL_WEEKDAY;
+        }
+    }
+    if (dayOfWeek == fWeekendOnset) {
+        return (fWeekendOnsetMillis == 0) ? UCAL_WEEKEND : UCAL_WEEKEND_ONSET;
+    }
+    if (dayOfWeek == fWeekendCease) {
+        return (fWeekendCeaseMillis == 0) ? UCAL_WEEKDAY : UCAL_WEEKEND_CEASE;
+    }
+    return UCAL_WEEKEND;
+}
+
+int32_t
+Calendar::getWeekendTransition(UCalendarDaysOfWeek dayOfWeek, UErrorCode &status) const
+{
+    if (U_FAILURE(status)) {
+        return 0;
+    }
+    if (dayOfWeek == fWeekendOnset) {
+        return fWeekendOnsetMillis;
+    } else if (dayOfWeek == fWeekendCease) {
+        return fWeekendCeaseMillis;
+    }
+    status = U_ILLEGAL_ARGUMENT_ERROR;
+    return 0;
+}
+
+UBool
+Calendar::isWeekend(UDate date, UErrorCode &status) const
+{
+    if (U_FAILURE(status)) {
+        return FALSE;
+    }
+    // clone the calendar so we don't mess with the real one.
+    Calendar *work = (Calendar*)this->clone();
+    if (work == NULL) {
+        status = U_MEMORY_ALLOCATION_ERROR;
+        return FALSE;
+    }
+    UBool result = FALSE;
+    work->setTime(date, status);
+    if (U_SUCCESS(status)) {
+        result = work->isWeekend();
+    }
+    delete work;
+    return result;
+}
+
+UBool
+Calendar::isWeekend(void) const
+{
+    UErrorCode status = U_ZERO_ERROR;
+    UCalendarDaysOfWeek dayOfWeek = (UCalendarDaysOfWeek)get(UCAL_DAY_OF_WEEK, status);
+    UCalendarWeekdayType dayType = getDayOfWeekType(dayOfWeek, status);
+    if (U_SUCCESS(status)) {
+        switch (dayType) {
+            case UCAL_WEEKDAY:
+                return FALSE;
+            case UCAL_WEEKEND:
+                return TRUE;
+            case UCAL_WEEKEND_ONSET:
+            case UCAL_WEEKEND_CEASE:
+                // Use internalGet() because the above call to get() populated all fields.
+                {
+                    int32_t millisInDay = internalGet(UCAL_MILLISECONDS_IN_DAY);
+                    int32_t transitionMillis = getWeekendTransition(dayOfWeek, status);
+                    if (U_SUCCESS(status)) {
+                        return (dayType == UCAL_WEEKEND_ONSET)?
+                            (millisInDay >= transitionMillis):
+                            (millisInDay <  transitionMillis);
+                    }
+                    // else fall through, return FALSE
+                }
+            default:
+                break;
+        }
+    }
+    return FALSE;
+}
+
 // ------------------------------------- limits
 
 int32_t 
@@ -3102,7 +3219,7 @@ int32_t Calendar::getActualHelper(UCalendarDateFields field, int32_t startValue,
 // -------------------------------------
 
 void
-Calendar::setWeekCountData(const Locale& desiredLocale, const char *type, UErrorCode& status)
+Calendar::setWeekData(const Locale& desiredLocale, const char *type, UErrorCode& status)
 {
     // Read the week count data from the resource bundle.  This should
     // have the form:
@@ -3118,44 +3235,67 @@ Calendar::setWeekCountData(const Locale& desiredLocale, const char *type, UError
 
     fFirstDayOfWeek = UCAL_SUNDAY;
     fMinimalDaysInFirstWeek = 1;
+    fWeekendOnset = UCAL_SATURDAY;
+    fWeekendOnsetMillis = 0;
+    fWeekendCease = UCAL_SUNDAY;
+    fWeekendCeaseMillis = 86400000; // 24*60*60*1000
 
     CalendarData calData(desiredLocale, type, status);
     // If the resource data doesn't seem to be present at all, then use last-resort
     // hard-coded data.
     UResourceBundle *dateTimeElements = calData.getByKey(gDateTimeElements, status);
 
-    if (U_FAILURE(status))
-    {
+    if (U_FAILURE(status)) {
 #if defined (U_DEBUG_CALDATA)
         fprintf(stderr, " Failure loading dateTimeElements = %s\n", u_errorName(status));
 #endif
         status = U_USING_FALLBACK_WARNING;
-        return;
-    }
-
-    U_LOCALE_BASED(locBased, *this);
-    locBased.setLocaleIDs(ures_getLocaleByType(dateTimeElements, ULOC_VALID_LOCALE, &status),
-        ures_getLocaleByType(dateTimeElements, ULOC_ACTUAL_LOCALE, &status));
-    if (U_SUCCESS(status)) {
+    } else {
+        U_LOCALE_BASED(locBased, *this);
+        locBased.setLocaleIDs(ures_getLocaleByType(dateTimeElements, ULOC_VALID_LOCALE, &status),
+            ures_getLocaleByType(dateTimeElements, ULOC_ACTUAL_LOCALE, &status));
+        if (U_SUCCESS(status)) {
 #if defined (U_DEBUG_CAL)
-        fprintf(stderr, " Valid=%s, Actual=%s\n", validLocale, actualLocale);
+            fprintf(stderr, " Valid=%s, Actual=%s\n", validLocale, actualLocale);
 #endif
-        int32_t arrLen;
-        const int32_t *dateTimeElementsArr = ures_getIntVector(dateTimeElements, &arrLen, &status);
-
-        if(U_SUCCESS(status) && arrLen == 2
-            && 1 <= dateTimeElementsArr[0] && dateTimeElementsArr[0] <= 7
-            && 1 <= dateTimeElementsArr[1] && dateTimeElementsArr[1] <= 7)
-        {
-            fFirstDayOfWeek = (UCalendarDaysOfWeek)dateTimeElementsArr[0];
-            fMinimalDaysInFirstWeek = (uint8_t)dateTimeElementsArr[1];
-        }
-        else {
-            status = U_INVALID_FORMAT_ERROR;
+            int32_t arrLen;
+            const int32_t *dateTimeElementsArr = ures_getIntVector(dateTimeElements, &arrLen, &status);
+    
+            if(U_SUCCESS(status) && arrLen == 2
+                && 1 <= dateTimeElementsArr[0] && dateTimeElementsArr[0] <= 7
+                && 1 <= dateTimeElementsArr[1] && dateTimeElementsArr[1] <= 7)
+            {
+                fFirstDayOfWeek = (UCalendarDaysOfWeek)dateTimeElementsArr[0];
+                fMinimalDaysInFirstWeek = (uint8_t)dateTimeElementsArr[1];
+            }
+            else {
+                status = U_INVALID_FORMAT_ERROR;
+            }
         }
     }
-
     // do NOT close dateTimeElements
+    
+    if (U_SUCCESS(status)) {
+        UResourceBundle *weekend = calData.getByKey(gWeekend, status);
+        if (U_FAILURE(status)) {
+            status = U_USING_FALLBACK_WARNING;
+        } else {
+            int32_t arrLen;
+            const int32_t *weekendArr = ures_getIntVector(weekend, &arrLen, &status);
+            if(U_SUCCESS(status) && arrLen >= 4
+                && 1 <= weekendArr[0] && weekendArr[0] <= 7
+                && 1 <= weekendArr[2] && weekendArr[2] <= 7)
+            {
+                fWeekendOnset = (UCalendarDaysOfWeek)weekendArr[0];
+                fWeekendOnsetMillis = weekendArr[1];
+                fWeekendCease = (UCalendarDaysOfWeek)weekendArr[2];
+                fWeekendCeaseMillis = weekendArr[3];
+            }
+            else {
+                status = U_INVALID_FORMAT_ERROR;
+            }
+        }
+    }
 }
 
 /**

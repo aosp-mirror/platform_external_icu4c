@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-* Copyright (c) 2002-2009, International Business Machines
+* Copyright (c) 2002-2010, International Business Machines
 * Corporation and others.  All Rights Reserved.
 **********************************************************************
 */
@@ -25,8 +25,9 @@
 #include "uhash.h"
 #include "uresimp.h"
 #include "ulist.h"
+#include "ureslocs.h"
 
-//#define UCURR_DEBUG 1
+// #define UCURR_DEBUG 1
 #ifdef UCURR_DEBUG
 #include "stdio.h"
 #endif
@@ -124,7 +125,7 @@ _findMetaData(const UChar* currency, UErrorCode& ec) {
     // Get CurrencyMeta resource out of root locale file.  [This may
     // move out of the root locale file later; if it does, update this
     // code.]
-    UResourceBundle* currencyData = ures_openDirect(NULL, CURRENCY_DATA, &ec);
+    UResourceBundle* currencyData = ures_openDirect(U_ICUDATA_CURR, CURRENCY_DATA, &ec);
     UResourceBundle* currencyMeta = ures_getByKey(currencyData, CURRENCY_META, currencyData, &ec);
 
     if (U_FAILURE(ec)) {
@@ -207,7 +208,6 @@ static UBool U_CALLCONV currency_cleanup(void);
 U_CDECL_END
 struct CReg;
 
-/* Remember to call umtx_init(&gCRegLock) before using it! */
 static UMTX gCRegLock = 0;
 static CReg* gCRegHead = 0;
 
@@ -234,7 +234,6 @@ struct CReg : public U_NAMESPACE_QUALIFIER UMemory {
         if (status && U_SUCCESS(*status) && _iso && _id) {
             CReg* n = new CReg(_iso, _id);
             if (n) {
-                umtx_init(&gCRegLock);
                 umtx_lock(&gCRegLock);
                 if (!gCRegHead) {
                     /* register for the first time */
@@ -252,7 +251,6 @@ struct CReg : public U_NAMESPACE_QUALIFIER UMemory {
 
     static UBool unreg(UCurrRegistryKey key) {
         UBool found = FALSE;
-        umtx_init(&gCRegLock);
         umtx_lock(&gCRegLock);
 
         CReg** p = &gCRegHead;
@@ -272,7 +270,6 @@ struct CReg : public U_NAMESPACE_QUALIFIER UMemory {
 
     static const UChar* get(const char* id) {
         const UChar* result = NULL;
-        umtx_init(&gCRegLock);
         umtx_lock(&gCRegLock);
         CReg* p = gCRegHead;
 
@@ -306,12 +303,7 @@ struct CReg : public U_NAMESPACE_QUALIFIER UMemory {
 /*The declaration here is needed so currency_cleanup(void)
  * can call this function.
  */
-static UBool
-#if defined (OS390)
-        __cdecl /* force to __cdecl for now */
-#else
-        U_CALLCONV
-#endif
+static UBool U_CALLCONV
 currency_cache_cleanup(void);
 
 U_CDECL_BEGIN
@@ -395,7 +387,7 @@ ucurr_forLocale(const char* locale,
                 }
 
                 // Look up the CurrencyMap element in the root bundle.
-                UResourceBundle *rb = ures_openDirect(NULL, CURRENCY_DATA, &localStatus);
+                UResourceBundle *rb = ures_openDirect(U_ICUDATA_CURR, CURRENCY_DATA, &localStatus);
                 UResourceBundle *cm = ures_getByKey(rb, CURRENCY_MAP, rb, &localStatus);
                 UResourceBundle *countryArray = ures_getByKey(rb, id, cm, &localStatus);
                 UResourceBundle *currencyReq = ures_getByIndex(countryArray, 0, NULL, &localStatus);
@@ -525,7 +517,7 @@ ucurr_getName(const UChar* currency,
 
     const UChar* s = NULL;
     ec2 = U_ZERO_ERROR;
-    UResourceBundle* rb = ures_open(NULL, loc, &ec2);
+    UResourceBundle* rb = ures_open(U_ICUDATA_CURR, loc, &ec2);
 
     rb = ures_getByKey(rb, CURRENCIES, rb, &ec2);
 
@@ -605,7 +597,7 @@ ucurr_getPluralName(const UChar* currency,
 
     const UChar* s = NULL;
     ec2 = U_ZERO_ERROR;
-    UResourceBundle* rb = ures_open(NULL, loc, &ec2);
+    UResourceBundle* rb = ures_open(U_ICUDATA_CURR, loc, &ec2);
 
     rb = ures_getByKey(rb, CURRENCYPLURALS, rb, &ec2);
 
@@ -670,13 +662,7 @@ typedef struct {
 
 
 // Comparason function used in quick sort.
-static int
-#if defined (OS390)
-        __cdecl /* force to __cdecl for now */
-#else
-        U_CALLCONV
-#endif
-	currencyNameComparator(const void* a, const void* b) {
+static int U_CALLCONV currencyNameComparator(const void* a, const void* b) {
     const CurrencyNameStruct* currName_1 = (const CurrencyNameStruct*)a;
     const CurrencyNameStruct* currName_2 = (const CurrencyNameStruct*)b;
     for (int32_t i = 0; 
@@ -708,6 +694,7 @@ static int
 // all currency names in "en_US" and "en".
 static void
 getCurrencyNameCount(const char* loc, int32_t* total_currency_name_count, int32_t* total_currency_symbol_count) {
+    U_NAMESPACE_USE
     *total_currency_name_count = 0;
     *total_currency_symbol_count = 0;
     const UChar* s = NULL;
@@ -716,7 +703,7 @@ getCurrencyNameCount(const char* loc, int32_t* total_currency_name_count, int32_
     for (;;) {
         UErrorCode ec2 = U_ZERO_ERROR;
         // TODO: ures_openDirect?
-        UResourceBundle* rb = ures_open(NULL, locale, &ec2);
+        UResourceBundle* rb = ures_open(U_ICUDATA_CURR, locale, &ec2);
         UResourceBundle* curr = ures_getByKey(rb, CURRENCIES, NULL, &ec2);
         int32_t n = ures_getSize(curr);
         for (int32_t i=0; i<n; ++i) {
@@ -794,6 +781,7 @@ collectCurrencyNames(const char* locale,
                      CurrencyNameStruct** currencySymbols, 
                      int32_t* total_currency_symbol_count, 
                      UErrorCode& ec) {
+    U_NAMESPACE_USE
     // Look up the Currencies resource for the given locale.
     UErrorCode ec2 = U_ZERO_ERROR;
 
@@ -826,7 +814,7 @@ collectCurrencyNames(const char* locale,
     for (int32_t localeLevel = 0; ; ++localeLevel) {
         ec2 = U_ZERO_ERROR;
         // TODO: ures_openDirect
-        UResourceBundle* rb = ures_open(NULL, loc, &ec2);
+        UResourceBundle* rb = ures_open(U_ICUDATA_CURR, loc, &ec2);
         UResourceBundle* curr = ures_getByKey(rb, CURRENCIES, NULL, &ec2);
         int32_t n = ures_getSize(curr);
         for (int32_t i=0; i<n; ++i) {
@@ -1217,12 +1205,7 @@ deleteCacheEntry(CurrencyNameCacheEntry* entry) {
 
 
 // Cache clean up
-static UBool
-#if defined (OS390)
-        __cdecl /* force to __cdecl for now */
-#else
-        U_CALLCONV
-#endif
+static UBool U_CALLCONV
 currency_cache_cleanup(void) {
     for (int32_t i = 0; i < CURRENCY_NAME_CACHE_NUM; ++i) {
         if (currCache[i]) {
@@ -1876,7 +1859,7 @@ ucurr_countCurrencies(const char* locale,
         }
 
         // Look up the CurrencyMap element in the root bundle.
-        UResourceBundle *rb = ures_openDirect(NULL, CURRENCY_DATA, &localStatus);
+        UResourceBundle *rb = ures_openDirect(U_ICUDATA_CURR, CURRENCY_DATA, &localStatus);
         UResourceBundle *cm = ures_getByKey(rb, CURRENCY_MAP, rb, &localStatus);
 
         // Using the id derived from the local, get the currency data
@@ -1992,7 +1975,7 @@ ucurr_forLocaleAndDate(const char* locale,
             }
 
             // Look up the CurrencyMap element in the root bundle.
-            UResourceBundle *rb = ures_openDirect(NULL, CURRENCY_DATA, &localStatus);
+            UResourceBundle *rb = ures_openDirect(U_ICUDATA_CURR, CURRENCY_DATA, &localStatus);
             UResourceBundle *cm = ures_getByKey(rb, CURRENCY_MAP, rb, &localStatus);
 
             // Using the id derived from the local, get the currency data
@@ -2150,7 +2133,7 @@ U_CAPI UEnumeration *U_EXPORT2 ucurr_getKeywordValuesForLocale(const char *key, 
     memcpy(en, &defaultKeywordValues, sizeof(UEnumeration));
     en->context = values;
     
-    UResourceBundle *bundle = ures_openDirect(NULL, "supplementalData", status);
+    UResourceBundle *bundle = ures_openDirect(U_ICUDATA_CURR, "supplementalData", status);
     ures_getByKey(bundle, "CurrencyMap", bundle, status);
     UResourceBundle bundlekey, regbndl, curbndl, to;
     ures_initStackObject(&bundlekey);
@@ -2167,7 +2150,7 @@ U_CAPI UEnumeration *U_EXPORT2 ucurr_getKeywordValuesForLocale(const char *key, 
         UBool isPrefRegion = uprv_strcmp(region, prefRegion) == 0 ? TRUE : FALSE;
         if (!isPrefRegion && commonlyUsed) {
             // With commonlyUsed=true, we do not put
-            // currencies for other regionsin the
+            // currencies for other regions in the
             // result list.
             continue;
         }
@@ -2187,7 +2170,23 @@ U_CAPI UEnumeration *U_EXPORT2 ucurr_getKeywordValuesForLocale(const char *key, 
                 *status = U_MEMORY_ALLOCATION_ERROR;
                 break;
             }
+
+#if U_CHARSET_FAMILY==U_ASCII_FAMILY
             ures_getUTF8StringByKey(&curbndl, "id", curID, &curIDLength, TRUE, status);
+            /* optimize - use the utf-8 string */
+#else
+            {
+                       const UChar* defString = ures_getStringByKey(&curbndl, "id", &curIDLength, status);
+                       if(U_SUCCESS(*status)) {
+			   if(curIDLength+1 > ULOC_KEYWORDS_CAPACITY) {
+				*status = U_BUFFER_OVERFLOW_ERROR;
+			   } else {
+                           	u_UCharsToChars(defString, curID, curIDLength+1);
+			   }
+                       }
+            }
+#endif	
+
             if (U_FAILURE(*status)) {
                 break;
             }
@@ -2199,10 +2198,10 @@ U_CAPI UEnumeration *U_EXPORT2 ucurr_getKeywordValuesForLocale(const char *key, 
             } else {
                 hasTo = TRUE;
             }
-            if (isPrefRegion && !hasTo && !ulist_containsString(values, curID, uprv_strlen(curID))) {
+            if (isPrefRegion && !hasTo && !ulist_containsString(values, curID, (int32_t)uprv_strlen(curID))) {
                 // Currently active currency for the target country
                 ulist_addItemEndList(values, curID, TRUE, status);
-            } else if (!ulist_containsString(otherValues, curID, uprv_strlen(curID)) && !commonlyUsed) {
+            } else if (!ulist_containsString(otherValues, curID, (int32_t)uprv_strlen(curID)) && !commonlyUsed) {
                 ulist_addItemEndList(otherValues, curID, TRUE, status);
             } else {
                 uprv_free(curID);
@@ -2223,7 +2222,7 @@ U_CAPI UEnumeration *U_EXPORT2 ucurr_getKeywordValuesForLocale(const char *key, 
             char *value = NULL;
             ulist_resetList(otherValues);
             while ((value = (char *)ulist_getNext(otherValues)) != NULL) {
-                if (!ulist_containsString(values, value, uprv_strlen(value))) {
+                if (!ulist_containsString(values, value, (int32_t)uprv_strlen(value))) {
                     char *tmpValue = (char *)uprv_malloc(sizeof(char) * ULOC_KEYWORDS_CAPACITY);
                     uprv_memcpy(tmpValue, value, uprv_strlen(value) + 1);
                     ulist_addItemEndList(values, tmpValue, TRUE, status);

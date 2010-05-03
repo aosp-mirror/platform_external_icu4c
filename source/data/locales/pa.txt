@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2009 International Business Machines
+// * Copyright (C) 2010 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/pa.xml
@@ -10,59 +10,29 @@
  *  ICU <specials> source: <path>/xml/main/pa.xml
  */
 pa{
-    AuxExemplarCharacters{"[\u200C \u200D \u0A01-\u0A03 {ਲ\u0A3C}]"}
-    Countries{
-        IN{"ਭਾਰਤ"}
-    }
-    Currencies{
-        INR{
-            "ਰੁ.",
-            "ਰੁਪਿਯ",
-        }
-    }
+    AuxExemplarCharacters{"[\u200C \u200D ਃ \u0A02 \u0A01 {ਲ\u0A3C}]"}
     ExemplarCharacters{
-        "[਼ ੰ ੱ ੦-੯ ੴ ੳ ਉ ਊ ਓ ਅ ਆ ਐ ਔ ੲ ਇ ਈ ਏ ਸ {ਸ\u0A3C} ਹ ਕ ਖ {ਖ\u0A3C} ਗ {ਗ\u0A3C}"
-        " ਘ-ਜ {ਜ\u0A3C} ਝ-ਨ ਪ ਫ {ਫ\u0A3C} ਬ-ਰ ਲ ਵ ੜ ਾ-ੂ ੇ ੈ ੋ-੍]"
-    }
-    Languages{
-        ab{"ਅਬਖਾਜ਼ੀਅਨ"}
-        ace{"ਅਚੀਨੀ"}
-        ach{"ਅਕੋਲੀ"}
-        af{"ਅਫ਼ਰੀਕੀ"}
-        apa{"ਅਪਾਚੇ ਭਾਸ਼ਾ"}
-        ar{"ਅਰਬੀ"}
-        as{"ਅਸਾਮੀ"}
-        aus{"ਆਸਟਰੇਲੀਅਨ ਭਾਸ਼ਾ"}
-        az{"ਅਜ਼ੇਰਬੈਜਨਿ"}
-        bat{"ਬੈਲਟਿਕ ਭਾਸ਼ਾ"}
-        be{"ਬੇਲਾਰੂਸੀਅਨ"}
-        bn{"ਬੰਗਾਲੀ"}
-        da{"ਡੈਨਿਸ਼"}
-        de{"ਜਰਮਨ"}
-        en{"ਅੰਗਰੇਜ਼ੀ"}
-        eo{"ਏਸਪਰੇਂਟੋ"}
-        es{"ਸਪੇਨਿਸ਼"}
-        fi{"ਫਿਨਿਸ਼"}
-        fr{"ਫਰੈਂਚ"}
-        gu{"ਗੁਜਰਾਤੀ"}
-        hi{"ਹਿੰਦੀ"}
-        id{"ਇੰਡੋਨੇਸ਼ੀਆਈ"}
-        it{"ਇਤਾਲਵੀ"}
-        mk{"ਮੈਕੇਡੋਨੀਅਨ"}
-        nl{"ਡੱਚ"}
-        no{"ਨਾਰਵੇਜੀਅਨ"}
-        pa{"ਪੰਜਾਬੀ"}
-        pt{"ਪੋਰਤੂਗੂਈਸ"}
-        sv{"ਸਵੈਡਿਸ਼"}
-        ta{"ਤਾਮਿਲ"}
-        te{"ਤੇਲਗੂ"}
-        th{"ਥਾਈ"}
-        tw{"ਤ੍ਵਿ"}
-        ug{"ਉਇਘੁਰ"}
-        und{"und"}
+        "[\u0A71 \u0A70 \u0A3C ੦ ੧ ੨ ੩ ੪ ੫ ੬ ੭ ੮ ੯ ੴ ੳ ਉ ਊ ਓ ਅ ਆ ਐ ਔ ੲ ਇ ਈ ਏ ਸ {ਸ"
+        "\u0A3C} ਹ ਕ ਖ {ਖ\u0A3C} ਗ {ਗ\u0A3C} ਘ ਙ ਚ ਛ ਜ {ਜ\u0A3C} ਝ ਞ ਟ ਠ ਡ ਢ ਣ ਤ ਥ ਦ "
+        "ਧ ਨ ਪ ਫ {ਫ\u0A3C} ਬ ਭ ਮ ਯ ਰ ਲ ਵ ੜ \u0A4D ਾ ਿ ੀ \u0A41 \u0A42 \u0A47 \u0A48 "
+        "\u0A4B \u0A4C]"
     }
     LocaleScript{
         "Guru",
+    }
+    NumberElements{
+        ".",
+        ",",
+        ";",
+        "%",
+        "੦",
+        "#",
+        "-",
+        "E",
+        "‰",
+        "∞",
+        "NaN",
+        "+",
     }
     NumberPatterns{
         "#,##,##0.###",
@@ -70,7 +40,7 @@ pa{
         "#,##,##0%",
         "#E0",
     }
-    Version{"1.76"}
+    Version{"2.0.47.63"}
     calendar{
         gregorian{
             AmPmMarkers{
@@ -133,7 +103,7 @@ pa{
                 }
             }
             eras{
-                wide{
+                abbreviated{
                     "ਈਸਾਪੂਰਵ",
                     "ਸੰਨ",
                 }

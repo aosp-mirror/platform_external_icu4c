@@ -1,7 +1,7 @@
 /*
  *******************************************************************************
  *
- *   Copyright (C) 2003-2009, International Business Machines
+ *   Copyright (C) 2003-2010, International Business Machines
  *   Corporation and others.  All Rights Reserved.
  *
  *******************************************************************************
@@ -32,8 +32,9 @@
 #include "cstring.h"
 #include "udataswp.h"
 #include "ucln_cmn.h"
-#include "unormimp.h"
 #include "ubidi_props.h"
+
+U_NAMESPACE_USE
 
 U_CDECL_BEGIN
 
@@ -202,10 +203,6 @@ static UBool U_CALLCONV usprep_cleanup(void){
 }
 U_CDECL_END
 
-static void 
-usprep_init() {
-    umtx_init(&usprepMutex);
-}
 
 /** Initializes the cache for resources */
 static void 
@@ -279,7 +276,7 @@ loadData(UStringPrepProfile* profile,
     /* initialize some variables */
     profile->mappingData=(uint16_t *)((uint8_t *)(p+_SPREP_INDEX_TOP)+profile->indexes[_SPREP_INDEX_TRIE_SIZE]);
     
-    unorm_getUnicodeVersion(&normUnicodeVersion, errorCode);
+    u_getUnicodeVersion(normUnicodeVersion);
     normUniVer = (normUnicodeVersion[0] << 24) + (normUnicodeVersion[1] << 16) + 
                  (normUnicodeVersion[2] << 8 ) + (normUnicodeVersion[3]);
     sprepUniVer = (dataVersion[0] << 24) + (dataVersion[1] << 16) + 
@@ -334,89 +331,64 @@ usprep_getProfile(const char* path,
     /* fetch the data from the cache */
     umtx_lock(&usprepMutex);
     profile = (UStringPrepProfile*) (uhash_get(SHARED_DATA_HASHTABLE,&stackKey));
+    if(profile != NULL) {
+        profile->refCount++;
+    }
     umtx_unlock(&usprepMutex);
     
-    if(profile == NULL){
-        UStringPrepKey* key   = (UStringPrepKey*) uprv_malloc(sizeof(UStringPrepKey));
-        if(key == NULL){
-            *status = U_MEMORY_ALLOCATION_ERROR;
-            return NULL;
-        }
+    if(profile == NULL) {
         /* else load the data and put the data in the cache */
-        profile = (UStringPrepProfile*) uprv_malloc(sizeof(UStringPrepProfile));
-        if(profile == NULL){
+        LocalMemory<UStringPrepProfile> newProfile;
+        if(newProfile.allocateInsteadAndReset() == NULL) {
             *status = U_MEMORY_ALLOCATION_ERROR;
-            uprv_free(key);
             return NULL;
         }
-
-        /* initialize the data struct members */
-        uprv_memset(profile->indexes,0,sizeof(profile->indexes));
-        profile->mappingData = NULL;
-        profile->sprepData   = NULL;
-        profile->refCount    = 0;
-    
-        /* initialize the  key memebers */
-        key->name  = (char*) uprv_malloc(uprv_strlen(name)+1);
-        if(key->name == NULL){
-            *status = U_MEMORY_ALLOCATION_ERROR;
-            uprv_free(key);
-            uprv_free(profile);
-            return NULL;
-        }
-
-        uprv_strcpy(key->name, name);
-        
-        key->path=NULL;
-
-        if(path != NULL){
-            key->path      = (char*) uprv_malloc(uprv_strlen(path)+1);
-            if(key->path == NULL){
-                *status = U_MEMORY_ALLOCATION_ERROR;
-                uprv_free(key->name);
-                uprv_free(key);
-                uprv_free(profile);
-                return NULL;
-            }
-            uprv_strcpy(key->path, path);
-        }        
 
         /* load the data */
-        if(!loadData(profile, path, name, _SPREP_DATA_TYPE, status) || U_FAILURE(*status) ){
-            uprv_free(key->path);
-            uprv_free(key->name);
-            uprv_free(key);
-            uprv_free(profile);
+        if(!loadData(newProfile.getAlias(), path, name, _SPREP_DATA_TYPE, status) || U_FAILURE(*status) ){
             return NULL;
         }
         
         /* get the options */
-        profile->doNFKC            = (UBool)((profile->indexes[_SPREP_OPTIONS] & _SPREP_NORMALIZATION_ON) > 0);
-        profile->checkBiDi         = (UBool)((profile->indexes[_SPREP_OPTIONS] & _SPREP_CHECK_BIDI_ON) > 0);
+        newProfile->doNFKC = (UBool)((newProfile->indexes[_SPREP_OPTIONS] & _SPREP_NORMALIZATION_ON) > 0);
+        newProfile->checkBiDi = (UBool)((newProfile->indexes[_SPREP_OPTIONS] & _SPREP_CHECK_BIDI_ON) > 0);
 
-        if(profile->checkBiDi) {
-            profile->bdp = ubidi_getSingleton(status);
+        if(newProfile->checkBiDi) {
+            newProfile->bdp = ubidi_getSingleton(status);
             if(U_FAILURE(*status)) {
-                usprep_unload(profile);
-                uprv_free(key->path);
-                uprv_free(key->name);
-                uprv_free(key);
-                uprv_free(profile);
+                usprep_unload(newProfile.getAlias());
                 return NULL;
             }
-        } else {
-            profile->bdp = NULL;
         }
-        
+
+        LocalMemory<UStringPrepKey> key;
+        LocalMemory<char> keyName;
+        LocalMemory<char> keyPath;
+        if( key.allocateInsteadAndReset() == NULL ||
+            keyName.allocateInsteadAndCopy(uprv_strlen(name)+1) == NULL ||
+            (path != NULL &&
+             keyPath.allocateInsteadAndCopy(uprv_strlen(path)+1) == NULL)
+         ) {
+            *status = U_MEMORY_ALLOCATION_ERROR;
+            usprep_unload(newProfile.getAlias());
+            return NULL;
+        }
+
+        /* initialize the key members */
+        key->name = keyName.orphan();
+        uprv_strcpy(key->name, name);
+        if(path != NULL){
+            key->path = keyPath.orphan();
+            uprv_strcpy(key->path, path);
+        }        
+
+        profile = newProfile.orphan();
         umtx_lock(&usprepMutex);
         /* add the data object to the cache */
-        uhash_put(SHARED_DATA_HASHTABLE, key, profile, status);
+        profile->refCount = 1;
+        uhash_put(SHARED_DATA_HASHTABLE, key.orphan(), profile, status);
         umtx_unlock(&usprepMutex);
     }
-    umtx_lock(&usprepMutex);
-    /* increment the refcount */
-    profile->refCount++;
-    umtx_unlock(&usprepMutex);
 
     return profile;
 }
@@ -429,8 +401,6 @@ usprep_open(const char* path,
     if(status == NULL || U_FAILURE(*status)){
         return NULL;
     }
-    /* initialize the mutex */
-    usprep_init();
        
     /* initialize the profile struct members */
     return usprep_getProfile(path,name,status);
@@ -638,20 +608,9 @@ static int32_t
 usprep_normalize(   const UChar* src, int32_t srcLength, 
                     UChar* dest, int32_t destCapacity,
                     UErrorCode* status ){
-    /*
-     * Option UNORM_BEFORE_PRI_29:
-     *
-     * IDNA as interpreted by IETF members (see unicode mailing list 2004H1)
-     * requires strict adherence to Unicode 3.2 normalization,
-     * including buggy composition from before fixing Public Review Issue #29.
-     * Note that this results in some valid but nonsensical text to be
-     * either corrupted or rejected, depending on the text.
-     * See http://www.unicode.org/review/resolved-pri.html#pri29
-     * See unorm.cpp and cnormtst.c
-     */
     return unorm_normalize(
         src, srcLength,
-        UNORM_NFKC, UNORM_UNICODE_3_2|UNORM_BEFORE_PRI_29,
+        UNORM_NFKC, UNORM_UNICODE_3_2,
         dest, destCapacity,
         status);
 }

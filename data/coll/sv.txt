@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2009 International Business Machines
+// * Copyright (C) 2010 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/collation/sv.xml
@@ -10,7 +10,7 @@
  *  ICU <specials> source: <path>/xml/collation/sv.xml
  */
 sv{
-    Version{"1.27"}
+    Version{"2.0.47.1"}
     collations{
         default{"reformed"}
         reformed{
@@ -19,10 +19,10 @@ sv{
                 "&t<<<þ/h"
                 "&T<<<Þ/H"
                 "&Y<<ü<<<Ü<<ű<<<Ű"
-                "&[before 1]ʒ<å<<<Å<ä<<<Ä<<æ<<<Æ<<ę<<<Ę<ö<<<Ö<<ø<<<Ø<<ő<<<Ő<<œ<<<Œ<<ô"
+                "&[before 1]ǀ<å<<<Å<ä<<<Ä<<æ<<<Æ<<ę<<<Ę<ö<<<Ö<<ø<<<Ø<<ő<<<Ő<<œ<<<Œ<<ô"
                 "<<<Ô"
             }
-            Version{"1.7"}
+            Version{"1.8.1"}
         }
         standard{
             Sequence{
@@ -32,10 +32,10 @@ sv{
                 "&v<<<w"
                 "&V<<<W"
                 "&Y<<ü<<<Ü<<ű<<<Ű"
-                "&[before 1]ʒ<å<<<Å<ä<<<Ä<<æ<<<Æ<<ę<<<Ę<ö<<<Ö<<ø<<<Ø<<ő<<<Ő<<œ<<<Œ<<ô"
+                "&[before 1]ǀ<å<<<Å<ä<<<Ä<<æ<<<Æ<<ę<<<Ę<ö<<<Ö<<ø<<<Ø<<ő<<<Ő<<œ<<<Œ<<ô"
                 "<<<Ô"
             }
-            Version{"1.7"}
+            Version{"1.8.1"}
         }
     }
 }

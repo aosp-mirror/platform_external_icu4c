@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 2000-2009, International Business Machines
+*   Copyright (C) 2000-2010, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -397,6 +397,76 @@ gb18030Ranges[13][4]={
 
 /* bit flag for UConverter.options indicating GB 18030 special handling */
 #define _MBCS_OPTION_GB18030 0x8000
+
+/* bit flag for UConverter.options indicating KEIS,JEF,JIF special handling */
+#define _MBCS_OPTION_KEIS 0x01000
+#define _MBCS_OPTION_JEF  0x02000
+#define _MBCS_OPTION_JIPS 0x04000
+
+#define KEIS_SO_CHAR_1 0x0A
+#define KEIS_SO_CHAR_2 0x42
+#define KEIS_SI_CHAR_1 0x0A
+#define KEIS_SI_CHAR_2 0x41
+
+#define JEF_SO_CHAR 0x28
+#define JEF_SI_CHAR 0x29
+
+#define JIPS_SO_CHAR_1 0x1A
+#define JIPS_SO_CHAR_2 0x70
+#define JIPS_SI_CHAR_1 0x1A
+#define JIPS_SI_CHAR_2 0x71
+
+enum SISO_Option {
+    SI,
+    SO
+};
+typedef enum SISO_Option SISO_Option;
+
+static int32_t getSISOBytes(SISO_Option option, uint32_t cnvOption, uint8_t *value) {
+    int32_t SISOLength = 0;
+
+    switch (option) {
+        case SI:
+            if ((cnvOption&_MBCS_OPTION_KEIS)!=0) {
+                value[0] = KEIS_SI_CHAR_1;
+                value[1] = KEIS_SI_CHAR_2;
+                SISOLength = 2;
+            } else if ((cnvOption&_MBCS_OPTION_JEF)!=0) {
+                value[0] = JEF_SI_CHAR;
+                SISOLength = 1;
+            } else if ((cnvOption&_MBCS_OPTION_JIPS)!=0) {
+                value[0] = JIPS_SI_CHAR_1;
+                value[1] = JIPS_SI_CHAR_2;
+                SISOLength = 2;
+            } else {
+                value[0] = UCNV_SI;
+                SISOLength = 1;
+            }
+            break;
+        case SO:
+            if ((cnvOption&_MBCS_OPTION_KEIS)!=0) {
+                value[0] = KEIS_SO_CHAR_1;
+                value[1] = KEIS_SO_CHAR_2;
+                SISOLength = 2;
+            } else if ((cnvOption&_MBCS_OPTION_JEF)!=0) {
+                value[0] = JEF_SO_CHAR;
+                SISOLength = 1;
+            } else if ((cnvOption&_MBCS_OPTION_JIPS)!=0) {
+                value[0] = JIPS_SO_CHAR_1;
+                value[1] = JIPS_SO_CHAR_2;
+                SISOLength = 2;
+            } else {
+                value[0] = UCNV_SO;
+                SISOLength = 1;
+            }
+            break;
+        default:
+            /* Should never happen. */
+            break;
+    }
+
+    return SISOLength;
+}
 
 /* Miscellaneous ------------------------------------------------------------ */
 
@@ -1724,6 +1794,15 @@ ucnv_MBCSOpen(UConverter *cnv,
             /* set a flag for GB 18030 mode, which changes the callback behavior */
             cnv->options|=_MBCS_OPTION_GB18030;
         }
+    } else if((uprv_strstr(pArgs->name, "KEIS")!=NULL) || (uprv_strstr(pArgs->name, "keis")!=NULL)) {
+        /* set a flag for KEIS converter, which changes the SI/SO character sequence */
+        cnv->options|=_MBCS_OPTION_KEIS;
+    } else if((uprv_strstr(pArgs->name, "JEF")!=NULL) || (uprv_strstr(pArgs->name, "jef")!=NULL)) {
+        /* set a flag for JEF converter, which changes the SI/SO character sequence */
+        cnv->options|=_MBCS_OPTION_JEF;
+    } else if((uprv_strstr(pArgs->name, "JIPS")!=NULL) || (uprv_strstr(pArgs->name, "jips")!=NULL)) {
+        /* set a flag for JIPS converter, which changes the SI/SO character sequence */
+        cnv->options|=_MBCS_OPTION_JIPS;
     }
 
     /* fix maxBytesPerUChar depending on outputType and options etc. */
@@ -2074,7 +2153,7 @@ unrolled:
 #endif
 
     /* conversion loop */
-    while(targetCapacity>0) {
+    while(targetCapacity > 0 && source < sourceLimit) {
         entry=stateTable[0][*source++];
         /* MBCS_ENTRY_IS_FINAL(entry) */
 
@@ -3859,6 +3938,7 @@ ucnv_MBCSFromUnicodeWithOffsets(UConverterFromUnicodeArgs *pArgs,
     uint32_t stage2Entry;
     uint32_t asciiRoundtrips;
     uint32_t value;
+    uint8_t si_value[2], so_value[2], si_value_length, so_value_length;
     int32_t length, prevLength;
     uint8_t unicodeMask;
 
@@ -3929,6 +4009,10 @@ ucnv_MBCSFromUnicodeWithOffsets(UConverterFromUnicodeArgs *pArgs,
     prevSourceIndex=-1;
     sourceIndex= c==0 ? 0 : -1;
     nextSourceIndex=0;
+
+    /* Get the SI/SO character for the converter */
+    si_value_length = getSISOBytes(SI, cnv->options, si_value);
+    so_value_length = getSISOBytes(SO, cnv->options, so_value);
 
     /* conversion loop */
     /*
@@ -4019,8 +4103,14 @@ ucnv_MBCSFromUnicodeWithOffsets(UConverterFromUnicodeArgs *pArgs,
                             length=1;
                         } else {
                             /* change from double-byte mode to single-byte */
-                            value|=(uint32_t)UCNV_SI<<8;
-                            length=2;
+                            if (si_value_length == 1) {
+                                value|=(uint32_t)si_value[0]<<8;
+                                length = 2;
+                            } else if (si_value_length == 2) {
+                                value|=(uint32_t)si_value[1]<<8;
+                                value|=(uint32_t)si_value[0]<<16;
+                                length = 3;
+                            }
                             prevLength=1;
                         }
                     } else {
@@ -4028,8 +4118,14 @@ ucnv_MBCSFromUnicodeWithOffsets(UConverterFromUnicodeArgs *pArgs,
                             length=2;
                         } else {
                             /* change from single-byte mode to double-byte */
-                            value|=(uint32_t)UCNV_SO<<16;
-                            length=3;
+                            if (so_value_length == 1) {
+                                value|=(uint32_t)so_value[0]<<16;
+                                length = 3;
+                            } else if (so_value_length == 2) {
+                                value|=(uint32_t)so_value[1]<<16;
+                                value|=(uint32_t)so_value[0]<<24;
+                                length = 4;
+                            }
                             prevLength=2;
                         }
                     }
@@ -4239,8 +4335,14 @@ getTrail:
                             length=1;
                         } else {
                             /* change from double-byte mode to single-byte */
-                            value|=(uint32_t)UCNV_SI<<8;
-                            length=2;
+                            if (si_value_length == 1) {
+                                value|=(uint32_t)si_value[0]<<8;
+                                length = 2;
+                            } else if (si_value_length == 2) {
+                                value|=(uint32_t)si_value[1]<<8;
+                                value|=(uint32_t)si_value[0]<<16;
+                                length = 3;
+                            }
                             prevLength=1;
                         }
                     } else {
@@ -4248,8 +4350,14 @@ getTrail:
                             length=2;
                         } else {
                             /* change from single-byte mode to double-byte */
-                            value|=(uint32_t)UCNV_SO<<16;
-                            length=3;
+                            if (so_value_length == 1) {
+                                value|=(uint32_t)so_value[0]<<16;
+                                length = 3;
+                            } else if (so_value_length == 2) {
+                                value|=(uint32_t)so_value[1]<<16;
+                                value|=(uint32_t)so_value[0]<<24;
+                                length = 4;
+                            }
                             prevLength=2;
                         }
                     }
@@ -4502,15 +4610,27 @@ unassigned:
     ) {
         /* EBCDIC_STATEFUL ending with DBCS: emit an SI to return the output stream to SBCS */
         if(targetCapacity>0) {
-            *target++=(uint8_t)UCNV_SI;
+            *target++=(uint8_t)si_value[0];
+            if (si_value_length == 2) {
+                if (targetCapacity<2) {
+                    cnv->charErrorBuffer[0]=(uint8_t)si_value[1];
+                    cnv->charErrorBufferLength=1;
+                    *pErrorCode=U_BUFFER_OVERFLOW_ERROR;
+                } else {
+                    *target++=(uint8_t)si_value[1];
+                }
+            }
             if(offsets!=NULL) {
                 /* set the last source character's index (sourceIndex points at sourceLimit now) */
                 *offsets++=prevSourceIndex;
             }
         } else {
             /* target is full */
-            cnv->charErrorBuffer[0]=(char)UCNV_SI;
-            cnv->charErrorBufferLength=1;
+            cnv->charErrorBuffer[0]=(uint8_t)si_value[0];
+            if (si_value_length == 2) {
+                cnv->charErrorBuffer[1]=(uint8_t)si_value[1];
+            }
+            cnv->charErrorBufferLength=si_value_length;
             *pErrorCode=U_BUFFER_OVERFLOW_ERROR;
         }
         prevLength=1; /* we switched into SBCS */
@@ -4903,7 +5023,14 @@ ucnv_SBCSFromUTF8(UConverterFromUnicodeArgs *pFromUArgs,
                     c=b;
 moreBytes:
                     while(toULength<toULimit) {
-                        if(source<sourceLimit) {
+                        /*
+                         * The sourceLimit may have been adjusted before the conversion loop
+                         * to stop before a truncated sequence.
+                         * Here we need to use the real limit in case we have two truncated
+                         * sequences at the end.
+                         * See ticket #7492.
+                         */
+                        if(source<(uint8_t *)pToUArgs->sourceLimit) {
                             b=*source;
                             if(U8_IS_TRAIL(b)) {
                                 ++source;
@@ -5180,7 +5307,14 @@ ucnv_DBCSFromUTF8(UConverterFromUnicodeArgs *pFromUArgs,
                     c=b;
 moreBytes:
                     while(toULength<toULimit) {
-                        if(source<sourceLimit) {
+                        /*
+                         * The sourceLimit may have been adjusted before the conversion loop
+                         * to stop before a truncated sequence.
+                         * Here we need to use the real limit in case we have two truncated
+                         * sequences at the end.
+                         * See ticket #7492.
+                         */
+                        if(source<(uint8_t *)pToUArgs->sourceLimit) {
                             b=*source;
                             if(U8_IS_TRAIL(b)) {
                                 ++source;

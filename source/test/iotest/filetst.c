@@ -1,6 +1,6 @@
 /*
  **********************************************************************
- *   Copyright (C) 2004-2008, International Business Machines
+ *   Copyright (C) 2004-2010, International Business Machines
  *   Corporation and others.  All Rights Reserved.
  **********************************************************************
  *   file name:  filetst.c
@@ -321,6 +321,10 @@ static void TestFile(void) {
     standardFile = fopen(STANDARD_TEST_FILE, "wb");
     TestFileFromICU(u_finit(standardFile, NULL, NULL));
     fclose(standardFile);
+
+    log_verbose("Testing u_fadopt\n");
+    standardFile = fopen(STANDARD_TEST_FILE, "wb");
+    TestFileFromICU(u_fadopt(standardFile, NULL, NULL));
 */
 }
 #endif
@@ -1439,7 +1443,7 @@ static void TestFileWriteRetval(const char * a_pszEncoding) {
     UChar   testChar = 0xBEEF; 
 
     if (!*a_pszEncoding || 0 == strcmp(a_pszEncoding, "ASCII")) { 
-        testChar = 'A'; /* otherwise read test will fail */ 
+        testChar = 0x65; /* 'A' - otherwise read test will fail */ 
     } 
 
     buffer = (UChar*) malloc(expected * sizeof(UChar)); 
@@ -1474,8 +1478,9 @@ static void TestFileWriteRetval(const char * a_pszEncoding) {
         return; 
     } 
     for (count = 0; count < expected; ++count) { 
-        if (u_fgetc(myFile) != testChar) { 
-            log_err("u_fgetc returned unexpected character\n"); 
+        UChar gotChar = u_fgetc(myFile);
+	if(gotChar != testChar) {
+            log_err("u_fgetc returned unexpected character U+%04X expected U+%04X\n", gotChar, testChar); 
             u_fclose(myFile); 
             return; 
         } 

@@ -1,6 +1,6 @@
 /*
  **********************************************************************
- *   Copyright (C) 1998-2009, International Business Machines
+ *   Copyright (C) 1998-2010, International Business Machines
  *   Corporation and others.  All Rights Reserved.
  **********************************************************************
  */
@@ -327,7 +327,7 @@ public:
      *
      * @see LEInsertionList.h
      *
-     * @draft ICU 4.2
+     * @stable ICU 4.2
      */
     LEGlyphID *insertGlyphs(le_int32 atIndex, le_int32 insertCount, LEErrorCode& success);
 
@@ -342,7 +342,6 @@ public:
      *
      * @param atIndex the index of the glyph to be replaced
      * @param insertCount the number of glyphs to replace it with
-     * @param success set to an error code if the auxillary data cannot be retrieved.
      *
      * @return the address at which to store the replacement glyphs.
      *
@@ -363,7 +362,7 @@ public:
      * @param toPosition - target position of the glyph
      * @param marker marker bit
      *
-     * @draft ICU 4.2
+     * @stable ICU 4.2
      */
     void moveGlyph(le_int32 fromPosition, le_int32 toPosition, le_uint32 marker);
 

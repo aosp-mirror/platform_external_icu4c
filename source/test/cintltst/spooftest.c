@@ -18,7 +18,7 @@
 **/
 
 #include "unicode/utypes.h"
-#if !UCONFIG_NO_REGULAR_EXPRESSIONS
+#if !UCONFIG_NO_REGULAR_EXPRESSIONS && !UCONFIG_NO_NORMALIZATION
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -63,36 +63,15 @@ log_err("Test Failure at file %s, line %d: \"%s\" is false.\n", __FILE__, __LINE
 }
 
 
-static void test_assert_string(const char *expected, const UChar *actual, UBool nulTerm, const char *file, int line) {
-     char     buf_inside_macro[120];
-     int32_t  len = (int32_t)strlen(expected);
-     UBool    success;
-     if (nulTerm) {
-         u_austrncpy(buf_inside_macro, (actual), len+1);
-         buf_inside_macro[len+2] = 0;
-         success = (strcmp((expected), buf_inside_macro) == 0);
-     } else {
-         u_austrncpy(buf_inside_macro, (actual), len);
-         buf_inside_macro[len+1] = 0;
-         success = (strncmp((expected), buf_inside_macro, len) == 0);
-     }
-     if (success == FALSE) {
-         log_err("Failure at file %s, line %d, expected \"%s\", got \"%s\"\n",
-             file, line, (expected), buf_inside_macro);
-     }
-}
-
-#define TEST_ASSERT_STRING(expected, actual, nulTerm) test_assert_string(expected, actual, nulTerm, __FILE__, __LINE__)
-
-
-
 static void TestUSpoofCAPI(void);
 
 void addUSpoofTest(TestNode** root);
 
 void addUSpoofTest(TestNode** root)
 {
+#if !UCONFIG_NO_FILE_IO
     addTest(root, &TestUSpoofCAPI, "uspoof/TestUSpoofCAPI");
+#endif
 }
 
 /*
@@ -119,6 +98,8 @@ const UChar lll_Cyrl[]    = {(UChar)0x0406, (UChar)0x04C0, (UChar)0x31, 0};
 /* The skeleton transform for all of thes 'lll' lookalikes is all ascii digit 1. */
 const UChar lll_Skel[]    = {(UChar)0x31, (UChar)0x31, (UChar)0x31, 0};  
 
+/* Provide better code coverage */
+const char goodLatinUTF8[]    = {0x75, 0x77, 0};
 /*
  *   Spoof Detction C API Tests
  */
@@ -510,6 +491,9 @@ static void TestUSpoofCAPI(void) {
         TEST_ASSERT_SUCCESS(status);
         TEST_ASSERT_EQ(0, u_strcmp(lll_Skel, dest));
         TEST_ASSERT_EQ(u_strlen(lll_Skel), skelLength);
+
+        skelLength = uspoof_getSkeletonUTF8(sc, USPOOF_ANY_CASE, goodLatinUTF8, -1, dest, sizeof(dest)/sizeof(UChar), &status);
+        TEST_ASSERT_SUCCESS(status);
 
         skelLength = uspoof_getSkeleton(sc, USPOOF_ANY_CASE, lll_Latin_a, -1, NULL, 0, &status);
         TEST_ASSERT_EQ(U_BUFFER_OVERFLOW_ERROR, status);

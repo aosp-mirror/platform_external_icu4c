@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 2001-2009, International Business Machines Corporation and
+ * Copyright (c) 2001-2010, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /*******************************************************************************
@@ -770,7 +770,7 @@ static void logFailure (const char *platform, const char *test,
   *sEsc = *tEsc = *s = *t = 0;
   if(error == TRUE) {
     log_err("Difference between expected and generated order. Run test with -v for more info\n");
-  } else if(VERBOSITY == 0) {
+  } else if(getTestOption(VERBOSITY_OPTION) == 0) {
     return;
   }
   for(i = 0; i<sLen; i++) {
@@ -1093,7 +1093,7 @@ static void testCEs(UCollator *coll, UErrorCode *status) {
     UColOptionSet opts;
     UParseError parseError;
     UChar *rulesCopy = NULL;
-    collIterate c;
+    collIterate *c = uprv_new_collIterate(status);
     UCAConstants *consts = NULL;
     uint32_t UCOL_RESET_TOP_VALUE, /*UCOL_RESET_TOP_CONT, */
         UCOL_NEXT_TOP_VALUE, UCOL_NEXT_TOP_CONT;
@@ -1102,12 +1102,15 @@ static void testCEs(UCollator *coll, UErrorCode *status) {
 
     if (U_FAILURE(*status)) {
         log_err("Could not open root collator %s\n", u_errorName(*status));
+        uprv_delete_collIterate(c);
         return;
     }
 
     colLoc = ucol_getLocaleByType(coll, ULOC_ACTUAL_LOCALE, status);
     if (U_FAILURE(*status)) {
         log_err("Could not get collator name: %s\n", u_errorName(*status));
+        ucol_close(UCA);
+        uprv_delete_collIterate(c);
         return;
     }
 
@@ -1183,15 +1186,15 @@ static void testCEs(UCollator *coll, UErrorCode *status) {
             varT = (UBool)((specs & UCOL_TOK_VARIABLE_TOP) != 0);
             top_ = (UBool)((specs & UCOL_TOK_TOP) != 0);
 
-            uprv_init_collIterate(coll, rulesCopy+chOffset, chLen, &c);
+            uprv_init_collIterate(coll, rulesCopy+chOffset, chLen, c, status);
 
-            currCE = ucol_getNextCE(coll, &c, status);
+            currCE = ucol_getNextCE(coll, c, status);
             if(currCE == 0 && UCOL_ISTHAIPREVOWEL(*(rulesCopy+chOffset))) {
                 log_verbose("Thai prevowel detected. Will pick next CE\n");
-                currCE = ucol_getNextCE(coll, &c, status);
+                currCE = ucol_getNextCE(coll, c, status);
             }
 
-            currContCE = ucol_getNextCE(coll, &c, status);
+            currContCE = ucol_getNextCE(coll, c, status);
             if(!isContinuation(currContCE)) {
                 currContCE = 0;
             }
@@ -1272,6 +1275,7 @@ static void testCEs(UCollator *coll, UErrorCode *status) {
         free(rulesCopy);
     }
     ucol_close(UCA);
+    uprv_delete_collIterate(c);
 }
 
 #if 0
@@ -2212,10 +2216,10 @@ static void TestIncrementalNormalize(void) {
     UErrorCode       status = U_ZERO_ERROR;
     UCollationResult result;
 
-    int32_t myQ = QUICK;
+    int32_t myQ = getTestOption(QUICK_OPTION);
 
-    if(QUICK < 0) {
-      QUICK = 1;
+    if(getTestOption(QUICK_OPTION) < 0) {
+        setTestOption(QUICK_OPTION, 1);
     }
 
     {
@@ -2255,7 +2259,7 @@ static void TestIncrementalNormalize(void) {
         }
     }
 
-    QUICK = myQ;
+    setTestOption(QUICK_OPTION, myQ);
 
 
     /*  Test 2:  Non-normal sequence in a string that extends to the last character*/
@@ -2944,12 +2948,12 @@ static void TestVariableTopSetting(void) {
   UChar first[256] = { 0 };
   UChar second[256] = { 0 };
   UParseError parseError;
-  int32_t myQ = QUICK;
+  int32_t myQ = getTestOption(QUICK_OPTION);
 
   src.opts = &opts;
 
-  if(QUICK <= 0) {
-    QUICK = 1;
+  if(getTestOption(QUICK_OPTION) <= 0) {
+    setTestOption(QUICK_OPTION, 1);
   }
 
   /* this test will fail when normalization is turned on */
@@ -2992,10 +2996,11 @@ static void TestVariableTopSetting(void) {
             uint32_t CE = UCOL_NO_MORE_CES;
 
             /* before we start screaming, let's see if there is a problem with the rules */
-            collIterate s;
-            uprv_init_collIterate(coll, rulesCopy+oldChOffset, oldChLen, &s);
+            UErrorCode collIterateStatus = U_ZERO_ERROR;
+            collIterate *s = uprv_new_collIterate(&collIterateStatus);
+            uprv_init_collIterate(coll, rulesCopy+oldChOffset, oldChLen, s, &collIterateStatus);
 
-            CE = ucol_getNextCE(coll, &s, &status);
+            CE = ucol_getNextCE(coll, s, &status);
 
             for(i = 0; i < oldChLen; i++) {
               j = sprintf(buf, "%04X ", *(rulesCopy+oldChOffset+i));
@@ -3004,7 +3009,7 @@ static void TestVariableTopSetting(void) {
             if(status == U_PRIMARY_TOO_LONG_ERROR) {
               log_verbose("= Expected failure for %s =", buffer);
             } else {
-              if(s.pos == s.endp) {
+              if(uprv_collIterateAtEnd(s)) {
                 log_err("Unexpected failure setting variable top at offset %d. Error %s. Codepoints: %s\n",
                   oldChOffset, u_errorName(status), buffer);
               } else {
@@ -3012,6 +3017,7 @@ static void TestVariableTopSetting(void) {
                   buffer);
               }
             }
+            uprv_delete_collIterate(s);
           }
           varTop2 = ucol_getVariableTop(coll, &status);
           if((varTop1 & 0xFFFF0000) != (varTop2 & 0xFFFF0000)) {
@@ -3063,7 +3069,7 @@ static void TestVariableTopSetting(void) {
     status = U_ZERO_ERROR;
   }
 
-  QUICK = myQ;
+  setTestOption(QUICK_OPTION, myQ);
 
   log_verbose("Testing setting variable top to contractions\n");
   {
@@ -3618,9 +3624,16 @@ static void TestRuleOptions(void) {
       { "b", "\\u02d0", "a", "\\u02d1"}, 4
     },
 
+    /*
+     * The character in the second ordering test string
+     * has to match the character that has the [last regular] weight
+     * which changes with each UCA version.
+     * See the bottom of FractionalUCA.txt which says something like
+     *   [last regular [CE 27, 05, 05]] # U+1342E EGYPTIAN HIEROGLYPH AA032
+     */
     { "&[before 1][last regular]<b"
       "&[last regular]<a",
-        { "b", "\\uD808\\uDF6E", "a", "\\u4e00" }, 4
+        { "b", "\\U0001342E", "a", "\\u4e00" }, 4
     },
 
     { "&[before 1][first implicit]<b"
@@ -4721,34 +4734,6 @@ static void TestTailorNULL( void ) {
 }
 
 static void
-TestThaiSortKey(void)
-{
-  UChar yamakan = 0x0E4E;
-  UErrorCode status = U_ZERO_ERROR;
-  uint8_t key[256];
-  int32_t keyLen = 0;
-  /* NOTE: there is a Thai tailoring that moves Yammakan. It should not move it, */
-  /* since it stays in the same relative position. This should be addressed in CLDR */
-  /* UCA 4.0 uint8_t expectedKey[256] = { 0x01, 0xd9, 0xb2, 0x01, 0x05, 0x00 }; */
-  /* UCA 4.1 uint8_t expectedKey[256] = { 0x01, 0xdb, 0x3a, 0x01, 0x05, 0x00 }; */
-  /* UCA 5.0 uint8_t expectedKey[256] = { 0x01, 0xdc, 0xce, 0x01, 0x05, 0x00 }; */
-  /* UCA 5.1 moves Yammakan */
-  uint8_t expectedKey[256] = { 0x01, 0xe0, 0x4e, 0x01, 0x05, 0x00 };
-  UCollator *coll = ucol_open("th", &status);
-  if(U_FAILURE(status)) {
-    log_err_status(status, "Could not open a collator, exiting (%s)\n", u_errorName(status));
-    return;
-  }
-
-  keyLen = ucol_getSortKey(coll, &yamakan, 1, key, 256);
-  if(strcmp((char *)key, (char *)expectedKey)) {
-    log_err("Yammakan key is different from ICU 4.0!\n");
-  }
-
-  ucol_close(coll);
-}
-
-static void
 TestUpperFirstQuaternary(void)
 {
   const char* tests[] = { "B", "b", "Bb", "bB" };
@@ -5050,11 +5035,14 @@ TestTailor6179(void)
             { 0xFDD0,0x009E, 0}
      };
 
-    /* UCA5.1, the value may increase in later version. */
+    /*
+     * These values from FractionalUCA.txt will change,
+     * and need to be updated here.
+     */
     uint8_t firstPrimaryIgnCE[6]={1, 87, 1, 5, 1, 0};
-    uint8_t lastPrimaryIgnCE[6]={1, 0xE7, 0xB9, 1, 5, 0};
+    uint8_t lastPrimaryIgnCE[6]={1, 0xE3, 0xC9, 1, 5, 0};
     uint8_t firstSecondaryIgnCE[6]={1, 1, 0x3f, 0x03, 0};
-    uint8_t lastSecondaryIgnCE[6]={1, 1, 0x05, 0};
+    uint8_t lastSecondaryIgnCE[6]={1, 1, 0x3f, 0x03, 0};
 
     /* Test [Last Primary ignorable] */
 
@@ -5445,6 +5433,54 @@ static void TestHiragana(void) {
     ucol_close(ucol);
 }
 
+const static UChar testSameStrengthSourceCases[][MAX_TOKEN_LEN] = {
+    {0x0061},
+    {0x0061},
+    {0x006c, 0x0061},
+    {0x0061, 0x0061, 0x0061},
+    {0x0062}
+};
+
+const static UChar testSameStrengthTargetCases[][MAX_TOKEN_LEN] = {
+    {0x0031},
+    {0x006d},
+    {0x006b, 0x0062},
+    {0x0031, 0x0032, 0x0033},
+    {0x007a}
+};
+
+const static UCollationResult sameStrengthResults[] = {
+    UCOL_EQUAL,
+    UCOL_LESS,
+    UCOL_LESS,
+    UCOL_EQUAL,
+    UCOL_LESS
+};
+
+static void TestSameStrengthList(void)
+{
+
+    int32_t i;
+    UParseError error;
+    UErrorCode status = U_ZERO_ERROR;
+    UCollator  *myCollation;
+    UChar rules[] =  { 0x26, 0x61, 0x3c, 0x2a, 0x62, 0x63, 0x64, 0x20, 0x26, 0x62, 0x3c, 0x3c, 0x2a, 0x6b, 0x6c, 0x6d, 0x20, 0x26, 0x6b, 0x3c, 0x3c, 0x3c, 0x2a, 0x78, 0x79, 0x7a, 0x20, 0x26, 0x61, 0x3d, 0x2a, 0x31, 0x32, 0x33, 0x00 }; /* &a<*bcd &b<<*klm &k<<<*xyz &a=*123 */
+
+    myCollation = ucol_openRules(rules, u_strlen(rules), UCOL_ON, UCOL_TERTIARY, &error, &status);
+    if(U_FAILURE(status)){
+        log_err_status(status, "ERROR: in creation of rule based collator: %s\n", myErrorName(status));
+        return;
+    }
+    log_verbose("Testing the <<* syntax\n");
+    /*ucol_setAttribute(myCollation, UCOL_NORMALIZATION_MODE, UCOL_ON, &status);
+      ucol_setStrength(myCollation, UCOL_TERTIARY);*/
+    for (i = 0; i < 5 ; i++)
+    {
+        doTest(myCollation, testSameStrengthSourceCases[i], testSameStrengthTargetCases[i], sameStrengthResults[i]);
+    }
+    ucol_close(myCollation);
+}
+
 #define TEST(x) addTest(root, &x, "tscoll/cmsccoll/" # x)
 
 void addMiscCollTest(TestNode** root)
@@ -5508,7 +5544,6 @@ void addMiscCollTest(TestNode** root)
     TEST(TestBeforeTightening);
     /*TEST(TestMoreBefore);*/
     TEST(TestTailorNULL);
-    TEST(TestThaiSortKey);
     TEST(TestUpperFirstQuaternary);
     TEST(TestJ4960);
     TEST(TestJ5223);
@@ -5521,6 +5556,7 @@ void addMiscCollTest(TestNode** root)
     TEST(TestTailor6179);
     TEST(TestUCAPrecontext);
     TEST(TestOutOfBuffer5468);
+    TEST(TestSameStrengthList);
 }
 
 #endif /* #if !UCONFIG_NO_COLLATION */

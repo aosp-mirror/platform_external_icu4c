@@ -13,7 +13,7 @@
 #define INTLTESTSPOOF_H
 
 #include "unicode/utypes.h"
-#if !UCONFIG_NO_REGULAR_EXPRESSIONS
+#if !UCONFIG_NO_REGULAR_EXPRESSIONS && !UCONFIG_NO_NORMALIZATION && !UCONFIG_NO_FILE_IO
 #include "unicode/uspoof.h"
 #include "intltest.h"
 
@@ -32,10 +32,12 @@ public:
     
     void testInvisible();
 
+    void testConfData();
+
     // Internal function to run a single skeleton test case.
     void  checkSkeleton(const USpoofChecker *sc, uint32_t flags, 
                         const char *input, const char *expected, int32_t lineNum);
 };
 
-#endif  // !UCONFIG_NO_REGULAR_EXPRESSIONS
+#endif  // !UCONFIG_NO_REGULAR_EXPRESSIONS && !UCONFIG_NO_NORMALIZATION && !UCONFIG_NO_FILE_IO
 #endif

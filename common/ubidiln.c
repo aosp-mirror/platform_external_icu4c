@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 1999-2007, International Business Machines
+*   Copyright (C) 1999-2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -696,7 +696,7 @@ ubidi_getRuns(UBiDi *pBiDi, UErrorCode *pErrorCode) {
         const UChar *start=pBiDi->text, *limit=start+pBiDi->length, *pu;
         for(pu=start; pu<limit; pu++) {
             if(IS_BIDI_CONTROL_CHAR(*pu)) {
-                runIndex=getRunFromLogicalIndex(pBiDi, pu-start, pErrorCode);
+                runIndex=getRunFromLogicalIndex(pBiDi, (int32_t)(pu-start), pErrorCode);
                 pBiDi->runs[runIndex].insertRemove--;
             }
         }
@@ -748,7 +748,7 @@ prepareReorder(const UBiDiLevel *levels, int32_t length,
 U_CAPI void U_EXPORT2
 ubidi_reorderLogical(const UBiDiLevel *levels, int32_t length, int32_t *indexMap) {
     int32_t start, limit, sumOfSosEos;
-    UBiDiLevel minLevel, maxLevel;
+    UBiDiLevel minLevel = 0, maxLevel = 0;
 
     if(indexMap==NULL || !prepareReorder(levels, length, indexMap, &minLevel, &maxLevel)) {
         return;
@@ -811,7 +811,7 @@ ubidi_reorderLogical(const UBiDiLevel *levels, int32_t length, int32_t *indexMap
 U_CAPI void U_EXPORT2
 ubidi_reorderVisual(const UBiDiLevel *levels, int32_t length, int32_t *indexMap) {
     int32_t start, end, limit, temp;
-    UBiDiLevel minLevel, maxLevel;
+    UBiDiLevel minLevel = 0, maxLevel = 0;
 
     if(indexMap==NULL || !prepareReorder(levels, length, indexMap, &minLevel, &maxLevel)) {
         return;

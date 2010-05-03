@@ -11,7 +11,7 @@
 #include "unicode/bmsearch.h"
 
 
-#if !UCONFIG_NO_COLLATION
+#if !UCONFIG_NO_COLLATION && !UCONFIG_NO_BREAK_ITERATION
 
 
 //#define USE_SAFE_CASTS
@@ -22,6 +22,8 @@
 #define STATIC_CAST(type,value) (type) (value)
 #define CONST_CAST(type,value) (type) (value)
 #endif
+
+U_NAMESPACE_USE
 
 U_CAPI UCD * U_EXPORT2
 ucd_open(UCollator *coll, UErrorCode *status)

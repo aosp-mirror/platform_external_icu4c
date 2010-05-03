@@ -1,5 +1,5 @@
 # aclocal.m4 for ICU
-# Copyright (c) 1999-2009, International Business Machines Corporation and
+# Copyright (c) 1999-2010, International Business Machines Corporation and
 # others. All Rights Reserved.
 # Stephen F. Booth
 
@@ -149,10 +149,13 @@ AC_DEFUN(AC_CHECK_64BIT_LIBS,
     if test "$cross_compiling" = "yes" -a "${BITS_REQ}" != "nochange"; then
         AC_MSG_ERROR([Don't specify bitness when cross compiling. See readme.html for help with cross compilation., and set compiler options manually.])
     fi
-    DEFAULT_64BIT=no
+    AC_CHECK_SIZEOF([void *])
     AC_MSG_CHECKING([whether runnable 64 bit binaries are built by default])
-    AC_RUN_IFELSE(int main(void) {return (sizeof(void*)*8==64)?0:1;},
-       DEFAULT_64BIT=yes, DEFAULT_64BIT=no, DEFAULT_64BIT=unknown)
+    case $ac_cv_sizeof_void_p in
+        8) DEFAULT_64BIT=yes ;;
+        4) DEFAULT_64BIT=no ;;
+        *) DEFAULT_64BIT=unknown
+    esac
     BITS_GOT=unknown
     
     # 'OK' here means, we can exit any further checking, everything's copa
@@ -191,17 +194,16 @@ AC_DEFUN(AC_CHECK_64BIT_LIBS,
             *) ;;
         esac
     elif test "$DEFAULT_64BIT" = "unknown"; then
-        AC_MSG_ERROR([Unable to determine binary format.])
-        # cross compiling?
-        #BITS_GOT=unknown
-        #case "$BITS_REQ" in
-        #    64|64else32) BITS_OK=no
-        #    BITS_CHECK_32=yes
-        #    BITS_CHECK_64=yes
-        #    32) BITS_OK=no;;
-        #    nochange) ;;
-        #    *) ;;
-        #esac
+        # cross compiling.
+        BITS_GOT=unknown
+        case "$BITS_REQ" in
+            64|64else32) BITS_OK=no
+            BITS_CHECK_32=yes
+            BITS_CHECK_64=yes ;;
+            32) BITS_OK=no;;
+            nochange) ;;
+            *) ;;
+        esac
     fi
             
     AC_MSG_RESULT($DEFAULT_64BIT);

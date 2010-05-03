@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2009, International Business Machines Corporation and
+ * Copyright (c) 1997-2010, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -13,6 +13,7 @@
 #include "unicode/decimfmt.h"
 #include "unicode/dcfmtsym.h"
 #include "unicode/parseerr.h"
+#include "unicode/currpinf.h"
 
 // This is an API test, not a unit test.  It doesn't test very many cases, and doesn't
 // try to test the full functionality.  It just calls each function in the class and
@@ -45,6 +46,12 @@ void IntlTestDecimalFormatAPI::runIndexedTest( int32_t index, UBool exec, const 
             if(exec) {
                logln((UnicodeString)"DecimalFormat Rounding Increment test---");
                testRoundingInc(/*par*/);
+            }
+            break;
+        case 3: name = "TestCurrencyPluralInfo";
+            if(exec) {
+               logln((UnicodeString)"CurrencyPluralInfo API test---");
+               TestCurrencyPluralInfo();
             }
             break;
         default: name = ""; break;
@@ -365,6 +372,49 @@ void IntlTestDecimalFormatAPI::testAPI(/*char *par*/)
     delete test;
 }
 
+void IntlTestDecimalFormatAPI::TestCurrencyPluralInfo(){
+    UErrorCode status = U_ZERO_ERROR;
+
+    CurrencyPluralInfo *cpi = new CurrencyPluralInfo(status);
+    if(U_FAILURE(status)) {
+        errln((UnicodeString)"ERROR: CurrencyPluralInfo(UErrorCode) could not be created");
+    }
+
+    CurrencyPluralInfo cpi1 = *cpi;
+
+    if(cpi->getDynamicClassID() != CurrencyPluralInfo::getStaticClassID()){
+        errln((UnicodeString)"ERROR: CurrencyPluralInfo::getDynamicClassID() didn't return the expected value");
+    }
+
+    cpi->setCurrencyPluralPattern("","",status);
+    if(U_FAILURE(status)) {
+        errln((UnicodeString)"ERROR: CurrencyPluralInfo::setCurrencyPluralPattern");
+    }
+
+    cpi->setLocale(Locale::getCanada(), status);
+    if(U_FAILURE(status)) {
+        errln((UnicodeString)"ERROR: CurrencyPluralInfo::setLocale");
+    }
+    
+    cpi->setPluralRules("",status);
+    if(U_FAILURE(status)) {
+        errln((UnicodeString)"ERROR: CurrencyPluralInfo::setPluralRules");
+    }
+
+    DecimalFormat *df = new DecimalFormat(status);
+    if(U_FAILURE(status)) {
+        errcheckln(status, "ERROR: Could not create DecimalFormat - %s", u_errorName(status));
+    }
+
+    df->adoptCurrencyPluralInfo(cpi);
+
+    df->getCurrencyPluralInfo();
+
+    df->setCurrencyPluralInfo(cpi1);
+
+    delete df;
+}
+
 void IntlTestDecimalFormatAPI::testRounding(/*char *par*/)
 {
     UErrorCode status = U_ZERO_ERROR;
@@ -437,12 +487,16 @@ void IntlTestDecimalFormatAPI::testRoundingInc(/*char *par*/)
       return;
     }
 
+    // With rounding now being handled by decNumber, we no longer 
+    // set a rounding increment to enable non-default mode rounding,
+    // checking of which was the original point of this test.
+
     // set rounding mode with zero increment.  Rounding 
-    // increment should be set by this operation
+    // increment should not be set by this operation
     pat.setRoundingMode((DecimalFormat::ERoundingMode)0);
     roundingInc = pat.getRoundingIncrement();
-    if (roundingInc == 0.0) {
-      errln((UnicodeString)"ERROR: Rounding increment zero");
+    if (roundingInc != 0.0) {
+      errln((UnicodeString)"ERROR: Rounding increment not zero after setRoundingMode");
       return;
     }
 }

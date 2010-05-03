@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 1998-2008, International Business Machines
+*   Copyright (C) 1998-2010, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -712,15 +712,9 @@ addCollation(struct SResource  *result, uint32_t startline, UErrorCode *status)
         }
         else if (uprv_strcmp(subtag, "Sequence") == 0)
         {
-#if UCONFIG_NO_COLLATION
-            warning(line, "Not building collation elements because of UCONFIG_NO_COLLATION, see uconfig.h");
+#if UCONFIG_NO_COLLATION || UCONFIG_NO_FILE_IO
+            warning(line, "Not building collation elements because of UCONFIG_NO_COLLATION and/or UCONFIG_NO_FILE_IO, see uconfig.h");
 #else
-            /* in order to achieve smaller data files, we can direct genrb */
-            /* to omit collation rules */
-            if(!gOmitCollationRules) {
-              /* first we add the "Sequence", so that we always have rules */
-              table_add(result, member, line, status);
-            }
             if(gMakeBinaryCollation) {
                 UErrorCode intStatus = U_ZERO_ERROR;
 
@@ -729,8 +723,6 @@ addCollation(struct SResource  *result, uint32_t startline, UErrorCode *status)
                 uint8_t   *data  = NULL;
                 UCollator *coll  = NULL;
                 UParseError parseError;
-                /* add sequence */
-                /*table_add(result, member, line, status);*/
 
                 coll = ucol_openRules(member->u.fString.fChars, member->u.fString.fLength,
                     UCOL_OFF, UCOL_DEFAULT_STRENGTH,&parseError, &intStatus);
@@ -754,9 +746,8 @@ addCollation(struct SResource  *result, uint32_t startline, UErrorCode *status)
 
                     if (U_SUCCESS(intStatus) && data != NULL)
                     {
-                        member = bin_open(bundle, "%%CollationBin", len, data, NULL, NULL, status);
-                        /*table_add(bundle->fRoot, member, line, status);*/
-                        table_add(result, member, line, status);
+                        struct SResource *collationBin = bin_open(bundle, "%%CollationBin", len, data, NULL, NULL, status);
+                        table_add(result, collationBin, line, status);
                         uprv_free(data);
                     }
                     else
@@ -772,6 +763,11 @@ addCollation(struct SResource  *result, uint32_t startline, UErrorCode *status)
                 }
                 else
                 {
+                    if(intStatus == U_FILE_ACCESS_ERROR) {
+                      error(startline, "Collation could not be built- U_FILE_ACCESS_ERROR. Make sure ICU's data has been built and is loading properly.");
+                      *status = intStatus;
+                      return NULL;
+                    }
                     warning(line, "%%Collation could not be constructed from CollationElements - check context!");
                     if(isStrict()){
                         *status = intStatus;
@@ -784,6 +780,13 @@ addCollation(struct SResource  *result, uint32_t startline, UErrorCode *status)
                 }
             }
 #endif
+            /* in order to achieve smaller data files, we can direct genrb */
+            /* to omit collation rules */
+            if(gOmitCollationRules) {
+                bundle_closeString(bundle, member);
+            } else {
+                table_add(result, member, line, status);
+            }
         }
 
         /*member = string_open(bundle, subtag, tokenValue->fChars, tokenValue->fLength, status);*/
@@ -1838,7 +1841,7 @@ parse(UCHARBUF *buf, const char *inputDir, const char *outputDir, UErrorCode *st
     ustr_init(&comment);
     expect(TOK_STRING, &tokenValue, &comment, NULL, status);
 
-    bundle = bundle_open(&comment, status);
+    bundle = bundle_open(&comment, FALSE, status);
 
     if (bundle == NULL || U_FAILURE(*status))
     {

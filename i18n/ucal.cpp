@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-*   Copyright (C) 1996-2009, International Business Machines
+*   Copyright (C) 1996-2010, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *******************************************************************************
 */
@@ -135,6 +135,9 @@ ucal_open(  const UChar*  zoneID,
 
   if ( caltype == UCAL_GREGORIAN ) {
       char  localeBuf[ULOC_LOCALE_IDENTIFIER_CAPACITY];
+      if ( locale == NULL ) {
+          locale = uloc_getDefault();
+      }
       uprv_strncpy(localeBuf, locale, ULOC_LOCALE_IDENTIFIER_CAPACITY);
       uloc_setKeywordValue("calendar", "gregorian", localeBuf, ULOC_LOCALE_IDENTIFIER_CAPACITY, status);
       if (U_FAILURE(*status)) {
@@ -533,6 +536,34 @@ ucal_getType(const UCalendar *cal, UErrorCode* status)
     return ((Calendar*)cal)->getType();
 }
 
+U_CAPI UCalendarWeekdayType U_EXPORT2
+ucal_getDayOfWeekType(const UCalendar *cal, UCalendarDaysOfWeek dayOfWeek, UErrorCode* status)
+{
+    if (U_FAILURE(*status)) {
+        return UCAL_WEEKDAY;
+    }
+    return ((Calendar*)cal)->getDayOfWeekType(dayOfWeek, *status);
+}
+
+U_CAPI int32_t U_EXPORT2
+ucal_getWeekendTransition(const UCalendar *cal, UCalendarDaysOfWeek dayOfWeek, UErrorCode *status)
+{
+    if (U_FAILURE(*status)) {
+        return 0;
+    }
+    return ((Calendar*)cal)->getWeekendTransition(dayOfWeek, *status);
+}
+
+U_CAPI UBool U_EXPORT2
+ucal_isWeekend(const UCalendar *cal, UDate date, UErrorCode *status)
+{
+    if (U_FAILURE(*status)) {
+        return FALSE;
+    }
+    return ((Calendar*)cal)->isWeekend(date, *status);
+}
+
+
 static const UEnumeration defaultKeywordValues = {
     NULL,
     NULL,
@@ -608,7 +639,7 @@ ucal_getKeywordValuesForLocale(const char * /* key */, const char* locale, UBool
             if (U_SUCCESS(*status) && !commonlyUsed) {
                 // If not commonlyUsed, add other available values
                 for (int32_t i = 0; CAL_TYPES[i] != NULL; i++) {
-                    if (!ulist_containsString(values, CAL_TYPES[i], uprv_strlen(CAL_TYPES[i]))) {
+                    if (!ulist_containsString(values, CAL_TYPES[i], (int32_t)uprv_strlen(CAL_TYPES[i]))) {
                         ulist_addItemEndList(values, CAL_TYPES[i], FALSE, status);
                         if (U_FAILURE(*status)) {
                             break;

@@ -1,6 +1,6 @@
 ## -*-makefile-*-
 ## Cygwin-specific setup
-## Copyright (c) 2001-2008, International Business Machines Corporation and
+## Copyright (c) 2001-2010, International Business Machines Corporation and
 ## others. All Rights Reserved.
 
 ## Commands to generate dependency files
@@ -29,11 +29,14 @@ LIBCPPFLAGS =
 LINK.c=       $(CXX) $(CXXFLAGS) $(LDFLAGS)
 #LINK.cc=      $(CXX) $(CXXFLAGS) $(LDFLAGS)
 
+## Shared library options
+LD_SOOPTIONS= -Wl,-Bsymbolic
+
 ## Commands to make a shared library
 # $(subst) won't work in shell script.  #M# at the end omits these
 # lines from the shell script (Make only)
-SHLIB.c=	$(CC) $(CFLAGS) $(LDFLAGS) -shared -Wl,--enable-auto-import -Wl,--out-implib=$(subst cyg,lib,$@).$(A)#M#
-SHLIB.cc=	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared -Wl,--enable-auto-import -Wl,--out-implib=$(subst cyg,lib,$@).$(A)#M#
+SHLIB.c=	$(CC) $(CFLAGS) $(LDFLAGS) -shared $(LD_SOOPTIONS) -Wl,--enable-auto-import -Wl,--out-implib=$(subst cyg,lib,$@).$(A)#M#
+SHLIB.cc=	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(LD_SOOPTIONS) -Wl,--enable-auto-import -Wl,--out-implib=$(subst cyg,lib,$@).$(A)#M#
 # the #SH# lines don't go through further postprocessing. 
 # so, they must be valid shell script starting from column 4
 #SH#SHLIB_c="$(CC) $(CFLAGS) $(LDFLAGS) -shared "
@@ -54,11 +57,6 @@ STATIC_O = ao
 LIBICU = cyg$(ICUPREFIX)
 ## To have an import library is better on Cygwin
 IMPORT_LIB_EXT = .dll.a
-
-# Change the stubnames so that poorly working FAT disks and installation programs can work.
-# This is also for backwards compatibility.
-DATA_STUBNAME = dt
-I18N_STUBNAME = in
 
 ## Compilation rules
 %.$(STATIC_O): $(srcdir)/%.c

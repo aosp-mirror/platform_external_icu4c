@@ -1,22 +1,12 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2009 International Business Machines
+// * Copyright (C) 2010 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/es_US.xml
 // *
 // ***************************************************************************
 es_US{
-    Currencies{
-        JPY{
-            "¥",
-            "yen japonés",
-        }
-        USD{
-            "$",
-            "dólar estadounidense",
-        }
-    }
     MeasurementSystem:int{1}
     NumberElements{
         ".",
@@ -36,7 +26,7 @@ es_US{
         279,
         216,
     }
-    Version{"1.71"}
+    Version{"2.0.45.82"}
     calendar{
         gregorian{
             DateTimeElements:intvector{

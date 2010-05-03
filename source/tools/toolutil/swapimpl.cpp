@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2005-2009, International Business Machines
+*   Copyright (C) 2005-2010, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -50,6 +50,7 @@
 #include "ucol_swp.h"
 #include "ucnv_bld.h"
 #include "unormimp.h"
+#include "normalizer2impl.h"
 #include "sprpimpl.h"
 #include "propname.h"
 #include "rbbidata.h"
@@ -91,7 +92,7 @@ uprops_swap(const UDataSwapper *ds,
         pInfo->dataFormat[1]==0x50 &&
         pInfo->dataFormat[2]==0x72 &&
         pInfo->dataFormat[3]==0x6f &&
-        (pInfo->formatVersion[0]==3 || pInfo->formatVersion[0]==4 || pInfo->formatVersion[0]==5) &&
+        (3<=pInfo->formatVersion[0] && pInfo->formatVersion[0]<=6) &&
         pInfo->formatVersion[2]==UTRIE_SHIFT &&
         pInfo->formatVersion[3]==UTRIE_INDEX_SHIFT
     )) {
@@ -541,10 +542,7 @@ test_swap(const UDataSwapper *ds,
     const uint8_t *inBytes;
     uint8_t *outBytes;
 
-    const int32_t *inIndexes;
-    int32_t indexes[32];
-
-    int32_t i, offset, count;
+    int32_t offset;
 
     /* udata_swapDataHeader checks the arguments */
     headerSize=udata_swapDataHeader(ds, inData, length, outData, pErrorCode);
@@ -594,6 +592,7 @@ test_swap(const UDataSwapper *ds,
 
     return headerSize+size;
 }
+
 /* swap any data (except a .dat package) ------------------------------------ */
 
 static const struct {
@@ -621,6 +620,7 @@ static const struct {
 
 #if !UCONFIG_NO_NORMALIZATION
     { { 0x4e, 0x6f, 0x72, 0x6d }, unorm_swap },         /* dataFormat="Norm" */
+    { { 0x4e, 0x72, 0x6d, 0x32 }, unorm2_swap },        /* dataFormat="Nrm2" */
 #endif
 #if !UCONFIG_NO_COLLATION
     { { 0x55, 0x43, 0x6f, 0x6c }, ucol_swap },          /* dataFormat="UCol" */
@@ -632,9 +632,9 @@ static const struct {
 #endif
     { { 0x70, 0x6e, 0x61, 0x6d }, upname_swap },        /* dataFormat="pnam" */
     { { 0x75, 0x6e, 0x61, 0x6d }, uchar_swapNames },    /* dataFormat="unam" */
-
+#if !UCONFIG_NO_NORMALIZATION
     { { 0x43, 0x66, 0x75, 0x20 }, uspoof_swap },         /* dataFormat="Cfu " */
-
+#endif
     { { 0x54, 0x65, 0x73, 0x74 }, test_swap }            /* dataFormat="Test" */
 };
 

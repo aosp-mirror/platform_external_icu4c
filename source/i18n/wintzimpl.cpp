@@ -1,6 +1,6 @@
 /*
 ********************************************************************************
-*   Copyright (C) 2008, International Business Machines
+*   Copyright (C) 2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 ********************************************************************************
 *
@@ -20,6 +20,7 @@
 #include "unicode/basictz.h"
 #include "putilimp.h"
 #include "uassert.h"
+#include "cmemory.h"
 
 #   define WIN32_LEAN_AND_MEAN
 #   define VC_EXTRALEAN
@@ -29,6 +30,8 @@
 #   define NOMCX
 
 #include <windows.h>
+
+U_NAMESPACE_USE
 
 static UBool getSystemTimeInformation(TimeZone *tz, SYSTEMTIME &daylightDate, SYSTEMTIME &standardDate, int32_t &bias, int32_t &daylightBias, int32_t &standardBias) {
     UErrorCode status = U_ZERO_ERROR;
@@ -41,6 +44,7 @@ static UBool getSystemTimeInformation(TimeZone *tz, SYSTEMTIME &daylightDate, SY
     if (U_SUCCESS(status)) {
         if (std == NULL || dst == NULL) {
             bias = -1 * (initial->getRawOffset()/60000);
+            standardBias = 0;
             daylightBias = 0;
             // Do not use DST.  Set 0 to all stadardDate/daylightDate fields
             standardDate.wYear = standardDate.wMonth  = standardDate.wDayOfWeek = standardDate.wDay = 
@@ -52,6 +56,7 @@ static UBool getSystemTimeInformation(TimeZone *tz, SYSTEMTIME &daylightDate, SY
             U_ASSERT(dst->getRule()->getDateRuleType() == DateTimeRule::DOW);
 
             bias = -1 * (std->getRawOffset()/60000);
+            standardBias = 0;
             daylightBias = -1 * (dst->getDSTSavings()/60000);
             // Always use DOW type rule
             int32_t hour, min, sec, mil;
@@ -119,7 +124,9 @@ static UBool getWindowsTimeZoneInfo(TIME_ZONE_INFORMATION *zoneInfo, const UChar
         int32_t standardBias;
         SYSTEMTIME daylightDate;
         SYSTEMTIME standardDate;
+
         if (getSystemTimeInformation(tz, daylightDate, standardDate, bias, daylightBias, standardBias)) {
+            uprv_memset(zoneInfo, 0, sizeof(TIME_ZONE_INFORMATION)); // We do not set standard/daylight names, so nullify first.
             zoneInfo->Bias          = bias;
             zoneInfo->DaylightBias  = daylightBias;
             zoneInfo->StandardBias  = standardBias;

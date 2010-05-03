@@ -76,7 +76,7 @@ void CharsetDetectionTest::runIndexedTest( int32_t index, UBool exec, const char
        case 5: name = "DetectionTest";
             if (exec) DetectionTest();
             break;
-
+#if !UCONFIG_NO_LEGACY_CONVERSION
        case 6: name = "IBM424Test";
             if (exec) IBM424Test();
             break;
@@ -84,7 +84,10 @@ void CharsetDetectionTest::runIndexedTest( int32_t index, UBool exec, const char
        case 7: name = "IBM420Test";
             if (exec) IBM420Test();
             break;
-
+#else
+       case 6:
+       case 7: name = "skip"; break;
+#endif
        case 8: name = "Ticket6394Test";
             if (exec) Ticket6394Test();
             break;
@@ -151,7 +154,7 @@ void CharsetDetectionTest::checkEncoding(const UnicodeString &testString, const 
     u_UCharsToChars(eSplit[0].getBuffer(), codepage, cpLength);
     codepage[cpLength] = '\0';
 
-    UCharsetDetector *csd = ucsdet_open(&status);
+    LocalUCharsetDetectorPointer csd(ucsdet_open(&status));
 
     int32_t byteLength = 0;
     char *bytes = extractBytes(testString, codepage, byteLength);
@@ -163,10 +166,10 @@ void CharsetDetectionTest::checkEncoding(const UnicodeString &testString, const 
         return;
     }
 
-    ucsdet_setText(csd, bytes, byteLength, &status);
+    ucsdet_setText(csd.getAlias(), bytes, byteLength, &status);
 
     int32_t matchCount = 0;
-    const UCharsetMatch **matches = ucsdet_detectAll(csd, &matchCount, &status);
+    const UCharsetMatch **matches = ucsdet_detectAll(csd.getAlias(), &matchCount, &status);
 
 
     UnicodeString name(ucsdet_getName(matches[0], &status));
@@ -220,7 +223,6 @@ void CharsetDetectionTest::checkEncoding(const UnicodeString &testString, const 
 
 bail:
     freeBytes(bytes);
-    ucsdet_close(csd);
     delete[] eSplit;
 }
 
@@ -240,10 +242,10 @@ const char *CharsetDetectionTest::getPath(char buffer[2048], const char *filenam
 
 void CharsetDetectionTest::ConstructionTest()
 {
-    UErrorCode status = U_ZERO_ERROR;
-    UCharsetDetector *csd = ucsdet_open(&status);
-    UEnumeration *e = ucsdet_getAllDetectableCharsets(csd, &status);
-    int32_t count = uenum_count(e, &status);
+    IcuTestErrorCode status(*this, "ConstructionTest");
+    LocalUCharsetDetectorPointer csd(ucsdet_open(status));
+    LocalUEnumerationPointer e(ucsdet_getAllDetectableCharsets(csd.getAlias(), status));
+    int32_t count = uenum_count(e.getAlias(), status);
 
 #ifdef DEBUG_DETECT
     printf("There are %d recognizers.\n", count);
@@ -251,7 +253,7 @@ void CharsetDetectionTest::ConstructionTest()
 
     for(int32_t i = 0; i < count; i += 1) {
         int32_t length;
-        const char *name = uenum_next(e, &length, &status);
+        const char *name = uenum_next(e.getAlias(), &length, status);
 
         if(name == NULL || length <= 0) {
             errln("ucsdet_getAllDetectableCharsets() returned a null or empty name!");
@@ -261,9 +263,6 @@ void CharsetDetectionTest::ConstructionTest()
         printf("%s\n", name);
 #endif
     }
-
-    uenum_close(e);
-    ucsdet_close(csd);
 }
 
 void CharsetDetectionTest::UTF8Test()

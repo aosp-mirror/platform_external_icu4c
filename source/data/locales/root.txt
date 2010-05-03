@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2009 International Business Machines
+// * Copyright (C) 2010 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/root.xml
@@ -11,668 +11,8 @@
  */
 root{
     AuxExemplarCharacters{"[]"}
-    Currencies{
-        AFN{
-            "Af",
-            "AFN",
-        }
-        ANG{
-            "NAf.",
-            "ANG",
-        }
-        AOA{
-            "Kz",
-            "AOA",
-        }
-        ARA{
-            "₳",
-            "ARA",
-        }
-        ARL{
-            "$L",
-            "ARL",
-        }
-        ARM{
-            "m$n",
-            "ARM",
-        }
-        ARS{
-            "AR$",
-            "ARS",
-        }
-        AUD{
-            "AU$",
-            "AUD",
-        }
-        AWG{
-            "Afl.",
-            "AWG",
-        }
-        AZN{
-            "man.",
-            "AZN",
-        }
-        BAM{
-            "KM",
-            "BAM",
-        }
-        BBD{
-            "Bds$",
-            "BBD",
-        }
-        BDT{
-            "Tk",
-            "BDT",
-        }
-        BEF{
-            "BF",
-            "BEF",
-        }
-        BHD{
-            "BD",
-            "BHD",
-        }
-        BIF{
-            "FBu",
-            "BIF",
-        }
-        BMD{
-            "BD$",
-            "BMD",
-        }
-        BND{
-            "BN$",
-            "BND",
-        }
-        BOB{
-            "Bs",
-            "BOB",
-        }
-        BOP{
-            "$b.",
-            "BOP",
-        }
-        BRL{
-            "R$",
-            "BRL",
-        }
-        BSD{
-            "BS$",
-            "BSD",
-        }
-        BTN{
-            "Nu.",
-            "BTN",
-        }
-        BWP{
-            "BWP",
-            "BWP",
-        }
-        BZD{
-            "BZ$",
-            "BZD",
-        }
-        CAD{
-            "CA$",
-            "CAD",
-        }
-        CDF{
-            "CDF",
-            "CDF",
-        }
-        CHF{
-            "Fr.",
-            "CHF",
-        }
-        CLE{
-            "Eº",
-            "CLE",
-        }
-        CLP{
-            "CL$",
-            "CLP",
-        }
-        CNY{
-            "CN¥",
-            "CNY",
-        }
-        COP{
-            "CO$",
-            "COP",
-        }
-        CRC{
-            "₡",
-            "CRC",
-        }
-        CUC{
-            "CUC$",
-            "CUC",
-        }
-        CUP{
-            "CU$",
-            "CUP",
-        }
-        CVE{
-            "CV$",
-            "CVE",
-        }
-        CYP{
-            "CY£",
-            "CYP",
-        }
-        CZK{
-            "Kč",
-            "CZK",
-        }
-        DEM{
-            "DM",
-            "DEM",
-        }
-        DJF{
-            "Fdj",
-            "DJF",
-        }
-        DKK{
-            "Dkr",
-            "DKK",
-        }
-        DOP{
-            "RD$",
-            "DOP",
-        }
-        DZD{
-            "DA",
-            "DZD",
-        }
-        EEK{
-            "Ekr",
-            "EEK",
-        }
-        EGP{
-            "EG£",
-            "EGP",
-        }
-        ERN{
-            "Nfk",
-            "ERN",
-        }
-        ESP{
-            "Pts",
-            "ESP",
-        }
-        ETB{
-            "Br",
-            "ETB",
-        }
-        EUR{
-            "€",
-            "EUR",
-        }
-        FIM{
-            "mk",
-            "FIM",
-        }
-        FJD{
-            "FJ$",
-            "FJD",
-        }
-        FKP{
-            "FK£",
-            "FKP",
-        }
-        FRF{
-            "₣",
-            "FRF",
-        }
-        GBP{
-            "£",
-            "GBP",
-        }
-        GHC{
-            "₵",
-            "GHC",
-        }
-        GHS{
-            "GH₵",
-            "GHS",
-        }
-        GIP{
-            "GI£",
-            "GIP",
-        }
-        GMD{
-            "GMD",
-            "GMD",
-        }
-        GNF{
-            "FG",
-            "GNF",
-        }
-        GRD{
-            "₯",
-            "GRD",
-        }
-        GTQ{
-            "GTQ",
-            "GTQ",
-        }
-        GYD{
-            "GY$",
-            "GYD",
-        }
-        HKD{
-            "HK$",
-            "HKD",
-        }
-        HNL{
-            "HNL",
-            "HNL",
-        }
-        HRK{
-            "kn",
-            "HRK",
-        }
-        HTG{
-            "HTG",
-            "HTG",
-        }
-        HUF{
-            "Ft",
-            "HUF",
-        }
-        IDR{
-            "Rp",
-            "IDR",
-        }
-        IEP{
-            "IR£",
-            "IEP",
-        }
-        ILP{
-            "I£",
-            "ILP",
-        }
-        ILS{
-            "₪",
-            "ILS",
-        }
-        INR{
-            "Rs",
-            "INR",
-        }
-        ISK{
-            "Ikr",
-            "ISK",
-        }
-        ITL{
-            "IT₤",
-            "ITL",
-        }
-        JMD{
-            "J$",
-            "JMD",
-        }
-        JOD{
-            "JD",
-            "JOD",
-        }
-        JPY{
-            "JP¥",
-            "JPY",
-        }
-        KES{
-            "Ksh",
-            "KES",
-        }
-        KMF{
-            "CF",
-            "KMF",
-        }
-        KRW{
-            "₩",
-            "KRW",
-        }
-        KWD{
-            "KD",
-            "KWD",
-        }
-        KYD{
-            "KY$",
-            "KYD",
-        }
-        LAK{
-            "₭",
-            "LAK",
-        }
-        LBP{
-            "LB£",
-            "LBP",
-        }
-        LKR{
-            "SLRs",
-            "LKR",
-        }
-        LRD{
-            "L$",
-            "LRD",
-        }
-        LSL{
-            "LSL",
-            "LSL",
-        }
-        LTL{
-            "Lt",
-            "LTL",
-        }
-        LVL{
-            "Ls",
-            "LVL",
-        }
-        LYD{
-            "LD",
-            "LYD",
-        }
-        MMK{
-            "MMK",
-            "MMK",
-        }
-        MNT{
-            "₮",
-            "MNT",
-        }
-        MOP{
-            "MOP$",
-            "MOP",
-        }
-        MRO{
-            "UM",
-            "MRO",
-        }
-        MTL{
-            "Lm",
-            "MTL",
-        }
-        MTP{
-            "MT£",
-            "MTP",
-        }
-        MUR{
-            "MURs",
-            "MUR",
-        }
-        MXP{
-            "MX$",
-            "MXP",
-        }
-        MYR{
-            "RM",
-            "MYR",
-        }
-        MZM{
-            "Mt",
-            "MZM",
-        }
-        MZN{
-            "MTn",
-            "MZN",
-        }
-        NAD{
-            "N$",
-            "NAD",
-        }
-        NGN{
-            "₦",
-            "NGN",
-        }
-        NIO{
-            "C$",
-            "NIO",
-        }
-        NLG{
-            "fl",
-            "NLG",
-        }
-        NOK{
-            "Nkr",
-            "NOK",
-        }
-        NPR{
-            "NPRs",
-            "NPR",
-        }
-        NZD{
-            "NZ$",
-            "NZD",
-        }
-        PAB{
-            "B/.",
-            "PAB",
-        }
-        PEI{
-            "I/.",
-            "PEI",
-        }
-        PEN{
-            "S/.",
-            "PEN",
-        }
-        PGK{
-            "PGK",
-            "PGK",
-        }
-        PHP{
-            "₱",
-            "PHP",
-        }
-        PKR{
-            "PKRs",
-            "PKR",
-        }
-        PLN{
-            "zł",
-            "PLN",
-        }
-        PTE{
-            "Esc",
-            "PTE",
-        }
-        PYG{
-            "₲",
-            "PYG",
-        }
-        QAR{
-            "QR",
-            "QAR",
-        }
-        RHD{
-            "RH$",
-            "RHD",
-        }
-        RON{
-            "RON",
-            "RON",
-        }
-        RSD{
-            "din.",
-            "RSD",
-        }
-        SAR{
-            "SR",
-            "SAR",
-        }
-        SBD{
-            "SI$",
-            "SBD",
-        }
-        SCR{
-            "SRe",
-            "SCR",
-        }
-        SDD{
-            "LSd",
-            "SDD",
-        }
-        SEK{
-            "Skr",
-            "SEK",
-        }
-        SGD{
-            "S$",
-            "SGD",
-        }
-        SHP{
-            "SH£",
-            "SHP",
-        }
-        SKK{
-            "Sk",
-            "SKK",
-        }
-        SLL{
-            "Le",
-            "SLL",
-        }
-        SOS{
-            "Ssh",
-            "SOS",
-        }
-        SRD{
-            "SR$",
-            "SRD",
-        }
-        SRG{
-            "Sf",
-            "SRG",
-        }
-        STD{
-            "Db",
-            "STD",
-        }
-        SVC{
-            "SV₡",
-            "SVC",
-        }
-        SYP{
-            "SY£",
-            "SYP",
-        }
-        SZL{
-            "SZL",
-            "SZL",
-        }
-        THB{
-            "฿",
-            "THB",
-        }
-        TMM{
-            "TMM",
-            "TMM",
-        }
-        TND{
-            "DT",
-            "TND",
-        }
-        TOP{
-            "T$",
-            "TOP",
-        }
-        TRL{
-            "TRL",
-            "TRL",
-        }
-        TRY{
-            "TL",
-            "TRY",
-        }
-        TTD{
-            "TT$",
-            "TTD",
-        }
-        TWD{
-            "NT$",
-            "TWD",
-        }
-        TZS{
-            "TSh",
-            "TZS",
-        }
-        UAH{
-            "₴",
-            "UAH",
-        }
-        UGX{
-            "USh",
-            "UGX",
-        }
-        USD{
-            "US$",
-            "USD",
-        }
-        UYU{
-            "$U",
-            "UYU",
-        }
-        VEF{
-            "Bs.F.",
-            "VEF",
-        }
-        VND{
-            "₫",
-            "VND",
-        }
-        VUV{
-            "VT",
-            "VUV",
-        }
-        WST{
-            "WS$",
-            "WST",
-        }
-        XAF{
-            "FCFA",
-            "XAF",
-        }
-        XCD{
-            "EC$",
-            "XCD",
-        }
-        XOF{
-            "CFA",
-            "XOF",
-        }
-        XPF{
-            "CFPF",
-            "XPF",
-        }
-        YER{
-            "YR",
-            "YER",
-        }
-        ZAR{
-            "R",
-            "ZAR",
-        }
-        ZMK{
-            "ZK",
-            "ZMK",
-        }
-        ZRN{
-            "NZ",
-            "ZRN",
-        }
-        ZRZ{
-            "ZRZ",
-            "ZRZ",
-        }
-        ZWD{
-            "Z$",
-            "ZWD",
-        }
-    }
-    CurrencyUnitPatterns{
-        other{"{0} {1}"}
-    }
     ExemplarCharacters{"[]"}
+    ExemplarCharactersCurrency{"[a b c č d e f g h i j k l ł m n o º p q r s t u v w x y z]"}
     LocaleScript{
         "Zyyy",
     }
@@ -701,13 +41,10 @@ root{
         297,
         210,
     }
-    Version{"1.192"}
+    Version{"2.0.48.64"}
     calendar{
         buddhist{
-            AmPmMarkers{
-                "AM",
-                "PM",
-            }
+            AmPmMarkers:alias{"/LOCALE/calendar/gregorian/AmPmMarkers"}
             DateTimePatterns{
                 "HH:mm:ss zzzz",
                 "HH:mm:ss z",
@@ -723,44 +60,8 @@ root{
                 "{1} {0}",
                 "{1} {0}",
             }
-            appendItems{
-                Day{"{0} ({2}: {1})"}
-                Day-Of-Week{"{0} {1}"}
-                Era{"{0} {1}"}
-                Hour{"{0} ({2}: {1})"}
-                Minute{"{0} ({2}: {1})"}
-                Month{"{0} ({2}: {1})"}
-                Quarter{"{0} ({2}: {1})"}
-                Second{"{0} ({2}: {1})"}
-                Timezone{"{0} {1}"}
-                Week{"{0} ({2}: {1})"}
-                Year{"{0} {1}"}
-            }
-            availableFormats{
-                EEEd{"EEE d"}
-                Hm{"H:mm"}
-                Hms{"H:mm:ss"}
-                M{"L"}
-                MEd{"E, M-d"}
-                MMM{"LLL"}
-                MMMEd{"E MMM d"}
-                MMMMEd{"E MMMM d"}
-                MMMMd{"MMMM d"}
-                MMMd{"MMM d"}
-                Md{"M-d"}
-                d{"d"}
-                hm{"h:mm a"}
-                hms{"h:mm:ss a"}
-                ms{"mm:ss"}
-                y{"y"}
-                yM{"M/y"}
-                yMEd{"EEE, M/d/y"}
-                yMMM{"MMM, y"}
-                yMMMEd{"EEE, MMM d, y"}
-                yMMMM{"MMMM, y"}
-                yQ{"y Q"}
-                yQQQ{"y QQQ"}
-            }
+            appendItems:alias{"/LOCALE/calendar/gregorian/appendItems"}
+            availableFormats:alias{"/LOCALE/calendar/gregorian/availableFormats"}
             dayNames:alias{"/LOCALE/calendar/gregorian/dayNames"}
             eras{
                 abbreviated{
@@ -774,10 +75,7 @@ root{
             quarters:alias{"/LOCALE/calendar/gregorian/quarters"}
         }
         chinese{
-            AmPmMarkers{
-                "AM",
-                "PM",
-            }
+            AmPmMarkers:alias{"/LOCALE/calendar/gregorian/AmPmMarkers"}
             DateTimePatterns{
                 "HH:mm:ss zzzz",
                 "HH:mm:ss z",
@@ -844,10 +142,7 @@ root{
             quarters:alias{"/LOCALE/calendar/gregorian/quarters"}
         }
         coptic{
-            AmPmMarkers{
-                "AM",
-                "PM",
-            }
+            AmPmMarkers:alias{"/LOCALE/calendar/gregorian/AmPmMarkers"}
             DateTimePatterns:alias{"/LOCALE/calendar/gregorian/DateTimePatterns"}
             appendItems:alias{"/LOCALE/calendar/gregorian/appendItems"}
             availableFormats:alias{"/LOCALE/calendar/gregorian/availableFormats"}
@@ -907,10 +202,7 @@ root{
         }
         default{"gregorian"}
         ethiopic{
-            AmPmMarkers{
-                "AM",
-                "PM",
-            }
+            AmPmMarkers:alias{"/LOCALE/calendar/gregorian/AmPmMarkers"}
             DateTimePatterns:alias{"/LOCALE/calendar/gregorian/DateTimePatterns"}
             appendItems:alias{"/LOCALE/calendar/gregorian/appendItems"}
             availableFormats:alias{"/LOCALE/calendar/gregorian/availableFormats"}
@@ -969,10 +261,7 @@ root{
             quarters:alias{"/LOCALE/calendar/gregorian/quarters"}
         }
         ethiopic-amete-alem{
-            AmPmMarkers{
-                "AM",
-                "PM",
-            }
+            AmPmMarkers:alias{"/LOCALE/calendar/gregorian/AmPmMarkers"}
             DateTimePatterns:alias{"/LOCALE/calendar/gregorian/DateTimePatterns"}
             appendItems:alias{"/LOCALE/calendar/gregorian/appendItems"}
             availableFormats:alias{"/LOCALE/calendar/gregorian/availableFormats"}
@@ -1027,17 +316,17 @@ root{
             }
             availableFormats{
                 EEEd{"d EEE"}
-                Hm{"H:mm"}
-                Hms{"H:mm:ss"}
+                H{"HH"}
+                Hm{"HH:mm"}
+                Hms{"HH:mm:ss"}
                 M{"L"}
                 MEd{"E, M-d"}
                 MMM{"LLL"}
                 MMMEd{"E MMM d"}
-                MMMMEd{"E MMMM d"}
-                MMMMd{"MMMM d"}
                 MMMd{"MMM d"}
                 Md{"M-d"}
                 d{"d"}
+                h{"h a"}
                 hm{"h:mm a"}
                 hms{"h:mm:ss a"}
                 ms{"mm:ss"}
@@ -1046,7 +335,6 @@ root{
                 yMEd{"EEE, y-M-d"}
                 yMMM{"y MMM"}
                 yMMMEd{"EEE, y MMM d"}
-                yMMMM{"y MMMM"}
                 yQ{"y Q"}
                 yQQQ{"y QQQ"}
             }
@@ -1129,22 +417,40 @@ root{
                 }
             }
             intervalFormats{
+                H{
+                    H{"HH–HH"}
+                    a{"HH–HH"}
+                }
+                Hm{
+                    H{"HH:mm–HH:mm"}
+                    a{"HH:mm–HH:mm"}
+                    m{"HH:mm–HH:mm"}
+                }
+                Hmv{
+                    H{"HH:mm–HH:mm v"}
+                    a{"HH:mm–HH:mm v"}
+                    m{"HH:mm–HH:mm v"}
+                }
+                Hv{
+                    H{"HH–HH v"}
+                    a{"HH–HH v"}
+                }
                 M{
-                    M{"M-M"}
+                    M{"M–M"}
                 }
                 MEd{
                     M{"E, MM-dd – E, MM-dd"}
                     d{"E, MM-dd – E, MM-dd"}
                 }
                 MMM{
-                    M{"LLL-LLL"}
+                    M{"LLL–LLL"}
                 }
                 MMMEd{
                     M{"E, MM-d – E, MM-d"}
                     d{"E, MM-d – E, MM-d"}
                 }
                 MMMM{
-                    M{"LLLL-LLLL"}
+                    M{"LLLL–LLLL"}
                 }
                 MMMd{
                     M{"MM-d – MM-d"}
@@ -1155,29 +461,29 @@ root{
                     d{"MM-dd – dd"}
                 }
                 d{
-                    d{"d-d"}
+                    d{"d–d"}
                 }
                 fallback{"{0} – {1}"}
                 h{
-                    a{"HH-HH"}
-                    h{"HH-HH"}
+                    a{"h a – h a"}
+                    h{"h–h a"}
                 }
                 hm{
-                    a{"HH:mm-HH:mm"}
-                    h{"HH:mm-HH:mm"}
-                    m{"HH:mm-HH:mm"}
+                    a{"h:mm a – h:mm a"}
+                    h{"h:mm–h:mm a"}
+                    m{"h:mm–h:mm a"}
                 }
                 hmv{
-                    a{"HH:mm-HH:mm v"}
-                    h{"HH:mm-HH:mm v"}
-                    m{"HH:mm-HH:mm v"}
+                    a{"h:mm a – h:mm a v"}
+                    h{"h:mm–h:mm a v"}
+                    m{"h:mm–h:mm a v"}
                 }
                 hv{
-                    a{"HH-HH v"}
-                    h{"HH-HH v"}
+                    a{"h a – h a v"}
+                    h{"h–h a v"}
                 }
                 y{
-                    y{"y-y"}
+                    y{"y–y"}
                 }
                 yM{
                     M{"yyyy-MM – MM"}
@@ -1282,10 +588,7 @@ root{
             }
         }
         hebrew{
-            AmPmMarkers{
-                "AM",
-                "PM",
-            }
+            AmPmMarkers:alias{"/LOCALE/calendar/gregorian/AmPmMarkers"}
             DateTimePatterns:alias{"/LOCALE/calendar/gregorian/DateTimePatterns"}
             appendItems:alias{"/LOCALE/calendar/gregorian/appendItems"}
             availableFormats:alias{"/LOCALE/calendar/gregorian/availableFormats"}
@@ -1303,7 +606,7 @@ root{
                 format{
                     abbreviated:alias{"/LOCALE/calendar/hebrew/monthNames/format/wide"}
                     default{"wide"}
-                    narrow:alias{"/LOCALE/calendar/hebrew/monthNames/stand-alone/narrow"}
+                    narrow:alias{"/LOCALE/calendar/hebrew/monthNames/format/wide"}
                     wide{
                         "Tishri",
                         "Heshvan",
@@ -1318,35 +621,19 @@ root{
                         "Tamuz",
                         "Av",
                         "Elul",
+                        "Adar II",
                     }
                 }
                 stand-alone{
                     abbreviated:alias{"/LOCALE/calendar/hebrew/monthNames/format/abbreviated"}
-                    narrow{
-                        "1",
-                        "2",
-                        "3",
-                        "4",
-                        "5",
-                        "6",
-                        "7",
-                        "8",
-                        "9",
-                        "10",
-                        "11",
-                        "12",
-                        "13",
-                    }
+                    narrow:alias{"/LOCALE/calendar/hebrew/monthNames/format/narrow"}
                     wide:alias{"/LOCALE/calendar/hebrew/monthNames/format/wide"}
                 }
             }
             quarters:alias{"/LOCALE/calendar/gregorian/quarters"}
         }
         indian{
-            AmPmMarkers{
-                "AM",
-                "PM",
-            }
+            AmPmMarkers:alias{"/LOCALE/calendar/gregorian/AmPmMarkers"}
             DateTimePatterns:alias{"/LOCALE/calendar/gregorian/DateTimePatterns"}
             appendItems:alias{"/LOCALE/calendar/gregorian/appendItems"}
             availableFormats:alias{"/LOCALE/calendar/gregorian/availableFormats"}
@@ -1402,10 +689,7 @@ root{
             quarters:alias{"/LOCALE/calendar/gregorian/quarters"}
         }
         islamic{
-            AmPmMarkers{
-                "AM",
-                "PM",
-            }
+            AmPmMarkers:alias{"/LOCALE/calendar/gregorian/AmPmMarkers"}
             DateTimePatterns:alias{"/LOCALE/calendar/gregorian/DateTimePatterns"}
             appendItems:alias{"/LOCALE/calendar/gregorian/appendItems"}
             availableFormats:alias{"/LOCALE/calendar/gregorian/availableFormats"}
@@ -1421,7 +705,20 @@ root{
             monthNames{
                 default{"format"}
                 format{
-                    abbreviated:alias{"/LOCALE/calendar/islamic/monthNames/format/wide"}
+                    abbreviated{
+                        "Muh.",
+                        "Saf.",
+                        "Rab. I",
+                        "Rab. II",
+                        "Jum. I",
+                        "Jum. II",
+                        "Raj.",
+                        "Sha.",
+                        "Ram.",
+                        "Shaw.",
+                        "Dhuʻl-Q.",
+                        "Dhuʻl-H.",
+                    }
                     default{"wide"}
                     narrow:alias{"/LOCALE/calendar/islamic/monthNames/stand-alone/narrow"}
                     wide{
@@ -1462,10 +759,7 @@ root{
         }
         islamic-civil:alias{"/LOCALE/calendar/islamic"}
         japanese{
-            AmPmMarkers{
-                "AM",
-                "PM",
-            }
+            AmPmMarkers:alias{"/LOCALE/calendar/gregorian/AmPmMarkers"}
             DateTimePatterns{
                 "HH:mm:ss zzzz",
                 "HH:mm:ss z",
@@ -1496,12 +790,13 @@ root{
             }
             availableFormats{
                 Ed{"E d"}
-                H{"H"}
+                H{"HH"}
                 Hm{"HH:mm"}
                 Hms{"HH:mm:ss"}
                 MMMEd{"E MMM d"}
                 MMMMd{"MMMM d"}
                 Md{"M-d"}
+                h{"hh a"}
                 hm{"hh:mm a"}
                 hms{"hh:mm:ss a"}
                 ms{"mm:ss"}
@@ -1996,10 +1291,7 @@ root{
             quarters:alias{"/LOCALE/calendar/gregorian/quarters"}
         }
         persian{
-            AmPmMarkers{
-                "AM",
-                "PM",
-            }
+            AmPmMarkers:alias{"/LOCALE/calendar/gregorian/AmPmMarkers"}
             DateTimePatterns:alias{"/LOCALE/calendar/gregorian/DateTimePatterns"}
             appendItems:alias{"/LOCALE/calendar/gregorian/appendItems"}
             availableFormats:alias{"/LOCALE/calendar/gregorian/availableFormats"}
@@ -2055,10 +1347,7 @@ root{
             quarters:alias{"/LOCALE/calendar/gregorian/quarters"}
         }
         roc{
-            AmPmMarkers{
-                "AM",
-                "PM",
-            }
+            AmPmMarkers:alias{"/LOCALE/calendar/gregorian/AmPmMarkers"}
             DateTimePatterns{
                 "HH:mm:ss zzzz",
                 "HH:mm:ss z",
@@ -2088,12 +1377,14 @@ root{
                 Year{"{0} {1}"}
             }
             availableFormats{
-                Hm{"H:mm"}
-                Hms{"H:mm:ss"}
+                H{"HH"}
+                Hm{"HH:mm"}
+                Hms{"HH:mm:ss"}
                 MEd{"E, M/d"}
                 MMMEd{"E, MMM d"}
                 MMMd{"MMM d"}
                 Md{"M/d"}
+                h{"h a"}
                 hm{"h:mm a"}
                 hms{"h:mm:ss a"}
                 ms{"mm:ss"}
@@ -2119,23 +1410,6 @@ root{
             quarters:alias{"/LOCALE/calendar/gregorian/quarters"}
         }
     }
-    codePatterns{
-        language{"{0}"}
-        script{"{0}"}
-        territory{"{0}"}
-    }
-    currencySpacing{
-        afterCurrency{
-            currencyMatch{"[:letter:]"}
-            insertBetween{" "}
-            surroundingMatch{"[:digit:]"}
-        }
-        beforeCurrency{
-            currencyMatch{"[:letter:]"}
-            insertBetween{" "}
-            surroundingMatch{"[:digit:]"}
-        }
-    }
     defaultNumberingSystem{"latn"}
     delimiters{
         alternateQuotationEnd{"’"}
@@ -2147,9 +1421,13 @@ root{
         characters{"left-to-right"}
         lines{"top-to-bottom"}
     }
-    localeDisplayPattern{
-        pattern{"{0} ({1})"}
-        separator{", "}
+    listPattern{
+        standard{
+            2{"{0}, {1}"}
+            end{"{0}, {1}"}
+            middle{"{0}, {1}"}
+            start{"{0}, {1}"}
+        }
     }
     measurementSystemNames{
         US{"US"}
@@ -2176,719 +1454,6 @@ root{
         }
         year{
             other{"{0} y"}
-        }
-    }
-    zoneStrings{
-        ""{
-            ec{""}
-            ld{""}
-            ls{""}
-            sd{""}
-            ss{""}
-        }
-        "America:Indiana:Knox"{
-            ec{"Knox, Indiana"}
-        }
-        "America:Indiana:Marengo"{
-            ec{"Marengo, Indiana"}
-        }
-        "America:Indiana:Petersburg"{
-            ec{"Petersburg, Indiana"}
-        }
-        "America:Indiana:Tell_City"{
-            ec{"Tell City, Indiana"}
-        }
-        "America:Indiana:Vevay"{
-            ec{"Vevay, Indiana"}
-        }
-        "America:Indiana:Vincennes"{
-            ec{"Vincennes, Indiana"}
-        }
-        "America:Indiana:Winamac"{
-            ec{"Winamac, Indiana"}
-        }
-        "America:Kentucky:Monticello"{
-            ec{"Monticello, Kentucky"}
-        }
-        "America:North_Dakota:Center"{
-            ec{"Center, North Dakota"}
-        }
-        "America:North_Dakota:New_Salem"{
-            ec{"New Salem, North Dakota"}
-        }
-        "America:St_Johns"{
-            ec{"St. John's"}
-        }
-        "Antarctica:DumontDUrville"{
-            ec{"Dumont d'Urville"}
-        }
-        "Etc:Unknown"{
-            ec{"Unknown"}
-        }
-        "meta:Acre"{
-            sd{"ACST (Acre)"}
-            ss{"ACT (Acre)"}
-        }
-        "meta:Afghanistan"{
-            ss{"AFT"}
-        }
-        "meta:Africa_Central"{
-            ss{"CAT"}
-        }
-        "meta:Africa_Eastern"{
-            ss{"EAT"}
-        }
-        "meta:Africa_Southern"{
-            ss{"SAST"}
-        }
-        "meta:Africa_Western"{
-            sd{"WAST"}
-            ss{"WAT"}
-        }
-        "meta:Aktyubinsk"{
-            sd{"AKTST"}
-            ss{"AKTT"}
-        }
-        "meta:Alaska"{
-            sd{"AKDT"}
-            ss{"AKST"}
-        }
-        "meta:Alaska_Hawaii"{
-            sd{"AHDT"}
-            ss{"AHST"}
-        }
-        "meta:Almaty"{
-            sd{"ALMST"}
-            ss{"ALMT"}
-        }
-        "meta:Amazon"{
-            sd{"AMST"}
-            ss{"AMT"}
-        }
-        "meta:America_Central"{
-            sd{"CDT"}
-            ss{"CST"}
-        }
-        "meta:America_Eastern"{
-            sd{"EDT"}
-            ss{"EST"}
-        }
-        "meta:America_Mountain"{
-            sd{"MDT"}
-            ss{"MST"}
-        }
-        "meta:America_Pacific"{
-            sd{"PDT"}
-            ss{"PST"}
-        }
-        "meta:Anadyr"{
-            sd{"ANAST"}
-            ss{"ANAT"}
-        }
-        "meta:Aqtau"{
-            sd{"AQTST (Aqtau)"}
-            ss{"AQTT (Aqtau)"}
-        }
-        "meta:Aqtobe"{
-            sd{"AQTST (Aqtobe)"}
-            ss{"AQTT (Aqtobe)"}
-        }
-        "meta:Arabian"{
-            sd{"ADT (SA)"}
-            ss{"AST (SA)"}
-        }
-        "meta:Argentina"{
-            sd{"ARST"}
-            ss{"ART"}
-        }
-        "meta:Argentina_Western"{
-            ss{"WART"}
-        }
-        "meta:Armenia"{
-            sd{"AMST (AM)"}
-            ss{"AMT (AM)"}
-        }
-        "meta:Ashkhabad"{
-            sd{"ASHST"}
-            ss{"ASHT"}
-        }
-        "meta:Atlantic"{
-            sd{"ADT"}
-            ss{"AST"}
-        }
-        "meta:Australia_Central"{
-            sd{"ACDT"}
-            ss{"ACST"}
-        }
-        "meta:Australia_CentralWestern"{
-            sd{"ACWDT"}
-            ss{"ACWST"}
-        }
-        "meta:Australia_Eastern"{
-            sd{"AEDT"}
-            ss{"AEST"}
-        }
-        "meta:Australia_Western"{
-            sd{"AWDT"}
-            ss{"AWST"}
-        }
-        "meta:Azerbaijan"{
-            sd{"AZST"}
-            ss{"AZT"}
-        }
-        "meta:Azores"{
-            sd{"AZOST"}
-            ss{"AZOT"}
-        }
-        "meta:Baku"{
-            sd{"BAKST"}
-            ss{"BAKT"}
-        }
-        "meta:Bangladesh"{
-            sd{"BDST"}
-            ss{"BDT"}
-        }
-        "meta:Bering"{
-            sd{"BDT (Bering)"}
-            ss{"BST (Bering)"}
-        }
-        "meta:Bhutan"{
-            ss{"BTT"}
-        }
-        "meta:Bolivia"{
-            ss{"BOT"}
-        }
-        "meta:Borneo"{
-            sd{"BORST"}
-            ss{"BORT"}
-        }
-        "meta:Brasilia"{
-            sd{"BRST"}
-            ss{"BRT"}
-        }
-        "meta:Brunei"{
-            ss{"BNT"}
-        }
-        "meta:Cape_Verde"{
-            sd{"CVST"}
-            ss{"CVT"}
-        }
-        "meta:Chamorro"{
-            ss{"ChST"}
-        }
-        "meta:Changbai"{
-            ss{"CHAT"}
-        }
-        "meta:Chatham"{
-            sd{"CHADT"}
-            ss{"CHAST"}
-        }
-        "meta:Chile"{
-            sd{"CLST"}
-            ss{"CLT"}
-        }
-        "meta:China"{
-            sd{"CDT (CN)"}
-            ss{"CST (CN)"}
-        }
-        "meta:Choibalsan"{
-            sd{"CHOST"}
-            ss{"CHOT"}
-        }
-        "meta:Christmas"{
-            ss{"CXT"}
-        }
-        "meta:Cocos"{
-            ss{"CCT"}
-        }
-        "meta:Colombia"{
-            sd{"COST"}
-            ss{"COT"}
-        }
-        "meta:Cook"{
-            sd{"CKHST"}
-            ss{"CKT"}
-        }
-        "meta:Cuba"{
-            sd{"CDT (CU)"}
-            ss{"CST (CU)"}
-        }
-        "meta:Dacca"{
-            ss{"DACT"}
-        }
-        "meta:Davis"{
-            ss{"DAVT"}
-        }
-        "meta:DumontDUrville"{
-            ss{"DDUT"}
-        }
-        "meta:Dushanbe"{
-            sd{"DUSST"}
-            ss{"DUST"}
-        }
-        "meta:Dutch_Guiana"{
-            ss{"NEGT"}
-        }
-        "meta:East_Timor"{
-            ss{"TLT"}
-        }
-        "meta:Easter"{
-            sd{"EASST"}
-            ss{"EAST"}
-        }
-        "meta:Ecuador"{
-            ss{"ECT"}
-        }
-        "meta:Europe_Central"{
-            sd{"CEST"}
-            ss{"CET"}
-        }
-        "meta:Europe_Eastern"{
-            sd{"EEST"}
-            ss{"EET"}
-        }
-        "meta:Europe_Western"{
-            sd{"WEST"}
-            ss{"WET"}
-        }
-        "meta:Falkland"{
-            sd{"FKST"}
-            ss{"FKT"}
-        }
-        "meta:Fiji"{
-            sd{"FJST"}
-            ss{"FJT"}
-        }
-        "meta:French_Guiana"{
-            ss{"GFT"}
-        }
-        "meta:French_Southern"{
-            ss{"TFT"}
-        }
-        "meta:Frunze"{
-            sd{"FRUST"}
-            ss{"FRUT"}
-        }
-        "meta:GMT"{
-            ss{"GMT"}
-        }
-        "meta:Galapagos"{
-            ss{"GALT"}
-        }
-        "meta:Gambier"{
-            ss{"GAMT"}
-        }
-        "meta:Georgia"{
-            sd{"GEST"}
-            ss{"GET"}
-        }
-        "meta:Gilbert_Islands"{
-            ss{"GILT"}
-        }
-        "meta:Greenland_Central"{
-            sd{"CGST"}
-            ss{"CGT"}
-        }
-        "meta:Greenland_Eastern"{
-            sd{"EGST"}
-            ss{"EGT"}
-        }
-        "meta:Greenland_Western"{
-            sd{"WGST"}
-            ss{"WGT"}
-        }
-        "meta:Guam"{
-            ss{"GST (GU)"}
-        }
-        "meta:Gulf"{
-            ss{"GST"}
-        }
-        "meta:Guyana"{
-            ss{"GYT"}
-        }
-        "meta:Hawaii_Aleutian"{
-            ss{"HST"}
-        }
-        "meta:Hong_Kong"{
-            sd{"HKST"}
-            ss{"HKT"}
-        }
-        "meta:Hovd"{
-            sd{"HOVST"}
-            ss{"HOVT"}
-        }
-        "meta:India"{
-            ss{"IST"}
-        }
-        "meta:Indian_Ocean"{
-            ss{"IOT"}
-        }
-        "meta:Indochina"{
-            ss{"ICT"}
-        }
-        "meta:Indonesia_Central"{
-            ss{"CIT"}
-        }
-        "meta:Indonesia_Eastern"{
-            ss{"EIT"}
-        }
-        "meta:Indonesia_Western"{
-            ss{"WIT"}
-        }
-        "meta:Iran"{
-            sd{"IRDT"}
-            ss{"IRST"}
-        }
-        "meta:Irkutsk"{
-            sd{"IRKST"}
-            ss{"IRKT"}
-        }
-        "meta:Israel"{
-            sd{"IDT"}
-            ss{"IST (IL)"}
-        }
-        "meta:Japan"{
-            sd{"JDT"}
-            ss{"JST"}
-        }
-        "meta:Kamchatka"{
-            sd{"PETST"}
-            ss{"PETT"}
-        }
-        "meta:Karachi"{
-            ss{"KART"}
-        }
-        "meta:Kashgar"{
-            ss{"KAST"}
-        }
-        "meta:Kazakhstan_Eastern"{
-            ss{"EKST"}
-        }
-        "meta:Kazakhstan_Western"{
-            ss{"WKST"}
-        }
-        "meta:Kizilorda"{
-            sd{"KIZST"}
-            ss{"KIZT"}
-        }
-        "meta:Korea"{
-            sd{"KDT"}
-            ss{"KST"}
-        }
-        "meta:Kosrae"{
-            ss{"KOST"}
-        }
-        "meta:Krasnoyarsk"{
-            sd{"KRAST"}
-            ss{"KRAT"}
-        }
-        "meta:Kuybyshev"{
-            sd{"KUYST"}
-            ss{"KUYT"}
-        }
-        "meta:Kwajalein"{
-            ss{"KWAT"}
-        }
-        "meta:Kyrgystan"{
-            ss{"KGT"}
-        }
-        "meta:Lanka"{
-            ss{"LKT"}
-        }
-        "meta:Line_Islands"{
-            ss{"LINT"}
-        }
-        "meta:Long_Shu"{
-            ss{"LONT"}
-        }
-        "meta:Lord_Howe"{
-            sd{"LHDT"}
-            ss{"LHST"}
-        }
-        "meta:Macau"{
-            sd{"MOST"}
-            ss{"MOT"}
-        }
-        "meta:Magadan"{
-            sd{"MAGST"}
-            ss{"MAGT"}
-        }
-        "meta:Malaya"{
-            ss{"MALT"}
-        }
-        "meta:Malaysia"{
-            ss{"MYT"}
-        }
-        "meta:Maldives"{
-            ss{"MVT"}
-        }
-        "meta:Marquesas"{
-            ss{"MART"}
-        }
-        "meta:Marshall_Islands"{
-            ss{"MHT"}
-        }
-        "meta:Mauritius"{
-            sd{"MUST"}
-            ss{"MUT"}
-        }
-        "meta:Mawson"{
-            ss{"MAWT"}
-        }
-        "meta:Mongolia"{
-            sd{"ULAST"}
-            ss{"ULAT"}
-        }
-        "meta:Moscow"{
-            sd{"MSKS"}
-            ss{"MSK"}
-        }
-        "meta:Myanmar"{
-            ss{"MMT"}
-        }
-        "meta:Nauru"{
-            ss{"NRT"}
-        }
-        "meta:Nepal"{
-            ss{"NPT"}
-        }
-        "meta:New_Caledonia"{
-            sd{"NCST"}
-            ss{"NCT"}
-        }
-        "meta:New_Zealand"{
-            sd{"NZDT"}
-            ss{"NZST"}
-        }
-        "meta:Newfoundland"{
-            sd{"NDT"}
-            ss{"NST"}
-        }
-        "meta:Niue"{
-            ss{"NUT"}
-        }
-        "meta:Norfolk"{
-            ss{"NFT"}
-        }
-        "meta:Noronha"{
-            sd{"FNST"}
-            ss{"FNT"}
-        }
-        "meta:North_Mariana"{
-            ss{"MPT"}
-        }
-        "meta:Novosibirsk"{
-            sd{"NOVST"}
-            ss{"NOVT"}
-        }
-        "meta:Omsk"{
-            sd{"OMSST"}
-            ss{"OMST"}
-        }
-        "meta:Pakistan"{
-            sd{"PKST"}
-            ss{"PKT"}
-        }
-        "meta:Palau"{
-            ss{"PWT"}
-        }
-        "meta:Papua_New_Guinea"{
-            ss{"PGT"}
-        }
-        "meta:Paraguay"{
-            sd{"PYST"}
-            ss{"PYT"}
-        }
-        "meta:Peru"{
-            sd{"PEST"}
-            ss{"PET"}
-        }
-        "meta:Philippines"{
-            sd{"PHST"}
-            ss{"PHT"}
-        }
-        "meta:Phoenix_Islands"{
-            ss{"PHOT"}
-        }
-        "meta:Pierre_Miquelon"{
-            sd{"PMDT"}
-            ss{"PMST"}
-        }
-        "meta:Pitcairn"{
-            ss{"PNT"}
-        }
-        "meta:Ponape"{
-            ss{"PONT"}
-        }
-        "meta:Qyzylorda"{
-            sd{"QYZST"}
-            ss{"QYZT"}
-        }
-        "meta:Reunion"{
-            ss{"RET"}
-        }
-        "meta:Rothera"{
-            ss{"ROTT"}
-        }
-        "meta:Sakhalin"{
-            sd{"SAKST"}
-            ss{"SAKT"}
-        }
-        "meta:Samara"{
-            sd{"SAMST"}
-            ss{"SAMT"}
-        }
-        "meta:Samarkand"{
-            sd{"SAMST (Samarkand)"}
-            ss{"SAMT (Samarkand)"}
-        }
-        "meta:Samoa"{
-            ss{"SST"}
-        }
-        "meta:Seychelles"{
-            ss{"SCT"}
-        }
-        "meta:Shevchenko"{
-            sd{"SHEST"}
-            ss{"SHET"}
-        }
-        "meta:Singapore"{
-            ss{"SGT"}
-        }
-        "meta:Solomon"{
-            ss{"SBT"}
-        }
-        "meta:South_Georgia"{
-            ss{"GST (GS)"}
-        }
-        "meta:Suriname"{
-            ss{"SRT"}
-        }
-        "meta:Sverdlovsk"{
-            sd{"SVEST"}
-            ss{"SVET"}
-        }
-        "meta:Syowa"{
-            ss{"SYOT"}
-        }
-        "meta:Tahiti"{
-            ss{"TAHT"}
-        }
-        "meta:Taipei"{
-            sd{"CDT (TW)"}
-            ss{"CST (TW)"}
-        }
-        "meta:Tajikistan"{
-            ss{"TJT"}
-        }
-        "meta:Tashkent"{
-            sd{"TASST"}
-            ss{"TAST"}
-        }
-        "meta:Tbilisi"{
-            sd{"TBIST"}
-            ss{"TBIT"}
-        }
-        "meta:Tokelau"{
-            ss{"TKT"}
-        }
-        "meta:Tonga"{
-            sd{"TOST"}
-            ss{"TOT"}
-        }
-        "meta:Truk"{
-            ss{"TRUT"}
-        }
-        "meta:Turkey"{
-            sd{"TRST"}
-            ss{"TRT"}
-        }
-        "meta:Turkmenistan"{
-            sd{"TMST"}
-            ss{"TMT"}
-        }
-        "meta:Tuvalu"{
-            ss{"TVT"}
-        }
-        "meta:Uralsk"{
-            sd{"URAST"}
-            ss{"URAT"}
-        }
-        "meta:Uruguay"{
-            sd{"UYST"}
-            ss{"UYT"}
-        }
-        "meta:Urumqi"{
-            ss{"URUT"}
-        }
-        "meta:Uzbekistan"{
-            sd{"UZST"}
-            ss{"UZT"}
-        }
-        "meta:Vanuatu"{
-            sd{"VUST"}
-            ss{"VUT"}
-        }
-        "meta:Venezuela"{
-            ss{"VET"}
-        }
-        "meta:Vladivostok"{
-            sd{"VLAST"}
-            ss{"VLAT"}
-        }
-        "meta:Volgograd"{
-            sd{"VOLST"}
-            ss{"VOLT"}
-        }
-        "meta:Vostok"{
-            ss{"VOST"}
-        }
-        "meta:Wake"{
-            ss{"WAKT"}
-        }
-        "meta:Wallis"{
-            ss{"WFT"}
-        }
-        "meta:Yakutsk"{
-            sd{"YAKST"}
-            ss{"YAKT"}
-        }
-        "meta:Yekaterinburg"{
-            sd{"YEKST"}
-            ss{"YEKT"}
-        }
-        "meta:Yerevan"{
-            sd{"YERST"}
-            ss{"YERT"}
-        }
-        "meta:Yukon"{
-            sd{"YDT"}
-            ss{"YST"}
-        }
-        fallbackFormat{"{1} ({0})"}
-        gmtFormat{"GMT{0}"}
-        gmtZeroFormat{"GMT"}
-        hourFormat{"+HH:mm;-HH:mm"}
-        hoursFormat{"{0}/{1}"}
-        preferenceOrdering{
-            "",
-        }
-        regionFormat{"{0}"}
-        singleCountries{
-            "Europe/Kiev",
-            "Pacific/Majuro",
-            "Africa/Bamako",
-            "America/Godthab",
-            "America/Santiago",
-            "America/Guayaquil",
-            "Asia/Shanghai",
-            "Asia/Tashkent",
-            "Asia/Kuala_Lumpur",
-            "Europe/Madrid",
-            "Europe/Lisbon",
-            "Europe/London",
-            "Pacific/Auckland",
-            "Pacific/Tahiti",
         }
     }
 }

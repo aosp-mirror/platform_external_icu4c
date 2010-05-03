@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2001-2008, International Business Machines
+*   Copyright (C) 2001-2010, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -461,7 +461,7 @@ ucol_tok_getNextArgument(const UChar *start, const UChar *end,
 
     ucol_uprv_tok_initData();
 
-    while(start < end && u_isWhitespace(*start)) { /* eat whitespace */
+    while(start < end && (u_isWhitespace(*start) || uprv_isRuleWhiteSpace(*start))) { /* eat whitespace */
         start++;
     }
     if(start >= end) {
@@ -480,7 +480,7 @@ ucol_tok_getNextArgument(const UChar *start, const UChar *end,
             foundOption = TRUE;
             if(end - start > rulesOptions[i].optionLen) {
                 optionArg = start+rulesOptions[i].optionLen+1; /* start of the options, skip space */
-                while(u_isWhitespace(*optionArg)) { /* eat whitespace */
+                while(u_isWhitespace(*optionArg) || uprv_isRuleWhiteSpace(*optionArg)) { /* eat whitespace */
                     optionArg++;
                 }
             }
@@ -501,7 +501,7 @@ ucol_tok_getNextArgument(const UChar *start, const UChar *end,
                 *attrib = rulesOptions[i].attr;
                 *value = rulesOptions[i].subopts[j].attrVal;
                 optionArg += rulesOptions[i].subopts[j].subLen;
-                while(u_isWhitespace(*optionArg)) { /* eat whitespace */
+                while(u_isWhitespace(*optionArg) || uprv_isRuleWhiteSpace(*optionArg)) { /* eat whitespace */
                     optionArg++;
                 }
                 if(*optionArg == 0x005d) {
@@ -548,14 +548,14 @@ int32_t ucol_uprv_tok_readOption(const UChar *start, const UChar *end, const UCh
     int32_t i = 0;
     ucol_uprv_tok_initData();
 
-    while(u_isWhitespace(*start)) { /* eat whitespace */
+    while(u_isWhitespace(*start) || uprv_isRuleWhiteSpace(*start)) { /* eat whitespace */
         start++;
     }
     while(i < UTOK_OPTION_COUNT) {
         if(u_strncmpNoCase(start, rulesOptions[i].optionName, rulesOptions[i].optionLen) == 0) {
             if(end - start > rulesOptions[i].optionLen) {
                 *optionArg = start+rulesOptions[i].optionLen; /* start of the options*/
-                while(u_isWhitespace(**optionArg)) { /* eat whitespace */
+                while(u_isWhitespace(**optionArg) || uprv_isRuleWhiteSpace(**optionArg)) { /* eat whitespace */
                     (*optionArg)++;
                 }
             }
@@ -673,14 +673,28 @@ uint8_t ucol_uprv_tok_readAndSetOption(UColTokenParser *src, UErrorCode *status)
         break;
         }
     }
-    src->current = u_memchr(src->current, 0x005d, src->end-src->current);
+    src->current = u_memchr(src->current, 0x005d, (int32_t)(src->end-src->current));
     return result;
 }
 
 
 inline void ucol_tok_addToExtraCurrent(UColTokenParser *src, const UChar *stuff, int32_t len, UErrorCode *status) {
+    if (stuff == NULL || len <= 0) {
+        return;
+    }
+    UChar *tempStuff = (UChar *)stuff;
     if(src->extraCurrent+len >= src->extraEnd) {
         /* reallocate */
+        if (stuff >= src->source && stuff <= src->end) {
+          // Copy stuff to a new buffer if stuff points to an address within
+          // src->source buffer.
+          tempStuff = (UChar*)uprv_malloc(len*sizeof(UChar));
+          if (tempStuff == NULL) {
+            *status = U_MEMORY_ALLOCATION_ERROR;
+            return;
+          }
+          uprv_memcpy(tempStuff, stuff, len*sizeof(UChar));
+        }
         UChar *newSrc = (UChar *)uprv_realloc(src->source, (src->extraEnd-src->source)*2*sizeof(UChar));
         if(newSrc != NULL) {
             src->current = newSrc + (src->current - src->source);
@@ -691,16 +705,21 @@ inline void ucol_tok_addToExtraCurrent(UColTokenParser *src, const UChar *stuff,
             src->source = newSrc;
         } else {
             *status = U_MEMORY_ALLOCATION_ERROR;
+            if (tempStuff != stuff) {
+                uprv_free(tempStuff);
+            }
+            return;
         }
     }
     if(len == 1) {
-        *src->extraCurrent++ = *stuff;
+        *src->extraCurrent++ = *tempStuff;
     } else {
-        uprv_memcpy(src->extraCurrent, stuff, len*sizeof(UChar));
+        uprv_memcpy(src->extraCurrent, tempStuff, len*sizeof(UChar));
         src->extraCurrent += len;
     }
-
-
+    if (tempStuff != stuff) {
+        uprv_free(tempStuff);
+    }
 }
 
 inline UBool ucol_tok_doSetTop(UColTokenParser *src, UErrorCode *status) {
@@ -760,6 +779,7 @@ ucol_tok_parseNextToken(UColTokenParser *src,
     uint32_t extensionOffset = 0;
     uint32_t newStrength = UCOL_TOK_UNSET;
     UChar buff[10];
+    UChar32 codepoint;
 
     src->parsedToken.charsOffset = 0;  src->parsedToken.charsLen = 0;
     src->parsedToken.prefixOffset = 0; src->parsedToken.prefixLen = 0;
@@ -823,6 +843,12 @@ ucol_tok_parseNextToken(UColTokenParser *src,
                         goto EndOfLoop;
                     }
                     newStrength = UCOL_IDENTICAL;
+                    if(*(src->current+1) == 0x002A) {/*'*'*/
+                        src->current++;
+                        src->prevStrength = newStrength;
+                    }else{
+                        src->prevStrength = UCOL_TOK_UNSET;
+                    }
                     break;
 
                 case 0x002C/*','*/:
@@ -838,6 +864,7 @@ ucol_tok_parseNextToken(UColTokenParser *src,
                         goto EndOfLoop;
                     }
                     newStrength = UCOL_TERTIARY;
+                    src->prevStrength = UCOL_TOK_UNSET;
                     break;
 
                 case  0x003B/*';'*/:
@@ -853,6 +880,7 @@ ucol_tok_parseNextToken(UColTokenParser *src,
                         goto EndOfLoop;
                     }
                     newStrength = UCOL_SECONDARY;
+                    src->prevStrength = UCOL_TOK_UNSET;
                     break;
 
                 case 0x003C/*'<'*/:
@@ -880,6 +908,12 @@ ucol_tok_parseNextToken(UColTokenParser *src,
                     } else { /* just one */
                         newStrength = UCOL_PRIMARY;
                     }
+                    if(*(src->current+1) == 0x002A) {/*'*'*/
+                        src->current++;
+                        src->prevStrength = newStrength;
+                    }else{
+                        src->prevStrength = UCOL_TOK_UNSET;
+                    }
                     break;
 
                 case 0x0026/*'&'*/:
@@ -889,6 +923,7 @@ ucol_tok_parseNextToken(UColTokenParser *src,
                     }
 
                     newStrength = UCOL_TOK_RESET; /* PatternEntry::RESET = 0 */
+                    src->prevStrength = UCOL_TOK_UNSET;
                     break;
 
                 case 0x005b/*'['*/:
@@ -953,11 +988,15 @@ ucol_tok_parseNextToken(UColTokenParser *src,
                     /* found a quote, we're gonna start copying */
                 case 0x0027/*'\''*/:
                     if (newStrength == UCOL_TOK_UNSET) { /* quote is illegal until we have a strength */
-                        *status = U_INVALID_FORMAT_ERROR;
-                        syntaxError(src->source,(int32_t)(src->current-src->source),(int32_t)(src->end-src->source),parseError);
-                        return NULL;
-                        // enabling rules to start with a non-token character a < b
-                        // newStrength = UCOL_TOK_RESET;
+                        if(src->prevStrength == UCOL_TOK_UNSET){
+                            *status = U_INVALID_FORMAT_ERROR;
+                            syntaxError(src->source,(int32_t)(src->current-src->source),(int32_t)(src->end-src->source),parseError);
+                            return NULL;
+                            // enabling rules to start with a non-token character a < b
+                            // newStrength = UCOL_TOK_RESET;
+                        }else{
+                            newStrength = src->prevStrength;
+                        }
                     }
 
                     inQuote = TRUE;
@@ -1036,9 +1075,13 @@ ucol_tok_parseNextToken(UColTokenParser *src,
                     break;
                 default:
                     if (newStrength == UCOL_TOK_UNSET) {
-                        *status = U_INVALID_FORMAT_ERROR;
-                        syntaxError(src->source,(int32_t)(src->current-src->source),(int32_t)(src->end-src->source),parseError);
-                        return NULL;
+                        if(src->prevStrength == UCOL_TOK_UNSET){
+                            *status = U_INVALID_FORMAT_ERROR;
+                            syntaxError(src->source,(int32_t)(src->current-src->source),(int32_t)(src->end-src->source),parseError);
+                            return NULL;
+                        }else{
+                            newStrength = src->prevStrength;
+                        }
                     }
 
                     if (ucol_tok_isSpecialChar(ch) && (inQuote == FALSE)) {
@@ -1056,6 +1099,11 @@ ucol_tok_parseNextToken(UColTokenParser *src,
                             src->parsedToken.charsOffset = (uint32_t)(src->current - src->source);
                         }
                         src->parsedToken.charsLen++;
+                        if(src->prevStrength != UCOL_TOK_UNSET){
+                            U16_NEXT(0, src->current, src->end, codepoint);
+                            src->parsedToken.charsLen+= U16_LENGTH(codepoint) - 1;
+                            goto EndOfLoop;
+                        }
                     } else {
                         if(newExtensionLen == 0) {
                             extensionOffset = (uint32_t)(src->current - src->source);
@@ -1069,6 +1117,10 @@ ucol_tok_parseNextToken(UColTokenParser *src,
         }
 
         if(wasInQuote) {
+            if(src->prevStrength != UCOL_TOK_UNSET && !inQuote){
+                src->current++;
+                goto EndOfLoop;
+            }
             if(ch != 0x27) {
                 if(inQuote || !uprv_isRuleWhiteSpace(ch)) {
                     ucol_tok_addToExtraCurrent(src, &ch, 1, status);
@@ -1108,7 +1160,7 @@ reset may be null.
 handled.
 */
 
-static UColToken *ucol_tok_initAReset(UColTokenParser *src, UChar *expand, uint32_t *expandNext,
+static UColToken *ucol_tok_initAReset(UColTokenParser *src, const UChar *expand, uint32_t *expandNext,
                                       UParseError *parseError, UErrorCode *status)
 {
     if(src->resultLen == src->listCapacity) {
@@ -1200,9 +1252,12 @@ inline UColToken *getVirginBefore(UColTokenParser *src, UColToken *sourceToken, 
     uint32_t CE, SecondCE;
     uint32_t invPos;
     if(sourceToken != NULL) {
-        uprv_init_collIterate(src->UCA, src->source+((sourceToken->source)&0xFFFFFF), 1, &s);
+        uprv_init_collIterate(src->UCA, src->source+((sourceToken->source)&0xFFFFFF), 1, &s, status);
     } else {
-        uprv_init_collIterate(src->UCA, src->source+src->parsedToken.charsOffset /**charsOffset*/, 1, &s);
+        uprv_init_collIterate(src->UCA, src->source+src->parsedToken.charsOffset /**charsOffset*/, 1, &s, status);
+    }
+    if(U_FAILURE(*status)) {
+        return NULL;
     }
 
     baseCE = ucol_getNextCE(src->UCA, &s, status) & 0xFFFFFF3F;
@@ -1684,10 +1739,10 @@ uint32_t ucol_tok_assembleTokenList(UColTokenParser *src, UParseError *parseErro
                         collIterate s;
                         uint32_t CE = UCOL_NOT_FOUND, SecondCE = UCOL_NOT_FOUND;
 
-                        uprv_init_collIterate(src->UCA, src->source+src->parsedToken.charsOffset, src->parsedToken.charsLen, &s);
+                        uprv_init_collIterate(src->UCA, src->source+src->parsedToken.charsOffset, src->parsedToken.charsLen, &s, status);
 
                         CE = ucol_getNextCE(src->UCA, &s, status);
-                        UChar *expand = s.pos;
+                        const UChar *expand = s.pos;
                         SecondCE = ucol_getNextCE(src->UCA, &s, status);
 
                         ListList[src->resultLen].baseCE = CE & 0xFFFFFF3F;
@@ -1823,6 +1878,7 @@ void ucol_tok_initTokenList(UColTokenParser *src, const UChar *rules, const uint
     src->parsedToken.flags = 0;
     src->parsedToken.strength = UCOL_TOK_UNSET;
     src->buildCCTabFlag = FALSE;
+    src->prevStrength = UCOL_TOK_UNSET;
 
     if(U_FAILURE(*status)) {
         return;
@@ -1912,4 +1968,3 @@ void ucol_tok_closeTokenList(UColTokenParser *src) {
 }
 
 #endif /* #if !UCONFIG_NO_COLLATION */
-

@@ -1,6 +1,6 @@
 /*
  **********************************************************************
- *   Copyright (C) 2002-2009, International Business Machines
+ *   Copyright (C) 2002-2010, International Business Machines
  *   Corporation and others.  All Rights Reserved.
  **********************************************************************
  */
@@ -265,7 +265,11 @@ static const le_bool complexTable[scriptCodeCount] = {
     FALSE,  /* Samr */
     FALSE,  /* Tavt */
     FALSE,  /* Zmth */
-    FALSE   /* Zsym */
+    FALSE,  /* Zsym */
+    FALSE,  /* Bamu */
+    FALSE,  /* Lisu */
+    FALSE,  /* Nkgb */
+    FALSE   /* Sarb */
 };
 
 
@@ -625,9 +629,14 @@ le_int32 ParagraphLayout::getLeading() const
     return fLeading;
 }
 
+le_bool ParagraphLayout::isDone() const
+{
+    return fLineEnd >= fCharCount;
+}
+
 ParagraphLayout::Line *ParagraphLayout::nextLine(float width)
 {
-    if (fLineEnd >= fCharCount) {
+    if (isDone()) {
         return NULL;
     }
 
@@ -1069,13 +1078,13 @@ void ParagraphLayout::appendRun(ParagraphLayout::Line *line, le_int32 run, le_in
 
     for (outGlyph = 0, inGlyph = leftGlyph * 2; inGlyph <= rightGlyph * 2; inGlyph += 2, outGlyph += 2) {
         positions[outGlyph]     = fStyleRunInfo[run].positions[inGlyph] + fVisualRunLastX;
-        positions[outGlyph + 1] = fStyleRunInfo[run].positions[inGlyph + 1] /* + fVisualRunLastY */;
+        positions[outGlyph + 1] = fStyleRunInfo[run].positions[inGlyph + 1] + fVisualRunLastY;
     }
 
     // Save the ending position of this run
     // to use for the start of the next run
     fVisualRunLastX = positions[outGlyph - 2];
- // fVisualRunLastY = positions[rightGlyph * 2 + 2];
+    fVisualRunLastY = positions[outGlyph - 1];
 
     if ((fStyleRunInfo[run].level & 1) == 0) {
         for (outGlyph = 0, inGlyph = leftGlyph; inGlyph < rightGlyph; inGlyph += 1, outGlyph += 1) {
@@ -1239,5 +1248,4 @@ ParagraphLayout::VisualRun::~VisualRun()
 U_NAMESPACE_END
 
 #endif
-
 

@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 1997-2009, International Business Machines
+*   Copyright (C) 1997-2010, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -111,6 +111,15 @@ Cleanly installed Solaris can use this #define.
 #include <unistd.h>
 #elif defined(U_QNX)
 #include <sys/neutrino.h>
+#elif defined(U_SOLARIS)
+# ifndef _XPG4_2
+#  define _XPG4_2
+# endif
+#endif
+
+
+#if defined(U_DARWIN)
+#include <TargetConditionals.h>
 #endif
 
 #ifndef U_WINDOWS
@@ -125,6 +134,14 @@ Cleanly installed Solaris can use this #define.
 
 #if U_HAVE_NL_LANGINFO_CODESET
 #include <langinfo.h>
+#endif
+
+/**
+ * Simple things (presence of functions, etc) should just go in configure.in and be added to
+ * icucfg.h via autoheader.
+ */
+#if defined(HAVE_CONFIG_H)
+#include "icucfg.h"
 #endif
 
 /* Define the extension for data files, again... */
@@ -266,14 +283,17 @@ uprv_getUTCtime()
     GetSystemTimeAsFileTime(&winTime.fileTime);
     return (UDate)((winTime.int64 - EPOCH_BIAS) / HECTONANOSECOND_PER_MILLISECOND);
 #else
-/*
+
+#if defined(HAVE_GETTIMEOFDAY)
     struct timeval posixTime;
     gettimeofday(&posixTime, NULL);
     return (UDate)(((int64_t)posixTime.tv_sec * U_MILLIS_PER_SECOND) + (posixTime.tv_usec/1000));
-*/
+#else
     time_t epochtime;
     time(&epochtime);
     return (UDate)epochtime * U_MILLIS_PER_SECOND;
+#endif
+
 #endif
 }
 
@@ -622,6 +642,7 @@ extern U_IMPORT char *U_TZNAME[];
 #define TZZONEINFO      "/usr/share/zoneinfo/"
 #endif
 #if U_HAVE_DIRENT_H
+#define TZFILE_SKIP     "posixrules" /* tz file to skip when searching. */
 #define SEARCH_TZFILE
 #include <dirent.h>  /* Needed to search through system timezone files */
 #endif
@@ -841,14 +862,17 @@ static UBool compareBinaryFiles(const char* defaultTZFileName, const char* TZFil
 #define SKIP2 ".."
 static char SEARCH_TZFILE_RESULT[MAX_PATH_SIZE] = "";
 static char* searchForTZFile(const char* path, DefaultTZInfo* tzInfo) {
+    char curpath[MAX_PATH_SIZE];
     DIR* dirp = opendir(path);
     DIR* subDirp = NULL;
     struct dirent* dirEntry = NULL;
 
     char* result = NULL;
+    if (dirp == NULL) {
+        return result;
+    }
 
     /* Save the current path */
-    char curpath[MAX_PATH_SIZE];
     uprv_memset(curpath, 0, MAX_PATH_SIZE);
     uprv_strcpy(curpath, path);
 
@@ -865,7 +889,7 @@ static char* searchForTZFile(const char* path, DefaultTZInfo* tzInfo) {
                 closedir(subDirp);
                 uprv_strcat(newpath, "/");
                 result = searchForTZFile(newpath, tzInfo);
-            } else {
+            } else if (uprv_strcmp(TZFILE_SKIP, dirEntry->d_name) != 0) {
                 if(compareBinaryFiles(TZDEFAULT, newpath, tzInfo)) {
                     uprv_strcpy(SEARCH_TZFILE_RESULT, newpath + (sizeof(TZZONEINFO) - 1));
                     result = SEARCH_TZFILE_RESULT;
@@ -969,7 +993,11 @@ uprv_tzname(int n)
 #endif
 
 #ifdef U_TZNAME
-#if !defined(U_WINDOWS)
+#ifdef U_WINDOWS
+    /* The return value is free'd in timezone.cpp on Windows because
+     * the other code path returns a pointer to a heap location. */
+    return uprv_strdup(U_TZNAME[n]);
+#else
     /*
     U_TZNAME is usually a non-unique abbreviation, which isn't normally usable.
     So we remap the abbreviation to an olson ID.
@@ -993,8 +1021,8 @@ uprv_tzname(int n)
             return tzid;
         }
     }
-#endif
     return U_TZNAME[n];
+#endif
 #else
     return "";
 #endif
@@ -1098,6 +1126,10 @@ uprv_pathIsAbsolute(const char *path)
 U_CAPI const char * U_EXPORT2
 u_getDataDirectory(void) {
     const char *path = NULL;
+#if defined(U_DARWIN) && TARGET_IPHONE_SIMULATOR
+    const char *simulator_root = NULL;
+    char datadir_path_buffer[PATH_MAX];
+#endif
 
     /* if we have the directory, then return it immediately */
     UMTX_CHECK(NULL, gDataDirectory, path);
@@ -1128,6 +1160,14 @@ u_getDataDirectory(void) {
 #   ifdef ICU_DATA_DIR
     if(path==NULL || *path==0) {
         path=ICU_DATA_DIR;
+#if defined(U_DARWIN) && TARGET_IPHONE_SIMULATOR
+        simulator_root=getenv("IPHONE_SIMULATOR_ROOT");
+        if (simulator_root != NULL) {
+            (void) strlcpy(datadir_path_buffer, simulator_root, PATH_MAX);
+            (void) strlcat(datadir_path_buffer, path, PATH_MAX);
+            path=datadir_path_buffer;
+        }
+#endif
     }
 #   endif
 
@@ -1637,6 +1677,12 @@ remapPlatformDependentCodepage(const char *locale, const char *name) {
         /* Remap CP949 to a similar codepage to avoid issues with backslash and won symbol. */
         name = "EUC-KR";
     }
+    else if (locale != NULL && uprv_strcmp(locale, "en_US_POSIX") != 0 && uprv_strcmp(name, "US-ASCII") == 0) {
+        /*
+         * For non C/POSIX locale, default the code page to UTF-8 instead of US-ASCII.
+         */
+        name = "UTF-8";
+    }
 #elif defined(U_BSD)
     if (uprv_strcmp(name, "CP949") == 0) {
         /* Remap CP949 to a similar codepage to avoid issues with backslash and won symbol. */
@@ -1674,6 +1720,13 @@ remapPlatformDependentCodepage(const char *locale, const char *name) {
         ibm-33722 is the default for eucJP (similar to Windows).
         */
         name = "eucjis";
+    }
+    else if (locale != NULL && uprv_strcmp(locale, "en_US_POSIX") != 0 &&
+            (uprv_strcmp(name, "ANSI_X3.4-1968") == 0 || uprv_strcmp(name, "US-ASCII") == 0)) {
+        /*
+         * For non C/POSIX locale, default the code page to UTF-8 instead of US-ASCII.
+         */
+        name = "UTF-8";
     }
 #endif
     /* return NULL when "" is passed in */
@@ -1773,7 +1826,19 @@ int_getDefaultCodepage()
        nl_langinfo may use the same buffer as setlocale. */
     {
         const char *codeset = nl_langinfo(U_NL_LANGINFO_CODESET);
-        codeset = remapPlatformDependentCodepage(NULL, codeset);
+#if defined(U_DARWIN) || defined(U_LINUX)
+        /*
+         * On Linux and MacOSX, ensure that default codepage for non C/POSIX locale is UTF-8
+         * instead of ASCII.
+         */
+        if (uprv_strcmp(localeName, "en_US_POSIX") != 0) {
+            codeset = remapPlatformDependentCodepage(localeName, codeset);
+        } else
+#endif
+        {
+            codeset = remapPlatformDependentCodepage(NULL, codeset);
+        }
+
         if (codeset != NULL) {
             uprv_strncpy(codesetName, codeset, sizeof(codesetName));
             codesetName[sizeof(codesetName)-1] = 0;
@@ -1845,25 +1910,10 @@ u_versionFromUString(UVersionInfo versionArray, const UChar *versionString) {
             len = U_MAX_VERSION_STRING_LENGTH;
         }
         u_UCharsToChars(versionString, versionChars, len);
-        versionChars[U_MAX_VERSION_STRING_LENGTH]=0;
+        versionChars[len]=0;
         u_versionFromString(versionArray, versionChars);
     }
 }
-
-U_CAPI int32_t U_EXPORT2
-u_compareVersions(UVersionInfo v1, UVersionInfo v2) {
-    int n;
-    if(v1==NULL||v2==NULL) return 0;
-    for(n=0;n<U_MAX_VERSION_LENGTH;n++) {
-      if(v1[n]<v2[n]) {
-        return -1;
-      } else if(v1[n]>v2[n]) {
-        return  1;
-      }
-    }
-    return 0; /* no difference */
-}
-
 
 U_CAPI void U_EXPORT2
 u_versionToString(UVersionInfo versionArray, char *versionString) {
@@ -1926,6 +1976,168 @@ U_CAPI void U_EXPORT2
 u_getVersion(UVersionInfo versionArray) {
     u_versionFromString(versionArray, U_ICU_VERSION);
 }
+
+/**
+ * icucfg.h dependent code 
+ */
+
+#if U_ENABLE_DYLOAD
+ 
+#if defined(U_CHECK_DYLOAD)
+
+#if defined(HAVE_DLOPEN) 
+
+#ifdef HAVE_DLFCN_H
+#ifdef __MVS__
+#ifndef __SUSV3
+#define __SUSV3 1
+#endif
+#endif
+#include <dlfcn.h>
+#endif
+
+U_INTERNAL void * U_EXPORT2
+uprv_dl_open(const char *libName, UErrorCode *status) {
+    void *ret = NULL;
+    if(U_FAILURE(*status)) return ret;
+    ret =  dlopen(libName, RTLD_NOW|RTLD_GLOBAL);
+    if(ret==NULL) {
+        perror("dlopen");
+        *status = U_MISSING_RESOURCE_ERROR;
+        /* TODO: read errno and translate. */
+    }
+    return ret;
+}
+
+U_INTERNAL void U_EXPORT2
+uprv_dl_close(void *lib, UErrorCode *status) {
+    if(U_FAILURE(*status)) return;
+    dlclose(lib);
+    /* TODO: translate errno? */
+}
+
+U_INTERNAL void* U_EXPORT2
+uprv_dl_sym(void *lib, const char* sym, UErrorCode *status) {
+    void *ret = NULL;
+    if(U_FAILURE(*status)) return ret;
+    ret = dlsym(lib, sym);
+    if(ret == NULL) {
+        *status = U_MISSING_RESOURCE_ERROR;
+        /* TODO: translate errno? */
+    }
+    return ret;
+}
+
+#else
+
+/* null (nonexistent) implementation. */
+
+U_INTERNAL void * U_EXPORT2
+uprv_dl_open(const char *libName, UErrorCode *status) {
+    if(U_FAILURE(*status)) return NULL;
+    *status = U_UNSUPPORTED_ERROR;
+    return NULL;
+}
+
+U_INTERNAL void U_EXPORT2
+uprv_dl_close(void *lib, UErrorCode *status) {
+    if(U_FAILURE(*status)) return;
+    *status = U_UNSUPPORTED_ERROR;
+    return;
+}
+
+
+U_INTERNAL void* U_EXPORT2
+uprv_dl_sym(void *lib, const char* sym, UErrorCode *status) {
+    if(U_FAILURE(*status)) return NULL;
+    *status = U_UNSUPPORTED_ERROR;
+    return NULL;
+}
+
+
+
+#endif
+
+#elif defined U_WINDOWS
+
+U_INTERNAL void * U_EXPORT2
+uprv_dl_open(const char *libName, UErrorCode *status) {
+   	HMODULE lib = NULL;
+
+	if(U_FAILURE(*status)) return NULL;
+    
+	lib = LoadLibrary(libName);
+
+	if(lib==NULL) {
+		*status = U_MISSING_RESOURCE_ERROR;
+	}
+
+    return (void*)lib;
+}
+
+U_INTERNAL void U_EXPORT2
+uprv_dl_close(void *lib, UErrorCode *status) {
+	HMODULE handle = (HMODULE)lib;
+    if(U_FAILURE(*status)) return;
+    
+	FreeLibrary(handle);
+
+    return;
+}
+
+
+U_INTERNAL void* U_EXPORT2
+uprv_dl_sym(void *lib, const char* sym, UErrorCode *status) {
+	HMODULE handle = (HMODULE)lib;
+	void * addr = NULL;
+
+	if(U_FAILURE(*status) || lib==NULL) return NULL;
+   
+	addr = GetProcAddress(handle, sym);
+
+	if(addr==NULL) {
+		DWORD lastError = GetLastError();
+		if(lastError == ERROR_PROC_NOT_FOUND) {
+			*status = U_MISSING_RESOURCE_ERROR;
+		} else {
+			*status = U_UNSUPPORTED_ERROR; /* other unknown error. */
+		}
+	}
+
+    return addr;
+}
+
+
+#else
+
+/* No dynamic loading set. */
+
+U_INTERNAL void * U_EXPORT2
+uprv_dl_open(const char *libName, UErrorCode *status) {
+    if(U_FAILURE(*status)) return NULL;
+    *status = U_UNSUPPORTED_ERROR;
+    return NULL;
+}
+
+U_INTERNAL void U_EXPORT2
+uprv_dl_close(void *lib, UErrorCode *status) {
+    if(U_FAILURE(*status)) return;
+    *status = U_UNSUPPORTED_ERROR;
+    return;
+}
+
+
+U_INTERNAL void* U_EXPORT2
+uprv_dl_sym(void *lib, const char* sym, UErrorCode *status) {
+    if(U_FAILURE(*status)) return NULL;
+    *status = U_UNSUPPORTED_ERROR;
+    return NULL;
+}
+
+
+#endif
+
+#endif /* U_ENABLE_DYLOAD */
 
 /*
  * Hey, Emacs, please set the following:
