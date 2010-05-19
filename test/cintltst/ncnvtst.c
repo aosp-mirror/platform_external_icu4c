@@ -178,6 +178,11 @@ static void TestSurrogateBehaviour(){
             log_err("u-> ibm-1363 [UCNV_MBCS] not match.\n");
     }
 
+
+   /* BEGIN android-removed */
+   /* To save space, Android does not build full ISO2022 CJK tables.
+      We skip the tests for ISO-2022. */
+   /* 
     log_verbose("Testing for ISO-2022-jp\n");
     {
         UChar    sampleText[] =   { 0x4e00, 0x04e01, 0x0031, 0xd801, 0xdc01, 0x0032};
@@ -187,8 +192,8 @@ static void TestSurrogateBehaviour(){
 
 
         int32_t offsets[] = {0,0,0,0,0,1,1,2,2,2,2,3,5 };
-
-        /*iso-2022-jp*/
+     
+        // iso-2022-jp
         if(!convertFromU(sampleText, sizeof(sampleText)/sizeof(sampleText[0]),
                 expected, sizeof(expected), "iso-2022-jp", 0 , TRUE, U_ZERO_ERROR))
             log_err("u-> not match.\n");
@@ -218,7 +223,7 @@ static void TestSurrogateBehaviour(){
                                     3,  
                                     5,  };
 
-        /*iso-2022-CN*/
+        // iso-2022-CN
         if(!convertFromU(sampleText, sizeof(sampleText)/sizeof(sampleText[0]),
                 expected, sizeof(expected), "iso-2022-cn", 0 , TRUE, U_ZERO_ERROR))
             log_err("u-> not match.\n");
@@ -248,7 +253,7 @@ static void TestSurrogateBehaviour(){
                               7,
                             };
 
-        /*iso-2022-kr*/
+        // iso-2022-kr
         if(!convertFromU(sampleText, sizeof(sampleText)/sizeof(sampleText[0]),
                 expected, sizeof(expected), "iso-2022-kr", 0 , TRUE, U_ZERO_ERROR))
             log_err("u-> iso-2022-kr [UCNV_DBCS] not match.\n");
@@ -256,7 +261,8 @@ static void TestSurrogateBehaviour(){
                 expected, sizeof(expected), "iso-2022-kr", offsets , TRUE, U_ZERO_ERROR))
             log_err("u-> iso-2022-kr [UCNV_DBCS] not match.\n");
     }
-
+    */
+    /* END android-removed */
         log_verbose("Testing for HZ\n");
     {
         static const UChar    sampleText[] =   { 0x4e00, 0xd801, 0xdc01, 0x04e01, 0x0031, 0xd801, 0xdc01, 0x0032};
@@ -446,8 +452,11 @@ static void TestErrorBehaviour(){
                 expected4MBCS, sizeof(expected4MBCS), "euc-jp", offsets4MBCS, FALSE, U_ZERO_ERROR))
             log_err("u-> euc-jp [UCNV_MBCS] \n");
     }
-
-    /*iso-2022-jp*/
+    /* BEGIN android-removed */
+    /* To save space, Android does not build full ISO2022 CJK tables.
+       We skip the tests for ISO-2022. */
+    /*
+    // iso-2022-jp
     log_verbose("Testing for iso-2022-jp\n");
     {
         static const UChar    sampleText[]    = { 0x0031, 0xd801};
@@ -487,7 +496,7 @@ static void TestErrorBehaviour(){
             log_err("u-> iso-2022-jp [UCNV_MBCS] \n");
     }
 
-    /*iso-2022-cn*/
+    // iso-2022-cn
     log_verbose("Testing for iso-2022-cn\n");
     {
         static const UChar    sampleText[]    = { 0x0031, 0xd801};
@@ -538,7 +547,7 @@ static void TestErrorBehaviour(){
             log_err("u-> iso-2022-cn [UCNV_MBCS] \n");
     }
 
-    /*iso-2022-kr*/
+    // iso-2022-kr
     log_verbose("Testing for iso-2022-kr\n");
     {
         static const UChar    sampleText[]    = { 0x0031, 0xd801};
@@ -578,6 +587,8 @@ static void TestErrorBehaviour(){
                 expected3MBCS, sizeof(expected3MBCS), "iso-2022-kr", offsets3MBCS, FALSE, U_ZERO_ERROR))
             log_err("u-> iso-2022-kr[UCNV_MBCS] \n");
     }
+    */
+    /* END android-removed */
 
     /*HZ*/
     log_verbose("Testing for HZ\n");
@@ -1560,6 +1571,10 @@ static void TestResetBehaviour(void){
 
     }
 
+    /* BEGIN android-removed */
+    /* To save space, Android does not build full ISO2022 CJK tables.
+       We skip the tests for ISO-2022. */
+    /*
     log_verbose("Testing Reset for ISO-2022-jp\n");
     {
         static const UChar    sampleText[] =   { 0x4e00, 0x04e01, 0x0031, 0xd801, 0xdc01, 0x0032};
@@ -1576,7 +1591,7 @@ static void TestResetBehaviour(void){
                                     0x31,0x1A, 0x32};
         static const int32_t offsets1[] =  { 3,5,10,11,12};
 
-        /*iso-2022-jp*/
+        // iso-2022-jp
         if(!testConvertFromU(sampleText, sizeof(sampleText)/sizeof(sampleText[0]),
                 expected, sizeof(expected), "iso-2022-jp",  UCNV_FROM_U_CALLBACK_SUBSTITUTE , NULL, TRUE))
             log_err("u-> not match.\n");
@@ -1621,7 +1636,7 @@ static void TestResetBehaviour(void){
                                     };
         static const int32_t offsets1[] =  { 5,7,13,16,17};
 
-        /*iso-2022-CN*/
+        // iso-2022-CN
         if(!testConvertFromU(sampleText, sizeof(sampleText)/sizeof(sampleText[0]),
                 expected, sizeof(expected), "iso-2022-cn", UCNV_FROM_U_CALLBACK_SUBSTITUTE , NULL, TRUE))
             log_err("u-> not match.\n");
@@ -1670,7 +1685,7 @@ static void TestResetBehaviour(void){
                               13, 14, 15  
                       
                             };
-        /*iso-2022-kr*/
+        // iso-2022-kr
         if(!testConvertFromU(sampleText, sizeof(sampleText)/sizeof(sampleText[0]),
                 expected, sizeof(expected), "iso-2022-kr",  UCNV_FROM_U_CALLBACK_SUBSTITUTE , NULL, TRUE))
             log_err("u-> iso-2022-kr [UCNV_DBCS] not match.\n");
@@ -1682,6 +1697,8 @@ static void TestResetBehaviour(void){
                 offsets1, TRUE))
            log_err("iso-2022-kr -> did not match.\n");
     }
+    */
+    /* END android-removed */
 
         log_verbose("Testing Reset for HZ\n");
     {
@@ -1907,9 +1924,8 @@ TestUnicodeSet() {
 #endif
         "IMAP-mailbox-name"
     };
-
-    static const char *const lmbcsNames[]={
 #if !UCONFIG_NO_LEGACY_CONVERSION
+    static const char *const lmbcsNames[]={
         "LMBCS-1",
         "LMBCS-2",
         "LMBCS-3",
@@ -1922,8 +1938,8 @@ TestUnicodeSet() {
         "LMBCS-17",
         "LMBCS-18",
         "LMBCS-19"
-#endif
     };
+#endif
 
     static const NameRange nameRanges[]={
         { "US-ASCII", 0, 0x7f, -1, -1, 0x80, 0x10ffff },
@@ -1990,6 +2006,7 @@ TestUnicodeSet() {
         ucnv_close(cnv);
     }
 
+#if !UCONFIG_NO_LEGACY_CONVERSION
     /* test LMBCS variants which convert all of Unicode except for U+F6xx */
     for(i=0; i<LENGTHOF(lmbcsNames); ++i) {
         errorCode=U_ZERO_ERROR;
@@ -2012,6 +2029,7 @@ TestUnicodeSet() {
 
         ucnv_close(cnv);
     }
+#endif
 
     /* test specific sets */
     for(i=0; i<LENGTHOF(nameRanges); ++i) {

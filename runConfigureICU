@@ -125,7 +125,13 @@ case $platform in
         THE_OS=AIX
         THE_COMP="xlC_r"
         CC=`which xlc_r`; export CC
+        if [ ! -x $CC ]; then
+           echo "ERROR: xlc_r was not found, please check the PATH to make sure it is correct."; exit 1
+        fi
         CXX=`which xlC_r`; export CXX
+        if [ ! -x $CXX ]; then
+           echo "ERROR: xlC_r was not found, please check the PATH to make sure it is correct."; exit 1
+        fi
         RELEASE_CFLAGS="-O2 -qmaxmem=-1"
         RELEASE_CXXFLAGS="-O2 -qmaxmem=-1"
         ;;
@@ -173,6 +179,7 @@ case $platform in
         THE_COMP="the iCC C++"
         CC=/usr/bin/icc; export CC
         CXX=/usr/bin/icc; export CXX
+        CPP="$CC -c -qpponly"; export CPP
         MAKE=/usr/bin/gmake; export MAKE
         RELEASE_CFLAGS='-O4'
         RELEASE_CXXFLAGS='-O4'
@@ -187,11 +194,21 @@ case $platform in
         ;;
     Linux/ICC)
         THE_OS="Linux"
-        THE_COMP="Intel ICC 9.0"
         CC=`which icc`; export CC
         CXX=`which icpc`; export CXX
+	ICC_VER=`${CC} -v 2>&1`
         RELEASE_CFLAGS='-O'
         RELEASE_CXXFLAGS='-O'
+        export CFLAGS="-fp-model precise"
+        export CXXFLAGS="-fp-model precise"
+	if [ "${ICC_VER}" = "Version 9.0 " ]; then
+		RELEASE_CFLAGS=''
+		RELEASE_CXXFLAGS=''
+		export CFLAGS="${CFLAGS} -O0"
+		export CXXFLAGS="${CXXFLAGS} -O0"
+		echo "ICC 9.0 does not work with optimization- disabling optimizations"
+	fi
+        THE_COMP="Intel ${ICC_VER}"
         ;;
     Linux/VA)
         THE_OS="Linux"
@@ -218,10 +235,10 @@ case $platform in
         THE_COMP="Microsoft Visual C++"
         CC=cl; export CC
         CXX=cl; export CXX
-        RELEASE_CFLAGS='/O2 /Ob2 /Op'
-        RELEASE_CXXFLAGS='/O2 /Ob2 /Op'
-        DEBUG_CFLAGS='/Zi'
-        DEBUG_CXXFLAGS='/Zi'
+        RELEASE_CFLAGS='/Gy /MD'
+        RELEASE_CXXFLAGS='/Gy /MD'
+        DEBUG_CFLAGS='/Zi /MDd'
+        DEBUG_CXXFLAGS='/Zi /MDd'
         DEBUG_LDFLAGS='/DEBUG'
         ;;
     Cygwin/MSVC2005)
@@ -229,10 +246,10 @@ case $platform in
         THE_COMP="Microsoft Visual C++ 2005"
         CC=cl; export CC
         CXX=cl; export CXX
-        RELEASE_CFLAGS='/O2 /Ob2'
-        RELEASE_CXXFLAGS='/O2 /Ob2'
-        DEBUG_CFLAGS='/Zi'
-        DEBUG_CXXFLAGS='/Zi'
+        RELEASE_CFLAGS='/Gy /MD'
+        RELEASE_CXXFLAGS='/Gy /MD'
+        DEBUG_CFLAGS='/Zi /MDd'
+        DEBUG_CXXFLAGS='/Zi /MDd'
         DEBUG_LDFLAGS='/DEBUG'
         ;;
     Cygwin/ICL)
@@ -284,7 +301,7 @@ case $platform in
         THE_COMP="z/OS 1.2 C/C++"
         CC=cc; export CC
         CXX=cxx; export CXX
-        export COMPILE_LINK_ENVVAR='_CXX_CVERSION=0x41020000 _C89_CVERSION=0x41020000 _CC_CVERSION=0x41020000 _CXX_PVERSION=0x41020000 _C89_PVERSION=0x41020000 _CC_PVERSION=0x41020000'
+        export COMPILE_LINK_ENVVAR='_CXX_CICC_VER}=0x41020000 _C89_CVERSION=0x41020000 _CC_CVERSION=0x41020000 _CXX_PVERSION=0x41020000 _C89_PVERSION=0x41020000 _CC_PVERSION=0x41020000'
         export _CXX_CVERSION=0x41020000 _C89_CVERSION=0x41020000 _CC_CVERSION=0x41020000 _CXX_PVERSION=0x41020000 _C89_PVERSION=0x41020000 _CC_PVERSION=0x41020000
         export LDFLAGS="-Wl,'compat=pm3'"
         export CFLAGS="-Wc,'target(zOSV1R2)'"
@@ -318,7 +335,7 @@ then
     then
         case $CXX in
             g++|*/g++|*-g++-*|*/*-g++-*)
-                RELEASE_CXXFLAGS=-O
+                RELEASE_CXXFLAGS=-O3
                 ;;
         esac
     fi

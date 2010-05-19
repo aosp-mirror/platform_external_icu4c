@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1997-2009, International Business Machines Corporation and
+ * Copyright (c) 1997-2010, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /*****************************************************************************
@@ -54,7 +54,7 @@ static const char* const rawData2[LOCALE_INFO_SIZE][LOCALE_SIZE] = {
     /* language code */
     {   "en",   "fr",   "ca",   "el",   "no",   "zh",   "de",   "es",  "ja"    },
     /* script code */
-    {   "",     "",     "",     "",     "",     "Hans", "", "", ""  },
+    {   "",     "",     "",     "",     "",     "", "", "", ""  },
     /* country code */
     {   "US",   "FR",   "ES",   "GR",   "NO",   "CN", "DE", "", "JP"    },
     /* variant code */
@@ -206,7 +206,9 @@ void addLocaleTest(TestNode** root)
     TESTCASE(TestDisplayNames);
     TESTCASE(TestGetAvailableLocales);
     TESTCASE(TestDataDirectory);
+#if !UCONFIG_NO_FILE_IO && !UCONFIG_NO_LEGACY_CONVERSION
     TESTCASE(TestISOFunctions);
+#endif
     TESTCASE(TestISO3Fallback);
     TESTCASE(TestUninstalledISO3Names);
     TESTCASE(TestSimpleDisplayNames);
@@ -219,7 +221,9 @@ void addLocaleTest(TestNode** root)
     TESTCASE(TestDisplayKeywords);
     TESTCASE(TestDisplayKeywordValues);
     TESTCASE(TestGetBaseName);
+#if !UCONFIG_NO_FILE_IO
     TESTCASE(TestGetLocale);
+#endif
     TESTCASE(TestDisplayNameWarning);
     TESTCASE(TestNonexistentLanguageExemplars);
     TESTCASE(TestLocDataErrorCodeChaining);
@@ -236,6 +240,7 @@ void addLocaleTest(TestNode** root)
     TESTCASE(TestLikelySubtags);
     TESTCASE(TestToLanguageTag);
     TESTCASE(TestForLanguageTag);
+    TESTCASE(TestTrailingNull);
 }
 
 
@@ -2115,9 +2120,28 @@ static void TestGetBaseName(void) {
             return;
         }
     }
-
 }
 
+static void TestTrailingNull(void) {
+  const char* localeId = "zh_Hans";
+  UChar buffer[128]; /* sufficient for this test */
+  int32_t len;
+  UErrorCode status = U_ZERO_ERROR;
+  int i;
+
+  len = uloc_getDisplayName(localeId, localeId, buffer, 128, &status);
+  if (len > 128) {
+    log_err("buffer too small");
+    return;
+  }
+
+  for (i = 0; i < len; ++i) {
+    if (buffer[i] == 0) {
+      log_err("name contained null");
+      return;
+    }
+  }
+}
 
 /* Jitterbug 4115 */
 static void TestDisplayNameWarning(void) {
@@ -2320,7 +2344,7 @@ static void TestGetLocale(void) {
         const char *req = "es_AR_BUENOSAIRES", *valid, *actual;
         obj = ucol_open(req, &ec);
         if (U_FAILURE(ec)) {
-            log_err("ucol_open failed\n");
+            log_err("ucol_open failed - %s\n", u_errorName(ec));
             return;
         }
         valid = ucol_getLocaleByType(obj, ULOC_VALID_LOCALE, &ec);
@@ -2605,7 +2629,7 @@ typedef struct OrientationStructTag {
     ULayoutType line;
 } OrientationStruct;
 
-const char* ULayoutTypeToString(ULayoutType type)
+static const char* ULayoutTypeToString(ULayoutType type)
 {
     switch(type)
     {
@@ -3136,10 +3160,6 @@ const char* const full_data[][3] = {
     "fil_Latn_PH",
     "fil"
   }, {
-    "fj",
-    "fj_Latn_FJ",
-    "fj"
-  }, {
     "fo",
     "fo_Latn_FO",
     "fo"
@@ -3223,10 +3243,6 @@ const char* const full_data[][3] = {
     "it",
     "it_Latn_IT",
     "it"
-  }, {
-    "iu",
-    "iu_Cans_CA",
-    "iu"
   }, {
     "ja",
     "ja_Jpan_JP",
@@ -3748,9 +3764,9 @@ const char* const full_data[][3] = {
     "cs_Latn_CZ",
     "cs"
   }, {
-    "und_Cans",
-    "crk_Cans_CA",
-    "crk"
+    "und_Cher",
+    "chr_Cher_US",
+    "chr"
   }, {
     "und_Cyrl",
     "ru_Cyrl_RU",
@@ -3824,10 +3840,6 @@ const char* const full_data[][3] = {
     "fi_Latn_FI",
     "fi"
   }, {
-    "und_FJ",
-    "fj_Latn_FJ",
-    "fj"
-  }, {
     "und_FM",
     "chk_Latn_FM",
     "chk"
@@ -3865,8 +3877,8 @@ const char* const full_data[][3] = {
     "fr_GP"
   }, {
     "und_GQ",
-    "fr_Latn_GQ",
-    "fr_GQ"
+    "es_Latn_GQ",
+    "es_GQ"
   }, {
     "und_GR",
     "el_Grek_GR",
@@ -4109,16 +4121,16 @@ const char* const full_data[][3] = {
     "mg"
   }, {
     "und_MH",
-    "mh_Latn_MH",
-    "mh"
+    "en_Latn_MH",
+    "en_MH"
   }, {
     "und_MK",
     "mk_Cyrl_MK",
     "mk"
   }, {
     "und_ML",
-    "fr_Latn_ML",
-    "fr_ML"
+    "bm_Latn_ML",
+    "bm"
   }, {
     "und_MM",
     "my_Mymr_MM",
@@ -4149,8 +4161,8 @@ const char* const full_data[][3] = {
     "dv"
   }, {
     "und_MW",
-    "ny_Latn_MW",
-    "ny"
+    "en_Latn_MW",
+    "en_MW"
   }, {
     "und_MX",
     "es_Latn_MX",
@@ -4205,8 +4217,8 @@ const char* const full_data[][3] = {
     "en_NR"
   }, {
     "und_NU",
-    "niu_Latn_NU",
-    "niu"
+    "en_Latn_NU",
+    "en_NU"
   }, {
     "und_OM",
     "ar_Arab_OM",
@@ -4365,8 +4377,8 @@ const char* const full_data[][3] = {
     "tg"
   }, {
     "und_TK",
-    "en_Latn_TK",
-    "en_TK"
+    "tkl_Latn_TK",
+    "tkl"
   }, {
     "und_TL",
     "pt_Latn_TL",
@@ -4441,8 +4453,8 @@ const char* const full_data[][3] = {
     "vi"
   }, {
     "und_VU",
-    "bi_Latn_VU",
-    "bi"
+    "fr_Latn_VU",
+    "fr_VU"
   }, {
     "und_WF",
     "fr_Latn_WF",
@@ -5205,7 +5217,7 @@ static void TestLikelySubtags()
         const char* const minimal = basic_maximize_data[i][0];
         const char* const maximal = basic_maximize_data[i][1];
 
-        const int32_t length =
+        /* const int32_t length = */
             uloc_addLikelySubtags(
                 minimal,
                 buffer,
@@ -5231,7 +5243,7 @@ static void TestLikelySubtags()
         const char* const maximal = basic_minimize_data[i][0];
         const char* const minimal = basic_minimize_data[i][1];
 
-        const int32_t length =
+        /* const int32_t length = */
             uloc_minimizeSubtags(
                 maximal,
                 buffer,
@@ -5258,7 +5270,7 @@ static void TestLikelySubtags()
         const char* const minimal = full_data[i][0];
         const char* const maximal = full_data[i][1];
 
-        const int32_t length =
+        /* const int32_t length = */
             uloc_addLikelySubtags(
                 minimal,
                 buffer,
@@ -5286,7 +5298,7 @@ static void TestLikelySubtags()
 
         if (strlen(maximal) > 0) {
 
-            const int32_t length =
+            /* const int32_t length = */
                 uloc_minimizeSubtags(
                     maximal,
                     buffer,
@@ -5380,32 +5392,33 @@ static void TestLikelySubtags()
 const char* const locale_to_langtag[][3] = {
     {"",            "und",          "und"},
     {"en",          "en",           "en"},
-    {"en_US",       "en-us",        "en-us"},
-    {"iw_IL",       "he-il",        "he-il"},
-    {"sr_Latn_SR",  "sr-latn-sr",   "sr-latn-sr"},
+    {"en_US",       "en-US",        "en-US"},
+    {"iw_IL",       "he-IL",        "he-IL"},
+    {"sr_Latn_SR",  "sr-Latn-SR",   "sr-Latn-SR"},
     {"en__POSIX",   "en-posix",     "en-posix"},
-    {"en_POSIX",    "en",           NULL},
+    {"en_POSIX",    "en",           "en"},
     {"und_555",     "und-555",      "und-555"},
     {"123",         "und",          NULL},
     {"%$#&",        "und",          NULL},
-    {"_Latn",       "und-latn",     "und-latn"},
-    {"_DE",         "und-de",       "und-de"},
-    {"und_FR",      "und-fr",       "und-fr"},
-    {"th_TH_TH",    "th-th",        NULL},
+    {"_Latn",       "und-Latn",     "und-Latn"},
+    {"_DE",         "und-DE",       "und-DE"},
+    {"und_FR",      "und-FR",       "und-FR"},
+    {"th_TH_TH",    "th-TH",        NULL},
     {"bogus",       "bogus",        "bogus"},
     {"foooobarrr",  "und",          NULL},
-    {"az_AZ_CYRL",  "az-cyrl-az",   "az-cyrl-az"},
-    {"aa_BB_CYRL",  "aa-bb",        NULL},
-    {"en_US_1234",  "en-us-1234",   "en-us-1234"},
-    {"en_US_VARIANTA_VARIANTB", "en-us-varianta-variantb",  "en-us-varianta-variantb"},
-    {"en_US_VARIANTB_VARIANTA", "en-us-varianta-variantb",  "en-us-varianta-variantb"},
+    {"az_AZ_CYRL",  "az-Cyrl-AZ",   "az-Cyrl-AZ"},
+    {"aa_BB_CYRL",  "aa-BB",        NULL},
+    {"en_US_1234",  "en-US-1234",   "en-US-1234"},
+    {"en_US_VARIANTA_VARIANTB", "en-US-varianta-variantb",  "en-US-varianta-variantb"},
+    {"en_US_VARIANTB_VARIANTA", "en-US-varianta-variantb",  "en-US-varianta-variantb"},
     {"ja__9876_5432",   "ja-5432-9876", "ja-5432-9876"},
-    {"zh_Hant__VAR",    "zh-hant",  NULL},
+    {"zh_Hant__VAR",    "zh-Hant",  NULL},
     {"es__BADVARIANT_GOODVAR",  "es-goodvar",   NULL},
     {"en@calendar=gregorian",   "en-u-ca-gregory",  "en-u-ca-gregory"},
     {"de@collation=phonebook;calendar=gregorian",   "de-u-ca-gregory-co-phonebk",   "de-u-ca-gregory-co-phonebk"},
     {"th@numbers=thai;z=extz;x=priv-use;a=exta",   "th-a-exta-u-nu-thai-z-extz-x-priv-use", "th-a-exta-u-nu-thai-z-extz-x-priv-use"},
     {"en@timezone=America/New_York;calendar=japanese",    "en-u-ca-japanese-tz-usnyc",    "en-u-ca-japanese-tz-usnyc"},
+    {"en@timezone=US/Eastern",  "en-u-tz-usnyc",    "en-u-tz-usnyc"},
     {"en@x=x-y-z;a=a-b-c",  "en-x-x-y-z",   NULL},
     {"it@collation=badcollationtype;colStrength=identical;cu=usd-eur", "it-u-ks-identic",  NULL},
     {NULL,          NULL,           NULL}
@@ -5473,11 +5486,11 @@ static const struct {
 } langtag_to_locale[] = {
     {"en",                  "en",                   2},
     {"en-us",               "en_US",                5},
-    {"und-us",              "_US",                  6},
+    {"und-US",              "_US",                  6},
     {"und-latn",            "_Latn",                8},
-    {"en-us-posix",         "en_US_POSIX",          11},
+    {"en-US-posix",         "en_US_POSIX",          11},
     {"de-de_euro",          "de",                   2},
-    {"kok-in",              "kok_IN",               6},
+    {"kok-IN",              "kok_IN",               6},
     {"123",                 "",                     0},
     {"en_us",               "",                     0},
     {"en-latn-x",           "en_Latn",              7},
@@ -5500,7 +5513,7 @@ static const struct {
     {"fr-u-nu-latn-cu-eur", "fr@currency=eur;numbers=latn", 19},
     {"de-k-kext-u-co-phonebk-nu-latn",  "de@collation=phonebook;k=kext;numbers=latn",   30},
     {"ja-u-cu-jpy-ca-jp",   "ja@currency=jpy",      11},
-    {"en-us-u-tz-usnyc",    "en_US@timezone=america/new_york",      16},
+    {"en-us-u-tz-usnyc",    "en_US@timezone=America/New_York",      16},
     {"und-a-abc-def",       "und@a=abc-def",        13},
     {"zh-u-ca-chinese-x-u-ca-chinese",  "zh@calendar=chinese;x=u-ca-chinese",   30},
     {NULL,          NULL,           0}
@@ -5531,4 +5544,3 @@ static void TestForLanguageTag(void) {
         }
     }
 }
-

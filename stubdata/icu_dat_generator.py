@@ -20,7 +20,7 @@
 #    icu_dat_generator.py  icu-version [-v] [-h]
 #
 # Sample usage:
-#   $ANDROID_BUILD_TOP/external/icu4c/stubdata$ ./icu_dat_generator.py  4.2 --verbose
+#   $ANDROID_BUILD_TOP/external/icu4c/stubdata$ ./icu_dat_generator.py  4.4 --verbose
 #
 #  Add new dat file:
 #    1. Add icudtxxl-<datname>.txt to $ANDROID_BUILD_TOP/external/icu4c/stubdata.
@@ -55,7 +55,7 @@ def PrintHelp():
   print "Usage:"
   print "icu_dat_generator.py  icu-version [-v|--verbose] [-h|--help]"
   print "Example:"
-  print "$ANDROID_BUILD_TOP/external/icu4c/stubdata$ ./icu_dat_generator.py 4.2"
+  print "$ANDROID_BUILD_TOP/external/icu4c/stubdata$ ./icu_dat_generator.py 4.4"
 
 
 def InvokeIcuTool(tool, working_dir, args):
@@ -139,6 +139,10 @@ def GenResIndex(dat_list_file_path):
   locales = set()
   brkitrs = set()
   colls = set()
+  currs = set()
+  langs = set()
+  regions = set()
+  zones = set()
   rbnfs = set()
 
   for line in open(dat_list_file_path, "r"):
@@ -156,6 +160,22 @@ def GenResIndex(dat_list_file_path):
       end = line.find(".res")
       if end > 0:
         colls.add(line[line.find("/")+1:end])
+    elif line.find("curr/") >= 0:
+      end = line.find(".res")
+      if end > 0:
+        currs.add(line[line.find("/")+1:end])
+    elif line.find("lang/") >= 0:
+      end = line.find(".res")
+      if end > 0:
+        langs.add(line[line.find("/")+1:end])
+    elif line.find("region/") >= 0:
+      end = line.find(".res")
+      if end > 0:
+        regions.add(line[line.find("/")+1:end])
+    elif line.find("zone/") >= 0:
+      end = line.find(".res")
+      if end > 0:
+        zones.add(line[line.find("/")+1:end])
     elif line.find("rbnf/") >= 0:
       end = line.find(".res")
       if end > 0:
@@ -169,17 +189,29 @@ def GenResIndex(dat_list_file_path):
 
   ShowMissing(brkitrs, locales, "brkitr", dat_list_file_path)
   ShowMissing(colls, locales, "coll", dat_list_file_path)
+  ShowMissing(currs, locales, "curr", dat_list_file_path)
+  ShowMissing(langs, locales, "lang", dat_list_file_path)
+  ShowMissing(regions, locales, "region", dat_list_file_path)
+  ShowMissing(zones, locales, "zone", dat_list_file_path)
   ShowMissing(rbnfs, locales, "rbnf", dat_list_file_path)
 
   WriteIndex(os.path.join(TMP_DAT_PATH, res_index), locales, CLDR_VERSION)
   WriteIndex(os.path.join(TMP_DAT_PATH, "brkitr", res_index), brkitrs)
   WriteIndex(os.path.join(TMP_DAT_PATH, "coll", res_index), colls)
+  WriteIndex(os.path.join(TMP_DAT_PATH, "curr", res_index), currs)
+  WriteIndex(os.path.join(TMP_DAT_PATH, "lang", res_index), langs)
+  WriteIndex(os.path.join(TMP_DAT_PATH, "region", res_index), regions)
+  WriteIndex(os.path.join(TMP_DAT_PATH, "zone", res_index), zones)
   WriteIndex(os.path.join(TMP_DAT_PATH, "rbnf", res_index), rbnfs)
 
   # Call genrb to generate new res_index.res.
   InvokeIcuTool("genrb", TMP_DAT_PATH, [res_index])
   InvokeIcuTool("genrb", os.path.join(TMP_DAT_PATH, "brkitr"), [res_index])
   InvokeIcuTool("genrb", os.path.join(TMP_DAT_PATH, "coll"), [res_index])
+  InvokeIcuTool("genrb", os.path.join(TMP_DAT_PATH, "curr"), [res_index])
+  InvokeIcuTool("genrb", os.path.join(TMP_DAT_PATH, "lang"), [res_index])
+  InvokeIcuTool("genrb", os.path.join(TMP_DAT_PATH, "region"), [res_index])
+  InvokeIcuTool("genrb", os.path.join(TMP_DAT_PATH, "zone"), [res_index])
   if len(rbnfs):
     InvokeIcuTool("genrb", os.path.join(TMP_DAT_PATH, "rbnf"), [res_index])
 
@@ -214,7 +246,7 @@ def main():
   argc = len(sys.argv)
   if argc < 2:
     print "You must provide icu version number."
-    print "Example: ./icu_dat_generator.py 4.2"
+    print "Example: ./icu_dat_generator.py 4.4"
     sys.exit(1)
   ICU_VERSION = sys.argv[1]
   version = GetIcuVersion(ICU_VERSION)
@@ -222,7 +254,7 @@ def main():
     print sys.argv[1] + " is not a valid icu version number!"
     sys.exit(1)
   ICUDATA = "icudt" + version + "l"
-  CLDR_VERSION = "1.7"
+  CLDR_VERSION = "1.8"
   ANDROID_ROOT = os.environ.get("ANDROID_BUILD_TOP")
   if not ANDROID_ROOT:
     print "$ANDROID_BUILD_TOP not set! Run 'env_setup.sh'."

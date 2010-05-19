@@ -39,15 +39,14 @@ src_files := \
 	ucnvmbcs.c         ucnvscsu.c         \
 	ucnv_set.c         ucnv_u16.c         \
 	ucnv_u32.c         ucnv_u7.c          \
-	ucnv_u8.c          ucol_swp.c         \
+	ucnv_u8.c                             \
 	udata.c            udatamem.c         \
 	udataswp.c         uenum.c            \
 	uhash.c            uinit.c            \
 	uinvchar.c         uloc.c             \
 	umapfile.c         umath.c            \
 	umutex.c           unames.c           \
-	unorm_it.c                            \
-	uprops.c           uresbund.c         \
+	unorm_it.c         uresbund.c         \
 	ures_cnv.c         uresdata.c         \
 	usc_impl.c         uscript.c          \
 	ushape.c           ustrcase.c         \
@@ -56,9 +55,9 @@ src_files := \
 	ustr_wcs.c         utf_impl.c         \
 	utrace.c           utrie.c            \
  	utypes.c           wintz.c            \
- 	utrie2.c           utrie2_builder.c   \
+ 	utrie2_builder.c   icuplug.c          \
  	propsvec.c         ulist.c            \
- 	uloc_tag.c
+ 	uloc_tag.c         
 
 src_files += \
         bmpset.cpp      unisetspan.cpp   \
@@ -92,10 +91,15 @@ src_files += \
 	util.cpp        util_props.cpp   \
  	uvector.cpp     uvectr32.cpp     \
  	errorcode.cpp                    \
- 	bytestream.cpp stringpiece.cpp   \
+ 	bytestream.cpp  stringpiece.cpp  \
  	mutex.cpp       dtintrv.cpp      \
- 	ucnvsel.cpp
-
+ 	ucnvsel.cpp     uvectr64.cpp     \
+        locavailable.cpp locdispnames.cpp     \
+        loclikely.cpp   locresdata.cpp   \
+        normalizer2impl.cpp normalizer2.cpp   \
+        filterednormalizer2.cpp  ucol_swp.cpp \
+        uprops.cpp      utrie2.cpp       \     
+ 
 c_includes := \
 	$(LOCAL_PATH) \
 	$(LOCAL_PATH)/../i18n

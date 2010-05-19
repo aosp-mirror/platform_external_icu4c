@@ -1,5 +1,5 @@
 /***********************************************************************
- * Copyright (c) 1997-2009, International Business Machines Corporation
+ * Copyright (c) 1997-2010, International Business Machines Corporation
  * and others. All Rights Reserved.
  ***********************************************************************/
  
@@ -1941,6 +1941,7 @@ void NumberFormatRegressionTest::Test4145457() {
         out2 = nf->format(pi, out2, pos);
         UnicodeString pat2;
         pat2 = nf->toPattern(pat2);
+        pp.setIndex(0);
         nf->parse(out2, num, pp);
         double val2 = num.getDouble();
         
@@ -2636,7 +2637,7 @@ void NumberFormatRegressionTest::TestJ691(void) {
     // create a Calendar for this locale
     Calendar *cal = Calendar::createInstance(loc, status);
     if (U_FAILURE(status)) {
-        errln("FAIL: Calendar::createInstance() returned " + (UnicodeString)u_errorName(status));
+        dataerrln("FAIL: Calendar::createInstance() returned " + (UnicodeString)u_errorName(status));
         return;
     }
 

@@ -81,7 +81,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\bin\icule42d.dll"
+				OutputFile="..\..\bin\icule44d.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				GenerateDebugInformation="true"
@@ -175,7 +175,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\bin\icule42.dll"
+				OutputFile="..\..\bin\icule44.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				ProgramDatabaseFile=".\..\..\lib\icule.pdb"
@@ -271,7 +271,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\bin64\icule42d.dll"
+				OutputFile="..\..\bin64\icule44d.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				GenerateDebugInformation="true"
@@ -367,7 +367,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\bin64\icule42.dll"
+				OutputFile="..\..\bin64\icule44.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				ProgramDatabaseFile=".\..\..\lib64\icule.pdb"
@@ -779,10 +779,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Features.h"
-				>
-			</File>
-			<File
 				RelativePath=".\GDEFMarkFilter.h"
 				>
 			</File>
@@ -828,6 +824,10 @@
 			</File>
 			<File
 				RelativePath=".\HanLayoutEngine.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ICUFeatures.h"
 				>
 			</File>
 			<File

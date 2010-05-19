@@ -71,7 +71,7 @@ config := $(word 1, \
             $(if $(findstring nl,$(PRODUCT_LOCALES)),default) \
             us)
 
-icu_var_name := icudt42_dat
+icu_var_name := icudt44_dat
 
 
 #
@@ -83,7 +83,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := libicudata-jp
 
 required_config := us-japan
-data_file_name := icudt42l-us-japan.dat
+data_file_name := icudt44l-us-japan.dat
 output_file_name := icu_data_jp.S
 
 include $(LOCAL_PATH)/IcuData.mk
@@ -98,7 +98,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := libicudata-large
 
 required_config := large
-data_file_name := icudt42l-large.dat
+data_file_name := icudt44l-large.dat
 output_file_name := icu_data_large.S
 
 include $(LOCAL_PATH)/IcuData.mk
@@ -113,7 +113,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := libicudata-eu
 
 required_config := us-euro
-data_file_name := icudt42l-us-euro.dat
+data_file_name := icudt44l-us-euro.dat
 output_file_name := icu_data_eu.S
 
 include $(LOCAL_PATH)/IcuData.mk
@@ -128,7 +128,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := libicudata-default
 
 required_config := default
-data_file_name := icudt42l-default.dat
+data_file_name := icudt44l-default.dat
 output_file_name := icu_data_default.S
 
 include $(LOCAL_PATH)/IcuData.mk
@@ -143,7 +143,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := libicudata-us
 
 required_config := us
-data_file_name := icudt42l-us.dat
+data_file_name := icudt44l-us.dat
 output_file_name := icu_data_us.S
 
 include $(LOCAL_PATH)/IcuData.mk
@@ -163,7 +163,7 @@ ifeq ($(WITH_HOST_DALVIK),true)
 
     config := large
     required_config := large
-    data_file_name := icudt42l-large.dat
+    data_file_name := icudt44l-large.dat
     output_file_name := icu_data_large.S
 
     include $(LOCAL_PATH)/IcuData.mk

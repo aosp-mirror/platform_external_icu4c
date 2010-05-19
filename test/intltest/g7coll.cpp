@@ -290,7 +290,11 @@ void G7CollationTest::runIndexedTest( int32_t index, UBool exec, const char* &na
 {
     if (exec) logln("TestSuite G7CollationTest: ");
     switch (index) {
-        case 0: name = "TestG7Locales"; if (exec)   TestG7Locales(/* par */); break;
+        // BEGIN android-changed
+        // To save space, Android does not include the collation tailoring rules.
+        // We skip the tailing tests for collations.
+        case 0: name = "TestG7Locales"; break;
+        // END android-changed
         case 1: name = "TestDemo1"; if (exec)   TestDemo1(/* par */); break;
         case 2: name = "TestDemo2"; if (exec)   TestDemo2(/* par */); break;
         case 3: name = "TestDemo3"; if (exec)   TestDemo3(/* par */); break;

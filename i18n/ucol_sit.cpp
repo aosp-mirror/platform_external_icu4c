@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-*   Copyright (C) 2004-2009, International Business Machines
+*   Copyright (C) 2004-2010, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *******************************************************************************
 *   file name:  ucol_sit.cpp
@@ -19,7 +19,6 @@
 #include "utracimp.h"
 #include "ucol_imp.h"
 #include "ucol_tok.h"
-#include "unormimp.h"
 #include "cmemory.h"
 #include "cstring.h"
 #include "uresimp.h"
@@ -292,7 +291,7 @@ const char* ucol_sit_readOption(const char *start, CollatorSpec *spec,
       if(*start == options[i].optionStart) {
           spec->entries[i].start = start;
           const char* end = options[i].action(spec, options[i].attr, start+1, status);
-          spec->entries[i].len = end - start;
+          spec->entries[i].len = (int32_t)(end - start);
           return end;
       }
   }
@@ -325,7 +324,7 @@ ucol_sit_readSpecs(CollatorSpec *s, const char *string,
         }
     }
     if(U_FAILURE(*status)) {
-        parseError->offset = string - definition;
+        parseError->offset = (int32_t)(string - definition);
     }
     return string;
 }
@@ -508,7 +507,7 @@ ucol_openFromShortString( const char *definition,
             }
 
             if(U_FAILURE(*status)) {
-                parseError->offset = string - definition;
+                parseError->offset = (int32_t)(string - definition);
                 ucol_close(result);
                 return NULL;
             }

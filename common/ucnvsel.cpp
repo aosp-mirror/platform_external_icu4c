@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2008, International Business Machines
+*   Copyright (C) 2008-2009, International Business Machines
 *   Corporation, Google and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -157,13 +157,13 @@ ucnvsel_open(const char* const*  converterList, int32_t converterListSize,
   }
 
   // allocate a new converter
-  UConverterSelector* newSelector =
-    (UConverterSelector*)uprv_malloc(sizeof(UConverterSelector));
-  if (!newSelector) {
+  LocalUConverterSelectorPointer newSelector(
+    (UConverterSelector*)uprv_malloc(sizeof(UConverterSelector)));
+  if (newSelector.isNull()) {
     *status = U_MEMORY_ALLOCATION_ERROR;
     return NULL;
   }
-  uprv_memset(newSelector, 0, sizeof(UConverterSelector));
+  uprv_memset(newSelector.getAlias(), 0, sizeof(UConverterSelector));
 
   if (converterListSize == 0) {
     converterList = NULL;
@@ -173,7 +173,6 @@ ucnvsel_open(const char* const*  converterList, int32_t converterListSize,
     (char**)uprv_malloc(converterListSize * sizeof(char*));
   if (!newSelector->encodings) {
     *status = U_MEMORY_ALLOCATION_ERROR;
-    uprv_free(newSelector);
     return NULL;
   }
   newSelector->encodings[0] = NULL;  // now we can call ucnvsel_close()
@@ -183,7 +182,7 @@ ucnvsel_open(const char* const*  converterList, int32_t converterListSize,
   int32_t i;
   for (i = 0; i < converterListSize; i++) {
     totalSize +=
-      uprv_strlen(converterList != NULL ? converterList[i] : ucnv_getAvailableName(i)) + 1;
+      (int32_t)uprv_strlen(converterList != NULL ? converterList[i] : ucnv_getAvailableName(i)) + 1;
   }
   // 4-align the totalSize to 4-align the size of the serialized form
   int32_t encodingStrPadding = totalSize & 3;
@@ -194,7 +193,6 @@ ucnvsel_open(const char* const*  converterList, int32_t converterListSize,
   char* allStrings = (char*) uprv_malloc(totalSize);
   if (!allStrings) {
     *status = U_MEMORY_ALLOCATION_ERROR;
-    ucnvsel_close(newSelector);
     return NULL;
   }
 
@@ -212,15 +210,14 @@ ucnvsel_open(const char* const*  converterList, int32_t converterListSize,
   newSelector->ownEncodingStrings = TRUE;
   newSelector->encodingsCount = converterListSize;
   UPropsVectors *upvec = upvec_open((converterListSize+31)/32, status);
-  generateSelectorData(newSelector, upvec, excludedCodePoints, whichSet, status);
+  generateSelectorData(newSelector.getAlias(), upvec, excludedCodePoints, whichSet, status);
   upvec_close(upvec);
 
   if (U_FAILURE(*status)) {
-    ucnvsel_close(newSelector);
     return NULL;
   }
 
-  return newSelector;
+  return newSelector.orphan();
 }
 
 /* close opened selector */
@@ -633,7 +630,7 @@ static const char* U_CALLCONV ucnvsel_next_encoding(UEnumeration* enumerator,
   result = sel->encodings[((Enumerator*)(enumerator->context))->index[cur] ];
   ((Enumerator*)(enumerator->context))->cur++;
   if (resultLength) {
-    *resultLength = uprv_strlen(result);
+    *resultLength = (int32_t)uprv_strlen(result);
   }
   return result;
 }
@@ -663,7 +660,7 @@ static const UEnumeration defaultEncodings = {
 
 // internal fn to intersect two sets of masks
 // returns whether the mask has reduced to all zeros
-UBool intersectMasks(uint32_t* dest, const uint32_t* source1, int32_t len) {
+static UBool intersectMasks(uint32_t* dest, const uint32_t* source1, int32_t len) {
   int32_t i;
   uint32_t oredDest = 0;
   for (i = 0 ; i < len ; ++i) {
@@ -674,7 +671,7 @@ UBool intersectMasks(uint32_t* dest, const uint32_t* source1, int32_t len) {
 
 // internal fn to count how many 1's are there in a mask
 // algorithm taken from  http://graphics.stanford.edu/~seander/bithacks.html
-int16_t countOnes(uint32_t* mask, int32_t len) {
+static int16_t countOnes(uint32_t* mask, int32_t len) {
   int32_t i, totalOnes = 0;
   for (i = 0 ; i < len ; ++i) {
     uint32_t ent = mask[i];
@@ -799,7 +796,7 @@ ucnvsel_selectForUTF8(const UConverterSelector* sel,
   uprv_memset(mask, ~0, columns *4);
 
   if (length < 0) {
-    length = uprv_strlen(s);
+    length = (int32_t)uprv_strlen(s);
   }
   const char *limit = s + length;
 

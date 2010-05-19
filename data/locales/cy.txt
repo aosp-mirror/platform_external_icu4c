@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2009 International Business Machines
+// * Copyright (C) 2010 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/cy.xml
@@ -11,151 +11,17 @@
  */
 cy{
     AuxExemplarCharacters{"[j k q v x z]"}
-    Countries{
-        GB{"Prydain Fawr"}
-    }
-    Currencies{
-        BRL{
-            "R$",
-            "Real Brasil",
-        }
-        CNY{
-            "CN¥",
-            "Yuan Renminbi Tseina",
-        }
-        EUR{
-            "€",
-            "Ewro",
-        }
-        GBP{
-            "£",
-            "Punt Sterling Prydain",
-        }
-        INR{
-            "Rs",
-            "Rwpî India",
-        }
-        JPY{
-            "JP¥",
-            "Yen Siapan",
-        }
-        RUB{
-            "RUB",
-            "Rwbl Rwsia",
-        }
-        USD{
-            "US$",
-            "Doler yr UDA",
-        }
-    }
     ExemplarCharacters{
-        "[a á à â ä b c {ch} d {dd} e é è ê ë f {ff} g-i í ì î ï l {ll} m n {ng} o ó "
-        "ò ô ö p {ph} r {rh} s t {th} u ú ù û ü w ẃ ẁ ŵ ẅ y ý ỳ ŷ ÿ]"
+        "[a á à â ä b c {ch} d {dd} e é è ê ë f {ff} g {ng} h i í ì î ï l {ll} m n o "
+        "ó ò ô ö p {ph} r {rh} s t {th} u ú ù û ü w ẃ ẁ ŵ ẅ y ý ỳ ŷ ÿ]"
     }
-    Languages{
-        af{"Affricaneg"}
-        am{"Amhareg"}
-        ar{"Arabeg"}
-        as{"Asameg"}
-        be{"Belarwsiyn"}
-        bg{"Bwlgareg"}
-        bh{"Bihari"}
-        bn{"Bengali; Bangla"}
-        br{"Llydaweg"}
-        bs{"Bosnieg"}
-        ca{"Catalaneg"}
-        cs{"Tsiec"}
-        cy{"Cymraeg"}
-        da{"Daneg"}
-        de{"Almaeneg"}
-        el{"Groeg"}
-        en{"Saesneg"}
-        eo{"Esperanto"}
-        es{"Sbaeneg"}
-        et{"Estoneg"}
-        eu{"Basgeg"}
-        fa{"Persieg"}
-        fi{"Ffineg"}
-        fil{"Tagalog"}
-        fo{"Ffaroeg"}
-        fr{"Ffrangeg"}
-        ga{"Gwyddeleg"}
-        gd{"Gaeleg yr Alban"}
-        gl{"Galiseg"}
-        he{"Hebraeg"}
-        hi{"Hindi"}
-        hr{"Croateg"}
-        hu{"Hwngareg"}
-        hy{"Armeneg"}
-        ia{"Interlingua"}
-        id{"Indonesieg"}
-        ie{"Interlingue"}
-        is{"Islandeg"}
-        it{"Eidaleg"}
-        ja{"Siapaneeg"}
-        jv{"Jafanaeg"}
-        ka{"Georgeg"}
-        km{"Cambodieg"}
-        kn{"Kannada"}
-        ko{"Corëeg"}
-        ku{"Cwrdeg"}
-        la{"Lladin"}
-        ln{"Lingala"}
-        lo{"Laoeg"}
-        lt{"Lithwaneg"}
-        lv{"Latfieg"}
-        ml{"Malayalam"}
-        mn{"Mongoleg"}
-        mr{"Marathi"}
-        ms{"Malai"}
-        mt{"Malteseg"}
-        ne{"Nepali"}
-        nl{"Iseldireg"}
-        nn{"Norwyeg (Nynorsk)"}
-        no{"Norwyeg"}
-        oc{"Ocsitaneg"}
-        or{"Oriya"}
-        pa{"Pwnjabi"}
-        pl{"Pwyleg"}
-        ps{"Pashto"}
-        pt{"Portiwgaleg"}
-        ro{"Rwmaneg"}
-        ru{"Rwsieg"}
-        sa{"Sansgrit"}
-        sd{"Sindhi"}
-        sh{"Serbo-Croateg"}
-        si{"Sinhaleg"}
-        sk{"Slofaceg"}
-        sl{"Slofeneg"}
-        so{"Somaleg"}
-        sq{"Albaneg"}
-        sr{"Serbeg"}
-        st{"Sesotheg"}
-        su{"Sundaneg"}
-        sv{"Swedeg"}
-        sw{"Swahili"}
-        ta{"Tamil"}
-        tlh{"Klingon"}
-        uk{"Wcreineg"}
-        und{"anh"}
-        uz{"Wsbeceg"}
-        vi{"Fietnameg"}
-        zh{"Tseineeg"}
-        zu{"Zwlw"}
-    }
+    ExemplarCharactersIndex{"[A B C {CH} D E F {FF} G H I J L {LL} M N O P {PH} R {RH} S T {TH} U W Y]"}
     LocaleScript{
         "Latn",
     }
-    Scripts{
-        Latn{"Lladin"}
-    }
-    Version{"1.66"}
+    Version{"2.0.47.68"}
     calendar{
         gregorian{
-            AmPmMarkers{
-                "AM",
-                "PM",
-            }
             DateTimePatterns{
                 "h:mm:ss a zzzz",
                 "h:mm:ss a z",
@@ -446,22 +312,11 @@ cy{
                         "4ydd chwarter",
                     }
                 }
-                stand-alone{
-                    narrow{
-                        "1",
-                        "2",
-                        "3",
-                        "4",
-                    }
-                }
             }
         }
     }
     measurementSystemNames{
         US{"UD"}
         metric{"Metrig"}
-    }
-    zoneStrings{
-        hourFormat{"+HHmm;-HHmm"}
     }
 }

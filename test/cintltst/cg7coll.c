@@ -125,7 +125,11 @@ const static int32_t results[TESTLOCALES][TOTALTESTSET] = {
 
 void addRuleBasedCollTest(TestNode** root)
 {
-    addTest(root, &TestG7Locales, "tscoll/cg7coll/TestG7Locales");
+    /* BEGIN android-removed
+       To save space, Android does not include the collation tailoring rules.
+       We skip the tailing tests for collations. */
+    /* addTest(root, &TestG7Locales, "tscoll/cg7coll/TestG7Locales"); */
+    /* END android-removed */
     addTest(root, &TestDemo1, "tscoll/cg7coll/TestDemo1");
     addTest(root, &TestDemo2, "tscoll/cg7coll/TestDemo2");
     addTest(root, &TestDemo3, "tscoll/cg7coll/TestDemo3");
