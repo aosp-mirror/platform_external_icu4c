@@ -36,7 +36,7 @@
 #include <limits.h>
 #include <string.h>
 #include <stdio.h>
-#ifdef HAVE_ANDROID_OS
+#ifdef ANDROID
 #include <math.h>
 #else
 #include <limits>
