@@ -380,7 +380,7 @@ _shapeToArabicDigitsWithContext(UChar *s, int32_t length,
  *           U_SHAPE_TEXT_DIRECTION_LOGICAL
  */
 static void 
-invertBuffer(UChar *buffer,int32_t size,uint32_t options,int32_t lowlimit,int32_t highlimit) {
+invertBuffer(UChar *buffer,int32_t size,uint64_t options,int32_t lowlimit,int32_t highlimit) {
     UChar temp;
     int32_t i=0,j=0;
     for(i=lowlimit,j=size-highlimit-1;i<j;i++,j--) {
@@ -442,7 +442,7 @@ getLink(UChar ch) {
  *           at each end of the logical buffer
  */
 static void
-countSpaces(UChar *dest,int32_t size,uint32_t options,int32_t *spacesCountl,int32_t *spacesCountr) {
+countSpaces(UChar *dest,int32_t size,uint64_t options,int32_t *spacesCountl,int32_t *spacesCountr) {
     int32_t i = 0;
     int32_t countl = 0,countr = 0;
     while(dest[i] == SPACE_CHAR) {
@@ -611,7 +611,7 @@ isIsolatedTashkeelChar(UChar ch){
 
 static int32_t
 calculateSize(const UChar *source, int32_t sourceLength,
-int32_t destSize,uint32_t options) {
+int32_t destSize,uint64_t options) {
     int32_t i = 0;
     
     int lamAlefOption = 0;
@@ -668,7 +668,7 @@ int32_t destSize,uint32_t options) {
  */
 static int32_t
 handleTashkeelWithTatweel(UChar *dest, int32_t sourceLength,
-             int32_t destSize,uint32_t options,
+             int32_t destSize,uint64_t options,
              UErrorCode *pErrorCode) {
                  int i;
                  for(i = 0; i < sourceLength; i++){
@@ -707,7 +707,7 @@ handleTashkeelWithTatweel(UChar *dest, int32_t sourceLength,
 static int32_t
 handleGeneratedSpaces(UChar *dest, int32_t sourceLength,
                     int32_t destSize,
-                    uint32_t options, uint32_t xoptions,
+                    uint64_t options,
                     UErrorCode *pErrorCode ) {
 
     int32_t i = 0, j = 0;
@@ -764,11 +764,11 @@ handleGeneratedSpaces(UChar *dest, int32_t sourceLength,
 
     if (shapingMode == 0){
         if ( (options&U_SHAPE_LAMALEF_MASK) == U_SHAPE_LAMALEF_NEAR &&
-             (xoptions&U_SHAPE_X_LAMALEF_SUB_ALTERNATE) == 0) { // if set, leave LAMALEF_SPACE_SUB in the output
+             (options&U_SHAPE_X_LAMALEF_SUB_ALTERNATE) == 0) { // if set, leave LAMALEF_SPACE_SUB in the output
             lamAlefOption = 1;
         }
     }
-    
+
     if (lamAlefOption){
         /* Lam+Alef is already shaped into LamAlef + FFFF */
         i = 0;
@@ -824,8 +824,6 @@ handleGeneratedSpaces(UChar *dest, int32_t sourceLength,
         uprv_memcpy(dest, tempbuffer, sourceLength*U_SIZEOF_UCHAR);
         destSize = sourceLength;
     }
-
-
 
     lamAlefOption = 0;
     tashkeelOption = 0;
@@ -1071,7 +1069,7 @@ expandCompositCharAtNear(UChar *dest, int32_t sourceLength, int32_t destSize,UEr
  
 static int32_t
 expandCompositChar(UChar *dest, int32_t sourceLength,
-              int32_t destSize,uint32_t options,
+              int32_t destSize,uint64_t options,
               UErrorCode *pErrorCode, int shapingMode) {
 
     int32_t      i = 0,j = 0;
@@ -1184,7 +1182,7 @@ expandCompositChar(UChar *dest, int32_t sourceLength,
  */
 static int32_t
 shapeUnicode(UChar *dest, int32_t sourceLength,
-             int32_t destSize,uint32_t options, int32_t xoptions,
+             int32_t destSize,uint64_t options,
              UErrorCode *pErrorCode,
              int tashkeelFlag) {
 
@@ -1336,7 +1334,7 @@ shapeUnicode(UChar *dest, int32_t sourceLength,
     }
     destSize = sourceLength;
     if ( (lamalef_found != 0 ) || (tashkeelFound  != 0) ){
-        destSize = handleGeneratedSpaces(dest,sourceLength,destSize,options,xoptions,pErrorCode);
+        destSize = handleGeneratedSpaces(dest,sourceLength,destSize,options,pErrorCode);
     }
 
     if ( (seenfamFound != 0) || (yehhamzaFound != 0) ) {
@@ -1352,7 +1350,7 @@ shapeUnicode(UChar *dest, int32_t sourceLength,
  */
 static int32_t
 deShapeUnicode(UChar *dest, int32_t sourceLength,
-               int32_t destSize,uint32_t options,
+               int32_t destSize,uint64_t options,
                UErrorCode *pErrorCode) {
     int32_t i = 0;
     int32_t lamalef_found = 0;
@@ -1397,28 +1395,19 @@ deShapeUnicode(UChar *dest, int32_t sourceLength,
    return destSize;
 }
 
-/* 
+/*
  ****************************************
  * u_shapeArabic
  ****************************************
- */    
+ */
 
 U_CAPI int32_t U_EXPORT2
 u_shapeArabic(const UChar *source, int32_t sourceLength,
               UChar *dest, int32_t destCapacity,
-              uint32_t options, UErrorCode *pErrorCode) {
-    return u_shapeArabicX(source, sourceLength, dest, destCapacity,
-            options, 0, pErrorCode);
-}
-
-U_CAPI int32_t U_EXPORT2
-u_shapeArabicX(const UChar *source, int32_t sourceLength,
-               UChar *dest, int32_t destCapacity,
-               uint32_t options, uint32_t xoptions,
-               UErrorCode *pErrorCode) {
+              uint64_t options, UErrorCode *pErrorCode) {
 
     int32_t destLength;
-    
+
     spacesRelativeToTextBeginEnd = 0;
     uShapeLamalefBegin = U_SHAPE_LAMALEF_BEGIN;
     uShapeLamalefEnd = U_SHAPE_LAMALEF_END;
@@ -1600,10 +1589,10 @@ u_shapeArabicX(const UChar *source, int32_t sourceLength,
              if( (options&U_SHAPE_TASHKEEL_MASK)> 0 
                  && ((options&U_SHAPE_TASHKEEL_MASK) !=U_SHAPE_TASHKEEL_REPLACE_BY_TATWEEL)) {
                 /* Call the shaping function with tashkeel flag == 2 for removal of tashkeel */
-                destLength = shapeUnicode(tempbuffer,sourceLength,destCapacity,options,xoptions,pErrorCode,2);
+                destLength = shapeUnicode(tempbuffer,sourceLength,destCapacity,options,pErrorCode,2);
              }else {
                 /* default Call the shaping function with tashkeel flag == 1 */
-                destLength = shapeUnicode(tempbuffer,sourceLength,destCapacity,options,xoptions,pErrorCode,1);
+                destLength = shapeUnicode(tempbuffer,sourceLength,destCapacity,options,pErrorCode,1);
 
                 /*After shaping text check if user wants to remove tashkeel and replace it with tatweel*/
                 if( (options&U_SHAPE_TASHKEEL_MASK) == U_SHAPE_TASHKEEL_REPLACE_BY_TATWEEL){
@@ -1613,7 +1602,7 @@ u_shapeArabicX(const UChar *source, int32_t sourceLength,
             break;
         case U_SHAPE_LETTERS_SHAPE_TASHKEEL_ISOLATED :
             /* Call the shaping function with tashkeel flag == 0 */
-            destLength = shapeUnicode(tempbuffer,sourceLength,destCapacity,options,xoptions,pErrorCode,0);
+            destLength = shapeUnicode(tempbuffer,sourceLength,destCapacity,options,pErrorCode,0);
             break;
 
         case U_SHAPE_LETTERS_UNSHAPE :
