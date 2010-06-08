@@ -103,6 +103,18 @@ u_shapeArabic(const UChar *source, int32_t sourceLength,
               UErrorCode *pErrorCode);
 
 /**
+ * ANDROID only.  Although on Android ICU believes uint64_t is
+ * supported, compilation warns if you assign 0x100000000ULL to a
+ * variable with this type.  So rather than expanding the options flag
+ * to 64 bits to fit one more flag in, we've added a new parameter.
+ */
+U_DRAFT int32_t U_EXPORT2
+u_shapeArabicX(const UChar *source, int32_t sourceLength,
+              UChar *dest, int32_t destSize,
+              uint32_t options, uint32_t xoptions,
+              UErrorCode *pErrorCode);
+
+/**
  * Memory option: allow the result to have a different length than the source.
  * Affects: LamAlef options
  * @stable ICU 2.0
@@ -470,5 +482,13 @@ u_shapeArabic(const UChar *source, int32_t sourceLength,
  * @draft ICU 4.2
  */
 #define SHAPE_TAIL_TYPE_MASK          0x8000000
+
+/**
+ * XOption used when forming LamAlef ligatures and
+ * U_SHAPE_LAMALEF_NEAR is set.  When this option is selected, inserts
+ * 0xffff instead of 0x0020 (space) after the ligature.  Use this when
+ * you need to identify these substitutions during later processing.
+ */
+#define U_SHAPE_X_LAMALEF_SUB_ALTERNATE 0x1
 
 #endif
