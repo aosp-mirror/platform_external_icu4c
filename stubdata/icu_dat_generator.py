@@ -293,7 +293,7 @@ def main():
   # Extract resource files from icudtxxl-all.dat to TMP_DAT_PATH.
   ExtractAllResourceToTempDir()
 
-  datlist = ["us", "us-euro", "default", "us-japan", "zh", "large"]
+  datlist = ["us", "us-euro", "default", "us-japan", "zh", "medium", "large"]
   for dat_subtag in datlist:
     MakeDat(icu_dat_path, dat_subtag)
     # Copy icudtxxl.dat to stubdata directory with corresponding subtag.

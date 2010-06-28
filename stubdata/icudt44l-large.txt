@@ -39,6 +39,10 @@ coll/ar_SD.res
 coll/ar_SY.res
 coll/ar_TN.res
 coll/ar_YE.res
+coll/bg.res
+coll/bg_BG.res
+coll/ca.res
+coll/ca_ES.res
 coll/cs.res
 coll/cs_CZ.res
 coll/da.res
@@ -94,6 +98,9 @@ coll/es_US.res
 coll/es_UY.res
 coll/es_VE.res
 coll/es__TRADITIONAL.res
+coll/fa.res
+coll/fa_AF.res
+coll/fa_IR.res
 coll/fi.res
 coll/fi_FI.res
 coll/fil.res
@@ -105,6 +112,8 @@ coll/fr_FR.res
 coll/fr_LU.res
 coll/he.res
 coll/he_IL.res
+coll/hi.res
+coll/hi_IN.res
 coll/hr.res
 coll/hr_HR.res
 coll/hu.res
@@ -118,6 +127,10 @@ coll/ja.res
 coll/ja_JP.res
 coll/ko.res
 coll/ko_KR.res
+coll/lt.res
+coll/lt_LT.res
+coll/lv.res
+coll/lv_LV.res
 coll/nb.res
 coll/nb_NO.res
 coll/nl.res
@@ -125,6 +138,7 @@ coll/nl_BE.res
 coll/nl_NL.res
 coll/pl.res
 coll/pl_PL.res
+coll/ps.res
 coll/pt.res
 coll/pt_BR.res
 coll/pt_PT.res
@@ -135,6 +149,8 @@ coll/ru_RU.res
 coll/ru_UA.res
 coll/sk.res
 coll/sk_SK.res
+coll/sl.res
+coll/sl_SI.res
 coll/sr.res
 coll/sr_BA.res
 coll/sr_Cyrl.res
@@ -156,6 +172,8 @@ coll/tr.res
 coll/tr_TR.res
 coll/uk.res
 coll/uk_UA.res
+coll/vi.res
+coll/vi_VN.res
 coll/zh.res
 coll/zh_.res
 coll/zh_CN.res
@@ -178,6 +196,8 @@ curr/pool.res
 curr/supplementalData.res
 curr/root.res
 curr/ar.res
+curr/bg.res
+curr/ca.res
 curr/cs.res
 curr/da.res
 curr/dav.res
@@ -213,6 +233,8 @@ curr/es_MX.res
 curr/es_PR.res
 curr/es_US.res
 curr/es_UY.res
+curr/fa.res
+curr/fa_AF.res
 curr/fi.res
 curr/fil.res
 curr/fr.res
@@ -220,6 +242,7 @@ curr/fr_CA.res
 curr/fr_LU.res
 curr/he.res
 curr/he_IL.res
+curr/hi.res
 curr/hr.res
 curr/hu.res
 curr/id.res
@@ -229,6 +252,8 @@ curr/ja.res
 curr/ja_JP.res
 curr/ja_JP_TRADITIONAL.res
 curr/ko.res
+curr/lt.res
+curr/lv.res
 curr/nb.res
 curr/nb_NO.res
 curr/nl.res
@@ -239,6 +264,7 @@ curr/ro.res
 curr/rof.res
 curr/ru.res
 curr/sk.res
+curr/sl.res
 curr/sr.res
 curr/sr_BA.res
 curr/sr_CS.res
@@ -262,6 +288,7 @@ curr/th_TH.res
 curr/th_TH_TRADITIONAL.res
 curr/tr.res
 curr/uk.res
+curr/vi.res
 curr/zh.res
 curr/zh_CN.res
 curr/zh_HK.res
@@ -281,6 +308,8 @@ lang/res_index.res
 lang/pool.res
 lang/root.res
 lang/ar.res
+lang/bg.res
+lang/ca.res
 lang/cs.res
 lang/da.res
 lang/dav.res
@@ -293,11 +322,14 @@ lang/en_ZW.res
 lang/es.res
 lang/es_AR.res
 lang/es_CL.res
+lang/fa.res
+lang/fa_AF.res
 lang/fi.res
 lang/fil.res
 lang/fr.res
 lang/he.res
 lang/he_IL.res
+lang/hi.res
 lang/hr.res
 lang/hu.res
 lang/id.res
@@ -307,6 +339,8 @@ lang/ja.res
 lang/ja_JP.res
 lang/ja_JP_TRADITIONAL.res
 lang/ko.res
+lang/lt.res
+lang/lv.res
 lang/nb.res
 lang/nb_NO.res
 lang/nl.res
@@ -319,6 +353,7 @@ lang/rof.res
 lang/ru.res
 lang/ru_UA.res
 lang/sk.res
+lang/sl.res
 lang/sr.res
 lang/sr_BA.res
 lang/sr_CS.res
@@ -343,6 +378,7 @@ lang/th_TH.res
 lang/th_TH_TRADITIONAL.res
 lang/tr.res
 lang/uk.res
+lang/vi.res
 lang/zh.res
 lang/zh_CN.res
 lang/zh_HK.res
@@ -361,6 +397,8 @@ region/res_index.res
 region/pool.res
 region/root.res
 region/ar.res
+region/bg.res
+region/ca.res
 region/cs.res
 region/da.res
 region/dav.res
@@ -372,11 +410,14 @@ region/en_RH.res
 region/en_ZW.res
 region/es.res
 region/es_CL.res
+region/fa.res
+region/fa_AF.res
 region/fi.res
 region/fil.res
 region/fr.res
 region/he.res
 region/he_IL.res
+region/hi.res
 region/hr.res
 region/hu.res
 region/id.res
@@ -386,6 +427,8 @@ region/ja.res
 region/ja_JP.res
 region/ja_JP_TRADITIONAL.res
 region/ko.res
+region/lt.res
+region/lv.res
 region/nb.res
 region/nb_NO.res
 region/nl.res
@@ -397,6 +440,7 @@ region/ro.res
 region/rof.res
 region/ru.res
 region/sk.res
+region/sl.res
 region/sr.res
 region/sr_BA.res
 region/sr_CS.res
@@ -421,6 +465,7 @@ region/th_TH.res
 region/th_TH_TRADITIONAL.res
 region/tr.res
 region/uk.res
+region/vi.res
 region/zh.res
 region/zh_CN.res
 region/zh_HK.res
@@ -439,6 +484,8 @@ zone/res_index.res
 zone/pool.res
 zone/root.res
 zone/ar.res
+zone/bg.res
+zone/ca.res
 zone/cs.res
 zone/da.res
 zone/dav.res
@@ -453,12 +500,14 @@ zone/en_RH.res
 zone/en_ZA.res
 zone/en_ZW.res
 zone/es.res
+zone/fa.res
 zone/fi.res
 zone/fil.res
 zone/fr.res
 zone/fr_CA.res
 zone/he.res
 zone/he_IL.res
+zone/hi.res
 zone/hr.res
 zone/hu.res
 zone/id.res
@@ -468,6 +517,8 @@ zone/ja.res
 zone/ja_JP.res
 zone/ja_JP_TRADITIONAL.res
 zone/ko.res
+zone/lt.res
+zone/lv.res
 zone/nb.res
 zone/nb_NO.res
 zone/nl.res
@@ -478,6 +529,7 @@ zone/ro.res
 zone/rof.res
 zone/ru.res
 zone/sk.res
+zone/sl.res
 zone/sr.res
 zone/sr_BA.res
 zone/sr_CS.res
@@ -501,6 +553,7 @@ zone/th_TH.res
 zone/th_TH_TRADITIONAL.res
 zone/tr.res
 zone/uk.res
+zone/vi.res
 zone/zh.res
 zone/zh_CN.res
 zone/zh_HK.res
@@ -519,6 +572,10 @@ res_index.res
 root.res
 pool.res
 ar.res
+bg.res
+bg_BG.res
+ca.res
+ca_ES.res
 cs.res
 cs_CZ.res
 da.res
@@ -559,7 +616,12 @@ en_ZW.res
 es.res
 es_ES.res
 es_US.res
+fa.res
+fa_AF.res
+fa_IR.res
 fi.res
+fil.res
+fil_PH.res
 fr.res
 fr_BE.res
 fr_CA.res
@@ -568,6 +630,8 @@ fr_FR.res
 fr_LU.res
 fr_MC.res
 he.res
+hi.res
+hi_IN.res
 hr.res
 hu.res
 id.res
@@ -578,6 +642,10 @@ ja.res
 ja_JP.res
 ko.res
 ko_KR.res
+lt.res
+lt_LT.res
+lv.res
+lv_LV.res
 nb.res
 nb_NO.res
 nl.res
@@ -592,6 +660,8 @@ ro.res
 ru.res
 ru_RU.res
 sk.res
+sl.res
+sl_SI.res
 sr.res
 sv.res
 sv_SE.res
@@ -599,6 +669,8 @@ th.res
 tr.res
 tr_TR.res
 uk.res
+vi.res
+vi_VN.res
 zh.res
 zh_CN.res
 zh_Hans.res
@@ -668,7 +740,4 @@ zoneinfo64.res
 icustd.res
 icuver.res
 keyTypeData.res
-
-
-
 
