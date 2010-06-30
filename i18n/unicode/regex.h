@@ -1032,6 +1032,29 @@ public:
     */
     virtual RegexMatcher &reset(UText *input);
 
+  // BEGIN android-added
+  // Removed this API after Android upgrade to ICU4.6.
+  /**
+    *  Set the subject text string upon which the regular expression is looking for matches
+    *  without changing any other aspect of the matching state.
+    *  The new and previous text strings must have the same content.
+    *
+    *  This function is intended for use in environments where ICU is operating on
+    *  strings that may move around in memory.  It provides a mechanism for notifying
+    *  ICU that the string has been relocated, and providing a new UText to access the
+    *  string in its new position.
+    *
+    *  Caution:  this function is normally used only by very specialized,
+    *  system-level code.
+    *
+    * @param input      The new (moved) text string.
+    * @param status     Receives errors detected by this function.
+    *
+    * @internal ICU 4.6
+    */
+    virtual RegexMatcher &refreshInputText(UText *input, UErrorCode &status);
+   // END android-added
+
 private:
     /**
      * Cause a compilation error if an application accidently attempts to

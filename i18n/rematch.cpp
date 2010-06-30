@@ -1927,7 +1927,44 @@ RegexMatcher &RegexMatcher::reset(int32_t position, UErrorCode &status) {
     return *this;
 }
 
+// BEGIN android-added
+// Removed this function after Android upgrad to ICU4.6.
+//--------------------------------------------------------------------------------
+//
+//    refresh
+//
+//--------------------------------------------------------------------------------
+RegexMatcher &RegexMatcher::refreshInputText(UText *input, UErrorCode &status) {
+    if (U_FAILURE(status)) {
+        return *this;
+    }
+    if (input == NULL) {
+        status = U_ILLEGAL_ARGUMENT_ERROR;
+        return *this;
+    }
+    if (utext_nativeLength(fInputText) != utext_nativeLength(input)) {
+        status = U_ILLEGAL_ARGUMENT_ERROR;
+        return *this;
+    }
+    int64_t  pos = utext_getNativeIndex(fInputText);
+    //  Shallow read-only clone of the new UText into the existing input UText
+    fInputText = utext_clone(fInputText, input, FALSE, TRUE, &status);
+    if (U_FAILURE(status)) {
+        return *this;
+    }
+    utext_setNativeIndex(fInputText, pos);
 
+    if (fAltInputText != NULL) {
+        pos = utext_getNativeIndex(fAltInputText);
+        fAltInputText = utext_clone(fAltInputText, input, FALSE, TRUE, &status);
+        if (U_FAILURE(status)) {
+            return *this;
+        }
+        utext_setNativeIndex(fAltInputText, pos);
+    }
+    return *this;
+}
+// END android-added
 
 
 

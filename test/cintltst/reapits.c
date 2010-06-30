@@ -119,6 +119,11 @@ static void test_assert_utext(const char *expected, UText *actual, const char *f
 static void TestRegexCAPI(void);
 static void TestBug4315(void);
 static void TestUTextAPI(void);
+/* BEGIN android-added
+   Removed this function after Android upgrade to ICU4.6.
+*/
+static void TestRefreshInput(void);
+/* END android-added */
 
 void addURegexTest(TestNode** root);
 
@@ -127,6 +132,11 @@ void addURegexTest(TestNode** root)
     addTest(root, &TestRegexCAPI, "regex/TestRegexCAPI");
     addTest(root, &TestBug4315,   "regex/TestBug4315");
     addTest(root, &TestUTextAPI,  "regex/TestUTextAPI");
+    /* BEGIN android-added
+       Removed this after Android upgrade to ICU4.6.
+    */
+    addTest(root, &TestRefreshInput, "regex/TestRefreshInput");
+    /* END android-added */
 }
 
 /*
@@ -2120,5 +2130,54 @@ static void TestUTextAPI(void) {
     }
     utext_close(&patternText);
 }
+
+/* BEGIN android-added
+   Removed this function after Android upgrade to ICU4.6.
+*/
+static void TestRefreshInput(void) {
+    /*
+     *  RefreshInput changes out the input of a URegularExpression without
+     *    changing anything else in the match state.  Used with Java JNI,
+     *    when Java moves the underlying string storage.   This test
+     *    runs a find() loop, moving the text after the first match.
+     *    The right number of matches should still be found.
+     */
+    UChar testStr[]  = {0x41, 0x20, 0x42, 0x20, 0x43, 0x0};  /* = "A B C"  */
+    UChar movedStr[] = {   0,    0,    0,    0,    0,   0};
+    UErrorCode status = U_ZERO_ERROR;
+    URegularExpression *re;
+    UText ut1 = UTEXT_INITIALIZER;
+    UText ut2 = UTEXT_INITIALIZER;
+
+    re = uregex_openC("[ABC]", 0, 0, &status);
+    TEST_ASSERT_SUCCESS(status);
+
+    utext_openUChars(&ut1, testStr, -1, &status);
+    TEST_ASSERT_SUCCESS(status);
+    uregex_setUText(re, &ut1, &status);
+    TEST_ASSERT_SUCCESS(status);
+
+    /* Find the first match "A" in the original string */
+    TEST_ASSERT(uregex_findNext(re, &status));
+    TEST_ASSERT(uregex_start(re, 0, &status) == 0);
+
+    /* Move the string, kill the original string.  */
+    u_strcpy(movedStr, testStr);
+    u_memset(testStr, 0, u_strlen(testStr));
+    utext_openUChars(&ut2, movedStr, -1, &status);
+    TEST_ASSERT_SUCCESS(status);
+    uregex_refreshUText(re, &ut2, &status);
+    TEST_ASSERT_SUCCESS(status);
+
+    /* Find the following two matches, now working in the moved string. */
+    TEST_ASSERT(uregex_findNext(re, &status));
+    TEST_ASSERT(uregex_start(re, 0, &status) == 2);
+    TEST_ASSERT(uregex_findNext(re, &status));
+    TEST_ASSERT(uregex_start(re, 0, &status) == 4);
+    TEST_ASSERT(FALSE == uregex_findNext(re, &status));
+
+    uregex_close(re);
+}
+/* END android-addedd */
 
 #endif   /*  !UCONFIG_NO_REGULAR_EXPRESSIONS */

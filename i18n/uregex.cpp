@@ -471,7 +471,7 @@ uregex_getText(URegularExpression *regexp2,
 //    uregex_getUText
 //
 //------------------------------------------------------------------------------
-U_CAPI UText * U_EXPORT2 
+U_CAPI UText * U_EXPORT2
 uregex_getUText(URegularExpression *regexp2,
                 UText              *dest,
                 UErrorCode         *status)  {
@@ -481,6 +481,25 @@ uregex_getUText(URegularExpression *regexp2,
     }
     return regexp->fMatcher->getInput(dest);
 }
+
+// BEGIN android-added
+// Removed this function after Android upgrade to ICU4.6.
+//------------------------------------------------------------------------------
+//
+//    uregex_refreshUText
+//
+//------------------------------------------------------------------------------
+U_CAPI void U_EXPORT2
+uregex_refreshUText(URegularExpression *regexp2,
+                    UText              *text,
+                    UErrorCode         *status) {
+    RegularExpression *regexp = (RegularExpression*)regexp2;
+    if (validateRE(regexp, status, FALSE) == FALSE) {
+        return;
+    }
+    regexp->fMatcher->refreshInputText(text, *status);
+}
+// END android-added
 
 
 //------------------------------------------------------------------------------
