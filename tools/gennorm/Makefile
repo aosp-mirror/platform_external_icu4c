@@ -4,7 +4,7 @@ include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := gennorm.c store.c
 
-LOCAL_STATIC_LIBRARIES := libicutu libicuuc libicudata libicui18n
+LOCAL_STATIC_LIBRARIES := libicutu libicuuc libicui18n
 
 ifneq ($(TARGET_ARCH),arm)
 LOCAL_LDLIBS += -lpthread -ldl

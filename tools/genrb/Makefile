@@ -16,7 +16,7 @@ LOCAL_SRC_FILES := \
 	errmsg.c \
 	wrtxml.c
 
-LOCAL_STATIC_LIBRARIES := libicui18n libicuuc libicudata libicutu
+LOCAL_STATIC_LIBRARIES := libicui18n libicuuc libicutu
 
 ifneq ($(TARGET_ARCH),arm)
 LOCAL_LDLIBS += -lpthread -ldl
@@ -41,7 +41,7 @@ include $(CLEAR_VARS)
 LOCAL_SRC_FILES := \
 	derb.c
 
-LOCAL_STATIC_LIBRARIES := libicui18n libicuuc libicudata libicutu
+LOCAL_STATIC_LIBRARIES := libicui18n libicuuc libicutu
 
 ifneq ($(TARGET_ARCH),arm)
 LOCAL_LDLIBS += -lpthread -ldl

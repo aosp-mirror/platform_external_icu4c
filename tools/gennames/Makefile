@@ -9,7 +9,7 @@ LOCAL_C_INCLUDES +=            \
 	$(LOCAL_PATH)/../toolutil  \
 	$(LOCAL_PATH)/../../common
 
-LOCAL_STATIC_LIBRARIES := libicutu libicuuc libicudata libicui18n
+LOCAL_STATIC_LIBRARIES := libicutu libicuuc libicui18n
 
 ifneq ($(TARGET_ARCH),arm)
 LOCAL_LDLIBS += -lpthread -ldl

@@ -10,7 +10,7 @@ LOCAL_C_INCLUDES +=            \
 	$(LOCAL_PATH)/../../common \
 	$(LOCAL_PATH)/../../i18n
 
-LOCAL_STATIC_LIBRARIES += libicuuc libicudata libicui18n libicutu
+LOCAL_STATIC_LIBRARIES += libicuuc libicui18n libicutu
 
 ifneq ($(TARGET_ARCH),arm)
 LOCAL_LDLIBS += -lpthread -ldl -licudata

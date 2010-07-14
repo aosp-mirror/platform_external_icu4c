@@ -15,7 +15,7 @@ endif
 
 LOCAL_CFLAGS +=
 
-LOCAL_STATIC_LIBRARIES := libicuuc libicudata libicui18n libicutu
+LOCAL_STATIC_LIBRARIES := libicuuc libicui18n libicutu
 
 LOCAL_MODULE := genpname
 

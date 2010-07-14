@@ -96,6 +96,10 @@ src_files += \
  	mutex.cpp       dtintrv.cpp      \
  	ucnvsel.cpp
 
+# This is the empty compiled-in icu data structure
+# that we need to satisfy the linker.
+src_files += ../stubdata/stubdata.c
+
 c_includes := \
 	$(LOCAL_PATH) \
 	$(LOCAL_PATH)/../i18n
@@ -110,10 +114,10 @@ include $(CLEAR_VARS)
 LOCAL_SRC_FILES := $(src_files)
 LOCAL_C_INCLUDES := $(c_includes)
 
-LOCAL_CFLAGS += -D_REENTRANT -DPIC -DU_COMMON_IMPLEMENTATION -fPIC
+LOCAL_CFLAGS += -D_REENTRANT -DPIC -DU_COMMON_IMPLEMENTATION -fPIC \
+                '-DICU_DATA_DIR="/system/usr/icu"'
 LOCAL_CFLAGS += -O3
 
-LOCAL_SHARED_LIBRARIES += libicudata
 LOCAL_LDLIBS += -lpthread -lm
 
 LOCAL_MODULE := libicuuc
@@ -134,7 +138,6 @@ ifeq ($(WITH_HOST_DALVIK),true)
 
     LOCAL_CFLAGS += -D_REENTRANT -DU_COMMON_IMPLEMENTATION
 
-    LOCAL_SHARED_LIBRARIES += libicudata
     LOCAL_LDLIBS += -lpthread -lm
 
     LOCAL_MODULE := libicuuc

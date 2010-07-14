@@ -4,7 +4,7 @@ include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := genuca.cpp
 
-LOCAL_STATIC_LIBRARIES := libicutu libicui18n libicuuc libicudata
+LOCAL_STATIC_LIBRARIES := libicutu libicui18n libicuuc
 
 ifneq ($(TARGET_ARCH),arm)
 LOCAL_LDLIBS += -lpthread -ldl
