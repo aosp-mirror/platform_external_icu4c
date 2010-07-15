@@ -94,7 +94,7 @@ LOCAL_C_INCLUDES := $(c_includes)
 LOCAL_CFLAGS += -D_REENTRANT -DPIC -DU_I18N_IMPLEMENTATION -fPIC 
 LOCAL_CFLAGS += -O3
 
-LOCAL_SHARED_LIBRARIES += libicuuc libicudata
+LOCAL_SHARED_LIBRARIES += libicuuc
 LOCAL_LDLIBS += -lpthread -lm
 
 LOCAL_MODULE := libicui18n
@@ -115,7 +115,7 @@ ifeq ($(WITH_HOST_DALVIK),true)
 
     LOCAL_CFLAGS += -D_REENTRANT -DU_I18N_IMPLEMENTATION
 
-    LOCAL_SHARED_LIBRARIES += libicuuc libicudata
+    LOCAL_SHARED_LIBRARIES += libicuuc
     LOCAL_LDLIBS += -lpthread -lm
 
     LOCAL_MODULE := libicui18n

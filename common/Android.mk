@@ -89,17 +89,22 @@ src_files += \
 	usprep.cpp      ustack.cpp       \
 	ustrenum.cpp    utext.cpp        \
 	util.cpp        util_props.cpp   \
- 	uvector.cpp     uvectr32.cpp     \
- 	errorcode.cpp                    \
- 	bytestream.cpp  stringpiece.cpp  \
- 	mutex.cpp       dtintrv.cpp      \
- 	ucnvsel.cpp     uvectr64.cpp     \
-        locavailable.cpp locdispnames.cpp     \
-        loclikely.cpp   locresdata.cpp   \
-        normalizer2impl.cpp normalizer2.cpp   \
-        filterednormalizer2.cpp  ucol_swp.cpp \
-        uprops.cpp      utrie2.cpp       \     
+	uvector.cpp     uvectr32.cpp     \
+	errorcode.cpp                    \
+	bytestream.cpp  stringpiece.cpp  \
+	mutex.cpp       dtintrv.cpp      \
+	ucnvsel.cpp     uvectr64.cpp     \
+	locavailable.cpp         locdispnames.cpp   \
+	loclikely.cpp            locresdata.cpp     \
+	normalizer2impl.cpp      normalizer2.cpp    \
+	filterednormalizer2.cpp  ucol_swp.cpp       \
+	uprops.cpp      utrie2.cpp
  
+
+# This is the empty compiled-in icu data structure
+# that we need to satisfy the linker.
+src_files += ../stubdata/stubdata.c
+
 c_includes := \
 	$(LOCAL_PATH) \
 	$(LOCAL_PATH)/../i18n
@@ -114,10 +119,10 @@ include $(CLEAR_VARS)
 LOCAL_SRC_FILES := $(src_files)
 LOCAL_C_INCLUDES := $(c_includes)
 
-LOCAL_CFLAGS += -D_REENTRANT -DPIC -DU_COMMON_IMPLEMENTATION -fPIC
+LOCAL_CFLAGS += -D_REENTRANT -DPIC -DU_COMMON_IMPLEMENTATION -fPIC \
+                '-DICU_DATA_DIR="/system/usr/icu"'
 LOCAL_CFLAGS += -O3
 
-LOCAL_SHARED_LIBRARIES += libicudata
 LOCAL_LDLIBS += -lpthread -lm
 
 LOCAL_MODULE := libicuuc
@@ -138,7 +143,6 @@ ifeq ($(WITH_HOST_DALVIK),true)
 
     LOCAL_CFLAGS += -D_REENTRANT -DU_COMMON_IMPLEMENTATION
 
-    LOCAL_SHARED_LIBRARIES += libicudata
     LOCAL_LDLIBS += -lpthread -lm
 
     LOCAL_MODULE := libicuuc
