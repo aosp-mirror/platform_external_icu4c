@@ -119,8 +119,13 @@ include $(CLEAR_VARS)
 LOCAL_SRC_FILES := $(src_files)
 LOCAL_C_INCLUDES := $(c_includes)
 
-LOCAL_CFLAGS += -D_REENTRANT -DPIC -DU_COMMON_IMPLEMENTATION -fPIC \
-                '-DICU_DATA_DIR="/system/usr/icu"'
+# We make the ICU data directory relative to $ANDROID_ROOT on Android, so both
+# device and sim builds can use the same codepath, and it's hard to break one
+# without noticing because the other still works.
+LOCAL_CFLAGS += '-DICU_DATA_DIR_PREFIX_ENV_VAR="ANDROID_ROOT"'
+LOCAL_CFLAGS += '-DICU_DATA_DIR="/usr/icu"'
+
+LOCAL_CFLAGS += -D_REENTRANT -DPIC -DU_COMMON_IMPLEMENTATION -fPIC
 LOCAL_CFLAGS += -O3
 
 LOCAL_LDLIBS += -lpthread -lm
