@@ -1128,10 +1128,6 @@ uprv_pathIsAbsolute(const char *path)
   return FALSE;
 }
 
-#if (defined(U_DARWIN) && TARGET_IPHONE_SIMULATOR)
-#   define ICU_DATA_DIR_PREFIX_ENV_VAR "IPHONE_SIMULATOR_ROOT"
-#endif
-
 U_CAPI const char * U_EXPORT2
 u_getDataDirectory(void) {
     const char *path = NULL;
