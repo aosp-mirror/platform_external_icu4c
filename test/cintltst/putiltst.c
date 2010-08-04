@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1998-2009, International Business Machines Corporation and
+ * Copyright (c) 1998-2010, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /*
@@ -18,8 +18,10 @@
 #include "cmemory.h"
 #include "unicode/putil.h"
 #include "unicode/ustring.h"
+#include "unicode/icudataver.h"
 #include "cstring.h"
 #include "putilimp.h"
+#include "toolutil.h"
 
 static UBool compareWithNAN(double x, double y);
 static void doAssert(double expect, double got, const char *message);
@@ -187,6 +189,9 @@ static void TestVersion()
     char versionString[17]; /* xxx.xxx.xxx.xxx\0 */
     UChar versionUString[] = { 0x0031, 0x002E, 0x0030, 0x002E,
                                0x0032, 0x002E, 0x0038, 0x0000 }; /* 1.0.2.8 */
+    UBool isModified = FALSE;
+    UVersionInfo version;
+    UErrorCode status = U_ZERO_ERROR;
 
     log_verbose("Testing the API u_versionToString().....\n");
     u_versionToString(versionArray, versionString);
@@ -267,6 +272,17 @@ static void TestVersion()
     else {
        log_verbose(" from UString: %s\n", versionString);
     }
+
+    /* Test the data version API for better code coverage */
+    u_getDataVersion(version, &status);
+    if (U_FAILURE(status)) {
+        log_data_err("ERROR: Unable to get data version. %s\n", u_errorName(status));
+    } else {
+        u_isDataOlder(version, &isModified, &status);
+        if (U_FAILURE(status)) {
+            log_err("ERROR: Unable to compare data version. %s\n", u_errorName(status));
+        }
+    }
 }
 
 static void TestCompareVersions()
@@ -286,7 +302,7 @@ static void TestCompareVersions()
    int32_t op, invop, got, invgot; 
    UVersionInfo v1, v2;
    int32_t j;
-   log_verbose("Testing u_compareVersions()\n");
+   log_verbose("Testing memcmp()\n");
    for(j=0;testCases[j]!=NULL;j+=3) {
     v1str = testCases[j+0];
     opstr = testCases[j+1];
@@ -303,17 +319,17 @@ static void TestCompareVersions()
     invop = 0-op; /* inverse operation: with v1 and v2 switched */
     u_versionFromString(v1, v1str);
     u_versionFromString(v2, v2str);
-    got = u_compareVersions(v1,v2);
-    invgot = u_compareVersions(v2,v1); /* oppsite */
-    if(got==op) {
+    got = memcmp(v1, v2, sizeof(UVersionInfo));
+    invgot = memcmp(v2, v1, sizeof(UVersionInfo)); /* Opposite */
+    if((got <= 0 && op <= 0) || (got >= 0 && op >= 0)) {
         log_verbose("%d: %s %s %s, OK\n", (j/3), v1str, opstr, v2str);
     } else {
-        log_err("%d: %s %s %s: wanted %d got %d\n", (j/3), v1str, opstr, v2str, op, got);
+        log_err("%d: %s %s %s: wanted values of the same sign, %d got %d\n", (j/3), v1str, opstr, v2str, op, got);
     }
-    if(invgot==invop) {
+    if((invgot >= 0 && invop >= 0) || (invgot <= 0 && invop <= 0)) {
         log_verbose("%d: %s (%d) %s, OK (inverse)\n", (j/3), v2str, invop, v1str);
     } else {
-        log_err("%d: %s (%d) %s: wanted %d got %d\n", (j/3), v2str, invop, v1str, invop, invgot);
+        log_err("%d: %s (%d) %s: wanted values of the same sign, %d got %d\n", (j/3), v2str, invop, v1str, invop, invgot);
     }
    }
 }
@@ -423,6 +439,9 @@ static void TestErrorName(void){
     const char* errorName ;
     for(;code<U_ERROR_LIMIT;code++){
         errorName = u_errorName((UErrorCode)code);
+        if(!errorName || errorName[0] == 0) {
+          log_err("Error:  u_errorName(0x%X) failed.\n",code);
+        }
     }
 
     for(code=0;code<_CODE_ARR_LEN; code++){
@@ -435,13 +454,195 @@ static void TestErrorName(void){
 
 void addPUtilTest(TestNode** root);
 
+static void addToolUtilTests(TestNode** root);
+
 void
 addPUtilTest(TestNode** root)
 {
-    addTest(root, &TestPUtilAPI,       "putiltst/TestPUtilAPI");
     addTest(root, &TestVersion,       "putiltst/TestVersion");
     addTest(root, &TestCompareVersions,       "putiltst/TestCompareVersions");
 /*    addTest(root, &testIEEEremainder,  "putiltst/testIEEEremainder"); */
     addTest(root, &TestErrorName, "putiltst/TestErrorName");
+    addTest(root, &TestPUtilAPI,       "putiltst/TestPUtilAPI");
+
+    addToolUtilTests(root);
 }
 
+/* Tool Util Tests ================ */
+#define TOOLUTIL_TESTBUF_SIZE 2048
+static char toolutil_testBuf[TOOLUTIL_TESTBUF_SIZE];
+static const char *NULLSTR="NULL";
+
+/**
+ * Normalize NULL to 'NULL'  for testing
+ */
+#define STRNULL(x) ((x)?(x):NULLSTR)
+
+static void toolutil_findBasename(void)
+{
+  struct {
+    const char *inBuf;
+    const char *expectResult;
+  } testCases[] = { 
+    {
+      U_FILE_SEP_STRING "usr" U_FILE_SEP_STRING "bin" U_FILE_SEP_STRING "pkgdata",
+      "pkgdata"
+    },
+    {
+      U_FILE_SEP_STRING "usr" U_FILE_SEP_STRING "bin" U_FILE_SEP_STRING,
+      ""
+    },
+    {
+      U_FILE_ALT_SEP_STRING "usr" U_FILE_ALT_SEP_STRING "bin" U_FILE_ALT_SEP_STRING "pkgdata",
+      "pkgdata"
+    },
+    {
+      U_FILE_ALT_SEP_STRING "usr" U_FILE_ALT_SEP_STRING "bin" U_FILE_ALT_SEP_STRING,
+      ""
+    },
+  };
+  int32_t count=(sizeof(testCases)/sizeof(testCases[0]));
+  int32_t i;
+
+
+  log_verbose("Testing findBaseName()\n");
+  for(i=0;i<count;i++) {
+    const char *result;
+    const char *input = STRNULL(testCases[i].inBuf);
+    const char *expect = STRNULL(testCases[i].expectResult);
+    log_verbose("Test case [%d/%d]: %s\n", i, count-1, input);
+    result = STRNULL(findBasename(testCases[i].inBuf));
+    if(result==expect||!strcmp(result,expect)) {
+      log_verbose(" -> %s PASS\n", result);
+    } else {
+      log_err("FAIL: Test case [%d/%d]: %s -> %s but expected %s\n", i, count-1, input, result, expect);
+    }
+  }
+}
+
+
+static void toolutil_findDirname(void)
+{
+  int i;
+  struct {
+    const char *inBuf;
+    int32_t outBufLen;
+    UErrorCode expectStatus;
+    const char *expectResult;
+  } testCases[] = { 
+    {
+      U_FILE_SEP_STRING "usr" U_FILE_SEP_STRING "bin" U_FILE_SEP_STRING "pkgdata",
+      200,
+      U_ZERO_ERROR,
+      U_FILE_SEP_STRING "usr" U_FILE_SEP_STRING "bin",
+    },
+    {
+      U_FILE_SEP_STRING "usr" U_FILE_SEP_STRING "bin" U_FILE_SEP_STRING "pkgdata",
+      2,
+      U_BUFFER_OVERFLOW_ERROR,
+      NULL
+    },
+    {
+      U_FILE_ALT_SEP_STRING "usr" U_FILE_ALT_SEP_STRING "bin" U_FILE_ALT_SEP_STRING "pkgdata",
+      200,
+      U_ZERO_ERROR,
+      U_FILE_ALT_SEP_STRING "usr" U_FILE_ALT_SEP_STRING "bin"
+    },
+    {
+      U_FILE_ALT_SEP_STRING "usr" U_FILE_ALT_SEP_STRING "bin" U_FILE_ALT_SEP_STRING "pkgdata",
+      2,
+      U_BUFFER_OVERFLOW_ERROR,
+      NULL
+    },
+    {
+      U_FILE_ALT_SEP_STRING "usr" U_FILE_ALT_SEP_STRING "bin" U_FILE_SEP_STRING "pkgdata",
+      200,
+      U_ZERO_ERROR,
+      U_FILE_ALT_SEP_STRING "usr" U_FILE_ALT_SEP_STRING "bin"
+    },
+    {
+      U_FILE_ALT_SEP_STRING "usr" U_FILE_SEP_STRING "bin" U_FILE_ALT_SEP_STRING "pkgdata",
+      200,
+      U_ZERO_ERROR,
+      U_FILE_ALT_SEP_STRING "usr" U_FILE_SEP_STRING "bin"
+    },
+    {
+      U_FILE_ALT_SEP_STRING "usr" U_FILE_ALT_SEP_STRING "bin" U_FILE_ALT_SEP_STRING "pkgdata",
+      2,
+      U_BUFFER_OVERFLOW_ERROR,
+      NULL
+    },
+    {
+      U_FILE_ALT_SEP_STRING "vmlinuz",
+      200,
+      U_ZERO_ERROR,
+      U_FILE_ALT_SEP_STRING
+    },
+    {
+      U_FILE_SEP_STRING "vmlinux",
+      200,
+      U_ZERO_ERROR,
+      U_FILE_SEP_STRING
+    },
+    {
+      "pkgdata",
+      0,
+      U_BUFFER_OVERFLOW_ERROR,
+      NULL
+    },
+    {
+      "pkgdata",
+      1,
+      U_BUFFER_OVERFLOW_ERROR,
+      NULL
+    },
+    {
+      "pkgdata",
+      2,
+      U_ZERO_ERROR,
+      "."
+    },
+    {
+      "pkgdata",
+      20,
+      U_ZERO_ERROR,
+      "."
+    }
+  };
+  int32_t count=(sizeof(testCases)/sizeof(testCases[0]));
+
+  log_verbose("Testing findDirname()\n");
+  for(i=0;i<count;i++) {
+    const char *result;
+    const char *input = STRNULL(testCases[i].inBuf);
+    const char *expect = STRNULL(testCases[i].expectResult);
+    UErrorCode status = U_ZERO_ERROR;
+    uprv_memset(toolutil_testBuf, 0x55, TOOLUTIL_TESTBUF_SIZE);
+    
+    log_verbose("Test case [%d/%d]: %s\n", i, count-1, input);
+    result = STRNULL(findDirname(testCases[i].inBuf, toolutil_testBuf, testCases[i].outBufLen, &status));
+    log_verbose(" -> %s, \n", u_errorName(status));
+    if(status != testCases[i].expectStatus) {
+      log_verbose("FAIL: Test case [%d/%d]: %s got error code %s but expected %s\n", i, count-1, input, u_errorName(status), u_errorName(testCases[i].expectStatus));
+    }
+    if(result==expect||!strcmp(result,expect)) {
+      log_verbose(" = -> %s \n", result);
+    } else {
+      log_err("FAIL: Test case [%d/%d]: %s -> %s but expected %s\n", i, count-1, input, result, expect);
+    }
+  }
+}
+
+
+
+static void addToolUtilTests(TestNode** root) {
+    addTest(root, &toolutil_findBasename,       "putiltst/toolutil/findBasename");
+    addTest(root, &toolutil_findDirname,       "putiltst/toolutil/findDirname");
+  /*
+    Not yet tested:
+
+    addTest(root, &toolutil_getLongPathname,       "putiltst/toolutil/getLongPathname");
+    addTest(root, &toolutil_getCurrentYear,       "putiltst/toolutil/getCurrentYear");
+    addTest(root, &toolutil_UToolMemory,       "putiltst/toolutil/UToolMemory");
+  */
+}

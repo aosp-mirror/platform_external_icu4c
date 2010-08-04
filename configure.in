@@ -1,5 +1,5 @@
-	# -*-autoconf-*-
-AC_COPYRIGHT([ Copyright (c) 1999-2009, International Business Machines Corporation and others. All Rights Reserved. ])
+# -*-autoconf-*-
+AC_COPYRIGHT([ Copyright (c) 1999-2010, International Business Machines Corporation and others. All Rights Reserved. ])
 # configure.in for ICU
 # Stephen F. Booth, heavily modified by Yves and others
 
@@ -11,7 +11,7 @@ AC_PREREQ(2.63)
 AC_INIT
 AC_CONFIG_SRCDIR([common/unicode/utypes.h])
 
-AC_CONFIG_HEADER(common/icucfg.h)
+AC_CONFIG_HEADERS(common/icucfg.h)
 PACKAGE="icu"
 AC_SUBST(PACKAGE)
 
@@ -21,11 +21,22 @@ AC_MSG_CHECKING(for ICU version numbers)
 geticuversion() {
     [sed -n 's/^[ 	]*#[ 	]*define[ 	]*U_ICU_VERSION[ 	]*"\([^"]*\)".*/\1/p' "$@"]
 }
-VERSION=`geticuversion $srcdir/common/unicode/uversion.h`
+getuversion() {
+    [sed -n 's/^[ 	]*#[ 	]*define[ 	]*U_UNICODE_VERSION[ 	]*"\([^"]*\)".*/\1/p' "$@"]
+}
+VERSION=`geticuversion $srcdir/common/unicode/uvernum.h`
 if test x"$VERSION" = x; then
     VERSION=`geticuversion $srcdir/common/unicode/*.h`
     if test x"$VERSION" = x; then
-        AC_MSG_ERROR([Cannot determine ICU version number from header files])
+        AC_MSG_ERROR([Cannot determine ICU version number from uvernum.h header file])
+    fi
+fi
+
+UNICODE_VERSION=`getuversion $srcdir/common/unicode/uchar.h`
+if test x"$UNICODE_VERSION" = x; then
+    UNICODE_VERSION=`getuversion $srcdir/common/unicode/*.h`
+    if test x"$UNICODE_VERSION" = x; then
+        AC_MSG_ERROR([Cannot determine Unicode version number from uchar.h header file])
     fi
 fi
 # Compute a reasonable library version from the release version. This is
@@ -36,9 +47,8 @@ LIB_VERSION_MAJOR=`echo $LIB_VERSION | sed 's/\..*//'`
 AC_SUBST(VERSION)
 AC_SUBST(LIB_VERSION)
 AC_SUBST(LIB_VERSION_MAJOR)
-AC_MSG_RESULT([release $VERSION, library $LIB_VERSION])
+AC_MSG_RESULT([release $VERSION, library $LIB_VERSION, unicode version $UNICODE_VERSION])
 
-UNICODE_VERSION="5.1"
 AC_SUBST(UNICODE_VERSION)
 
 # Determine the host system
@@ -53,6 +63,7 @@ export _CXX_CXXSUFFIX
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_CPP
+
 AC_PROG_INSTALL
 
 AC_SUBST(cross_compiling)
@@ -81,6 +92,7 @@ AC_ARG_WITH(cross-build,
 if test "X$cross_buildroot" = "X"; then
     if test "$cross_compiling" = "yes"; then
         AC_MSG_ERROR([Error! Cross compiling but no --with-cross-build option specified - please supply the path to an executable ICU's build root])
+	dnl '
     fi
 else
     if test -f "${cross_buildroot}/config/icucross.mk"; then
@@ -192,12 +204,44 @@ AC_ARG_ENABLE(release,
 AC_MSG_RESULT($enabled)
 AC_SUBST(ENABLE_RELEASE)
 
+# Check whether to enable auto cleanup of libraries
+AC_MSG_CHECKING([whether to enable auto cleanup of libraries])
+enabled=no
+UCLN_NO_AUTO_CLEANUP=1
+AC_ARG_ENABLE(auto-cleanup,
+    [  --enable-auto-cleanup   enable auto cleanup of libraries [default=no]],
+    [ case "${enableval}" in
+         yes) enabled=yes; UCLN_NO_AUTO_CLEANUP=0 ;;
+         *) ;;
+    esac],
+)
+AC_MSG_RESULT($enabled)
+AC_SUBST(UCLN_NO_AUTO_CLEANUP)
+
+# MSVC floating-point option
+MSVC_RELEASE_FLAG=""
+if test $enabled = yes
+then  
+    if test $icu_cv_host_frag = mh-cygwin-msvc
+    then
+        AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+    #if defined _MSC_VER && _MSC_VER >= 1400
+    #else
+    Microsoft Visual C++ < 2005
+    #endif
+        ]], [[]])],[MSVC_RELEASE_FLAG="/fp:precise"],[MSVC_RELEASE_FLAG="/Op"])
+        
+        CFLAGS="${CFLAGS} ${MSVC_RELEASE_FLAG}"
+        CXXFLAGS="${CXXFLAGS} ${MSVC_RELEASE_FLAG}"
+    fi
+fi
+
 # Check whether to enabled draft APIs
 AC_MSG_CHECKING([whether to enable draft APIs])
 enabled=yes
 U_DEFAULT_SHOW_DRAFT=1
 AC_ARG_ENABLE(draft,
-    [  --enable-draft          enable draft APIs [default=yes]],
+    [  --enable-draft          enable draft APIs (and internal APIs) [default=yes]],
     [ case "${enableval}" in
          no) enabled=no; U_DEFAULT_SHOW_DRAFT=0 ;;
          *) ;;
@@ -297,6 +341,42 @@ AC_ARG_ENABLE(tracing,
 AC_MSG_RESULT($enabled)
 AC_SUBST(U_ENABLE_TRACING)
 
+
+U_ENABLE_DYLOAD=1
+AC_MSG_CHECKING([whether to enable dynamic loading of plugins])
+enabled=check
+AC_ARG_ENABLE(dyload,
+    [  --disable-dyload        disable dynamic loading [default=no]],
+    [ case "${enableval}" in
+	     yes|"") 
+		     U_ENABLE_DYLOAD=1
+		     enabled=check ;;
+	     no) 
+	     	 U_ENABLE_DYLOAD=0;
+	     	 enabled=disabled ;;
+	     *) ;;
+    esac],
+)
+AC_SUBST(U_ENABLE_DYLOAD)
+
+# goes into icucfg.h
+AC_CHECK_HEADERS([dlfcn.h])
+U_CHECK_DYLOAD=0
+#AC_MSG_RESULT($enabled)
+if test "$enabled" = "check"; then
+    AC_SEARCH_LIBS([dlopen], [dl])
+    AC_CHECK_FUNCS([dlopen])
+    U_CHECK_DYLOAD=1
+fi
+AC_SUBST(U_CHECK_DYLOAD)
+
+# Check for miscellanous functions.
+# These only go into common/icucfg.h and are NOT exported with ICU builds.
+# So, use for putil / tools only.
+# Note that this will generate HAVE_GETTIMEOFDAY, not U_HAVE_GETTIMEOFDAY
+# rerun 'autoheader' to regenerate icucfg.h.in
+AC_CHECK_FUNCS([gettimeofday])
+
 # Check whether to use the evil rpath or not
 AC_ARG_ENABLE(rpath,
     [  --enable-rpath          use rpath when linking [default is only if necessary]],
@@ -331,6 +411,16 @@ AC_SUBST(U_INLINE)
 #
 U_HAVE_STD_STRING=0
 AC_LANG_PUSH([C++])
+AC_MSG_CHECKING([[if we have a C++ compiler]])
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]],[[]])],[cxx_okay=yes],[cxx_okay=no])
+if test $cxx_okay = yes
+then
+	AC_MSG_RESULT([[congratulations]])
+else
+	AC_MSG_RESULT([[no]])
+	AC_MSG_ERROR([[C++ compiler $CXX does not work or no compiler found]])
+fi
+
 AC_MSG_CHECKING([[if #include <string> works]])
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <string>]], [[]])], [ac_cv_header_stdstring=yes], [ac_cv_header_stdstring=no])
 AC_MSG_RESULT($ac_cv_header_stdstring)
@@ -396,20 +486,9 @@ if test $threads = true; then
   case "${host}" in
   *-pc-cygwin*|*-pc-mingw*)
     # For gcc, the thread options are set by mh-mingw/mh-cygwin
+    # For msvc, the thread options are set by runConfigureICU
     ICU_USE_THREADS=1
-    if test "$ac_cv_c_compiler_gnu" = no; then
-      # We're using normal windows compilers. Threading is available.
-      ICU_USE_THREADS=1
-      if test $ENABLE_DEBUG = 1; then
-        # /MDd means 'compiles and links a debugable multithreaded program with DLL'
-        CFLAGS="${CFLAGS} /MDd"
-        CXXFLAGS="${CXXFLAGS} /MDd"
-      else
-        # /MD means 'compiles and links a multithreaded program with DLL'
-        CFLAGS="${CFLAGS} /MD"
-        CXXFLAGS="${CXXFLAGS} /MD"
-      fi
-    fi ;;
+    ;;
   *-*-hpux*)
     # Add -mt because it does several nice things on newer compilers.
     case "${icu_cv_host_frag}" in
@@ -419,6 +498,13 @@ if test $threads = true; then
         if test x"`${CXX} ${CXXFLAGS} 2>&1`" != x""; then
            CXXFLAGS="${OLD_CXXFLAGS}"
        fi
+      ;;
+    esac
+    ;;
+  *-*-solaris*)
+    case "${icu_cv_host_frag}" in
+      mh-solaris)
+           LIBS="${LIBS} -mt"
       ;;
     esac
     ;;
@@ -462,7 +548,7 @@ AC_MSG_CHECKING([for genccode assembly])
 # Check to see if genccode can generate simple assembly.
 GENCCODE_ASSEMBLY=
 case "${host}" in
-i*86-*-linux*|x86_64-*-linux*|powerpc*-*-linux*|i*86-*-*bsd*|i*86-pc-gnu)
+*-linux*|i*86-*-*bsd*|i*86-pc-gnu)
     if test "$GCC" = yes; then
         # We're using gcc, and the simple -a gcc command line works for genccode
         GENCCODE_ASSEMBLY="-a gcc"
@@ -670,6 +756,25 @@ fi
 AC_SUBST(U_OVERRIDE_CXX_ALLOCATION)
 AC_SUBST(U_HAVE_PLACEMENT_NEW)
 
+# gcc atomic built-in functions check
+# AC_TRY_LINK([], [int foo, bar; bar = __sync_val_compare_and_swap(&foo, 0, 1);],, 
+AC_LANG(C)
+AC_MSG_CHECKING([for gcc atomic functions])
+AC_LINK_IFELSE([AC_LANG_PROGRAM(
+    [[
+        void *p;
+        int   i;
+    ]],
+    [[
+        __sync_fetch_and_add(&i, 1);
+        __sync_fetch_and_sub(&i, 1);
+        __sync_val_compare_and_swap(&p, 0, 0);
+    ]]
+)],
+[U_HAVE_GCC_ATOMICS=1; AC_MSG_RESULT([yes])],
+[U_HAVE_GCC_ATOMICS=0; AC_MSG_RESULT([no])])
+AC_SUBST(U_HAVE_GCC_ATOMICS)
+
 AC_LANG(C)
 AC_CHECK_FUNC(popen)
 if test x$ac_cv_func_popen = xyes
@@ -827,7 +932,7 @@ then
     U_HAVE_WCHAR_H=0
     U_HAVE_WCSCPY=0
 else
-    AC_DEFINE(HAVE_WCHAR_H)
+    AC_DEFINE([HAVE_WCHAR_H], [1], [wchar.h was found.])
     U_HAVE_WCHAR_H=1
     # Some broken systems have wchar.h but not some of its functions...
     AC_SEARCH_LIBS(wcscpy, wcs w)
@@ -861,6 +966,7 @@ AC_SUBST(U_SIZEOF_WCHAR_T)
 AC_MSG_CHECKING([for UTF-16 string literal support])
 U_CHECK_UTF16_STRING=1
 CHECK_UTF16_STRING_RESULT="unknown"
+
 case "${host}" in
 *-*-aix*|powerpc64-*-linux*)
     if test "$ac_cv_c_compiler_gnu" = no; then
@@ -913,6 +1019,37 @@ case "${host}" in
 *)
     ;;
 esac
+
+# GCC >= 4.4 supports UTF16 string literals. The CFLAGS and CXXFLAGS may change in the future.
+# Since we have to use a different standard, if strict is enable, don't enable UTF16 string literals.
+U_CHECK_GNUC_UTF16_STRING=0
+if test "$ac_use_strict_options" = no && test "$CHECK_UTF16_STRING_RESULT" = "unknown"; then
+    if test "$ac_cv_c_compiler_gnu" = yes; then
+        OLD_CFLAGS="${CFLAGS}"
+        OLD_CXXFLAGS="${CXXFLAGS}"
+        CFLAGS="${CFLAGS} -std=gnu99 -D_GCC_"
+        CXXFLAGS="${CXXFLAGS} -std=c++0x"
+        AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 4)
+#ifdef _GCC_
+typedef __CHAR16_TYPE__ char16_t;
+#endif
+char16_t test[] = u"This is a UTF16 literal string.";
+#else
+GCC IS TOO OLD!
+#endif
+        ]], [[]])],[U_CHECK_UTF16_STRING=1],[U_CHECK_UTF16_STRING=0])
+        if test "$U_CHECK_UTF16_STRING" = 1; then
+            CHECK_UTF16_STRING_RESULT="available";
+            U_CHECK_GNUC_UTF16_STRING=1
+        else
+            CFLAGS="${OLD_CFLAGS}"
+            CXXFLAGS="${OLD_CXXFLAGS}"
+        fi
+    fi
+fi
+AC_SUBST(U_CHECK_GNUC_UTF16_STRING)
+
 AC_MSG_RESULT($CHECK_UTF16_STRING_RESULT)
 AC_SUBST(U_CHECK_UTF16_STRING)
 
@@ -948,7 +1085,7 @@ AC_ARG_ENABLE(layout,
 ICU_CONDITIONAL(LAYOUT, test "$layout" = true)
 
 AC_ARG_WITH(data-packaging,
-	[  --with-data-packaging=type specify how to package ICU data (files, archive, library, auto) [default=auto]],
+	[  --with-data-packaging=type specify how to package ICU data (files, archive, library, static, auto) [default=auto]],
 	[case "${withval}" in
                 files|archive|library) datapackaging=$withval ;;
 		auto) datapackaging=$withval ;;
@@ -975,7 +1112,13 @@ AC_SUBST(thepkgicudatadir)
 dnl# Shouldn't need the AC_SUBST
 
 if test x"$datapackaging" = x -o x"$datapackaging" = xauto; then
+	# default to library
 	datapackaging=library
+	if test "$ENABLE_STATIC" = "YES"; then
+		if test "$ENABLE_SHARED" != "YES"; then
+			datapackaging=static
+		fi
+	fi
 fi
 
 datapackaging_dir=`eval echo $thedatadir`"/icu/${VERSION}"
@@ -1008,9 +1151,11 @@ case "$datapackaging" in
     fi
     datapackaging_howfound="$datapackaging_msg_set"
     ;;
-#    static)
-#	DATA_PACKAGING_MODE=static
-#	;;
+    static)
+    DATA_PACKAGING_MODE=static
+    datapackaging_msg="ICU data will be stored in a static library."
+    datapackaging_howfound="$datapackaging_msg_set"
+    ;;
 esac
 AC_SUBST(DATA_PACKAGING_MODE)
 
@@ -1141,13 +1286,14 @@ AC_CONFIG_FILES([icudefs.mk \
 		tools/genctd/Makefile \
 		tools/gennames/Makefile \
 		tools/gentest/Makefile \
-		tools/gennorm/Makefile \
+		tools/gennorm2/Makefile \
 		tools/genprops/Makefile \
 		tools/gencase/Makefile \
 		tools/genbidi/Makefile \
 		tools/genpname/Makefile \
 		tools/genbrk/Makefile \
 		tools/gensprep/Makefile \
+		tools/icuinfo/Makefile \
 		tools/icupkg/Makefile \
 		tools/icuswap/Makefile \
 		tools/pkgdata/Makefile \
@@ -1202,7 +1348,7 @@ echo "is in your PATH so that the configure script can detect its location."
 fi
 
 AC_MSG_CHECKING([the version of "$U_MAKE"])
-if "$U_MAKE" -f "$srcdir/config/gmakever.mk"; then
+if "$U_MAKE" -f "$srcdir/config/gmakever.mk" PLATFORM="$platform"; then
 AC_MSG_RESULT([ok])
 else
 AC_MSG_RESULT([too old or test failed - try upgrading GNU Make])

@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 1997-2008, International Business Machines Corporation and    *
+* Copyright (C) 1997-2010, International Business Machines Corporation and    *
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 *
@@ -150,7 +150,7 @@ static const UDate kPapalCutover = (2299161.0 - kEpochStartAsJulianDay) * U_MILL
 // -------------------------------------
 
 GregorianCalendar::GregorianCalendar(UErrorCode& status)
-:   Calendar(TimeZone::createDefault(), Locale::getDefault(), status),
+:   Calendar(status),
 fGregorianCutover(kPapalCutover),
 fCutoverJulianDay(kCutoverJulianDay), fNormalizedGregorianCutover(fGregorianCutover), fGregorianCutoverYear(1582),
 fIsGregorian(TRUE), fInvertGregorian(FALSE)
@@ -1174,8 +1174,21 @@ int32_t GregorianCalendar::getActualMaximum(UCalendarDateFields field, UErrorCod
 
 
 int32_t GregorianCalendar::handleGetExtendedYear() {
+    // the year to return
     int32_t year = kEpochYear;
-    switch(resolveFields(kYearPrecedence)) {
+
+    // year field to use
+    int32_t yearField = UCAL_EXTENDED_YEAR;
+
+    // There are three separate fields which could be used to
+    // derive the proper year.  Use the one most recently set.
+    if (fStamp[yearField] < fStamp[UCAL_YEAR])
+        yearField = UCAL_YEAR;
+    if (fStamp[yearField] < fStamp[UCAL_YEAR_WOY])
+        yearField = UCAL_YEAR_WOY;
+
+    // based on the "best" year field, get the year
+    switch(yearField) {
     case UCAL_EXTENDED_YEAR:
         year = internalGet(UCAL_EXTENDED_YEAR, kEpochYear);
         break;

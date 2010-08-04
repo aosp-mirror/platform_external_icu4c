@@ -478,12 +478,7 @@ void UVector::sortedInsert(UHashTok tok, USortComparator *compare, UErrorCode& e
   *  (with some extra indirection) to the user supplied comparator.
   *  
   */
-static int32_t
-#if defined (OS390)
- 	__cdecl /* force to __cdecl for now */
-#else
- 	U_CALLCONV 
-#endif
+static int32_t U_CALLCONV
 sortComparator(const void *context, const void *left, const void *right) {
     USortComparator *compare = *static_cast<USortComparator * const *>(context);
     UHashTok tok1 = *static_cast<const UHashTok *>(left);
@@ -493,17 +488,11 @@ sortComparator(const void *context, const void *left, const void *right) {
 }
 
 
-
 /**
   *  Array sort comparison function for use from UVector::sorti()
   *  Compares int32_t vector elements.
   */
-static int32_t
-#if defined (OS390)
- 	__cdecl /* force to __cdecl for now */
-#else
- 	U_CALLCONV 
-#endif
+static int32_t U_CALLCONV
 sortiComparator(const void * /*context */, const void *left, const void *right) {
     const UHashTok *tok1 = static_cast<const UHashTok *>(left);
     const UHashTok *tok2 = static_cast<const UHashTok *>(right);

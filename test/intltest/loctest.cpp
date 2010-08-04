@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1997-2009, International Business Machines Corporation and
+ * Copyright (c) 1997-2010, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -212,11 +212,15 @@ void LocaleTest::runIndexedTest( int32_t index, UBool exec, const char* &name, c
         TESTCASE(23, TestParallelAPIValues);
         TESTCASE(24, TestKeywordVariants);
         TESTCASE(25, TestKeywordVariantParsing);
-        TESTCASE(26, TestGetBaseName);
-        TESTCASE(27, TestGetLocale);
-        TESTCASE(28, TestVariantWithOutCountry);
-        TESTCASE(29, TestCanonicalization);
-        TESTCASE(30, TestCurrencyByDate);
+        TESTCASE(26, TestSetKeywordValue);
+        TESTCASE(27, TestGetBaseName);
+#if !UCONFIG_NO_FILE_IO
+        TESTCASE(28, TestGetLocale);
+#endif
+        TESTCASE(29, TestVariantWithOutCountry);
+        TESTCASE(30, TestCanonicalization);
+        TESTCASE(31, TestCurrencyByDate);
+	TESTCASE(32, TestGetVariantWithKeywords);
 
         // keep the last index in sync with the condition in default:
 
@@ -1302,7 +1306,7 @@ LocaleTest::Test4139940()
     UErrorCode status = U_ZERO_ERROR;
     SimpleDateFormat df_full("EEEE", mylocale, status);
     if(U_FAILURE(status)){
-        errcheckln(status, UnicodeString("Could not create SimpleDateFormat object for locale hu. Error: " )+ UnicodeString(u_errorName(status)));
+        dataerrln(UnicodeString("Could not create SimpleDateFormat object for locale hu. Error: ") + UnicodeString(u_errorName(status)));
         return;
     }
     UnicodeString str;
@@ -1689,6 +1693,40 @@ LocaleTest::TestKeywordVariantParsing(void) {
 }
 
 void
+LocaleTest::TestSetKeywordValue(void) {
+    static const struct {
+        const char *keyword;
+        const char *value;
+    } testCases[] = {
+        { "collation", "phonebook" },
+        { "currency", "euro" },
+        { "calendar", "buddhist" }
+    };
+
+    UErrorCode status = U_ZERO_ERROR;
+
+    int32_t i = 0;
+    int32_t resultLen = 0;
+    char buffer[256];
+
+    Locale l(Locale::getGerman());
+
+    for(i = 0; i < (int32_t)(sizeof(testCases)/sizeof(testCases[0])); i++) {
+        l.setKeywordValue(testCases[i].keyword, testCases[i].value, status);
+        if(U_FAILURE(status)) {
+            err("FAIL: Locale::setKeywordValue failed - %s\n", u_errorName(status));
+        }
+
+        *buffer = 0;
+        resultLen = l.getKeywordValue(testCases[i].keyword, buffer, 256, status);
+        if(uprv_strcmp(testCases[i].value, buffer) != 0) {
+            err("Expected to extract \"%s\" for keyword \"%s\". Got \"%s\" instead\n",
+                testCases[i].value, testCases[i].keyword, buffer);
+        }
+    }
+}
+
+void
 LocaleTest::TestGetBaseName(void) {
     static const struct {
         const char *localeID;
@@ -1775,7 +1813,7 @@ void LocaleTest::TestGetLocale(void) {
     req = "en_US_BROOKLYN";
     Calendar* cal = Calendar::createInstance(Locale::createFromName(req), ec);
     if (U_FAILURE(ec)) {
-        errln("FAIL: Calendar::createInstance failed - %s", u_errorName(ec));
+        dataerrln("FAIL: Calendar::createInstance failed - %s", u_errorName(ec));
     } else {
         valid = cal->getLocale(ULOC_VALID_LOCALE, ec);
         actual = cal->getLocale(ULOC_ACTUAL_LOCALE, ec);
@@ -2454,4 +2492,18 @@ void LocaleTest::TestCurrencyByDate(void)
     }
     status = U_ZERO_ERROR; // reset
 #endif
+}
+
+void LocaleTest::TestGetVariantWithKeywords(void)
+{
+  Locale l("en_US_VALLEY@foo=value");
+  const char *variant = l.getVariant();
+  logln(variant);
+  test_assert(strcmp("VALLEY", variant) == 0);
+
+  UErrorCode status = U_ZERO_ERROR;
+  char buffer[50];
+  int32_t len = l.getKeywordValue("foo", buffer, 50, status);
+  buffer[len] = '\0';
+  test_assert(strcmp("value", buffer) == 0);
 }

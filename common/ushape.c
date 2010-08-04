@@ -1,7 +1,7 @@
 /*
  ******************************************************************************
  *
- *   Copyright (C) 2000-2009, International Business Machines
+ *   Copyright (C) 2000-2010, International Business Machines
  *   Corporation and others.  All Rights Reserved.
  *
  ******************************************************************************
@@ -76,12 +76,12 @@
 #define SHAPE_MODE   0
 #define DESHAPE_MODE 1
 
-UChar tailChar = OLD_TAIL_CHAR;
-uint32_t uShapeLamalefBegin = U_SHAPE_LAMALEF_BEGIN;
-uint32_t uShapeLamalefEnd    = U_SHAPE_LAMALEF_END;        
-uint32_t uShapeTashkeelBegin = U_SHAPE_TASHKEEL_BEGIN;
-uint32_t uShapeTashkeelEnd = U_SHAPE_TASHKEEL_END;
-int spacesRelativeToTextBeginEnd = 0;
+static UChar tailChar = OLD_TAIL_CHAR;
+static uint32_t uShapeLamalefBegin = U_SHAPE_LAMALEF_BEGIN;
+static uint32_t uShapeLamalefEnd    = U_SHAPE_LAMALEF_END;        
+static uint32_t uShapeTashkeelBegin = U_SHAPE_TASHKEEL_BEGIN;
+static uint32_t uShapeTashkeelEnd = U_SHAPE_TASHKEEL_END;
+static int spacesRelativeToTextBeginEnd = 0;
 
 static const uint8_t tailFamilyIsolatedFinal[] = {
     /* FEB1 */ 1,
@@ -380,7 +380,7 @@ _shapeToArabicDigitsWithContext(UChar *s, int32_t length,
  *           U_SHAPE_TEXT_DIRECTION_LOGICAL
  */
 static void 
-invertBuffer(UChar *buffer,int32_t size,uint32_t options,int32_t lowlimit,int32_t highlimit) {
+invertBuffer(UChar *buffer,int32_t size,uint64_t options,int32_t lowlimit,int32_t highlimit) {
     UChar temp;
     int32_t i=0,j=0;
     for(i=lowlimit,j=size-highlimit-1;i<j;i++,j--) {
@@ -442,7 +442,7 @@ getLink(UChar ch) {
  *           at each end of the logical buffer
  */
 static void
-countSpaces(UChar *dest,int32_t size,uint32_t options,int32_t *spacesCountl,int32_t *spacesCountr) {
+countSpaces(UChar *dest,int32_t size,uint64_t options,int32_t *spacesCountl,int32_t *spacesCountr) {
     int32_t i = 0;
     int32_t countl = 0,countr = 0;
     while(dest[i] == SPACE_CHAR) {
@@ -611,7 +611,7 @@ isIsolatedTashkeelChar(UChar ch){
 
 static int32_t
 calculateSize(const UChar *source, int32_t sourceLength,
-int32_t destSize,uint32_t options) {
+int32_t destSize,uint64_t options) {
     int32_t i = 0;
     
     int lamAlefOption = 0;
@@ -668,7 +668,7 @@ int32_t destSize,uint32_t options) {
  */
 static int32_t
 handleTashkeelWithTatweel(UChar *dest, int32_t sourceLength,
-             int32_t destSize,uint32_t options,
+             int32_t destSize,uint64_t options,
              UErrorCode *pErrorCode) {
                  int i;
                  for(i = 0; i < sourceLength; i++){
@@ -707,7 +707,7 @@ handleTashkeelWithTatweel(UChar *dest, int32_t sourceLength,
 static int32_t
 handleGeneratedSpaces(UChar *dest, int32_t sourceLength,
                     int32_t destSize,
-                    uint32_t options,
+                    uint64_t options,
                     UErrorCode *pErrorCode ) {
 
     int32_t i = 0, j = 0;
@@ -763,11 +763,12 @@ handleGeneratedSpaces(UChar *dest, int32_t sourceLength,
       lamAlefOption = 0;
 
     if (shapingMode == 0){
-        if ( (options&U_SHAPE_LAMALEF_MASK) == U_SHAPE_LAMALEF_NEAR ){
+        if ( (options&U_SHAPE_LAMALEF_MASK) == U_SHAPE_LAMALEF_NEAR &&
+             (options&U_SHAPE_X_LAMALEF_SUB_ALTERNATE) == 0) { // if set, leave LAMALEF_SPACE_SUB in the output
             lamAlefOption = 1;
         }
     }
-    
+
     if (lamAlefOption){
         /* Lam+Alef is already shaped into LamAlef + FFFF */
         i = 0;
@@ -823,8 +824,6 @@ handleGeneratedSpaces(UChar *dest, int32_t sourceLength,
         uprv_memcpy(dest, tempbuffer, sourceLength*U_SIZEOF_UCHAR);
         destSize = sourceLength;
     }
-
-
 
     lamAlefOption = 0;
     tashkeelOption = 0;
@@ -1070,7 +1069,7 @@ expandCompositCharAtNear(UChar *dest, int32_t sourceLength, int32_t destSize,UEr
  
 static int32_t
 expandCompositChar(UChar *dest, int32_t sourceLength,
-              int32_t destSize,uint32_t options,
+              int32_t destSize,uint64_t options,
               UErrorCode *pErrorCode, int shapingMode) {
 
     int32_t      i = 0,j = 0;
@@ -1167,7 +1166,6 @@ expandCompositChar(UChar *dest, int32_t sourceLength,
             }
             
             uprv_memcpy(dest, tempbuffer, destSize*U_SIZEOF_UCHAR);
-            destSize = sourceLength;
         }
     }
     
@@ -1184,7 +1182,7 @@ expandCompositChar(UChar *dest, int32_t sourceLength,
  */
 static int32_t
 shapeUnicode(UChar *dest, int32_t sourceLength,
-             int32_t destSize,uint32_t options,
+             int32_t destSize,uint64_t options,
              UErrorCode *pErrorCode,
              int tashkeelFlag) {
 
@@ -1352,7 +1350,7 @@ shapeUnicode(UChar *dest, int32_t sourceLength,
  */
 static int32_t
 deShapeUnicode(UChar *dest, int32_t sourceLength,
-               int32_t destSize,uint32_t options,
+               int32_t destSize,uint64_t options,
                UErrorCode *pErrorCode) {
     int32_t i = 0;
     int32_t lamalef_found = 0;
@@ -1397,20 +1395,19 @@ deShapeUnicode(UChar *dest, int32_t sourceLength,
    return destSize;
 }
 
-/* 
+/*
  ****************************************
  * u_shapeArabic
  ****************************************
- */    
+ */
 
 U_CAPI int32_t U_EXPORT2
 u_shapeArabic(const UChar *source, int32_t sourceLength,
               UChar *dest, int32_t destCapacity,
-              uint32_t options,
-              UErrorCode *pErrorCode) {
+              uint64_t options, UErrorCode *pErrorCode) {
 
     int32_t destLength;
-    
+
     spacesRelativeToTextBeginEnd = 0;
     uShapeLamalefBegin = U_SHAPE_LAMALEF_BEGIN;
     uShapeLamalefEnd = U_SHAPE_LAMALEF_END;

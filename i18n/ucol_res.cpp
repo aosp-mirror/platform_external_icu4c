@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-*   Copyright (C) 1996-2009, International Business Machines
+*   Copyright (C) 1996-2010, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *******************************************************************************
 *   file name:  ucol_res.cpp
@@ -329,7 +329,6 @@ ucol_open(const char *loc,
     UTRACE_DATA1(UTRACE_INFO, "locale = \"%s\"", loc);
     UCollator *result = NULL;
 
-    u_init(status);
 #if !UCONFIG_NO_SERVICE
     result = Collator::createUCollator(loc, status);
     if (result == NULL)
@@ -355,11 +354,6 @@ ucol_openRules( const UChar        *rules,
 
     if(status == NULL || U_FAILURE(*status)){
         return 0;
-    }
-
-    u_init(status);
-    if (U_FAILURE(*status)) {
-        return NULL;
     }
 
     if(rules == NULL || rulesLength < -1) {
@@ -754,6 +748,8 @@ static const UEnumeration defaultKeywordValues = {
     ulist_reset_keyword_values_iterator
 };
 
+#include <stdio.h>
+
 U_CAPI UEnumeration* U_EXPORT2
 ucol_getKeywordValuesForLocale(const char* /*key*/, const char* locale,
                                UBool /*commonlyUsed*/, UErrorCode* status) {
@@ -806,7 +802,21 @@ ucol_getKeywordValuesForLocale(const char* /*key*/, const char* locale,
                     int32_t defcollLength = ULOC_KEYWORDS_CAPACITY;
 
                     ures_getNextResource(&collres, &defres, status);
+#if U_CHARSET_FAMILY==U_ASCII_FAMILY
+			/* optimize - use the utf-8 string */
                     ures_getUTF8String(&defres, defcoll, &defcollLength, TRUE, status);
+#else
+                    {
+                       const UChar* defString = ures_getString(&defres, &defcollLength, status);
+                       if(U_SUCCESS(*status)) {
+			   if(defcollLength+1 > ULOC_KEYWORDS_CAPACITY) {
+				*status = U_BUFFER_OVERFLOW_ERROR;
+			   } else {
+                           	u_UCharsToChars(defString, defcoll, defcollLength+1);
+			   }
+                       }
+                    }
+#endif	
 
                     ulist_addItemBeginList(results, defcoll, TRUE, status);
                 }
@@ -833,7 +843,7 @@ ucol_getKeywordValuesForLocale(const char* /*key*/, const char* locale,
         char *value = NULL;
         ulist_resetList(values);
         while ((value = (char *)ulist_getNext(values)) != NULL) {
-            if (!ulist_containsString(results, value, uprv_strlen(value))) {
+            if (!ulist_containsString(results, value, (int32_t)uprv_strlen(value))) {
                 ulist_addItemEndList(results, value, FALSE, status);
                 if (U_FAILURE(*status)) {
                     break;

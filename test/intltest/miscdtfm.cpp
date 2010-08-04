@@ -1,5 +1,5 @@
 /***********************************************************************
- * Copyright (c) 1997-2009, International Business Machines Corporation
+ * Copyright (c) 1997-2010, International Business Machines Corporation
  * and others. All Rights Reserved.
  ***********************************************************************/
  
@@ -113,7 +113,10 @@ DateFormatMiscTests::test4097450()
     UErrorCode status = U_ZERO_ERROR;
     SimpleDateFormat *formatter;
     SimpleDateFormat *resultFormatter = new SimpleDateFormat((UnicodeString)"yyyy", status);
-    failure(status, "new SimpleDateFormat");
+    if (U_FAILURE(status)) {
+        dataerrln("Fail new SimpleDateFormat: %s", u_errorName(status));
+        return;
+    }
 
     logln("Format\tSource\tResult");
     logln("-------\t-------\t-------");
@@ -327,7 +330,7 @@ DateFormatMiscTests::test4117335()
     }
     failure(status, "new DateFormatSymbols");
     int32_t eraCount = 0;
-    const UnicodeString *eras = symbols->getEras(eraCount);
+    const UnicodeString *eras = symbols->getEraNames(eraCount);
     
     logln(UnicodeString("BC = ") + eras[0]);
     if (eras[0] != bc) {

@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 2008-2009, International Business Machines Corporation and
+ * Copyright (c) 2008-2010, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -28,6 +28,7 @@ void IntlTestDateTimePatternGeneratorAPI::runIndexedTest( int32_t index, UBool e
     if (exec) logln("TestSuite DateTimePatternGeneratorAPI");
     switch (index) {
         TESTCASE(0, testAPI);
+        TESTCASE(1, testOptions);
         default: name = ""; break;
     }
 }
@@ -109,7 +110,7 @@ void IntlTestDateTimePatternGeneratorAPI::testAPI(/*char *par*/)
         UnicodeString("58:59"),
         CharsToUnicodeString("1999\\u5E741\\u6708"),          // zh_Hans_CN 11: yyyyMMMM  -> yyyy\u5E74MMM
 
-        UnicodeString("1999-1"),  // de_DE
+        UnicodeString("1.1999"),  // de_DE
         UnicodeString("Jan 1999"),
         UnicodeString("13.1.1999"),
         UnicodeString("13. Jan 1999"),
@@ -122,18 +123,18 @@ void IntlTestDateTimePatternGeneratorAPI::testAPI(/*char *par*/)
         UnicodeString("58:59"),
         UnicodeString("Januar 1999"),                         // de 11: yyyyMMMM
 
-        UnicodeString("1.1999"),                              // fi: yM (fixed expected result per ticket:6626:)
-        UnicodeString("tammikuuta 1999"),
+        UnicodeString("1.1999"),                              // fi  0: yM (fixed expected result per ticket:6626:)
+        UnicodeString("tammi 1999"),                          // fi  1: yMMM
         UnicodeString("13.1.1999"),
-        UnicodeString("13. tammikuuta 1999"),
+        UnicodeString("13. tammikuuta 1999"),                 // fi  3: yMMMd
         UnicodeString("13.1."),
-        UnicodeString("13. tammikuuta"),
+        UnicodeString("13. tammikuuta"),                      // fi  5: MMMd
         UnicodeString("1. nelj. 1999"),
         UnicodeString("11.58 ip."),                           // fi  7: hhmm
         UnicodeString("23.58"),
         UnicodeString("23.58"),                               // fi  9: jjmm
         UnicodeString("58.59"),
-        UnicodeString("tammikuuta 1999"),                     // fi 11: yyyyMMMM
+        UnicodeString("tammikuu 1999"),                       // fi 11: yyyyMMMM
 
         UnicodeString("1999/1"),                              // ja 0: yM    -> y/M
         CharsToUnicodeString("1999\\u5E741\\u6708"),          // ja 1: yMMM  -> y\u5E74M\u6708
@@ -216,11 +217,11 @@ void IntlTestDateTimePatternGeneratorAPI::testAPI(/*char *par*/)
         UnicodeString("Thu, Oct 14 6:58:59 AM"),
         UnicodeString("10/14 6:58 AM"),
         UnicodeString("Thursday, Oct 14 6:58:59 AM"),
-        UnicodeString("Oct 14, 1999 06:58:59 AM"),
-        UnicodeString("Thu, Oct 14, 1999 06:58:59 AM"),
+        UnicodeString("Oct 14, 1999 6:58:59 AM"),
+        UnicodeString("Thu, Oct 14, 1999 6:58:59 AM"),
         UnicodeString("6:58 AM"),
-        UnicodeString("06:58 AM"),
-        UnicodeString("06:58 AM GMT+00:00"),
+        UnicodeString("6:58 AM"),
+        UnicodeString("6:58 AM GMT+00:00"),
         UnicodeString(""),
     };
     
@@ -319,7 +320,7 @@ void IntlTestDateTimePatternGeneratorAPI::testAPI(/*char *par*/)
     UnicodeString dateReturned, expectedResult;
     dateReturned.remove();
     dateReturned = format->format(sampleDate, dateReturned, status);
-    expectedResult=UnicodeString("14. Okt 8:58", -1, US_INV);
+    expectedResult=UnicodeString("14. Okt 08:58", -1, US_INV);
     if ( dateReturned != expectedResult ) {
         errln("ERROR: Simple test in getBestPattern with Locale::getGermany()).");
     }
@@ -332,12 +333,12 @@ void IntlTestDateTimePatternGeneratorAPI::testAPI(/*char *par*/)
     status = U_ZERO_ERROR;
     UnicodeString testPattern=gen->getBestPattern(UnicodeString("MMMMdd"), status);
     testPattern=gen->getBestPattern(UnicodeString("MMMddHmm"), status);
-    format->applyPattern(gen->getBestPattern(UnicodeString("MMMMddHmm"), status));
+    format->applyPattern(gen->getBestPattern(UnicodeString("MMMMdHmm"), status));
     dateReturned.remove();
     dateReturned = format->format(sampleDate, dateReturned, status);
-    expectedResult=UnicodeString("14. von Oktober 8:58", -1, US_INV);
+    expectedResult=UnicodeString("14. von Oktober 08:58", -1, US_INV);
     if ( dateReturned != expectedResult ) {
-        errln("ERROR: Simple test addPattern failed!: d\'. von\' MMMM  ");
+        errln(UnicodeString("ERROR: Simple test addPattern failed!: d\'. von\' MMMM   Got: ") + dateReturned + UnicodeString(" Expected: ") + expectedResult);
     }
     delete format;
     
@@ -360,7 +361,7 @@ void IntlTestDateTimePatternGeneratorAPI::testAPI(/*char *par*/)
     format->applyPattern(newPattern);
     dateReturned.remove();
     dateReturned = format->format(sampleDate, dateReturned, status);
-    expectedResult=UnicodeString("Donnerstag, 14. Oktober 1999 08:58:59 Frankreich");
+    expectedResult=UnicodeString("Donnerstag, 14. Oktober 1999 08:58:59 (Frankreich)");
     if ( dateReturned != expectedResult ) {
         errln("ERROR: Simple test modify the timezone!");
         errln(UnicodeString(" Got: ")+ dateReturned + UnicodeString(" Expected: ") + expectedResult);
@@ -705,6 +706,78 @@ void IntlTestDateTimePatternGeneratorAPI::testAPI(/*char *par*/)
     delete ptrBaseSkeletonEnum;
     delete test;
     delete generator;
+}
+
+/**
+ * Test handling of options
+ *
+ * For reference, as of ICU 4.3.3,
+ *  root/gregorian has
+ *      Hm{"H:mm"}
+ *      Hms{"H:mm:ss"}
+ *      hm{"h:mm a"}
+ *      hms{"h:mm:ss a"}
+ *  en/gregorian has
+ *      Hm{"H:mm"}
+ *      Hms{"H:mm:ss"}
+ *      hm{"h:mm a"}
+ *  be/gregorian has
+ *      HHmmss{"HH.mm.ss"}
+ *      Hm{"HH.mm"}
+ *      hm{"h.mm a"}
+ *      hms{"h.mm.ss a"}
+ */
+typedef struct DTPtnGenOptionsData {
+    const char *locale;
+    const char *skel;
+    const char *expectedPattern;
+    UDateTimePatternMatchOptions    options;
+} DTPtnGenOptionsData;
+void IntlTestDateTimePatternGeneratorAPI::testOptions(/*char *par*/)
+{
+    DTPtnGenOptionsData testData[] = {
+    //   locale  skel   expectedPattern     options
+        { "en", "Hmm",  "HH:mm",   UDATPG_MATCH_NO_OPTIONS        },
+        { "en", "HHmm", "HH:mm",   UDATPG_MATCH_NO_OPTIONS        },
+        { "en", "hhmm", "h:mm a",  UDATPG_MATCH_NO_OPTIONS        },
+        { "en", "Hmm",  "HH:mm",   UDATPG_MATCH_HOUR_FIELD_LENGTH },
+        { "en", "HHmm", "HH:mm",   UDATPG_MATCH_HOUR_FIELD_LENGTH },
+        { "en", "hhmm", "hh:mm a", UDATPG_MATCH_HOUR_FIELD_LENGTH },
+        { "be", "Hmm",  "HH.mm",   UDATPG_MATCH_NO_OPTIONS        },
+        { "be", "HHmm", "HH.mm",   UDATPG_MATCH_NO_OPTIONS        },
+        { "be", "hhmm", "h.mm a",  UDATPG_MATCH_NO_OPTIONS        },
+        { "be", "Hmm",  "H.mm",    UDATPG_MATCH_HOUR_FIELD_LENGTH },
+        { "be", "HHmm", "HH.mm",   UDATPG_MATCH_HOUR_FIELD_LENGTH },
+        { "be", "hhmm", "hh.mm a", UDATPG_MATCH_HOUR_FIELD_LENGTH },
+    };
+    
+    int count = sizeof(testData) / sizeof(testData[0]);
+    const DTPtnGenOptionsData * testDataPtr = testData;
+    
+    for (; count-- > 0; ++testDataPtr) {
+        UErrorCode status = U_ZERO_ERROR;
+
+        Locale locale(testDataPtr->locale);
+        UnicodeString skel(testDataPtr->skel);
+        UnicodeString expectedPattern(testDataPtr->expectedPattern);
+        UDateTimePatternMatchOptions options = testDataPtr->options;
+
+        DateTimePatternGenerator * dtpgen = DateTimePatternGenerator::createInstance(locale, status);
+        if (U_FAILURE(status)) {
+            dataerrln("Unable to create DateTimePatternGenerator instance for locale(%s): %s", locale.getName(), u_errorName(status));
+            delete dtpgen;
+            continue;
+        }
+        UnicodeString pattern = dtpgen->getBestPattern(skel, options, status);
+        if (pattern.compare(expectedPattern) != 0) {
+            errln( UnicodeString("ERROR in getBestPattern, locale ") + UnicodeString(testDataPtr->locale) +
+                   UnicodeString(", skeleton ") + skel +
+                   ((options)?UnicodeString(", options!=0"):UnicodeString(", options==0")) +
+                   UnicodeString(", expected pattern ") + expectedPattern +
+                   UnicodeString(", got ") + pattern );
+        }
+        delete dtpgen;
+    }
 }
 
 #endif /* #if !UCONFIG_NO_FORMATTING */

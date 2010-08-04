@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2009 International Business Machines
+// * Copyright (C) 2010 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/rbnf/ar.xml
@@ -234,5 +234,5 @@ ar{
             "10000000000: <#,##0<<;",
         }
     }
-    Version{"1.4"}
+    Version{"2.0.41.38"}
 }

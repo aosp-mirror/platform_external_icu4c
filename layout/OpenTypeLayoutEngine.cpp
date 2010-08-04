@@ -1,7 +1,7 @@
 
 /*
  *
- * (C) Copyright IBM Corp. 1998-2009 - All Rights Reserved
+ * (C) Copyright IBM Corp. 1998-2010 - All Rights Reserved
  *
  */
 
@@ -24,6 +24,8 @@
 
 #include "GDEFMarkFilter.h"
 
+#include "KernTable.h"
+
 U_NAMESPACE_BEGIN
 
 UOBJECT_DEFINE_RTTI_IMPLEMENTATION(OpenTypeLayoutEngine)
@@ -35,6 +37,7 @@ UOBJECT_DEFINE_RTTI_IMPLEMENTATION(OpenTypeLayoutEngine)
 #define markFeatureTag LE_MARK_FEATURE_TAG
 #define mkmkFeatureTag LE_MKMK_FEATURE_TAG
 #define loclFeatureTag LE_LOCL_FEATURE_TAG
+#define caltFeatureTag LE_CALT_FEATURE_TAG
 
 // 'dlig' not used at the moment
 #define dligFeatureTag 0x646C6967
@@ -50,8 +53,9 @@ UOBJECT_DEFINE_RTTI_IMPLEMENTATION(OpenTypeLayoutEngine)
 #define markFeatureMask 0x04000000UL
 #define mkmkFeatureMask 0x02000000UL
 #define loclFeatureMask 0x01000000UL
+#define caltFeatureMask 0x00800000UL
 
-#define minimalFeatures     (ccmpFeatureMask | markFeatureMask | mkmkFeatureMask | loclFeatureMask)
+#define minimalFeatures     (ccmpFeatureMask | markFeatureMask | mkmkFeatureMask | loclFeatureMask | caltFeatureMask)
 #define ligaFeatures        (ligaFeatureMask | cligFeatureMask | minimalFeatures)
 #define kernFeatures        (kernFeatureMask | paltFeatureMask | minimalFeatures)
 #define kernAndLigaFeatures (ligaFeatures    | kernFeatures)
@@ -65,7 +69,8 @@ static const FeatureMap featureMap[] =
     {paltFeatureTag, paltFeatureMask},
     {markFeatureTag, markFeatureMask},
     {mkmkFeatureTag, mkmkFeatureMask},
-    {loclFeatureTag, loclFeatureMask}
+    {loclFeatureTag, loclFeatureMask},
+    {caltFeatureTag, caltFeatureMask}
 };
 
 static const le_int32 featureMapCount = LE_ARRAY_SIZE(featureMap);
@@ -97,7 +102,9 @@ OpenTypeLayoutEngine::OpenTypeLayoutEngine(const LEFontInstance *fontInstance, l
 
     fGDEFTable = (const GlyphDefinitionTableHeader *) getFontTable(gdefTableTag);
     
-    if (gposTable != NULL && gposTable->coversScriptAndLanguage(fScriptTag, fLangSysTag)) {
+// JK patch, 2008-05-30 - see Sinhala bug report and LKLUG font
+//    if (gposTable != NULL && gposTable->coversScriptAndLanguage(fScriptTag, fLangSysTag)) {
+    if (gposTable != NULL && gposTable->coversScript(fScriptTag)) {
         fGPOSTable = gposTable;
     }
 }
@@ -193,7 +200,16 @@ le_int32 OpenTypeLayoutEngine::characterProcessing(const LEUnicode chars[], le_i
             return 0;
         }
 
+        if (LE_FAILURE(success)) {
+            LE_DELETE_ARRAY(outChars);
+            return 0;
+        }
+
         CanonShaping::reorderMarks(&chars[offset], count, rightToLeft, outChars, glyphStorage);
+    }
+
+    if (LE_FAILURE(success)) {
+        return 0;
     }
 
     glyphStorage.allocateGlyphArray(count, rightToLeft, success);
@@ -333,8 +349,11 @@ void OpenTypeLayoutEngine::adjustGlyphPositions(const LEUnicode chars[], le_int3
     }
 
     le_int32 glyphCount = glyphStorage.getGlyphCount();
+    if (glyphCount == 0) {
+        return;
+    }
 
-    if (glyphCount > 0 && fGPOSTable != NULL) {
+    if (fGPOSTable != NULL) {
         GlyphPositionAdjustments *adjustments = new GlyphPositionAdjustments(glyphCount);
         le_int32 i;
 
@@ -366,6 +385,10 @@ void OpenTypeLayoutEngine::adjustGlyphPositions(const LEUnicode chars[], le_int3
                 fGPOSTable->process(glyphStorage, adjustments, reverse, fScriptTag, fLangSysTag, fGDEFTable, success, fFontInstance,
                                 fFeatureMap, fFeatureMapCount, fFeatureOrder);
             }
+        } else if ( fTypoFlags & 0x1 ) {
+            static const le_uint32 kernTableTag = LE_KERN_TABLE_TAG;
+            KernTable kt(fFontInstance, getFontTable(kernTableTag));
+            kt.process(glyphStorage);
         }
 
         float xAdjust = 0, yAdjust = 0;
@@ -400,6 +423,9 @@ void OpenTypeLayoutEngine::adjustGlyphPositions(const LEUnicode chars[], le_int3
         glyphStorage.adjustPosition(glyphCount, xAdjust, -yAdjust, success);
 
         delete adjustments;
+    } else {
+        // if there was no GPOS table, maybe there's non-OpenType kerning we can use
+        LayoutEngine::adjustGlyphPositions(chars, offset, count, reverse, glyphStorage, success);        
     }
 
     LEGlyphID zwnj  = fFontInstance->mapCharToGlyph(0x200C);

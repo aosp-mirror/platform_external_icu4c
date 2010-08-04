@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-*   Copyright (C) 1996-2009, International Business Machines
+*   Copyright (C) 1996-2010, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *******************************************************************************
 * Modification History:
@@ -99,12 +99,9 @@ unum_open(  UNumberFormatStyle    style,
             *status = U_MEMORY_ALLOCATION_ERROR;
             return 0;
         }
-        //  BEGIN android-added
-        //  ICU ticket#4216.
         if (U_FAILURE(*status)) {
             return 0;
         }
-        //  END android-added
 
         retVal = (UNumberFormat*)new DecimalFormat(pat, syms, *parseErr, *status);
         if(retVal == 0) {

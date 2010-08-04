@@ -49,12 +49,9 @@
 
 # Look-ahead expressions
 #
-#   BEGIN android-added
-#   Test data for important bug fixing after 4.2.1 release.
 "(?!0{5})(\d{5})"              "<0><1>00001</1></0>zzzz"
 "(?!0{5})(\d{5})z"             "<0><1>00001</1>z</0>zzz"
 "(?!0{5})(\d{5})(?!y)"         "<0><1>00001</1></0>zzzz"
-#   END android-added
 "abc(?=def)"                   "<0>abc</0>def"
 "(.*)(?=c)"                    "<0><1>ab</1></0>cdef"
 
@@ -1016,15 +1013,12 @@
 "a+?"                             "<0>a</0>aaaaaaaaaaaa"
 "a+?"                          M  "<0>aaaaaaaaaaaaa</0>"
 
-#   BEGIN android-added
-#   Test data for important bug fixing after 4.2.1 release.
 #
 #   Bug 7724.  Expression to validate zip codes.
 #
 "(?!0{5})(\d{5})(?!-?0{4})(-?\d{4})?"    "<0><1>94040</1><2>-3344</2></0>"
 "(?!0{5})(\d{5})(?!-?0{4})(-?\d{4})?"    "94040-0000"
 "(?!0{5})(\d{5})(?!-?0{4})(-?\d{4})?"    "00000-3344"
-#   END android-added
 #
 #  Random debugging, Temporary
 #

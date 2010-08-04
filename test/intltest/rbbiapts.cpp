@@ -242,13 +242,13 @@ void RBBIAPITest::TestHashCode()
 void RBBIAPITest::TestGetSetAdoptText()
 {
     logln((UnicodeString)"Testing getText setText ");
-    UErrorCode status=U_ZERO_ERROR;
+    IcuTestErrorCode status(*this, "TestGetSetAdoptText");
     UnicodeString str1="first string.";
     UnicodeString str2="Second string.";
-    RuleBasedBreakIterator* charIter1 = (RuleBasedBreakIterator*)RuleBasedBreakIterator::createCharacterInstance(Locale::getDefault(), status);
-    RuleBasedBreakIterator* wordIter1 = (RuleBasedBreakIterator*)RuleBasedBreakIterator::createWordInstance(Locale::getDefault(), status);
-    if(U_FAILURE(status)){
-        errcheckln(status, "Fail : in construction - %s", u_errorName(status));
+    LocalPointer<RuleBasedBreakIterator> charIter1((RuleBasedBreakIterator*)RuleBasedBreakIterator::createCharacterInstance(Locale::getDefault(), status));
+    LocalPointer<RuleBasedBreakIterator> wordIter1((RuleBasedBreakIterator*)RuleBasedBreakIterator::createWordInstance(Locale::getDefault(), status));
+    if(status.isFailure()){
+        errcheckln(status, "Fail : in construction - %s", status.errorName());
             return;
     }
 
@@ -283,7 +283,7 @@ void RBBIAPITest::TestGetSetAdoptText()
     TEST_ASSERT(tstr == str1);
 
 
-    RuleBasedBreakIterator* rb=(RuleBasedBreakIterator*)wordIter1->clone();
+    LocalPointer<RuleBasedBreakIterator> rb((RuleBasedBreakIterator*)wordIter1->clone());
     rb->adoptText(text1);
     if(rb->getText() != *text1)
         errln((UnicodeString)"ERROR:1 error in adoptText ");
@@ -312,9 +312,9 @@ void RBBIAPITest::TestGetSetAdoptText()
     const char *s2 = "\x73\x65\x65\x20\x79\x61"; /* "see ya" in UTF-8 */
     //                012345678901
 
-    status = U_ZERO_ERROR;
-    UText *ut = utext_openUTF8(NULL, s1, -1, &status);
-    wordIter1->setText(ut, status);
+    status.reset();
+    LocalUTextPointer ut(utext_openUTF8(NULL, s1, -1, status));
+    wordIter1->setText(ut.getAlias(), status);
     TEST_ASSERT_SUCCESS(status);
 
     int32_t pos;
@@ -329,10 +329,10 @@ void RBBIAPITest::TestGetSetAdoptText()
     pos = wordIter1->next();
     TEST_ASSERT(pos==UBRK_DONE);
 
-    status = U_ZERO_ERROR;
-    UText *ut2 = utext_openUTF8(NULL, s2, -1, &status);
+    status.reset();
+    LocalUTextPointer ut2(utext_openUTF8(NULL, s2, -1, status));
     TEST_ASSERT_SUCCESS(status);
-    wordIter1->setText(ut2, status);
+    wordIter1->setText(ut2.getAlias(), status);
     TEST_ASSERT_SUCCESS(status);
 
     pos = wordIter1->first();
@@ -353,21 +353,13 @@ void RBBIAPITest::TestGetSetAdoptText()
     pos = wordIter1->previous();
     TEST_ASSERT(pos==UBRK_DONE);
 
-    status = U_ZERO_ERROR;
+    status.reset();
     UnicodeString sEmpty;
-    UText *gut2 = utext_openUnicodeString(NULL, &sEmpty, &status);
-    wordIter1->getUText(gut2, status);
+    LocalUTextPointer gut2(utext_openUnicodeString(NULL, &sEmpty, status));
+    wordIter1->getUText(gut2.getAlias(), status);
     TEST_ASSERT_SUCCESS(status);
-    utext_close(gut2);
-
-    utext_close(ut);
-    utext_close(ut2);
-
-    delete wordIter1;
-    delete charIter1;
-    delete rb;
-
- }
+    status.reset();
+}
 
 
 void RBBIAPITest::TestIteration()
@@ -1018,7 +1010,7 @@ void RBBIAPITest::RoundtripRule(const char *dataFile) {
     UParseError parseError;
     parseError.line = 0;
     parseError.offset = 0;
-    UDataMemory *data = udata_open(U_ICUDATA_BRKITR, "brk", dataFile, &status);
+    LocalUDataMemoryPointer data(udata_open(U_ICUDATA_BRKITR, "brk", dataFile, &status));
     uint32_t length;
     const UChar *builtSource;
     const uint8_t *rbbiRules;
@@ -1029,7 +1021,7 @@ void RBBIAPITest::RoundtripRule(const char *dataFile) {
         return;
     }
 
-    builtRules = (const uint8_t *)udata_getMemory(data);
+    builtRules = (const uint8_t *)udata_getMemory(data.getAlias());
     builtSource = (const UChar *)(builtRules + ((RBBIDataHeader*)builtRules)->fRuleSource);
     RuleBasedBreakIterator *brkItr = new RuleBasedBreakIterator(builtSource, parseError, status);
     if (U_FAILURE(status)) {
@@ -1044,7 +1036,6 @@ void RBBIAPITest::RoundtripRule(const char *dataFile) {
         return;
     }
     delete brkItr;
-    udata_close(data);
 }
 
 void RBBIAPITest::TestRoundtripRules() {
@@ -1067,9 +1058,9 @@ void RBBIAPITest::TestCreateFromRBBIData() {
     // Get some handy RBBIData
     const char *brkName = "word"; // or "sent", "line", "char", etc.
     UErrorCode status = U_ZERO_ERROR;
-    UDataMemory * data = udata_open(U_ICUDATA_BRKITR, "brk", brkName, &status);
+    LocalUDataMemoryPointer data(udata_open(U_ICUDATA_BRKITR, "brk", brkName, &status));
     if ( U_SUCCESS(status) ) {
-        const RBBIDataHeader * builtRules = (const RBBIDataHeader *)udata_getMemory(data);
+        const RBBIDataHeader * builtRules = (const RBBIDataHeader *)udata_getMemory(data.getAlias());
         uint32_t length = builtRules->fLength;
         RBBIWithProtectedFunctions * brkItr;
 
@@ -1098,8 +1089,6 @@ void RBBIAPITest::TestCreateFromRBBIData() {
         } else {
             errln("create RuleBasedBreakIterator from RBBIData (non-adopted): ICU Error \"%s\"\n", u_errorName(status) );
         }
-        
-        udata_close(data);
     }
 }
 
@@ -1112,20 +1101,28 @@ void RBBIAPITest::runIndexedTest( int32_t index, UBool exec, const char* &name, 
     if (exec) logln((UnicodeString)"TestSuite RuleBasedBreakIterator API ");
     switch (index) {
      //   case 0: name = "TestConstruction"; if (exec) TestConstruction(); break;
+#if !UCONFIG_NO_FILE_IO
         case  0: name = "TestCloneEquals"; if (exec) TestCloneEquals(); break;
         case  1: name = "TestgetRules"; if (exec) TestgetRules(); break;
         case  2: name = "TestHashCode"; if (exec) TestHashCode(); break;
         case  3: name = "TestGetSetAdoptText"; if (exec) TestGetSetAdoptText(); break;
         case  4: name = "TestIteration"; if (exec) TestIteration(); break;
+#else
+        case  0: case  1: case  2: case  3: case  4: name = "skip"; break;
+#endif
         case  5: name = "TestBuilder"; if (exec) TestBuilder(); break;
         case  6: name = "TestQuoteGrouping"; if (exec) TestQuoteGrouping(); break;
-        case  7: name = "TestRuleStatus"; if (exec) TestRuleStatus(); break;
-        case  8: name = "TestRuleStatusVec"; if (exec) TestRuleStatusVec(); break;
-        case  9: name = "TestBug2190"; if (exec) TestBug2190(); break;
-        case 10: name = "TestRegistration"; if (exec) TestRegistration(); break;
-        case 11: name = "TestBoilerPlate"; if (exec) TestBoilerPlate(); break;
+        case  7: name = "TestRuleStatusVec"; if (exec) TestRuleStatusVec(); break;
+        case  8: name = "TestBug2190"; if (exec) TestBug2190(); break;
+#if !UCONFIG_NO_FILE_IO
+        case  9: name = "TestRegistration"; if (exec) TestRegistration(); break;
+        case 10: name = "TestBoilerPlate"; if (exec) TestBoilerPlate(); break;
+        case 11: name = "TestRuleStatus"; if (exec) TestRuleStatus(); break;
         case 12: name = "TestRoundtripRules"; if (exec) TestRoundtripRules(); break;
         case 13: name = "TestCreateFromRBBIData"; if (exec) TestCreateFromRBBIData(); break;
+#else
+        case  9: case 10: case 11: case 12: case 13: name = "skip"; break;
+#endif
 
         default: name = ""; break; // needed to end loop
     }

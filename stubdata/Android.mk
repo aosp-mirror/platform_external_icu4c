@@ -71,7 +71,7 @@ config := $(word 1, \
             $(if $(findstring nl,$(PRODUCT_LOCALES)),default) \
             us)
 
-root := icudt42l
+root := icudt44l
 
 PRODUCT_COPY_FILES += $(LOCAL_PATH)/$(root)-$(config).dat:/system/usr/icu/$(root).dat
 

@@ -32,6 +32,8 @@
 #include "cstring.h"
 #include "locbased.h"
 #include "uresimp.h"
+#include "ureslocs.h"
+
 // *****************************************************************************
 // class DecimalFormatSymbols
 // *****************************************************************************
@@ -156,6 +158,7 @@ DecimalFormatSymbols::initialize(const Locale& loc, UErrorCode& status,
     const char* locStr = loc.getName();
     UResourceBundle *resource = ures_open((char *)0, locStr, &status);
     UResourceBundle *numberElementsRes = ures_getByKey(resource, gNumberElements, NULL, &status);
+
     if (U_FAILURE(status))
     {
         // Initializes with last resort data if necessary.
@@ -223,17 +226,20 @@ DecimalFormatSymbols::initialize(const Locale& loc, UErrorCode& status,
                                   ures_getLocaleByType(numberElementsRes,
                                        ULOC_ACTUAL_LOCALE, &status));
         }
+
         //load the currency data
         UChar ucc[4]={0}; //Currency Codes are always 3 chars long
         int32_t uccLen = 4;
         const char* locName = loc.getName();
         UErrorCode localStatus = U_ZERO_ERROR;
         uccLen = ucurr_forLocale(locName, ucc, uccLen, &localStatus);
+
         if(U_SUCCESS(localStatus) && uccLen > 0) {
             char cc[4]={0};
             u_UCharsToChars(ucc, cc, uccLen);
             /* An explicit currency was requested */
-            UResourceBundle *currency = ures_getByKeyWithFallback(resource, "Currencies", NULL, &localStatus);
+            UResourceBundle *currencyResource = ures_open(U_ICUDATA_CURR, locStr, &localStatus);
+            UResourceBundle *currency = ures_getByKeyWithFallback(currencyResource, "Currencies", NULL, &localStatus);
             currency = ures_getByKeyWithFallback(currency, cc, currency, &localStatus);
             if(U_SUCCESS(localStatus) && ures_getSize(currency)>2) { // the length is 3 if more data is present
                 currency = ures_getByIndex(currency, 2, currency, &localStatus);
@@ -249,6 +255,7 @@ DecimalFormatSymbols::initialize(const Locale& loc, UErrorCode& status,
                 }
             }
             ures_close(currency);
+            ures_close(currencyResource);
             /* else An explicit currency was requested and is unknown or locale data is malformed. */
             /* ucurr_* API will get the correct value later on. */
         }
@@ -258,7 +265,8 @@ DecimalFormatSymbols::initialize(const Locale& loc, UErrorCode& status,
 
     // Currency Spacing.
     UErrorCode localStatus = U_ZERO_ERROR;
-    UResourceBundle *currencySpcRes = ures_getByKeyWithFallback(resource,
+    UResourceBundle *currencyResource = ures_open(U_ICUDATA_CURR, locStr, &localStatus);
+    UResourceBundle *currencySpcRes = ures_getByKeyWithFallback(currencyResource,
                                        gCurrencySpacingTag, NULL, &localStatus);
 
     if (localStatus == U_USING_FALLBACK_WARNING || U_SUCCESS(localStatus)) {
@@ -287,6 +295,7 @@ DecimalFormatSymbols::initialize(const Locale& loc, UErrorCode& status,
             ures_close(dataRes);
         }
         ures_close(currencySpcRes);
+        ures_close(currencyResource);
     }
     ures_close(resource);
 }

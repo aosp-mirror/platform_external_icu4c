@@ -1,7 +1,7 @@
 /*
  *******************************************************************************
  *
- *   Copyright (C) 2003-2009, International Business Machines
+ *   Copyright (C) 2003-2010, International Business Machines
  *   Corporation and others.  All Rights Reserved.
  *
  *******************************************************************************
@@ -47,6 +47,7 @@ UStringPrepProfileType getTypeFromProfileName(const char* profileName);
 void 
 addUStringPrepTest(TestNode** root)
 {
+#if !UCONFIG_NO_FILE_IO && !UCONFIG_NO_LEGACY_CONVERSION
    addTest(root, &Test_nfs4_cs_prep_data,    "spreptst/Test_nfs4_cs_prep_data");
    addTest(root, &Test_nfs4_cis_prep_data,   "spreptst/Test_nfs4_cis_prep_data");
    addTest(root, &Test_nfs4_mixed_prep_data, "spreptst/Test_nfs4_mixed_prep_data");
@@ -54,6 +55,7 @@ addUStringPrepTest(TestNode** root)
    addTest(root, &Test_nfs4_cis_prep,        "spreptst/Test_nfs4_cis_prep");
    addTest(root, &Test_nfs4_mixed_prep,      "spreptst/Test_nfs4_mixed_prep");
    addTest(root, &TestBEAMWarning,           "spreptst/TestBEAMWarning");
+#endif
    addTest(root, &TestCoverage,              "spreptst/TestCoverage");
    addTest(root, &TestStringPrepProfiles,              "spreptst/TestStringPrepProfiles");
 }
@@ -335,7 +337,7 @@ static void Test_nfs4_cis_prep(void){
         }
 
         if(expectedStatus != status){
-            log_err("Did not get the expected status for nfs4_cis_prep at index %i. Expected: %s Got: %s\n",i, u_errorName(expectedStatus), u_errorName(status));
+            log_data_err("Did not get the expected status for nfs4_cis_prep at index %i. Expected: %s Got: %s - (Are you missing data?)\n",i, u_errorName(expectedStatus), u_errorName(status));
         }
         if(U_SUCCESS(status) && (strcmp(expectedDest,dest) !=0)){
               log_err("Did not get the expected output for nfs4_cis_prep at index %i.\n", i);
@@ -460,7 +462,7 @@ Test_nfs4_mixed_prep(void){
             }
             free(dest);
             if(U_FAILURE(status)){
-                log_err("Preparation of string at index %i failed. Error: %s\n", i, u_errorName(status));
+                log_data_err("Preparation of string at index %i failed. Error: %s - (Are you missing data?)\n", i, u_errorName(status));
                 continue;
             }
         } 
@@ -751,7 +753,7 @@ UStringPrepProfileType getTypeFromProfileName(const char* profileName) {
 }
 static void TestStringPrepProfiles(void) {
     UErrorCode status = U_ZERO_ERROR;
-    char *profileName;
+    const char *profileName = NULL;
     UChar src[SPREP_PROFILE_TEST_MAX_LENGTH];
     UChar expected[SPREP_PROFILE_TEST_MAX_LENGTH];
     UChar result[SPREP_PROFILE_TEST_MAX_LENGTH];

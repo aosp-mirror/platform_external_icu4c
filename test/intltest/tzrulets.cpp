@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 2007-2009, International Business Machines Corporation and    *
+* Copyright (C) 2007-2010, International Business Machines Corporation and    *
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 */
@@ -18,14 +18,19 @@
 #include "unicode/gregocal.h"
 #include "unicode/ucal.h"
 #include "unicode/unistr.h"
+#include "unicode/ustring.h"
 #include "unicode/tztrans.h"
 #include "unicode/vtzone.h"
 #include "tzrulets.h"
+#include "zrule.h"
+#include "ztrans.h"
+#include "vzone.h"
+#include "cmemory.h"
 
 #define CASE(id,test) case id: name = #test; if (exec) { logln(#test "---"); logln((UnicodeString)""); test(); } break
 #define HOUR (60*60*1000)
 
-static const UVersionInfo ICU_432 = {4,3,2,0};
+static const UVersionInfo ICU_45 = {4,5,0,0};
 
 static const char *const TESTZIDS[] = {
         "AGT",
@@ -129,6 +134,7 @@ void TimeZoneRuleTest::runIndexedTest( int32_t index, UBool exec, const char* &n
         CASE(13, TestVTimeZoneParse);
         CASE(14, TestT6216);
         CASE(15, TestT6669);
+        CASE(16, TestVTimeZoneWrapper);
         default: name = ""; break;
     }
 }
@@ -266,7 +272,12 @@ TimeZoneRuleTest::TestSimpleRuleBasedTimeZone(void) {
 
     GregorianCalendar *cal = new GregorianCalendar(status);
     if (U_FAILURE(status)) {
-        errln("FAIL: Could not create a Gregorian calendar instance.");
+        dataerrln("FAIL: Could not create a Gregorian calendar instance.: %s", u_errorName(status));
+        delete rbtz1;
+        delete rbtz2;
+        delete rbtz3;
+        delete rbtz1c;
+        return;
     }
     cal->setTimeZone(*rbtz1);
     cal->clear();
@@ -775,7 +786,7 @@ TimeZoneRuleTest::TestVTimeZoneRoundTrip(void) {
             errln("FAIL: error returned while enumerating timezone IDs.");
             break;
         }
-        if (!isICUVersionAtLeast(ICU_432)) {
+        if (!isICUVersionAtLeast(ICU_45)) {
             // See ticket#7008
             if (*tzid == UnicodeString("Asia/Amman")) {
                 continue;
@@ -874,7 +885,7 @@ TimeZoneRuleTest::TestVTimeZoneRoundTripPartial(void) {
             errln("FAIL: error returned while enumerating timezone IDs.");
             break;
         }
-        if (!isICUVersionAtLeast(ICU_432)) {
+        if (!isICUVersionAtLeast(ICU_45)) {
             // See ticket#7008
             if (*tzid == UnicodeString("Asia/Amman")) {
                 continue;
@@ -1310,12 +1321,12 @@ TimeZoneRuleTest::TestTimeZoneRuleCoverage(void) {
     }
     b1 = a3->getNextStart(time2, -3*HOUR, 0, FALSE, d1);
     if (b1) {
-        errln("FAIL: getNextStart must return FALSE when no start time is available after the base time");
+        dataerrln("FAIL: getNextStart must return FALSE when no start time is available after the base time");
     }
     b1 = a3->getFinalStart(-3*HOUR, 0, d1);
     b2 = a3->getPreviousStart(time2, -3*HOUR, 0, FALSE, d2);
     if (!b1 || !b2 || d1 != d2) {
-        errln("FAIL: getPreviousStart does not match with getFinalStart after the end year");
+        dataerrln("FAIL: getPreviousStart does not match with getFinalStart after the end year");
     }
 
     // AnnualTimeZone::isEquavalentTo
@@ -1442,11 +1453,11 @@ TimeZoneRuleTest::TestTimeZoneRuleCoverage(void) {
     // TimeArrayTimeZoneRule::getNextStart/getPreviousStart
     b1 = t3->getNextStart(time1, -3*HOUR, 1*HOUR, FALSE, d1);
     if (b1) {
-        errln("FAIL: getNextStart returned TRUE after the final transition for t3");
+        dataerrln("FAIL: getNextStart returned TRUE after the final transition for t3");
     }
     b1 = t3->getPreviousStart(time1, -3*HOUR, 1*HOUR, FALSE, d1);
     if (!b1 || d1 != trtimes2[1]) {
-        errln("FAIL: Bad start time returned by getPreviousStart for t3");
+        dataerrln("FAIL: Bad start time returned by getPreviousStart for t3");
     } else {
         b2 = t3->getPreviousStart(d1, -3*HOUR, 1*HOUR, FALSE, d2);
         if (!b2 || d2 != trtimes2[0]) {
@@ -1657,11 +1668,11 @@ TimeZoneRuleTest::TestVTimeZoneCoverage(void) {
     UBool inDst1, inDst2;
     inDst1 = otz->inDaylightTime(t, status);
     if (U_FAILURE(status)) {
-        errln("FAIL: inDaylightTime failed for otz");
+        dataerrln("FAIL: inDaylightTime failed for otz: %s", u_errorName(status));
     }
     inDst2 = vtz->inDaylightTime(t, status);
     if (U_FAILURE(status)) {
-        errln("FAIL: inDaylightTime failed for vtz");
+        dataerrln("FAIL: inDaylightTime failed for vtz: %s", u_errorName(status));
     }
     if (inDst1 != inDst2) {
         errln("FAIL: inDaylightTime returned different results in VTimeZone and OlsonTimeZone");
@@ -1735,10 +1746,10 @@ TimeZoneRuleTest::TestVTimeZoneCoverage(void) {
     UDate time2 = getUTCMillis(2020, UCAL_JANUARY, 1);
     UBool equiv = vtz->hasEquivalentTransitions(*otz, time1, time2, FALSE, status);
     if (U_FAILURE(status)) {
-        errln("FAIL: hasEquivalentTransitions failed for vtz/otz");
+        dataerrln("FAIL: hasEquivalentTransitions failed for vtz/otz: %s", u_errorName(status));
     }
     if (!equiv) {
-        errln("FAIL: hasEquivalentTransitons returned false for the same time zone");
+        dataerrln("FAIL: hasEquivalentTransitons returned false for the same time zone");
     }
 
     // operator=/operator==/operator!=
@@ -2023,7 +2034,7 @@ TimeZoneRuleTest::TestT6216(void) {
         {0, 0, 0}
     };
 
-    static const UnicodeString TestZones[] = {
+    /*static*/ const UnicodeString TestZones[] = {
         UnicodeString(tokyoTZ),
         UnicodeString(finalOverlap),
         UnicodeString(finalNonOverlap),
@@ -2047,7 +2058,7 @@ TimeZoneRuleTest::TestT6216(void) {
     TimeZone *utc = TimeZone::createTimeZone("Etc/GMT");
     GregorianCalendar cal(utc, status);
     if (U_FAILURE(status)) {
-        errln("FAIL: Failed to creat a GregorianCalendar");
+        dataerrln("FAIL: Failed to creat a GregorianCalendar: %s", u_errorName(status));
         return;
     }
     for (i = 0; TestDates[i][2] != 0; i++) {
@@ -2115,6 +2126,124 @@ TimeZoneRuleTest::TestT6669(void) {
     }
 }
 
+void
+TimeZoneRuleTest::TestVTimeZoneWrapper(void) {
+#if 0
+    // local variables
+    UBool b;
+    UChar * data = NULL;
+    int32_t length = 0;
+    int32_t i;
+    UDate result;
+    UDate base = 1231027200000.0; //2009-01-04T00:00:00
+    UErrorCode status;
+
+    const char *name = "Test Initial";
+    UChar uname[20];
+
+    UClassID cid1;
+    UClassID cid2;
+
+    ZRule * r;
+    IZRule* ir1;
+    IZRule* ir2;
+    ZTrans* zt1;
+    ZTrans* zt2;
+    VZone*  v1;
+    VZone*  v2;
+
+    uprv_memset(uname, 0, sizeof(uname));
+    u_uastrcpy(uname, name);
+
+    // create rules
+    ir1 = izrule_open(uname, 13, 2*HOUR, 0);
+    ir2 = izrule_clone(ir1);
+
+    // test equality
+    b = izrule_equals(ir1, ir2);
+    b = izrule_isEquivalentTo(ir1, ir2);
+
+    // test accessors
+    izrule_getName(ir1, data, length);
+    i = izrule_getRawOffset(ir1);
+    i = izrule_getDSTSavings(ir1);
+
+    b = izrule_getFirstStart(ir1, 2*HOUR, 0, result);
+    b = izrule_getFinalStart(ir1, 2*HOUR, 0, result);
+    b = izrule_getNextStart(ir1, base , 2*HOUR, 0, true, result);
+    b = izrule_getPreviousStart(ir1, base, 2*HOUR, 0, true, result);
+
+    // test class ids
+    cid1 = izrule_getStaticClassID(ir1);
+    cid2 = izrule_getDynamicClassID(ir1);
+
+    // test transitions
+    zt1 = ztrans_open(base, ir1, ir2);
+    zt2 = ztrans_clone(zt1);
+    zt2 = ztrans_openEmpty();
+
+    // test equality
+    b = ztrans_equals(zt1, zt2);
+
+    // test accessors
+    result = ztrans_getTime(zt1);
+    ztrans_setTime(zt1, result);
+
+    r = (ZRule*)ztrans_getFrom(zt1);
+    ztrans_setFrom(zt1, (void*)ir1);
+    ztrans_adoptFrom(zt1, (void*)ir1);
+
+    r = (ZRule*)ztrans_getTo(zt1);
+    ztrans_setTo(zt1, (void*)ir2);
+    ztrans_adoptTo(zt1, (void*)ir2);
+
+    // test class ids
+    cid1 = ztrans_getStaticClassID(zt1);
+    cid2 = ztrans_getDynamicClassID(zt2);
+
+    // test vzone
+    v1 = vzone_openID((UChar*)"America/Chicago", sizeof("America/Chicago"));
+    v2 = vzone_clone(v1);
+    //v2 = vzone_openData(const UChar* vtzdata, int32_t vtzdataLength, UErrorCode& status);
+
+    // test equality
+    b = vzone_equals(v1, v2);
+    b = vzone_hasSameRules(v1, v2);
+
+    // test accessors
+    b = vzone_getTZURL(v1, data, length);
+    vzone_setTZURL(v1, data, length);
+    
+    b = vzone_getLastModified(v1, result);
+    vzone_setLastModified(v1, result);
+    
+    // test writers
+    vzone_write(v1, data, length, status);
+    vzone_writeFromStart(v1, result, data, length, status);
+    vzone_writeSimple(v1, result, data, length, status);
+
+    // test more accessors
+    i = vzone_getRawOffset(v1);
+    vzone_setRawOffset(v1, i);
+
+    b = vzone_useDaylightTime(v1);
+    b = vzone_inDaylightTime(v1, result, status);
+
+    b = vzone_getNextTransition(v1, result, false, zt1);
+    b = vzone_getPreviousTransition(v1, result, false, zt1);
+    i = vzone_countTransitionRules(v1, status);
+
+    cid1 = vzone_getStaticClassID(v1);
+    cid2 = vzone_getDynamicClassID(v1);
+
+    // cleanup
+    vzone_close(v1);
+    vzone_close(v2);
+    ztrans_close(zt1);
+    ztrans_close(zt2);
+#endif
+}
+
 //----------- private test helpers -------------------------------------------------
 
 UDate
@@ -2125,7 +2254,7 @@ TimeZoneRuleTest::getUTCMillis(int32_t y, int32_t m, int32_t d,
     Calendar *cal = Calendar::createInstance(*tz, status);
     if (U_FAILURE(status)) {
         delete cal;
-        errln("FAIL: Calendar::createInstance failed");
+        dataerrln("FAIL: Calendar::createInstance failed: %s", u_errorName(status));
         return 0.0;
     }
     cal->set(y, m, d, hr, min, sec);

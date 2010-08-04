@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2009, International Business Machines Corporation and
+ * Copyright (c) 1997-2010, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -16,7 +16,7 @@
 #include "caltztst.h"
 
 /** 
- * Performs many different tests for DataeFormat and SimpleDateFormat
+ * Performs many different tests for DateFormat and SimpleDateFormat
  **/
 class DateFormatTest: public CalendarTimeZoneTest {
     // IntlTest override

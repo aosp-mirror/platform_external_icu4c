@@ -955,12 +955,15 @@ void RTTest::logRoundTripFailure(const UnicodeString& from,
 30FF          ; 3.2 #       KATAKANA DIGRAPH KOTO
 31F0..31FF    ; 3.2 #  [16] KATAKANA LETTER SMALL KU..KATAKANA LETTER SMALL RO
 
+    Unicode 5.2 added another Hiragana character:
+1F200         ; 5.2 #       SQUARE HIRAGANA HOKA
+
     We will not add them to the rules until they are more supported (e.g. in fonts on Windows)
     A bug has been filed to remind us to do this: #1979.
     */
-    
+
 static const char KATAKANA[] = "[[[:katakana:][\\u30A1-\\u30FA\\u30FC]]-[\\u30FF\\u31F0-\\u31FF]]";
-static const char HIRAGANA[] = "[[[:hiragana:][\\u3040-\\u3094]]-[\\u3095-\\u3096\\u309F-\\u30A0]]";
+static const char HIRAGANA[] = "[[[:hiragana:][\\u3040-\\u3094]]-[\\u3095-\\u3096\\u309F-\\u30A0\\U0001F200-\\U0001F2FF]]";
 static const char LENGTH[] = "[\\u30FC]";
 static const char HALFWIDTH_KATAKANA[] = "[\\uFF65-\\uFF9D]";
 static const char KATAKANA_ITERATION[] = "[\\u30FD\\u30FE]";
@@ -1049,25 +1052,16 @@ static void writeStringInU8(FILE *out, const UnicodeString &s) {
 
 void TransliteratorRoundTripTest::TestHan() {
     UErrorCode  status = U_ZERO_ERROR;
-
-    // TODO:  getExemplars() exists only as a C API, taking a USet.
-    //        The set API we need to use exists only on UnicodeSet, not on USet.
-    //        Do a hacky cast, knowing that a USet is really a UnicodeSet in
-    //        the implementation.  Once USet gets the missing API, switch back
-    //        to using that.
-    USet       *USetExemplars = NULL;
-    ULocaleData *uld = ulocdata_open("zh",&status);
-    USetExemplars = uset_open(0, 0);
-    USetExemplars = ulocdata_getExemplarSet(uld, USetExemplars, 0, ULOCDATA_ES_STANDARD, &status);
+    LocalULocaleDataPointer uld(ulocdata_open("zh",&status));
+    LocalUSetPointer USetExemplars(ulocdata_getExemplarSet(uld.getAlias(), uset_openEmpty(), 0, ULOCDATA_ES_STANDARD, &status));
     ASSERT_SUCCESS(status);
-    ulocdata_close(uld);
 
     UnicodeString source;
     UChar32       c;
     int           i;
     for (i=0; ;i++) {
         // Add all of the Chinese exemplar chars to the string "source".
-        c = uset_charAt(USetExemplars, i);
+        c = uset_charAt(USetExemplars.getAlias(), i);
         if (c == (UChar32)-1) {
             break;
         }
@@ -1128,7 +1122,6 @@ void TransliteratorRoundTripTest::TestHan() {
     delete pn;
     delete nfd;
     delete np;
-    uset_close(USetExemplars);
 }
 
 

@@ -39,15 +39,14 @@ src_files := \
 	ucnvmbcs.c         ucnvscsu.c         \
 	ucnv_set.c         ucnv_u16.c         \
 	ucnv_u32.c         ucnv_u7.c          \
-	ucnv_u8.c          ucol_swp.c         \
+	ucnv_u8.c                             \
 	udata.c            udatamem.c         \
 	udataswp.c         uenum.c            \
 	uhash.c            uinit.c            \
 	uinvchar.c         uloc.c             \
 	umapfile.c         umath.c            \
 	umutex.c           unames.c           \
-	unorm_it.c                            \
-	uprops.c           uresbund.c         \
+	unorm_it.c         uresbund.c         \
 	ures_cnv.c         uresdata.c         \
 	usc_impl.c         uscript.c          \
 	ushape.c           ustrcase.c         \
@@ -56,9 +55,9 @@ src_files := \
 	ustr_wcs.c         utf_impl.c         \
 	utrace.c           utrie.c            \
  	utypes.c           wintz.c            \
- 	utrie2.c           utrie2_builder.c   \
+ 	utrie2_builder.c   icuplug.c          \
  	propsvec.c         ulist.c            \
- 	uloc_tag.c
+ 	uloc_tag.c         
 
 src_files += \
         bmpset.cpp      unisetspan.cpp   \
@@ -90,11 +89,17 @@ src_files += \
 	usprep.cpp      ustack.cpp       \
 	ustrenum.cpp    utext.cpp        \
 	util.cpp        util_props.cpp   \
- 	uvector.cpp     uvectr32.cpp     \
- 	errorcode.cpp                    \
- 	bytestream.cpp stringpiece.cpp   \
- 	mutex.cpp       dtintrv.cpp      \
- 	ucnvsel.cpp
+	uvector.cpp     uvectr32.cpp     \
+	errorcode.cpp                    \
+	bytestream.cpp  stringpiece.cpp  \
+	mutex.cpp       dtintrv.cpp      \
+	ucnvsel.cpp     uvectr64.cpp     \
+	locavailable.cpp         locdispnames.cpp   \
+	loclikely.cpp            locresdata.cpp     \
+	normalizer2impl.cpp      normalizer2.cpp    \
+	filterednormalizer2.cpp  ucol_swp.cpp       \
+	uprops.cpp      utrie2.cpp
+ 
 
 # This is the empty compiled-in icu data structure
 # that we need to satisfy the linker.
@@ -114,8 +119,13 @@ include $(CLEAR_VARS)
 LOCAL_SRC_FILES := $(src_files)
 LOCAL_C_INCLUDES := $(c_includes)
 
-LOCAL_CFLAGS += -D_REENTRANT -DPIC -DU_COMMON_IMPLEMENTATION -fPIC \
-                '-DICU_DATA_DIR="/system/usr/icu"'
+# We make the ICU data directory relative to $ANDROID_ROOT on Android, so both
+# device and sim builds can use the same codepath, and it's hard to break one
+# without noticing because the other still works.
+LOCAL_CFLAGS += '-DICU_DATA_DIR_PREFIX_ENV_VAR="ANDROID_ROOT"'
+LOCAL_CFLAGS += '-DICU_DATA_DIR="/usr/icu"'
+
+LOCAL_CFLAGS += -D_REENTRANT -DPIC -DU_COMMON_IMPLEMENTATION -fPIC
 LOCAL_CFLAGS += -O3
 
 LOCAL_LDLIBS += -lpthread -lm

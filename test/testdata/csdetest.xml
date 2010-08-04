@@ -199,9 +199,13 @@
     </test-case>
 
     <!-- No EUC-JP in this test because it detects as GB18030 -->
+    <!-- BEGIN android-removed
+         To save space, Android does not build full ISO-2022 tables.
+         We skip the ISO-2022 tests.
     <test-case id="IUC10-jp" encodings="UTF-8 UTF-32BE UTF-32LE Shift_JIS/ja ISO-2022-JP">
+    -->
     <!-- Copyright © 1991-2005 Unicode, Inc. All rights reserved. -->
-
+    <!--
     ヨーロッパ、ソフトウェア、そしてインターネット:
     Unicode でグローバル化を狙って
     IUC10
@@ -215,8 +219,9 @@
     </test-case>
 
     <test-case id="IUC10-ko" encodings="UTF-8 UTF-32BE UTF-32LE EUC-KR/ko ISO-2022-KR">
+    -->
     <!-- Copyright © 1991-2005 Unicode, Inc. All rights reserved. -->
-
+   <!--
     유럽, 소프트웨어 그리고 인터넷:
     유니코드와 함께 세계로
     IUC10
@@ -228,6 +233,9 @@
     세계를 향한 대화, 유니코드로 하십시오
 
     </test-case>
+
+    END android-removed
+    -->
 
     <!-- No UTF-8 in this test because there are no non-ASCII characters. -->
     <test-case id="IUC10-nl" encodings="UTF-32BE UTF-32LE ISO-8859-1/nl">
@@ -393,9 +401,13 @@
     </test-case>
 
     <!-- No ISO-2022-CN in this test because Java doesn't support it in both directions :-( -->
+    <!-- BEGIN android-removed
+         To save space, Android does not build full ISO-2022 tables.
+         We skip the ISO-2022 tests.
     <test-case id="IUC10-zh-Hans" encodings="UTF-8 UTF-32BE UTF-32LE ISO-2022-CN GB18030/zh">
+    -->
     <!-- Copyright © 1991-2005 Unicode, Inc. All rights reserved. -->
-
+    <!--
     欧洲，软件＋互联网
     用统一码 (Unicode) 走遍世界
     IUC10
@@ -408,6 +420,8 @@
 
 Conference Program
     </test-case>
+    END android-removed
+    -->
 
     <test-case id="WIU-cz" encodings="UTF-8 UTF-32BE UTF-32LE ISO-8859-2/cs">
     <!-- Copyright © 1991-2005 Unicode, Inc. All rights reserved. -->

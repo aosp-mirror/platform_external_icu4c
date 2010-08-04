@@ -22,8 +22,8 @@ LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
 src_files := \
-	bocsu.c     ucln_in.c  ucol_wgt.c \
-	ulocdata.c  utmscale.c
+	bocsu.c     ucln_in.c  decContext.c \
+	ulocdata.c  utmscale.c decNumber.c
 
 src_files += \
         indiancal.cpp   dtptngen.cpp dtrule.cpp   \
@@ -70,8 +70,12 @@ src_files += \
  	tmunit.cpp      tmutamt.cpp  tmutfmt.cpp  \
  	colldata.cpp    bmsearch.cpp bms.cpp      \
         currpinf.cpp    uspoof.cpp   uspoof_impl.cpp \
-        uspoof_build.cpp uspoof_buildconf.cpp     \
- 	uspoof_buildwsconf.cpp
+        uspoof_build.cpp     \
+        regextxt.cpp    selfmt.cpp   uspoof_conf.cpp \
+        uspoof_wsconf.cpp ztrans.cpp zrule.cpp  \
+        vzone.cpp       fphdlimp.cpp fpositer.cpp\
+        locdspnm.cpp    decnumstr.cpp ucol_wgt.cpp
+
 
 c_includes = \
 	$(LOCAL_PATH) \
