@@ -9,6 +9,7 @@ brkitr/sent.brk
 brkitr/title.brk
 brkitr/word.brk
 brkitr/word_POSIX.brk
+brkitr/thaidict.ctd
 
 coll/res_index.res
 coll/invuca.icu

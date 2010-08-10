@@ -11,6 +11,7 @@ brkitr/title.brk
 brkitr/word.brk
 brkitr/word_POSIX.brk
 brkitr/word_ja.brk
+brkitr/thaidict.ctd
 
 coll/res_index.res
 coll/invuca.icu
