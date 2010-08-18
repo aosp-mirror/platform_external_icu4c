@@ -57,7 +57,7 @@ src_files := \
  	utypes.c           wintz.c            \
  	utrie2_builder.c   icuplug.c          \
  	propsvec.c         ulist.c            \
- 	uloc_tag.c         
+ 	uloc_tag.c
 
 src_files += \
         bmpset.cpp      unisetspan.cpp   \
@@ -99,7 +99,7 @@ src_files += \
 	normalizer2impl.cpp      normalizer2.cpp    \
 	filterednormalizer2.cpp  ucol_swp.cpp       \
 	uprops.cpp      utrie2.cpp
- 
+
 
 # This is the empty compiled-in icu data structure
 # that we need to satisfy the linker.
@@ -109,29 +109,26 @@ c_includes := \
 	$(LOCAL_PATH) \
 	$(LOCAL_PATH)/../i18n
 
+# We make the ICU data directory relative to $ANDROID_ROOT on Android, so both
+# device and sim builds can use the same codepath, and it's hard to break one
+# without noticing because the other still works.
+local_cflags := '-DICU_DATA_DIR_PREFIX_ENV_VAR="ANDROID_ROOT"'
+local_cflags += '-DICU_DATA_DIR="/usr/icu"'
+
+local_cflags += -D_REENTRANT -DU_COMMON_IMPLEMENTATION -O3
+local_ldlibs := -lpthread -lm
+
 
 #
 # Build for the target (device).
 #
 
 include $(CLEAR_VARS)
-
 LOCAL_SRC_FILES := $(src_files)
 LOCAL_C_INCLUDES := $(c_includes)
-
-# We make the ICU data directory relative to $ANDROID_ROOT on Android, so both
-# device and sim builds can use the same codepath, and it's hard to break one
-# without noticing because the other still works.
-LOCAL_CFLAGS += '-DICU_DATA_DIR_PREFIX_ENV_VAR="ANDROID_ROOT"'
-LOCAL_CFLAGS += '-DICU_DATA_DIR="/usr/icu"'
-
-LOCAL_CFLAGS += -D_REENTRANT -DPIC -DU_COMMON_IMPLEMENTATION -fPIC
-LOCAL_CFLAGS += -O3
-
-LOCAL_LDLIBS += -lpthread -lm
-
+LOCAL_CFLAGS := $(local_cflags) -DPIC -fPIC
+LOCAL_LDLIBS += $(local_ldlibs)
 LOCAL_MODULE := libicuuc
-
 include $(BUILD_SHARED_LIBRARY)
 
 
@@ -140,18 +137,14 @@ include $(BUILD_SHARED_LIBRARY)
 #
 
 ifeq ($(WITH_HOST_DALVIK),true)
-
     include $(CLEAR_VARS)
-
+    include $(LOCAL_PATH)/../stubdata/root.mk
     LOCAL_SRC_FILES := $(src_files)
     LOCAL_C_INCLUDES := $(c_includes)
-
-    LOCAL_CFLAGS += -D_REENTRANT -DU_COMMON_IMPLEMENTATION
-
-    LOCAL_LDLIBS += -lpthread -lm
-
+    LOCAL_CFLAGS := $(local_cflags)
+    LOCAL_LDLIBS += $(local_ldlibs)
+    LOCAL_ADDITIONAL_DEPENDENCIES += $(HOST_OUT)/usr/icu/$(root).dat
     LOCAL_MODULE := libicuuc
-
     include $(BUILD_HOST_SHARED_LIBRARY)
 
 endif
