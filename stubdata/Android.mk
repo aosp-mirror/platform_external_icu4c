@@ -71,7 +71,10 @@ config := $(word 1, \
             $(if $(findstring nl,$(PRODUCT_LOCALES)),default) \
             us)
 
-root := icudt44l
+include $(LOCAL_PATH)/root.mk
 
 PRODUCT_COPY_FILES += $(LOCAL_PATH)/$(root)-$(config).dat:/system/usr/icu/$(root).dat
 
+ifeq ($(WITH_HOST_DALVIK),true)
+    $(eval $(call copy-one-file,$(LOCAL_PATH)/$(root)-$(config).dat,$(HOST_OUT)/usr/icu/$(root).dat))
+endif
