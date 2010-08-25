@@ -260,6 +260,7 @@ curr/nl.res
 curr/pl.res
 curr/pt.res
 curr/pt_PT.res
+curr/rm.res
 curr/ro.res
 curr/rof.res
 curr/ru.res
@@ -348,6 +349,7 @@ lang/nl_BE.res
 lang/pl.res
 lang/pt.res
 lang/pt_PT.res
+lang/rm.res
 lang/ro.res
 lang/rof.res
 lang/ru.res
@@ -436,6 +438,7 @@ region/nl_BE.res
 region/pl.res
 region/pt.res
 region/pt_PT.res
+region/rm.res
 region/ro.res
 region/rof.res
 region/ru.res
@@ -525,6 +528,7 @@ zone/nl.res
 zone/pl.res
 zone/pt.res
 zone/pt_PT.res
+zone/rm.res
 zone/ro.res
 zone/rof.res
 zone/ru.res
@@ -656,6 +660,7 @@ pl_PL.res
 pt.res
 pt_BR.res
 pt_PT.res
+rm.res
 ro.res
 ru.res
 ru_RU.res
