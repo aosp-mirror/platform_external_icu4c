@@ -64,6 +64,7 @@ U_NAMESPACE_BEGIN
 // -------------------------------------
 // default constructor
 
+U_EXPORT
 DigitList::DigitList()
 {
     // BEGIN android-added
@@ -77,6 +78,7 @@ DigitList::DigitList()
 
 // -------------------------------------
 
+U_EXPORT
 DigitList::~DigitList()
 {
     // BEGIN android-added
@@ -88,6 +90,7 @@ DigitList::~DigitList()
 // -------------------------------------
 // capacity constructor
 
+U_EXPORT
 DigitList::DigitList(int capacity)
 {
     fBufferSize = capacity;
@@ -548,6 +551,7 @@ DigitList::set(double source, int32_t maximumDigits, UBool fixedPoint)
  * @param maximumDigits The maximum number of digits to be shown.
  * Upon return, count will be less than or equal to maximumDigits.
  */
+U_EXPORT
 void
 DigitList::round(int32_t maximumDigits)
 {
