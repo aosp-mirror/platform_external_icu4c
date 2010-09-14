@@ -33,6 +33,8 @@
 
 LOCAL_PATH:= $(call my-dir)
 
+include $(CLEAR_VARS)
+
 # Build configuration:
 #
 # "Large" includes all the supported locales.
@@ -74,7 +76,13 @@ config := $(word 1, \
 
 include $(LOCAL_PATH)/root.mk
 
-PRODUCT_COPY_FILES += $(LOCAL_PATH)/$(root)-$(config).dat:/system/usr/icu/$(root).dat
+LOCAL_MODULE := icu.dat
+LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE_CLASS := ETC
+LOCAL_MODULE_PATH := $(TARGET_OUT)/usr/icu
+LOCAL_MODULE_STEM := $(root).dat
+LOCAL_SRC_FILES := $(root)-$(config).dat
+include $(BUILD_PREBUILT)
 
 ifeq ($(WITH_HOST_DALVIK),true)
     $(eval $(call copy-one-file,$(LOCAL_PATH)/$(root)-$(config).dat,$(HOST_OUT)/usr/icu/$(root).dat))
