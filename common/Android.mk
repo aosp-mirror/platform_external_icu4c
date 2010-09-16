@@ -128,6 +128,7 @@ LOCAL_SRC_FILES := $(src_files)
 LOCAL_C_INCLUDES := $(c_includes)
 LOCAL_CFLAGS := $(local_cflags) -DPIC -fPIC
 LOCAL_LDLIBS += $(local_ldlibs)
+LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := libicuuc
 include $(BUILD_SHARED_LIBRARY)
 
@@ -144,6 +145,7 @@ ifeq ($(WITH_HOST_DALVIK),true)
     LOCAL_CFLAGS := $(local_cflags)
     LOCAL_LDLIBS += $(local_ldlibs)
     LOCAL_ADDITIONAL_DEPENDENCIES += $(HOST_OUT)/usr/icu/$(root).dat
+    LOCAL_MODULE_TAGS := optional
     LOCAL_MODULE := libicuuc
     include $(BUILD_HOST_SHARED_LIBRARY)
 

@@ -96,7 +96,7 @@ LOCAL_CFLAGS += -O3
 
 LOCAL_SHARED_LIBRARIES += libicuuc
 LOCAL_LDLIBS += -lpthread -lm
-
+LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := libicui18n
 
 include $(BUILD_SHARED_LIBRARY)
@@ -117,7 +117,7 @@ ifeq ($(WITH_HOST_DALVIK),true)
 
     LOCAL_SHARED_LIBRARIES += libicuuc
     LOCAL_LDLIBS += -lpthread -lm
-
+    LOCAL_MODULE_TAGS := optional
     LOCAL_MODULE := libicui18n
 
     include $(BUILD_HOST_SHARED_LIBRARY)
