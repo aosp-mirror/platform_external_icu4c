@@ -4982,19 +4982,25 @@ ucol_calcSortKey(const    UCollator    *coll,
                             }
                             if(primary2 == UCOL_IGNORABLE) {
                                 /* one byter, not compressed */
-                                *primaries++ = primary1;
+	                        if(primaries <= primarySafeEnd) {
+	                            *primaries++ = primary1;
+	                        }
                                 leadPrimary = 0;
                             } else if(primary1<UCOL_BYTE_FIRST_NON_LATIN_PRIMARY ||
                                 //(primary1 > (*UCAconsts->UCA_LAST_NON_VARIABLE>>24) && primary1 < (*UCAconsts->UCA_FIRST_IMPLICIT>>24))) {
                                 (primary1 > maxRegularPrimary && primary1 < minImplicitPrimary)) {
                                     /* not compressible */
                                     leadPrimary = 0;
-                                    *primaries++ = primary1;
+                                    if(primaries <= primarySafeEnd) {
+                                        *primaries++ = primary1;
+                                    }
                                     if(primaries <= primarySafeEnd) {
                                         *primaries++ = primary2;
                                     }
                             } else { /* compress */
-                                *primaries++ = leadPrimary = primary1;
+                                if(primaries <= primarySafeEnd) {
+                                    *primaries++ = leadPrimary = primary1;
+                                }
                                 if(primaries <= primarySafeEnd) {
                                     *primaries++ = primary2;
                                 }
@@ -5568,7 +5574,9 @@ ucol_calcSortKeySimpleTertiary(const    UCollator    *coll,
                         }
                         if(primary2 == UCOL_IGNORABLE) {
                             /* one byter, not compressed */
-                            *primaries++ = primary1;
+                            if(primaries <= primarySafeEnd) {
+                                *primaries++ = primary1;
+                            }
                             leadPrimary = 0;
                         } else if(primary1<UCOL_BYTE_FIRST_NON_LATIN_PRIMARY ||
                             //(primary1 > (UCOL_RESET_TOP_VALUE>>24) && primary1 < (UCOL_NEXT_TOP_VALUE>>24)))
@@ -5576,16 +5584,24 @@ ucol_calcSortKeySimpleTertiary(const    UCollator    *coll,
                             (primary1 > maxRegularPrimary && primary1 < minImplicitPrimary)) {
                                 /* not compressible */
                                 leadPrimary = 0;
-                                *primaries++ = primary1;
-                                *primaries++ = primary2;
+                                if(primaries <= primarySafeEnd) {
+                                    *primaries++ = primary1;
+                                }
+                                if(primaries <= primarySafeEnd) {
+                                    *primaries++ = primary2;
+                                }
                         } else { /* compress */
-                            *primaries++ = leadPrimary = primary1;
-                            *primaries++ = primary2;
+                            if(primaries <= primarySafeEnd) {
+                                *primaries++ = leadPrimary = primary1;
+                            }
+                            if(primaries <= primarySafeEnd) {
+                                *primaries++ = primary2;
+                            }
                         }
                     }
                 } else { /* we are in continuation, so we're gonna add primary to the key don't care about compression */
                     *primaries++ = primary1;
-                    if(primary2 != UCOL_IGNORABLE) {
+                    if((primary2 != UCOL_IGNORABLE) && (primaries <= primarySafeEnd)) {
                         *primaries++ = primary2; /* second part */
                     }
                 }
