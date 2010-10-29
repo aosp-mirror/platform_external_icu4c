@@ -100,13 +100,12 @@ def WriteIndex(path, locales, cldr_version=None):
 
 
 def AddResFile(collection, path):
+  # There are two consumers of the the input .txt file: this script and
+  # icupkg. We only care about .res files, but icupkg needs files they depend
+  # on too, so it's not an error to have to ignore non-.res files here.
   end = path.find(".res")
   if end > 0:
     collection.add(path[path.find("/")+1:end])
-  else:
-    # TODO(enh): this is a bug, right? we really just wanted to strip the
-    # extension, and don't care whether it was .res or not?
-    print "warning: ignoring non-.res file %s" % path.rstrip()
   return
 
 
