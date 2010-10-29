@@ -61,7 +61,6 @@ curr/en_TT.res
 curr/en_ZW.res
 curr/ja.res
 curr/ja_JP.res
-curr/ja_JP_TRADITIONAL.res
 
 lang/res_index.res
 lang/pool.res
@@ -71,7 +70,6 @@ lang/en_RH.res
 lang/en_ZW.res
 lang/ja.res
 lang/ja_JP.res
-lang/ja_JP_TRADITIONAL.res
 
 region/res_index.res
 region/pool.res
@@ -81,7 +79,6 @@ region/en_RH.res
 region/en_ZW.res
 region/ja.res
 region/ja_JP.res
-region/ja_JP_TRADITIONAL.res
 
 zone/res_index.res
 zone/pool.res
@@ -96,7 +93,6 @@ zone/en_ZA.res
 zone/en_ZW.res
 zone/ja.res
 zone/ja_JP.res
-zone/ja_JP_TRADITIONAL.res
 
 res_index.res
 root.res
@@ -117,6 +113,7 @@ en_NA.res
 en_NZ.res
 en_PH.res
 en_PK.res
+en_RH.res
 en_SG.res
 en_TT.res
 en_US.res
