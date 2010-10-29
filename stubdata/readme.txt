@@ -2,25 +2,20 @@ This directory is used for building our Android ICU data file.
 
 1. To generate ICU data files:run the icu_dat_generator.py script.
    The command is:
-     ./icu_dat_generator.py  <icu version> [-v] [-h]
-   For example:
-     ./icu_dat_generator.py  4.4
+     ./icu_dat_generator.py [-v] [-h]
 
 2. To add a resource to Android ICU data file: insert an entry to
    icudtxx-<tag name>.txt under external/icu4c/stubdata directory then
    run the icu_dat_generator.py.
    For example, to add French sort to icudt44l-us.dat, you need to
    a. Add an entry, "coll/fr.res", into external/icu4c/stubdata/icudt44l-us.txt
-   b. run "./icu_dat_generator.py 4.4".
+   b. run "./icu_dat_generator.py".
 
-3. To add a new Adnroid ICU data file: add the <tag name> to datlist[] in
-   icu_dat_generator.py and add corresponding resource list to
-   icudtxxl<tag name>.txt. Then run the script icu_dat_generator.py to generate
-   dat files.
+3. To add a new Android ICU data file: create the .txt file and run the script
+   to generate the .dat file.
    For example, to add icudt44l-latin.dat, you need to
-   a. Modify icu_dat_generator.py by adding "latin" into datlist.
-   b. Make a new file icudt44l-latin.txt to include the resource list.
-   c. run "./icu_dat_generator.py 4.4".
+   a. Make a new file icudt44l-latin.txt to include the resource list.
+   b. run "./icu_dat_generator.py".
 
 4. Add a new resource or modify existing ICU resource definition:
    Note: This is a rare case. You should talk to ICU team first if it is a bug
