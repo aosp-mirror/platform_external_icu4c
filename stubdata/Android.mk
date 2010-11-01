@@ -37,11 +37,17 @@ include $(CLEAR_VARS)
 
 # Build configuration:
 #
-# "Large" includes all the supported locales.
-# Japanese includes US and Japan.
-# US-Euro is needed for IT or PL builds
-# Default is suitable for CS, DE, EN, ES, FR, NL
-# US has only EN and ES
+# all includes all ICU's locale data.
+#
+# icudt44l-large.txt includes all the most-used
+# locales (http://googleblog.blogspot.com/2008/07/hitting-40-languages.html):
+#   ar, bg, ca, cs, da, de, el, en, es, fa, fi, fr, he, hi, hr, hu, id, it, ja,
+#   ko, lt, lv, nb, nl, pl, ps, pt, rm, ro, ru, sk, sl, sr, sv, th, tr, uk, vi,
+#   zh.
+#
+# icudt44l-default.txt includes cs, de, en, es, fr, it, nl, pl.
+# icudt44l-us-japan.txt includes en, ja.
+# icudt44l-us.txt includes en, es (for voles-eng).
 
 config := $(word 1, \
             $(if $(findstring ar,$(PRODUCT_LOCALES)),large) \
@@ -66,12 +72,8 @@ config := $(word 1, \
             $(if $(findstring uk,$(PRODUCT_LOCALES)),large) \
             $(if $(findstring zh,$(PRODUCT_LOCALES)),large) \
             $(if $(findstring ja,$(PRODUCT_LOCALES)),us-japan) \
-            $(if $(findstring it,$(PRODUCT_LOCALES)),us-euro) \
-            $(if $(findstring pl,$(PRODUCT_LOCALES)),us-euro) \
-            $(if $(findstring cs,$(PRODUCT_LOCALES)),default) \
-            $(if $(findstring de,$(PRODUCT_LOCALES)),default) \
-            $(if $(findstring fr,$(PRODUCT_LOCALES)),default) \
-            $(if $(findstring nl,$(PRODUCT_LOCALES)),default) \
+            $(if $(findstring it,$(PRODUCT_LOCALES)),default) \
+            $(if $(findstring pl,$(PRODUCT_LOCALES)),default) \
             us)
 
 include $(LOCAL_PATH)/root.mk

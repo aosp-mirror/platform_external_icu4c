@@ -58,9 +58,14 @@ coll/fr.res
 coll/fr_CA.res
 coll/fr_FR.res
 coll/fr_LU.res
+coll/it.res
+coll/it_CH.res
+coll/it_IT.res
 coll/nl.res
 coll/nl_BE.res
 coll/nl_NL.res
+coll/pl.res
+coll/pl_PL.res
 
 curr/res_index.res
 curr/root.res
@@ -101,7 +106,9 @@ curr/es_UY.res
 curr/fr.res
 curr/fr_CA.res
 curr/fr_LU.res
+curr/it.res
 curr/nl.res
+curr/pl.res
 
 lang/res_index.res
 lang/root.res
@@ -116,8 +123,10 @@ lang/es.res
 lang/es_AR.res
 lang/es_CL.res
 lang/fr.res
+lang/it.res
 lang/nl.res
 lang/nl_BE.res
+lang/pl.res
 
 region/res_index.res
 region/root.res
@@ -131,8 +140,10 @@ region/en_ZW.res
 region/es.res
 region/es_CL.res
 region/fr.res
+region/it.res
 region/nl.res
 region/nl_BE.res
+region/pl.res
 
 zone/res_index.res
 zone/pool.res
@@ -150,7 +161,9 @@ zone/en_ZW.res
 zone/es.res
 zone/fr.res
 zone/fr_CA.res
+zone/it.res
 zone/nl.res
+zone/pl.res
 
 res_index.res
 root.res
@@ -204,9 +217,14 @@ fr.res
 fr_CA.res
 fr_FR.res
 fr_LU.res
+it.res
+it_CH.res
+it_IT.res
 nl.res
 nl_BE.res
 nl_NL.res
+pl.res
+pl_PL.res
 
 gsm-03.38-2000.cnv
 ibm-1089_P100-1995.cnv

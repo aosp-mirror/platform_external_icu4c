@@ -163,7 +163,15 @@ def GenResIndex(input_file):
   if VERBOSE:
     for kind, locales in kind_to_locales.items():
       print "%s=%s" % (kind, sorted(locales))
-    print "every_locale=" % sorted(every_locale)
+
+  # Print a human-readable list of the languages supported.
+  every_language = set()
+  for locale in every_locale:
+    language = re.sub(r"(_.*)", "", locale)
+    if len(language) == 2:
+      every_language.add(language)
+  input_basename = os.path.basename(input_file)
+  print "%s includes %s." % (input_basename, ", ".join(sorted(every_language)))
 
   # Find cases where we've included only part of a locale's data.
   missing_files = []
