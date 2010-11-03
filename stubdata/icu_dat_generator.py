@@ -168,7 +168,7 @@ def GenResIndex(input_file):
   every_language = set()
   for locale in every_locale:
     language = re.sub(r"(_.*)", "", locale)
-    if len(language) == 2:
+    if language != "pool" and language != "supplementalData":
       every_language.add(language)
   input_basename = os.path.basename(input_file)
   print "%s includes %s." % (input_basename, ", ".join(sorted(every_language)))

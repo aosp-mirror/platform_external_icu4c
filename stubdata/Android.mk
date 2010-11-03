@@ -13,21 +13,6 @@
 # limitations under the License.
 
 #
-# To get your own ICU userdata:
-#
-# Go to http://apps.icu-project.org/datacustom/ and configure yourself
-# a data file.  Unzip the file it gives you, and save that somewhere,
-# Set the icu_var_name variable to the location of that file in the tree.
-#
-# Make sure to choose ICU4C at the bottom.  You should also
-# make sure to pick all of the following options, as they are required
-# by the system.  Things will fail quietly if you don't have them:
-#
-# TODO: >>> base list goes here once we have it <<<
-#
-
-
-#
 # Common definitions for all variants.
 #
 
@@ -39,11 +24,12 @@ include $(CLEAR_VARS)
 #
 # all includes all ICU's locale data.
 #
-# icudt44l-large.txt includes all the most-used
-# locales (http://googleblog.blogspot.com/2008/07/hitting-40-languages.html):
-#   ar, bg, ca, cs, da, de, el, en, es, fa, fi, fr, he, hi, hr, hu, id, it, ja,
-#   ko, lt, lv, nb, nl, pl, ps, pt, rm, ro, ru, sk, sl, sr, sv, th, tr, uk, vi,
-#   zh.
+# icudt44l-large.txt includes all the most-used locales, covering 99.3% of
+# internet users
+# (http://googleblog.blogspot.com/2008/07/hitting-40-languages.html):
+#   ar, bg, ca, cs, da, de, el, en, es, fa, fi, fil, fr, he, hi, hr, hu, id,
+#   it, ja, ko, lt, lv, nb, nl, pl, ps, pt, rm, ro, ru, sk, sl, sr, sv, th, tr,
+#   uk, vi, zh.
 #
 # icudt44l-default.txt includes cs, de, en, es, fr, it, nl, pl.
 # icudt44l-us-japan.txt includes en, ja.
