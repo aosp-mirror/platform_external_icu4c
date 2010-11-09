@@ -33,7 +33,6 @@ include $(CLEAR_VARS)
 #
 # icudt44l-default.txt includes cs, de, en, es, fr, it, nl, pl.
 # icudt44l-us-japan.txt includes en, ja.
-# icudt44l-us.txt includes en, es (for voles-eng).
 
 config := $(word 1, \
             $(if $(findstring ar,$(PRODUCT_LOCALES)),large) \
@@ -58,9 +57,7 @@ config := $(word 1, \
             $(if $(findstring uk,$(PRODUCT_LOCALES)),large) \
             $(if $(findstring zh,$(PRODUCT_LOCALES)),large) \
             $(if $(findstring ja,$(PRODUCT_LOCALES)),us-japan) \
-            $(if $(findstring it,$(PRODUCT_LOCALES)),default) \
-            $(if $(findstring pl,$(PRODUCT_LOCALES)),default) \
-            us)
+            default)
 
 include $(LOCAL_PATH)/root.mk
 
