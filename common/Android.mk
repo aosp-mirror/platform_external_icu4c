@@ -115,7 +115,7 @@ c_includes := \
 local_cflags := '-DICU_DATA_DIR_PREFIX_ENV_VAR="ANDROID_ROOT"'
 local_cflags += '-DICU_DATA_DIR="/usr/icu"'
 
-local_cflags += -D_REENTRANT -DU_COMMON_IMPLEMENTATION -O3
+local_cflags += -D_REENTRANT -DU_COMMON_IMPLEMENTATION -O3 -fvisibility=hidden
 local_ldlibs := -lpthread -lm
 
 
@@ -148,5 +148,4 @@ ifeq ($(WITH_HOST_DALVIK),true)
     LOCAL_MODULE_TAGS := optional
     LOCAL_MODULE := libicuuc
     include $(BUILD_HOST_SHARED_LIBRARY)
-
 endif

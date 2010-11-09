@@ -81,24 +81,22 @@ c_includes = \
 	$(LOCAL_PATH) \
 	$(LOCAL_PATH)/../common
 
+local_cflags := -D_REENTRANT -DU_I18N_IMPLEMENTATION -O3 -fvisibility=hidden
+local_ldlibs := -lpthread -lm
+
 
 #
 # Build for the target (device).
 #
 
 include $(CLEAR_VARS)
-
 LOCAL_SRC_FILES := $(src_files)
 LOCAL_C_INCLUDES := $(c_includes)
-
-LOCAL_CFLAGS += -D_REENTRANT -DPIC -DU_I18N_IMPLEMENTATION -fPIC 
-LOCAL_CFLAGS += -O3
-
+LOCAL_CFLAGS += $(local_cflags) -DPIC -fPIC
 LOCAL_SHARED_LIBRARIES += libicuuc
-LOCAL_LDLIBS += -lpthread -lm
+LOCAL_LDLIBS += $(local_ldlibs)
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := libicui18n
-
 include $(BUILD_SHARED_LIBRARY)
 
 
@@ -107,19 +105,13 @@ include $(BUILD_SHARED_LIBRARY)
 #
 
 ifeq ($(WITH_HOST_DALVIK),true)
-
     include $(CLEAR_VARS)
-
     LOCAL_SRC_FILES := $(src_files)
     LOCAL_C_INCLUDES := $(c_includes)
-
-    LOCAL_CFLAGS += -D_REENTRANT -DU_I18N_IMPLEMENTATION
-
+    LOCAL_CFLAGS += $(local_cflags)
     LOCAL_SHARED_LIBRARIES += libicuuc
-    LOCAL_LDLIBS += -lpthread -lm
+    LOCAL_LDLIBS += $(local_ldlibs)
     LOCAL_MODULE_TAGS := optional
     LOCAL_MODULE := libicui18n
-
     include $(BUILD_HOST_SHARED_LIBRARY)
-
 endif
