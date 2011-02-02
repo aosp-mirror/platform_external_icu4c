@@ -22,42 +22,15 @@ include $(CLEAR_VARS)
 
 # Build configuration:
 #
-# all includes all ICU's locale data.
+# 'all' includes all ICU's locale data.
 #
-# icudt44l-large.txt includes all the most-used locales, covering 99.3% of
-# internet users
-# (http://googleblog.blogspot.com/2008/07/hitting-40-languages.html):
-#   ar, bg, ca, cs, da, de, el, en, es, fa, fi, fil, fr, he, hi, hr, hu, id,
+# 'default' (icudt44l-default.txt) includes all the most-used locales,
+#   covering 99.3% of internet users
+#   (http://googleblog.blogspot.com/2008/07/hitting-40-languages.html):
+#   ar, bg, ca, cs, da, de, el, en, es, fa, fi, fil, fr, he, hi, hr, hu, in,
 #   it, ja, ko, lt, lv, nb, nl, pl, ps, pt, rm, ro, ru, sk, sl, sr, sv, th, tr,
 #   uk, vi, zh.
-#
-# icudt44l-default.txt includes cs, de, en, es, fr, it, nl, pl.
-# icudt44l-us-japan.txt includes en, ja.
-
-config := $(word 1, \
-            $(if $(findstring ar,$(PRODUCT_LOCALES)),large) \
-            $(if $(findstring da,$(PRODUCT_LOCALES)),large) \
-            $(if $(findstring el,$(PRODUCT_LOCALES)),large) \
-            $(if $(findstring fi,$(PRODUCT_LOCALES)),large) \
-            $(if $(findstring he,$(PRODUCT_LOCALES)),large) \
-            $(if $(findstring hr,$(PRODUCT_LOCALES)),large) \
-            $(if $(findstring hu,$(PRODUCT_LOCALES)),large) \
-            $(if $(findstring id,$(PRODUCT_LOCALES)),large) \
-            $(if $(findstring ko,$(PRODUCT_LOCALES)),large) \
-            $(if $(findstring nb,$(PRODUCT_LOCALES)),large) \
-            $(if $(findstring pt,$(PRODUCT_LOCALES)),large) \
-            $(if $(findstring rm,$(PRODUCT_LOCALES)),large) \
-            $(if $(findstring ro,$(PRODUCT_LOCALES)),large) \
-            $(if $(findstring ru,$(PRODUCT_LOCALES)),large) \
-            $(if $(findstring sk,$(PRODUCT_LOCALES)),large) \
-            $(if $(findstring sr,$(PRODUCT_LOCALES)),large) \
-            $(if $(findstring sv,$(PRODUCT_LOCALES)),large) \
-            $(if $(findstring th,$(PRODUCT_LOCALES)),large) \
-            $(if $(findstring tr,$(PRODUCT_LOCALES)),large) \
-            $(if $(findstring uk,$(PRODUCT_LOCALES)),large) \
-            $(if $(findstring zh,$(PRODUCT_LOCALES)),large) \
-            $(if $(findstring ja,$(PRODUCT_LOCALES)),us-japan) \
-            default)
+config := default
 
 include $(LOCAL_PATH)/root.mk
 
