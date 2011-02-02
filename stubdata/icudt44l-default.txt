@@ -284,6 +284,7 @@ curr/sr_YU.res
 curr/sv.res
 curr/th.res
 curr/th_TH.res
+curr/tl.res
 curr/tr.res
 curr/uk.res
 curr/vi.res
@@ -372,6 +373,7 @@ lang/sv.res
 lang/sv_FI.res
 lang/th.res
 lang/th_TH.res
+lang/tl.res
 lang/tr.res
 lang/uk.res
 lang/vi.res
@@ -457,6 +459,7 @@ region/sv.res
 region/sv_FI.res
 region/th.res
 region/th_TH.res
+region/tl.res
 region/tr.res
 region/uk.res
 region/vi.res
@@ -543,6 +546,7 @@ zone/sr_YU.res
 zone/sv.res
 zone/th.res
 zone/th_TH.res
+zone/tl.res
 zone/tr.res
 zone/uk.res
 zone/vi.res
@@ -706,6 +710,7 @@ sv_FI.res
 sv_SE.res
 th.res
 th_TH.res
+tl.res
 tr.res
 tr_TR.res
 uk.res

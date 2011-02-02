@@ -25,11 +25,11 @@ include $(CLEAR_VARS)
 # 'all' includes all ICU's locale data.
 #
 # 'default' (icudt44l-default.txt) includes all the most-used locales,
-#   covering 99.3% of internet users
+#   covering 94% of internet users
 #   (http://googleblog.blogspot.com/2008/07/hitting-40-languages.html):
 #   ar, bg, ca, cs, da, de, el, en, es, fa, fi, fil, fr, he, hi, hr, hu, in,
-#   it, ja, ko, lt, lv, nb, nl, pl, ps, pt, rm, ro, ru, sk, sl, sr, sv, th, tr,
-#   uk, vi, zh.
+#   it, ja, ko, lt, lv, nb, nl, pl, ps, pt, rm, ro, ru, sk, sl, sr, sv, th, tl,
+#   tr, uk, vi, zh.
 config := default
 
 include $(LOCAL_PATH)/root.mk
