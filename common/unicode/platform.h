@@ -263,7 +263,7 @@ typedef unsigned int uint32_t;
 // it represent whether we are compiling for Android, and if that's
 // the case then we might as well use the standard definition instead.
 // END android-note
-#if HAVE_ANDROID_OS
+#ifdef HAVE_ANDROID_OS
 #define U_HAVE_WCHAR_H      0
 #define U_SIZEOF_WCHAR_T    1
 
