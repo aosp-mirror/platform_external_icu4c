@@ -30,7 +30,7 @@ include $(CLEAR_VARS)
 #   ar, bg, ca, cs, da, de, el, en, es, fa, fi, fil, fr, he, hi, hr, hu, in,
 #   it, ja, ko, lt, lv, nb, nl, pl, ps, pt, rm, ro, ru, sk, sl, sr, sv, th, tl,
 #   tr, uk, vi, zh.
-config := default
+config := all
 
 include $(LOCAL_PATH)/root.mk
 
