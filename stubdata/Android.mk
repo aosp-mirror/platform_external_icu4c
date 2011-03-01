@@ -22,7 +22,8 @@ include $(CLEAR_VARS)
 
 # Build configuration:
 #
-# 'all' includes all ICU's locale data.
+# 'all' includes all ICU's locale data, but is currently missing some Android
+# extensions (mostly extra charset converters).
 #
 # 'default' (icudt44l-default.txt) includes all the most-used locales,
 #   covering 94% of internet users
@@ -30,7 +31,7 @@ include $(CLEAR_VARS)
 #   ar, bg, ca, cs, da, de, el, en, es, fa, fi, fil, fr, he, hi, hr, hu, in,
 #   it, ja, ko, lt, lv, nb, nl, pl, ps, pt, rm, ro, ru, sk, sl, sr, sv, th, tl,
 #   tr, uk, vi, zh.
-config := all
+config := default
 
 include $(LOCAL_PATH)/root.mk
 
