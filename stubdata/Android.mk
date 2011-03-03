@@ -29,7 +29,7 @@ include $(CLEAR_VARS)
 #   covering 94% of internet users
 #   (http://googleblog.blogspot.com/2008/07/hitting-40-languages.html):
 #   ar, bg, ca, cs, da, de, el, en, es, fa, fi, fil, fr, he, hi, hr, hu, in,
-#   it, ja, ko, lt, lv, nb, nl, pl, ps, pt, rm, ro, ru, sk, sl, sr, sv, th, tl,
+#   it, ja, ko, lt, lv, nb, nl, pl, ps, pt, rm, ro, ru, sk, sl, sr, sv, th,
 #   tr, uk, vi, zh.
 config := default
 
