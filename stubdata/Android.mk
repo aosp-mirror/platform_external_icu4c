@@ -47,6 +47,11 @@ config := $(word 1, \
             $(if $(findstring el,$(PRODUCT_LOCALES)),large) \
             $(if $(findstring fi,$(PRODUCT_LOCALES)),large) \
             $(if $(findstring he,$(PRODUCT_LOCALES)),large) \
+            $(if $(findstring bg,$(PRODUCT_LOCALES)),large) \
+            $(if $(findstring no,$(PRODUCT_LOCALES)),large) \
+            $(if $(findstring mk,$(PRODUCT_LOCALES)),large) \
+            $(if $(findstring is,$(PRODUCT_LOCALES)),large) \
+            $(if $(findstring sl,$(PRODUCT_LOCALES)),large) \
             $(if $(findstring hr,$(PRODUCT_LOCALES)),large) \
             $(if $(findstring hu,$(PRODUCT_LOCALES)),large) \
             $(if $(findstring id,$(PRODUCT_LOCALES)),large) \

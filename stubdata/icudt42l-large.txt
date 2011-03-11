@@ -69,6 +69,8 @@ coll/res_index.res
 coll/root.res
 
 ar.res
+bg.res
+bg_BG.res
 cs.res
 cs_CZ.res
 da.res
@@ -121,6 +123,8 @@ he.res
 hr.res
 hu.res
 id.res
+is.res
+is_IS.res
 it.res
 it_CH.res
 it_IT.res
@@ -128,11 +132,15 @@ ja.res
 ja_JP.res
 ko.res
 ko_KR.res
+mk.res
+mk_MK.res
 nb.res
 nb_NO.res
 nl.res
 nl_BE.res
 nl_NL.res
+no.res
+no_NO.res
 pl.res
 pl_PL.res
 pt.res
@@ -142,6 +150,8 @@ ro.res
 ru.res
 ru_RU.res
 sk.res
+sl.res
+sl_SI.res
 sr.res
 sv.res
 sv_SE.res
