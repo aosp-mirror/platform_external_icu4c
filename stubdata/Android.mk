@@ -50,6 +50,7 @@ config := $(word 1, \
             $(if $(findstring hr,$(PRODUCT_LOCALES)),large) \
             $(if $(findstring hu,$(PRODUCT_LOCALES)),large) \
             $(if $(findstring id,$(PRODUCT_LOCALES)),large) \
+            $(if $(findstring ka,$(PRODUCT_LOCALES)),large) \
             $(if $(findstring ko,$(PRODUCT_LOCALES)),large) \
             $(if $(findstring nb,$(PRODUCT_LOCALES)),large) \
             $(if $(findstring pt,$(PRODUCT_LOCALES)),large) \

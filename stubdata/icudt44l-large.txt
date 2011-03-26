@@ -125,6 +125,8 @@ coll/it_CH.res
 coll/it_IT.res
 coll/ja.res
 coll/ja_JP.res
+coll/ka.res
+coll/ka_GE.res
 coll/ko.res
 coll/ko_KR.res
 coll/lt.res
@@ -251,6 +253,7 @@ curr/it.res
 curr/ja.res
 curr/ja_JP.res
 curr/ja_JP_TRADITIONAL.res
+curr/ka.res
 curr/ko.res
 curr/lt.res
 curr/lv.res
@@ -338,6 +341,7 @@ lang/it.res
 lang/ja.res
 lang/ja_JP.res
 lang/ja_JP_TRADITIONAL.res
+lang/ka.res
 lang/ko.res
 lang/lt.res
 lang/lv.res
@@ -426,6 +430,7 @@ region/it.res
 region/ja.res
 region/ja_JP.res
 region/ja_JP_TRADITIONAL.res
+region/ka.res
 region/ko.res
 region/lt.res
 region/lv.res
@@ -516,6 +521,7 @@ zone/it.res
 zone/ja.res
 zone/ja_JP.res
 zone/ja_JP_TRADITIONAL.res
+zone/ka.res
 zone/ko.res
 zone/lt.res
 zone/lv.res
@@ -640,6 +646,8 @@ it_CH.res
 it_IT.res
 ja.res
 ja_JP.res
+ka.res
+ka_GE.res
 ko.res
 ko_KR.res
 lt.res
