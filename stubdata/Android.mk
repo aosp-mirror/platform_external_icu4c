@@ -22,7 +22,8 @@ include $(CLEAR_VARS)
 
 # Build configuration:
 #
-# 'all' includes all ICU's locale data.
+# 'all' includes all ICU's locale data, but is currently missing some Android
+# extensions (mostly extra charset converters).
 #
 # 'default' (icudt44l-default.txt) includes all the most-used locales,
 #   covering 94% of internet users

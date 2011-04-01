@@ -800,6 +800,8 @@ gb18030.cnv
 
 cnvalias.icu
 pnames.icu
+# Required for Character.getName.
+unames.icu
 supplementalData.res
 numberingSystems.res
 plurals.res
@@ -812,4 +814,3 @@ zoneinfo64.res
 icustd.res
 icuver.res
 keyTypeData.res
-
