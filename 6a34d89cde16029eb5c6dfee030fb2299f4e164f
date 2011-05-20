@@ -1,0 +1,8 @@
+Change-Id: I6a34d89cde16029eb5c6dfee030fb2299f4e164f
+Code-Review+2: Jean-Baptiste Queru <jbq@google.com>
+Verified+1: Jean-Baptiste Queru <jbq@google.com>
+Submitted-by: Jean-Baptiste Queru <jbq@google.com>
+Submitted-at: Wed, 18 Mar 2009 17:59:15 -0700
+Reviewed-on: https://review.source.android.com/9271
+Project: platform/external/icu4c
+Branch: refs/heads/master
