@@ -818,6 +818,7 @@ uplug_init(UErrorCode *status) {
       DBG((stderr, "Can't open plugin file %s\n", plugin_file));
 #endif
     }
+    close(f);
   }
   uplug_loadWaitingPlugs(status);
 #endif /* U_ENABLE_DYLOAD */

@@ -1630,13 +1630,13 @@ ultag_parse(const char* tag, int32_t tagLen, int32_t* parsedLen, UErrorCode* sta
 
     /* create a ULanguageTag */
     t = (ULanguageTag*)uprv_malloc(sizeof(ULanguageTag));
-    _initializeULanguageTag(t);
-    t->buf = tagBuf;
     if (t == NULL) {
         uprv_free(tagBuf);
         *status = U_MEMORY_ALLOCATION_ERROR;
         return NULL;
     }
+    _initializeULanguageTag(t);
+    t->buf = tagBuf;
 
     if (tagLen < MINLEN) {
         /* the input tag is too short - return empty ULanguageTag */

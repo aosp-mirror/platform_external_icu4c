@@ -37,8 +37,9 @@ SpoofImpl::SpoofImpl(SpoofData *data, UErrorCode &status) :
     UnicodeSet *allowedCharsSet = new UnicodeSet(0, 0x10ffff);
     if (allowedCharsSet == NULL) {
         status = U_MEMORY_ALLOCATION_ERROR;
+    } else {
+        allowedCharsSet->freeze();
     }
-    allowedCharsSet->freeze();
     fAllowedCharsSet = allowedCharsSet;
     fAllowedLocales  = uprv_strdup("");
 }
