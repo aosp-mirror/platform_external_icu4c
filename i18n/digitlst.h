@@ -32,7 +32,6 @@
 #include "decContext.h"
 #include "decNumber.h"
 #include "cmemory.h"
-#include "decnumstr.h"
 
 // Decimal digits in a 64-bit int
 #define INT64_DIGITS 19
@@ -51,17 +50,19 @@ typedef enum EDigitListValues {
 
 U_NAMESPACE_BEGIN
 
-// Export an explicit template instantiation of the MaybeStackArray that
+class CharString;
+
+// Export an explicit template instantiation of the MaybeStackHeaderAndArray that
 //    is used as a data member of DigitList.
 //
 //    MSVC requires this, even though it should not be necessary. 
-//    No direct access to the MaybeStackArray leaks out of the i18n library.
+//    No direct access to the MaybeStackHeaderAndArray leaks out of the i18n library.
 //
 //    Macintosh produces duplicate definition linker errors with the explicit template
 //    instantiation.
 //
 #if !defined(U_DARWIN)
-template class U_I18N_API MaybeStackArray<char, sizeof(decNumber) + DEFAULT_DIGITS>;
+template class U_I18N_API MaybeStackHeaderAndArray<decNumber, char, DEFAULT_DIGITS>;
 #endif
 
 
@@ -112,7 +113,7 @@ template class U_I18N_API MaybeStackArray<char, sizeof(decNumber) + DEFAULT_DIGI
  *
  *       digitList exponent = decNumber exponent + digit count
  *
- *    digitList, digits are chars, '0' - '9'
+ *    digitList, digits are platform invariant chars, '0' - '9'
  *    decNumber, digits are binary, one per byte, 0 - 9.
  *
  *       (decNumber library is configurable in how digits are stored, ICU has configured
@@ -173,6 +174,7 @@ public:
      *              inefficient, and the interaction with the exponent value is confusing.
      *              Best avoided.
      *              TODO:  remove this function once all use has been replaced.
+     *              TODO:  describe alternative to append()
      * @param digit The digit to be appended.
      */
     void append(char digit);
@@ -202,8 +204,8 @@ public:
 
     /**
      *  Utility routine to get the value of the digit list as a decimal string.
-     */  
-    void getDecimal(DecimalNumberString &str, UErrorCode &status);
+     */
+    void getDecimal(CharString &str, UErrorCode &status);
 
     /**
      * Return true if the number represented by this object can fit into
@@ -317,8 +319,28 @@ public:
     void     setCount(int32_t c);
     int32_t  getCount() const;
     
+    /**
+     * Set the digit in platform (invariant) format, from '0'..'9'
+     * @param i index of digit
+     * @param v digit value, from '0' to '9' in platform invariant format
+     */
     void     setDigit(int32_t i, char v);
+
+    /**
+     * Get the digit in platform (invariant) format, from '0'..'9' inclusive
+     * @param i index of digit
+     * @return invariant format of the digit
+     */
     char     getDigit(int32_t i);
+
+
+    /**
+     * Get the digit's value, as an integer from 0..9 inclusive.
+     * Note that internally this value is a decNumberUnit, but ICU configures it to be a uint8_t.
+     * @param i index of digit
+     * @return value of that digit
+     */
+    uint8_t     getDigitValue(int32_t i);
 
 
 private:
@@ -354,8 +376,8 @@ private:
 
     decContext    fContext;
     decNumber     *fDecNumber;
-    MaybeStackArray<char, sizeof(decNumber) + DEFAULT_DIGITS>  fStorage;
-    
+    MaybeStackHeaderAndArray<decNumber, char, DEFAULT_DIGITS>  fStorage;
+
     /* Cached double value corresponding to this decimal number.
      * This is an optimization for the formatting implementation, which may
      * ask for the double value multiple times.

@@ -17,26 +17,26 @@ el{
         "Grek",
     }
     NumberElements{
-        ",",
-        ".",
-        ",",
-        "%",
-        "0",
-        "#",
-        "-",
-        "e",
-        "‰",
-        "∞",
-        "NaN",
-        "+",
+        latn{
+            patterns{
+                currencyFormat{"#,##0.00 ¤"}
+                percentFormat{"#,##0%"}
+            }
+            symbols{
+                decimal{","}
+                exponential{"e"}
+                group{"."}
+                infinity{"∞"}
+                list{","}
+                minusSign{"-"}
+                nan{"NaN"}
+                perMille{"‰"}
+                percentSign{"%"}
+                plusSign{"+"}
+            }
+        }
     }
-    NumberPatterns{
-        "#,##0.###",
-        "#,##0.00 ¤",
-        "#,##0%",
-        "#E0",
-    }
-    Version{"2.0.48.64"}
+    Version{"2.0.50.96"}
     calendar{
         buddhist{
             DateTimePatterns{
@@ -98,18 +98,17 @@ el{
                 y{"y"}
                 yM{"M/yyyy"}
                 yMEd{"EEE, d/M/yyyy"}
-                yMMM{"MMM y"}
+                yMMM{"LLL y"}
                 yMMMEd{"EEE, d MMM y"}
-                yMMMM{"LLLL y"}
                 yQ{"y Q"}
                 yQQQ{"y QQQ"}
                 yyMM{"MM/yy"}
-                yyMMM{"MMM yy"}
+                yyMMM{"LLL yy"}
                 yyQ{"Q yy"}
                 yyQQQQ{"QQQQ yy"}
                 yyyy{"y"}
                 yyyyMM{"MM/yyyy"}
-                yyyyMMMM{"MMMM y"}
+                yyyyMMMM{"LLLL y"}
             }
             dayNames{
                 format{
@@ -264,8 +263,8 @@ el{
                     y{"E, dd MMM y - E, dd MMM y"}
                 }
                 yMMMM{
-                    M{"MM-MM/yyyy"}
-                    y{"MM/yyyy-MM/yyyy"}
+                    M{"LLLL-LLLL y"}
+                    y{"LLLL y - LLLL y"}
                 }
                 yMMMd{
                     M{"dd MMM - dd MMM y"}
@@ -381,11 +380,12 @@ el{
                 "{1} {0}",
             }
             availableFormats{
+                Ed{"E d"}
                 MMMEd{"E, d MMM"}
                 MMMMd{"d MMMM"}
                 Md{"d/M"}
                 yyyyM{"MM/yy GGGGG"}
-                yyyyMMM{"MMM yy GGGGG"}
+                yyyyMMM{"LLL yy GGGGG"}
                 yyyyQ{"yy GGGGG Q"}
             }
         }
@@ -406,6 +406,7 @@ el{
                 "{1} {0}",
             }
             availableFormats{
+                Ed{"E d"}
                 MEd{"E, d/M"}
                 MMMEd{"E, d MMM"}
                 MMMd{"d MMM"}
@@ -413,7 +414,7 @@ el{
                 yyyy{"y G"}
                 yyyyM{"M/y G"}
                 yyyyMEd{"EEE, d/M/y G"}
-                yyyyMMM{"MMM, y G"}
+                yyyyMMM{"LLL, y G"}
                 yyyyMMMEd{"EEE, d MMM, y G"}
                 yyyyQ{"y G Q"}
                 yyyyQQQ{"QQQ y G"}

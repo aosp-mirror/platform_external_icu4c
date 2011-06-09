@@ -28,6 +28,7 @@
 
 #if !UCONFIG_NO_FORMATTING
 #include "unicode/putil.h"
+#include "charstr.h"
 #include "cmemory.h"
 #include "cstring.h"
 #include "putilimp.h"
@@ -50,6 +51,7 @@
 
 /**
  * This is the zero digit.  The base for the digits returned by getDigit()
+ * Note that it is the platform invariant digit, and is not Unicode.
  */
 #define kZero '0'
 
@@ -70,9 +72,9 @@ DigitList::DigitList()
     uprv_decContextDefault(&fContext, DEC_INIT_BASE);
     fContext.traps  = 0;
     uprv_decContextSetRounding(&fContext, DEC_ROUND_HALF_EVEN);
-    fContext.digits = fStorage.getCapacity() - sizeof(decNumber);
+    fContext.digits = fStorage.getCapacity();
 
-    fDecNumber = (decNumber *)(fStorage.getAlias());
+    fDecNumber = fStorage.getAlias();
     uprv_decNumberZero(fDecNumber);
 
     fDouble = 0.0;
@@ -90,7 +92,7 @@ DigitList::~DigitList()
 
 DigitList::DigitList(const DigitList &other)
 {
-    fDecNumber = NULL;
+    fDecNumber = fStorage.getAlias();
     *this = other;
 }
 
@@ -105,8 +107,12 @@ DigitList::operator=(const DigitList& other)
     {
         uprv_memcpy(&fContext, &other.fContext, sizeof(decContext));
 
-        fStorage.resize(other.fStorage.getCapacity());
-        fDecNumber = (decNumber *)fStorage.getAlias();
+        if (other.fStorage.getCapacity() > fStorage.getCapacity()) {
+            fDecNumber = fStorage.resize(other.fStorage.getCapacity());
+        }
+        // Always reset the fContext.digits, even if fDecNumber was not reallocated,
+        // because above we copied fContext from other.fContext.
+        fContext.digits = fStorage.getCapacity();
         uprv_decNumberCopy(fDecNumber, other.fDecNumber);
 
         fDouble = other.fDouble;
@@ -328,6 +334,14 @@ DigitList::getDigit(int32_t i) {
     return fDecNumber->lsu[count-i-1] + '0';
 }
 
+// copied from DigitList::getDigit()
+uint8_t
+DigitList::getDigitValue(int32_t i) {
+    int32_t count = fDecNumber->digits;
+    U_ASSERT(i<count);
+    return fDecNumber->lsu[count-i-1];
+}
+
 // -------------------------------------
 // Appends the digit to the digit list if it's not out of scope.
 // Ignores the digit, otherwise.
@@ -404,20 +418,22 @@ DigitList::getDouble() const
         }
     } else if (isInfinite()) {
         // BEGIN android-changed
-        // There is no numeric_limits template member in Android std.
+        // There is no numeric_limits template member in Android std nor
+        // INFINITY defined in math.h of ICU Linux build.
+#ifdef INFINITY
         nonConstThis->fDouble = INFINITY;
-        /*
+#else
         if (std::numeric_limits<double>::has_infinity) {
             nonConstThis->fDouble = std::numeric_limits<double>::infinity();
         } else {
             nonConstThis->fDouble = std::numeric_limits<double>::max();
         }
-        */
+#endif
         // END android-changed
        
         if (!isPositive()) {
             nonConstThis->fDouble = -fDouble;
-        } 
+        }
     } else {
         MaybeStackArray<char, MAX_DBL_DIGITS+18> s;
            // Note:  14 is a  magic constant from the decNumber library documentation,
@@ -532,22 +548,23 @@ int64_t DigitList::getInt64() /*const*/ {
  *     Format is as defined by the decNumber library, for interchange of
  *     decimal numbers.
  */
-void DigitList::getDecimal(DecimalNumberString &str, UErrorCode &status) {
+void DigitList::getDecimal(CharString &str, UErrorCode &status) {
     if (U_FAILURE(status)) {
         return;
     }
-    
+
     // A decimal number in string form can, worst case, be 14 characters longer
     //  than the number of digits.  So says the decNumber library doc.
-    int32_t maxLength = fDecNumber->digits + 15;
-    str.setLength(maxLength, status);
+    int32_t maxLength = fDecNumber->digits + 14;
+    int32_t capacity = 0;
+    char *buffer = str.clear().getAppendBuffer(maxLength, 0, capacity, status);
     if (U_FAILURE(status)) {
         return;    // Memory allocation error on growing the string.
     }
-    uprv_decNumberToString(this->fDecNumber, &str[0]);
-    int32_t len = uprv_strlen(&str[0]);
-    U_ASSERT(len <= maxLength);
-    str.setLength(len, status);
+    U_ASSERT(capacity >= maxLength);
+    uprv_decNumberToString(this->fDecNumber, buffer);
+    U_ASSERT((int32_t)uprv_strlen(buffer) <= maxLength);
+    str.append(buffer, -1, status);
 }
 
 /**
@@ -675,7 +692,7 @@ DigitList::set(int64_t source)
 /**
  * Set the DigitList from a decimal number string.
  *
- * The incoming string _must_ be nul terminated, even thought it is arriving
+ * The incoming string _must_ be nul terminated, even though it is arriving
  * as a StringPiece because that is what the decNumber library wants.
  * We can get away with this for an internal function; it would not
  * be acceptable for a public API.
@@ -690,15 +707,16 @@ DigitList::set(const StringPiece &source, UErrorCode &status) {
     // resize the number up if necessary.
     int32_t numDigits = source.length();
     if (numDigits > fContext.digits) {
-        fContext.digits = numDigits;
-        char *t = fStorage.resize(sizeof(decNumber) + numDigits, fStorage.getCapacity());
+        // fContext.digits == fStorage.getCapacity()
+        decNumber *t = fStorage.resize(numDigits, fStorage.getCapacity());
         if (t == NULL) {
             status = U_MEMORY_ALLOCATION_ERROR;
             return;
         }
-        fDecNumber = (decNumber *)fStorage.getAlias();
+        fDecNumber = t;
+        fContext.digits = numDigits;
     }
-        
+
     fContext.status = 0;
     uprv_decNumberFromString(fDecNumber, source.data(), &fContext);
     if ((fContext.status & DEC_Conversion_syntax) != 0) {
@@ -789,13 +807,13 @@ DigitList::ensureCapacity(int32_t requestedCapacity, UErrorCode &status) {
         requestedCapacity = DEC_MAX_DIGITS;
     }
     if (requestedCapacity > fContext.digits) {
-        char *newBuffer = fStorage.resize(sizeof(decNumber) + requestedCapacity, fStorage.getCapacity());
+        decNumber *newBuffer = fStorage.resize(requestedCapacity, fStorage.getCapacity());
         if (newBuffer == NULL) {
             status = U_MEMORY_ALLOCATION_ERROR;
             return;
         }
         fContext.digits = requestedCapacity;
-        fDecNumber = (decNumber *)fStorage.getAlias();
+        fDecNumber = newBuffer;
     }
 }
 

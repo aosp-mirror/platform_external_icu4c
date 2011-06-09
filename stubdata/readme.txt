@@ -7,14 +7,14 @@ This directory is used for building our Android ICU data file.
 2. To add a resource to Android ICU data file: insert an entry to
    icudtxx-<tag name>.txt under external/icu4c/stubdata directory then
    run the icu_dat_generator.py.
-   For example, to add French sort to icudt44l-us.dat, you need to
-   a. Add an entry, "coll/fr.res", into external/icu4c/stubdata/icudt44l-us.txt
+   For example, to add French sort to icudt 46l-us.dat, you need to
+   a. Add an entry, "coll/fr.res", into external/icu4c/stubdata/icudt 46l-us.txt
    b. run "./icu_dat_generator.py".
 
 3. To add a new Android ICU data file: create the .txt file and run the script
    to generate the .dat file.
-   For example, to add icudt44l-latin.dat, you need to
-   a. Make a new file icudt44l-latin.txt to include the resource list.
+   For example, to add icudt 46l-latin.dat, you need to
+   a. Make a new file icudt 46l-latin.txt to include the resource list.
    b. run "./icu_dat_generator.py".
 
 4. Add a new resource or modify existing ICU resource definition:
@@ -32,17 +32,17 @@ This directory is used for building our Android ICU data file.
    e. make -j2
    f. The new icudtxxl.dat is under data/out/tmp and the individual resources are
       under data/out/build/icudtxxl
-      For example, you can find data/out/tmp/icudt44l.dat and data/out/build/icudt44l/*.res.
+      For example, you can find data/out/tmp/icudt 46l.dat and data/out/build/icudt 46l/*.res.
    g. Copy the new icudtxxl.dat over $ANDROID_BUILD_TOP/external/icu4c/stubdata/icudtxxl-all.dat.
-      i.e. cp data/out/tmp/icudt44l.dat $ANDROID_BUILD_TOP/external/icu4c/stubdata/icudt44l-all.dat.
+      i.e. cp data/out/tmp/icudt 46l.dat $ANDROID_BUILD_TOP/external/icu4c/stubdata/icudt 46l-all.dat.
    h. Check #1 or #2 to replace or add resource to ICU.
    i. Clean up ICU build directory.
    j. Discuss with icu-team how to include the change to public ICU.
 
 Locale Resource Files:
-- icudt44l-all.dat contains the resources in packed
+- icudt 46l-all.dat contains the resources in packed
   form. It includes everything that comes with
-  a vanilla ICU 4.4. icu_dat_generator.py uses this file to generate
+  a vanilla ICU  4.6. icu_dat_generator.py uses this file to generate
   custom build dat files.
 
 - cnv/*.cnv are the additional encodings required by Android.
@@ -61,9 +61,9 @@ Locale Resource Files:
   you can run icupkg utility to extract icudtxxl-all.dat into a temporary directory.
   For example:
   cd $ANDROID_BUILD_TOP/external/icu4c/stubdata
-  cp icudt44l-all.dat icudt44l.dat
+  cp icudt 46l-all.dat icudt 46l.dat
   mkdir tempDir
-  $ANDROID_BUILD_TOP/prebuilt/linux-x86/icu-4.4/icupkg  icudt44l.dat -x "*" -d tempDir
+  $ANDROID_BUILD_TOP/prebuilt/linux-x86/icu-4.6/icupkg  icudt 46l.dat -x "*" -d tempDir
 
 Run ICU tests:
 ICU tests are not part of Android build. If you change the ICU code or data,

@@ -120,7 +120,7 @@ lengthenRange(WeightRange *range, uint32_t maxByte, uint32_t countBytes) {
 
 /* for uprv_sortArray: sort ranges in weight order */
 static int32_t U_CALLCONV
-compareRanges(const void *context, const void *left, const void *right) {
+compareRanges(const void * /*context*/, const void *left, const void *right) {
     uint32_t l, r;
 
     l=((const WeightRange *)left)->start;
@@ -508,7 +508,7 @@ ucol_nextWeight(WeightRange ranges[], int32_t *pRangeCount) {
     }
 }
 
-#ifdef UCOL_DEBUG
+#if 0 // #ifdef UCOL_DEBUG
 
 static void
 testAlloc(uint32_t lowerLimit, uint32_t upperLimit, uint32_t n, UBool enumerate) {

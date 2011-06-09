@@ -1,7 +1,7 @@
 /*
  ******************************************************************************
- * Copyright (C) 1996-2009, International Business Machines Corporation and   *
- * others. All Rights Reserved.                                               *
+ * Copyright (C) 1996-2010, International Business Machines Corporation and
+ * others. All Rights Reserved.
  ******************************************************************************
  */
 
@@ -235,8 +235,8 @@ Collator::createUCollator(const char *loc,
     if (status && U_SUCCESS(*status) && hasService()) {
         Locale desiredLocale(loc);
         Collator *col = (Collator*)gService->get(desiredLocale, *status);
-        if (col && col->getDynamicClassID() == RuleBasedCollator::getStaticClassID()) {
-            RuleBasedCollator *rbc = (RuleBasedCollator *)col;
+        RuleBasedCollator *rbc;
+        if (col && (rbc = dynamic_cast<RuleBasedCollator *>(col))) {
             if (!rbc->dataIsOwned) {
                 result = ucol_safeClone(rbc->ucollator, NULL, NULL, status);
             } else {
@@ -831,6 +831,25 @@ Collator::getFunctionalEquivalent(const char* keyword, const Locale& locale,
         *loc = 0; // root
     }
     return Locale::createFromName(loc);
+}
+
+int32_t Collator::getReorderCodes(int32_t *dest,
+                                 int32_t destCapacity,
+                                 UErrorCode& status) const
+{
+    if (U_SUCCESS(status)) {
+        status = U_UNSUPPORTED_ERROR;
+    }
+    return 0;
+}
+
+void Collator::setReorderCodes(const int32_t *reorderCodes,
+                              int32_t reorderCodesLength,
+                              UErrorCode& status)
+{
+    if (U_SUCCESS(status)) {
+        status = U_UNSUPPORTED_ERROR;
+    }
 }
 
 // UCollator private data members ----------------------------------------

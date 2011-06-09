@@ -6,22 +6,18 @@ subdirs := $(addprefix $(LOCAL_PATH)/,$(addsuffix /Android.mk, \
 	ctestfw  \
 	makeconv \
 	genrb    \
-	genuca   \
 	genbrk   \
 	genctd   \
-	gennames \
-	genpname \
 	gencnval \
 	gensprep \
+	icuinfo  \
 	genccode \
 	gencmn   \
 	icupkg   \
 	pkgdata  \
-	genprops \
-	gencase  \
-	genbidi  \
-	gennorm  \
-	icuswap  \
+	gentest  \
+	gennorm2 \
+	gencfu   \
 	))
 
 include $(subdirs)

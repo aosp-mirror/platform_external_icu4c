@@ -62,7 +62,7 @@ static UBool U_CALLCONV compareEntries(const UHashTok p1, const UHashTok p2) {
     name2.pointer = b2->fName;
     path1.pointer = b1->fPath;
     path2.pointer = b2->fPath;
-    return (UBool)(uhash_compareChars(name1, name2) & 
+    return (UBool)(uhash_compareChars(name1, name2) &&
         uhash_compareChars(path1, path2));
 }
 
@@ -565,9 +565,8 @@ static UResourceDataEntry *entryOpen(const char* path, const char* localeID, UEr
                    u1->fParent = t1;
                    r = u1;
                  } else {
-                   /* the USR override data wasn't found, delete it */
-                   uhash_remove(cache, u1);
-                   free_entry(u1);
+                   /* the USR override data wasn't found, set it to be deleted */
+                   u1->fCountExisting = 0;
                  }
                }
             }
@@ -591,17 +590,15 @@ static UResourceDataEntry *entryOpen(const char* path, const char* localeID, UEr
                     } else {
                         t1->fParent = t2;
                         if(usingUSRData) {
-                          /* the USR override data wasn't found, delete it */
-                          uhash_remove(cache, u2);
-                          free_entry(u2);
+                            /* the USR override data wasn't found, set it to be deleted */
+                            u2->fCountExisting = 0;
                         }
                     }
                     t1 = t2;
                 } else {
                     if (usingUSRData) {
-                        /* the USR override data wasn't found, delete it */
-                        uhash_remove(cache, u2);
-                        free_entry(u2);
+                        /* the USR override data wasn't found, set it to be deleted */
+                        u2->fCountExisting = 0;
                     }
                     /* t2->fCountExisting have to be decremented since the call to init_entry increments
                      * it and if we hit this code, that means it is not set as the parent.
@@ -665,7 +662,7 @@ static UResourceDataEntry *entryOpen(const char* path, const char* localeID, UEr
             if(!hasRealData) {
                 r->fBogus = U_USING_DEFAULT_WARNING;
             }
-            hasRealData = (UBool)((t2->fBogus == U_ZERO_ERROR) | hasRealData);
+            hasRealData = (UBool)((t2->fBogus == U_ZERO_ERROR) || hasRealData);
             t1->fParent = t2;
             t1 = t2;
         }
@@ -673,7 +670,7 @@ static UResourceDataEntry *entryOpen(const char* path, const char* localeID, UEr
         while(r != NULL && !isRoot && t1->fParent != NULL) {
             t1->fParent->fCountExisting++;
             t1 = t1->fParent;
-            hasRealData = (UBool)((t1->fBogus == U_ZERO_ERROR) | hasRealData);
+            hasRealData = (UBool)((t1->fBogus == U_ZERO_ERROR) || hasRealData);
         }
     } /* umtx_lock */
 finishUnlock:
@@ -1905,8 +1902,8 @@ ures_getUTF8StringByKey(const UResourceBundle *resB,
  *  INTERNAL: Get the name of the first real locale (not placeholder) 
  *  that has resource bundle data.
  */
-U_CAPI const char*  U_EXPORT2
-ures_getLocale(const UResourceBundle* resourceBundle, UErrorCode* status)
+U_INTERNAL const char*  U_EXPORT2
+ures_getLocaleInternal(const UResourceBundle* resourceBundle, UErrorCode* status)
 {
     if (status==NULL || U_FAILURE(*status)) {
         return NULL;
@@ -1918,6 +1915,14 @@ ures_getLocale(const UResourceBundle* resourceBundle, UErrorCode* status)
       return resourceBundle->fData->fName;
     }
 }
+
+U_CAPI const char* U_EXPORT2 
+ures_getLocale(const UResourceBundle* resourceBundle, 
+               UErrorCode* status)
+{
+  return ures_getLocaleInternal(resourceBundle, status);
+}
+
 
 U_CAPI const char* U_EXPORT2 
 ures_getLocaleByType(const UResourceBundle* resourceBundle, 
@@ -2154,8 +2159,18 @@ ures_countArrayItems(const UResourceBundle* resourceBundle,
     }
 }
 
-U_CAPI const char*  U_EXPORT2
-ures_getVersionNumber(const UResourceBundle*   resourceBundle)
+/**
+ * Internal function.
+ * Return the version number associated with this ResourceBundle as a string.
+ *
+ * @param resourceBundle The resource bundle for which the version is checked.
+ * @return  A version number string as specified in the resource bundle or its parent.
+ *          The caller does not own this string.
+ * @see ures_getVersion
+ * @internal
+ */
+U_INTERNAL const char* U_EXPORT2 
+ures_getVersionNumberInternal(const UResourceBundle *resourceBundle)
 {
     if (!resourceBundle) return NULL;
 
@@ -2198,10 +2213,16 @@ ures_getVersionNumber(const UResourceBundle*   resourceBundle)
     return resourceBundle->fVersion;
 }
 
+U_CAPI const char*  U_EXPORT2
+ures_getVersionNumber(const UResourceBundle*   resourceBundle)
+{
+    return ures_getVersionNumberInternal(resourceBundle);
+}
+
 U_CAPI void U_EXPORT2 ures_getVersion(const UResourceBundle* resB, UVersionInfo versionInfo) {
     if (!resB) return;
 
-    u_versionFromString(versionInfo, ures_getVersionNumber(resB));
+    u_versionFromString(versionInfo, ures_getVersionNumberInternal(resB));
 }
 
 /** Tree support functions *******************************/

@@ -308,7 +308,7 @@ th{
             "ครูนเอสโตเนีย",
         }
         EGP{
-            "EG£",
+            "EGP",
             "ปอนด์อียิปต์",
         }
         ERN{
@@ -1091,5 +1091,5 @@ th{
     CurrencyUnitPatterns{
         other{"{0} {1}"}
     }
-    Version{"2.0.48.64"}
+    Version{"2.0.50.94"}
 }

@@ -47,7 +47,7 @@ utrie_swap(const UDataSwapper *ds,
     }
 
     /* setup and swapping */
-    if(length>=0 && length<sizeof(UTrieHeader)) {
+    if(length>=0 && (uint32_t)length<sizeof(UTrieHeader)) {
         *pErrorCode=U_INDEX_OUTOFBOUNDS_ERROR;
         return 0;
     }
@@ -108,7 +108,7 @@ ucol_looksLikeCollationBinary(const UDataSwapper *ds,
                               const void *inData, int32_t length) {
     const uint8_t *inBytes;
     const UCATableHeader *inHeader;
-    UCATableHeader header={ 0 };
+    UCATableHeader header;
 
     if(ds==NULL || inData==NULL || length<-1) {
         return FALSE;
@@ -123,6 +123,7 @@ ucol_looksLikeCollationBinary(const UDataSwapper *ds,
      * sizeof(UCATableHeader)==42*4 in ICU 2.8
      * check the length against the header size before reading the size field
      */
+    uprv_memset(&header, 0, sizeof(header));
     if(length<0) {
         header.size=udata_readInt32(ds, inHeader->size);
     } else if((length<(42*4) || length<(header.size=udata_readInt32(ds, inHeader->size)))) {
@@ -132,8 +133,8 @@ ucol_looksLikeCollationBinary(const UDataSwapper *ds,
     header.magic=ds->readUInt32(inHeader->magic);
     if(!(
         header.magic==UCOL_HEADER_MAGIC &&
-        inHeader->formatVersion[0]==2 &&
-        inHeader->formatVersion[1]>=3
+        inHeader->formatVersion[0]==3 /*&&
+        inHeader->formatVersion[1]>=0*/
     )) {
         return FALSE;
     }
@@ -155,7 +156,7 @@ ucol_swapBinary(const UDataSwapper *ds,
 
     const UCATableHeader *inHeader;
     UCATableHeader *outHeader;
-    UCATableHeader header={ 0 };
+    UCATableHeader header;
 
     uint32_t count;
 
@@ -180,6 +181,7 @@ ucol_swapBinary(const UDataSwapper *ds,
      * sizeof(UCATableHeader)==42*4 in ICU 2.8
      * check the length against the header size before reading the size field
      */
+    uprv_memset(&header, 0, sizeof(header));
     if(length<0) {
         header.size=udata_readInt32(ds, inHeader->size);
     } else if((length<(42*4) || length<(header.size=udata_readInt32(ds, inHeader->size)))) {
@@ -192,8 +194,8 @@ ucol_swapBinary(const UDataSwapper *ds,
     header.magic=ds->readUInt32(inHeader->magic);
     if(!(
         header.magic==UCOL_HEADER_MAGIC &&
-        inHeader->formatVersion[0]==2 &&
-        inHeader->formatVersion[1]>=3
+        inHeader->formatVersion[0]==3 /*&&
+        inHeader->formatVersion[1]>=0*/
     )) {
         udata_printError(ds, "ucol_swapBinary(): magic 0x%08x or format version %02x.%02x is not a collation binary\n",
                          header.magic,
@@ -230,11 +232,14 @@ ucol_swapBinary(const UDataSwapper *ds,
         header.expansionCESize=         ds->readUInt32(inHeader->expansionCESize);
         header.endExpansionCECount=     udata_readInt32(ds, inHeader->endExpansionCECount);
         header.contractionUCACombosSize=udata_readInt32(ds, inHeader->contractionUCACombosSize);
-
+        header.scriptToLeadByte=        ds->readUInt32(inHeader->scriptToLeadByte);
+        header.leadByteToScript=        ds->readUInt32(inHeader->leadByteToScript);
+        
         /* swap the 32-bit integers in the header */
         ds->swapArray32(ds, inHeader, (int32_t)((const char *)&inHeader->jamoSpecial-(const char *)inHeader),
                            outHeader, pErrorCode);
-
+        ds->swapArray32(ds, &(inHeader->scriptToLeadByte), sizeof(header.scriptToLeadByte) + sizeof(header.leadByteToScript),
+                           &(outHeader->scriptToLeadByte), pErrorCode);
         /* set the output platform properties */
         outHeader->isBigEndian=ds->outIsBigEndian;
         outHeader->charSetFamily=ds->outCharset;
@@ -301,6 +306,24 @@ ucol_swapBinary(const UDataSwapper *ds,
             ds->swapArray16(ds, inBytes+header.contractionUCACombos, (int32_t)count,
                                outBytes+header.contractionUCACombos, pErrorCode);
         }
+        
+        /* swap the script to lead bytes */
+        if(header.scriptToLeadByte!=0) {
+            int indexCount = ds->readUInt16(*((uint16_t*)(inBytes+header.scriptToLeadByte))); // each entry = 2 * uint16
+            int dataCount = ds->readUInt16(*((uint16_t*)(inBytes+header.scriptToLeadByte + 2))); // each entry = uint16
+            ds->swapArray16(ds, inBytes+header.scriptToLeadByte, 
+                                4 + (4 * indexCount) + (2 * dataCount),
+                                outBytes+header.scriptToLeadByte, pErrorCode);
+        }
+        
+        /* swap the lead byte to scripts */
+        if(header.leadByteToScript!=0) {
+            int indexCount = ds->readUInt16(*((uint16_t*)(inBytes+header.leadByteToScript))); // each entry = uint16
+            int dataCount = ds->readUInt16(*((uint16_t*)(inBytes+header.leadByteToScript + 2))); // each entry = uint16
+            ds->swapArray16(ds, inBytes+header.leadByteToScript, 
+                                4 + (2 * indexCount) + (2 * dataCount),
+                                outBytes+header.leadByteToScript, pErrorCode);
+        }
     }
 
     return header.size;
@@ -311,6 +334,7 @@ U_CAPI int32_t U_EXPORT2
 ucol_swap(const UDataSwapper *ds,
           const void *inData, int32_t length, void *outData,
           UErrorCode *pErrorCode) {
+          
     const UDataInfo *pInfo;
     int32_t headerSize, collationSize;
 
@@ -327,8 +351,8 @@ ucol_swap(const UDataSwapper *ds,
         pInfo->dataFormat[1]==0x43 &&
         pInfo->dataFormat[2]==0x6f &&
         pInfo->dataFormat[3]==0x6c &&
-        pInfo->formatVersion[0]==2 &&
-        pInfo->formatVersion[1]>=3
+        pInfo->formatVersion[0]==3 /*&&
+        pInfo->formatVersion[1]>=0*/
     )) {
         udata_printError(ds, "ucol_swap(): data format %02x.%02x.%02x.%02x (format version %02x.%02x) is not a collation file\n",
                          pInfo->dataFormat[0], pInfo->dataFormat[1],
@@ -363,7 +387,7 @@ ucol_swapInverseUCA(const UDataSwapper *ds,
 
     const InverseUCATableHeader *inHeader;
     InverseUCATableHeader *outHeader;
-    InverseUCATableHeader header={ 0 };
+    InverseUCATableHeader header={ 0,0,0,0,0,{0,0,0,0},{0,0,0,0,0,0,0,0} };
 
     /* udata_swapDataHeader checks the arguments */
     headerSize=udata_swapDataHeader(ds, inData, length, outData, pErrorCode);

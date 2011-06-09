@@ -1,9 +1,11 @@
 /*
 *******************************************************************************
-* Copyright (C) 2007-2009, International Business Machines Corporation and    *
-* others. All Rights Reserved.                                                *
+* Copyright (C) 2007-2010, International Business Machines Corporation and
+* others. All Rights Reserved.
 *******************************************************************************
 */
+
+#include <typeinfo>  // for 'typeid' to work
 
 #include "unicode/utypes.h"
 
@@ -1033,8 +1035,8 @@ VTimeZone::operator==(const TimeZone& that) const {
     if (this == &that) {
         return TRUE;
     }
-    if (getDynamicClassID() != that.getDynamicClassID()
-        || !BasicTimeZone::operator==(that)) {
+
+    if (typeid(*this) != typeid(that) || !BasicTimeZone::operator==(that)) {
         return FALSE;
     }
     VTimeZone *vtz = (VTimeZone*)&that;
@@ -1063,8 +1065,39 @@ VTimeZone::createVTimeZoneByID(const UnicodeString& ID) {
     UErrorCode status = U_ZERO_ERROR;
     UResourceBundle *bundle = NULL;
     const UChar* versionStr = NULL;
-    int32_t len;
-    bundle = ures_openDirect(NULL, "zoneinfo", &status);
+    int32_t len = 0;
+    bundle = ures_openDirect(NULL, "zoneinfo64", &status);
+    versionStr = ures_getStringByKey(bundle, "TZVersion", &len, &status);
+    if (U_SUCCESS(status)) {
+        vtz->icutzver.setTo(versionStr, len);
+    }
+    ures_close(bundle);
+    return vtz;
+}
+
+VTimeZone*
+VTimeZone::createVTimeZoneFromBasicTimeZone(const BasicTimeZone& basic_time_zone, UErrorCode &status) {
+    if (U_FAILURE(status)) {
+        return NULL;
+    }
+    VTimeZone *vtz = new VTimeZone();
+    if (vtz == NULL) {
+        status = U_MEMORY_ALLOCATION_ERROR;
+        return NULL;
+    }
+    vtz->tz = (BasicTimeZone *)basic_time_zone.clone();
+    if (vtz->tz == NULL) {
+        status = U_MEMORY_ALLOCATION_ERROR;
+        delete vtz;
+        return NULL;
+    }
+    vtz->tz->getID(vtz->olsonzid);
+
+    // Set ICU tzdata version
+    UResourceBundle *bundle = NULL;
+    const UChar* versionStr = NULL;
+    int32_t len = 0;
+    bundle = ures_openDirect(NULL, "zoneinfo64", &status);
     versionStr = ures_getStringByKey(bundle, "TZVersion", &len, &status);
     if (U_SUCCESS(status)) {
         vtz->icutzver.setTo(versionStr, len);
@@ -1563,8 +1596,9 @@ VTimeZone::parse(UErrorCode& status) {
 
     for (n = 0; n < rules->size(); n++) {
         TimeZoneRule *r = (TimeZoneRule*)rules->elementAt(n);
-        if (r->getDynamicClassID() == AnnualTimeZoneRule::getStaticClassID()) {
-            if (((AnnualTimeZoneRule*)r)->getEndYear() == AnnualTimeZoneRule::MAX_YEAR) {
+        AnnualTimeZoneRule *atzrule = dynamic_cast<AnnualTimeZoneRule *>(r);
+        if (atzrule != NULL) {
+            if (atzrule->getEndYear() == AnnualTimeZoneRule::MAX_YEAR) {
                 finalRuleCount++;
                 finalRuleIdx = n;
             }
@@ -1920,12 +1954,13 @@ VTimeZone::writeZone(VTZWriter& w, BasicTimeZone& basictz,
         Grego::timeToFields(tzt.getTime() + fromOffset, year, month, dom, dow, doy, mid);
         int32_t weekInMonth = Grego::dayOfWeekInMonth(year, month, dom);
         UBool sameRule = FALSE;
+        const AnnualTimeZoneRule *atzrule;
         if (isDst) {
             if (finalDstRule == NULL
-                && tzt.getTo()->getDynamicClassID() == AnnualTimeZoneRule::getStaticClassID()) {
-                if (((AnnualTimeZoneRule*)tzt.getTo())->getEndYear() == AnnualTimeZoneRule::MAX_YEAR) {
-                    finalDstRule = (AnnualTimeZoneRule*)tzt.getTo()->clone();
-                }
+                && (atzrule = dynamic_cast<const AnnualTimeZoneRule *>(tzt.getTo())) != NULL
+                && atzrule->getEndYear() == AnnualTimeZoneRule::MAX_YEAR
+            ) {
+                finalDstRule = (AnnualTimeZoneRule*)tzt.getTo()->clone();
             }
             if (dstCount > 0) {
                 if (year == dstStartYear + dstCount
@@ -1973,10 +2008,10 @@ VTimeZone::writeZone(VTZWriter& w, BasicTimeZone& basictz,
             }
         } else {
             if (finalStdRule == NULL
-                && tzt.getTo()->getDynamicClassID() == AnnualTimeZoneRule::getStaticClassID()) {
-                    if (((AnnualTimeZoneRule*)tzt.getTo())->getEndYear() == AnnualTimeZoneRule::MAX_YEAR) {
-                    finalStdRule = (AnnualTimeZoneRule*)tzt.getTo()->clone();
-                }
+                && (atzrule = dynamic_cast<const AnnualTimeZoneRule *>(tzt.getTo())) != NULL
+                && atzrule->getEndYear() == AnnualTimeZoneRule::MAX_YEAR
+            ) {
+                finalStdRule = (AnnualTimeZoneRule*)tzt.getTo()->clone();
             }
             if (stdCount > 0) {
                 if (year == stdStartYear + stdCount
@@ -2442,6 +2477,18 @@ VTimeZone::writeFinalRule(VTZWriter& writer, UBool isDst, const AnnualTimeZoneRu
         modifiedRule = FALSE;
         dtrule = rule->getRule();
     }
+
+    // If the rule's mills in a day is out of range, adjust start time.
+    // Olson tzdata supports 24:00 of a day, but VTIMEZONE does not.
+    // See ticket#7008/#7518
+
+    int32_t timeInDay = dtrule->getRuleMillisInDay();
+    if (timeInDay < 0) {
+        startTime = startTime + (0 - timeInDay);
+    } else if (timeInDay >= U_MILLIS_PER_DAY) {
+        startTime = startTime - (timeInDay - (U_MILLIS_PER_DAY - 1));
+    }
+
     int32_t toOffset = rule->getRawOffset() + rule->getDSTSavings();
     UnicodeString name;
     rule->getName(name);
@@ -2577,4 +2624,3 @@ U_NAMESPACE_END
 #endif /* #if !UCONFIG_NO_FORMATTING */
 
 //eof
-

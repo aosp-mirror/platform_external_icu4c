@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2009, International Business Machines Corporation and
+ * Copyright (c) 1997-2010, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /*******************************************************************************
@@ -250,6 +250,7 @@ static void checkStatus(int32_t line, UErrorCode expected, UErrorCode status) {
 }
 
 static void TestErrorCodes(void) {
+  static const UVersionInfo icu47 = { 4, 7, 0, 0 };
   UErrorCode status = U_USING_DEFAULT_WARNING;
 
   UResourceBundle *r = NULL, *r2 = NULL;
@@ -280,7 +281,8 @@ static void TestErrorCodes(void) {
   checkStatus(__LINE__, U_USING_DEFAULT_WARNING, status);
 
   /* we look up the resource which is aliased and at our level */
-  if(U_SUCCESS(status) && r != NULL) {
+  /* TODO: restore the following test when cldrbug 3058: is fixed */
+  if(U_SUCCESS(status) && r != NULL && isICUVersionAtLeast(icu47)) {
     status = U_USING_DEFAULT_WARNING;
     r2 = ures_getByKey(r, "Countries", r2, &status);
     checkStatus(__LINE__, U_USING_DEFAULT_WARNING, status);

@@ -57,6 +57,9 @@ typedef struct ULanguageTag {
 static const char* EMPTY = "";
 static const char* LANG_UND = "und";
 static const char* PRIVATEUSE_KEY = "x";
+static const char* _POSIX = "_POSIX";
+static const char* POSIX_KEY = "va";
+static const char* POSIX_VALUE = "posix";
 
 #define LANG_UND_LEN 3
 
@@ -1056,7 +1059,7 @@ _appendRegionToLanguageTag(const char* localeID, char* appendAt, int32_t capacit
 }
 
 static int32_t
-_appendVariantsToLanguageTag(const char* localeID, char* appendAt, int32_t capacity, UBool strict, UErrorCode* status) {
+_appendVariantsToLanguageTag(const char* localeID, char* appendAt, int32_t capacity, UBool strict, UBool *hadPosix, UErrorCode* status) {
     char buf[ULOC_FULLNAME_CAPACITY];
     UErrorCode tmpStatus = U_ZERO_ERROR;
     int32_t len, i;
@@ -1104,20 +1107,26 @@ _appendVariantsToLanguageTag(const char* localeID, char* appendAt, int32_t capac
 
                     /* validate */
                     if (_isVariantSubtag(pVar, -1)) {
-                        /* emit the variant to the list */
-                        var = uprv_malloc(sizeof(VariantListEntry));
-                        if (var == NULL) {
-                            *status = U_MEMORY_ALLOCATION_ERROR;
-                            break;
-                        }
-                        var->variant = pVar;
-                        if (!_addVariantToList(&varFirst, var)) {
-                            /* duplicated variant */
-                            uprv_free(var);
-                            if (strict) {
-                                *status = U_ILLEGAL_ARGUMENT_ERROR;
+                        if (uprv_strcmp(pVar,POSIX_VALUE)) {
+                            /* emit the variant to the list */
+                            var = uprv_malloc(sizeof(VariantListEntry));
+                            if (var == NULL) {
+                                *status = U_MEMORY_ALLOCATION_ERROR;
                                 break;
                             }
+                            var->variant = pVar;
+                            if (!_addVariantToList(&varFirst, var)) {
+                                /* duplicated variant */
+                                uprv_free(var);
+                                if (strict) {
+                                    *status = U_ILLEGAL_ARGUMENT_ERROR;
+                                    break;
+                                }
+                            }
+                        } else {
+                            /* Special handling for POSIX variant, need to remember that we had it and then */
+                            /* treat it like an extension later. */
+                            *hadPosix = TRUE;
                         }
                     } else if (strict) {
                         *status = U_ILLEGAL_ARGUMENT_ERROR;
@@ -1171,17 +1180,17 @@ _appendVariantsToLanguageTag(const char* localeID, char* appendAt, int32_t capac
 }
 
 static int32_t
-_appendKeywordsToLanguageTag(const char* localeID, char* appendAt, int32_t capacity, UBool strict, UErrorCode* status) {
+_appendKeywordsToLanguageTag(const char* localeID, char* appendAt, int32_t capacity, UBool strict, UBool hadPosix, UErrorCode* status) {
     char buf[ULOC_KEYWORD_AND_VALUES_CAPACITY];
     UEnumeration *keywordEnum = NULL;
     int32_t reslen = 0;
 
     keywordEnum = uloc_openKeywords(localeID, status);
-    if (U_FAILURE(*status)) {
+    if (U_FAILURE(*status) && !hadPosix) {
         uenum_close(keywordEnum);
         return 0;
     }
-    if (keywordEnum != NULL) {
+    if (keywordEnum != NULL || hadPosix) {
         /* reorder extensions */
         int32_t len;
         const char *key;
@@ -1296,6 +1305,22 @@ _appendKeywordsToLanguageTag(const char* localeID, char* appendAt, int32_t capac
                 }
             }
         }
+
+        /* Special handling for POSIX variant - add the keywords for POSIX */
+        if (hadPosix) {
+            /* create ExtensionListEntry for POSIX */
+            ext = uprv_malloc(sizeof(ExtensionListEntry));
+            if (ext == NULL) {
+                *status = U_MEMORY_ALLOCATION_ERROR;
+            }
+            ext->key = POSIX_KEY;
+            ext->value = POSIX_VALUE;
+
+            if (!_addExtensionToList(&firstExt, ext, TRUE)) {
+                uprv_free(ext);
+            }
+        }
+
         if (U_SUCCESS(*status) && (firstExt != NULL)) {
             UBool startLDMLExtension = FALSE;
 
@@ -1361,7 +1386,7 @@ _appendKeywordsToLanguageTag(const char* localeID, char* appendAt, int32_t capac
  * Note: char* buf is used for storing keywords
  */
 static void
-_appendLDMLExtensionAsKeywords(const char* ldmlext, ExtensionListEntry** appendTo, char* buf, int32_t bufSize, UErrorCode *status) {
+_appendLDMLExtensionAsKeywords(const char* ldmlext, ExtensionListEntry** appendTo, char* buf, int32_t bufSize, UBool *posixVariant, UErrorCode *status) {
     const char *p, *pNext, *pSep;
     const char *pBcpKey, *pBcpType;
     const char *pKey, *pType;
@@ -1417,20 +1442,27 @@ _appendLDMLExtensionAsKeywords(const char* ldmlext, ExtensionListEntry** appendT
             *(buf + bufIdx) = 0;
             bufIdx++;
 
-            /* create an ExtensionListEntry for this keyword */
-            kwd = uprv_malloc(sizeof(ExtensionListEntry));
-            if (kwd == NULL) {
-                *status = U_MEMORY_ALLOCATION_ERROR;
-                goto cleanup;
-            }
+            /* Special handling for u-va-posix, since we want to treat this as a variant, not */
+            /* as a keyword.                                                                  */
 
-            kwd->key = pKey;
-            kwd->value = pType;
+            if ( !uprv_strcmp(pKey,POSIX_KEY) && !uprv_strcmp(pType,POSIX_VALUE) ) {
+                *posixVariant = TRUE;
+            } else {
+                /* create an ExtensionListEntry for this keyword */
+                kwd = uprv_malloc(sizeof(ExtensionListEntry));
+                if (kwd == NULL) {
+                    *status = U_MEMORY_ALLOCATION_ERROR;
+                    goto cleanup;
+                }
 
-            if (!_addExtensionToList(&kwdFirst, kwd, FALSE)) {
-                *status = U_ILLEGAL_ARGUMENT_ERROR;
-                uprv_free(kwd);
-                goto cleanup;
+                kwd->key = pKey;
+                kwd->value = pType;
+
+                if (!_addExtensionToList(&kwdFirst, kwd, FALSE)) {
+                    *status = U_ILLEGAL_ARGUMENT_ERROR;
+                    uprv_free(kwd);
+                    goto cleanup;
+                }
             }
 
             /* for next pair */
@@ -1472,6 +1504,7 @@ _appendKeywords(ULanguageTag* langtag, char* appendAt, int32_t capacity, UErrorC
     ExtensionListEntry *kwd;
     const char *key, *type;
     char kwdBuf[ULOC_KEYWORDS_CAPACITY];
+    UBool posixVariant = FALSE;
 
     if (U_FAILURE(*status)) {
         return 0;
@@ -1484,7 +1517,7 @@ _appendKeywords(ULanguageTag* langtag, char* appendAt, int32_t capacity, UErrorC
         key = ultag_getExtensionKey(langtag, i);
         type = ultag_getExtensionValue(langtag, i);
         if (*key == LDMLEXT) {
-            _appendLDMLExtensionAsKeywords(type, &kwdFirst, kwdBuf, sizeof(kwdBuf), status);
+            _appendLDMLExtensionAsKeywords(type, &kwdFirst, kwdBuf, sizeof(kwdBuf), &posixVariant, status);
             if (U_FAILURE(*status)) {
                 break;
             }
@@ -1520,6 +1553,16 @@ _appendKeywords(ULanguageTag* langtag, char* appendAt, int32_t capacity, UErrorC
                 }
             }
         }
+    }
+
+    /* If a POSIX variant was in the extensions, write it out before writing the keywords. */
+
+    if (U_SUCCESS(*status) && posixVariant) {
+        len = (int32_t) uprv_strlen(_POSIX);
+        if (reslen < capacity) {
+            uprv_memcpy(appendAt + reslen, _POSIX, uprv_min(len, capacity - reslen));
+        }
+        reslen += len;
     }
 
     if (U_SUCCESS(*status) && kwdFirst != NULL) {
@@ -2150,6 +2193,7 @@ uloc_toLanguageTag(const char* localeID,
     char canonical[256];
     int32_t reslen = 0;
     UErrorCode tmpStatus = U_ZERO_ERROR;
+    UBool hadPosix = FALSE;
 
     /* Note: uloc_canonicalize returns "en_US_POSIX" for input locale ID "".  See #6835 */
     canonical[0] = 0;
@@ -2164,8 +2208,8 @@ uloc_toLanguageTag(const char* localeID,
     reslen += _appendLanguageToLanguageTag(canonical, langtag, langtagCapacity, strict, status);
     reslen += _appendScriptToLanguageTag(canonical, langtag + reslen, langtagCapacity - reslen, strict, status);
     reslen += _appendRegionToLanguageTag(canonical, langtag + reslen, langtagCapacity - reslen, strict, status);
-    reslen += _appendVariantsToLanguageTag(canonical, langtag + reslen, langtagCapacity - reslen, strict, status);
-    reslen += _appendKeywordsToLanguageTag(canonical, langtag + reslen, langtagCapacity - reslen, strict, status);
+    reslen += _appendVariantsToLanguageTag(canonical, langtag + reslen, langtagCapacity - reslen, strict, &hadPosix, status);
+    reslen += _appendKeywordsToLanguageTag(canonical, langtag + reslen, langtagCapacity - reslen, strict, hadPosix, status);
 
     return reslen;
 }

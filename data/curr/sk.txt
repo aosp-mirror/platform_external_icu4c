@@ -276,7 +276,7 @@ sk{
             "Estónska kroon",
         }
         EGP{
-            "EG£",
+            "EGP",
             "Egyptská libra",
         }
         ERN{
@@ -956,5 +956,5 @@ sk{
             "Zimbabský dolár",
         }
     }
-    Version{"2.0.48.56"}
+    Version{"2.0.50.88"}
 }

@@ -316,17 +316,10 @@ _shapeToArabicDigitsWithContext(UChar *s, int32_t length,
                                 UChar digitBase,
                                 UBool isLogical, UBool lastStrongWasAL) {
     const UBiDiProps *bdp;
-    UErrorCode errorCode;
-
     int32_t i;
     UChar c;
 
-    errorCode=U_ZERO_ERROR;
-    bdp=ubidi_getSingleton(&errorCode);
-    if(U_FAILURE(errorCode)) {
-        return;
-    }
-
+    bdp=ubidi_getSingleton();
     digitBase-=0x30;
 
     /* the iteration direction depends on the type of input */
@@ -379,8 +372,10 @@ _shapeToArabicDigitsWithContext(UChar *s, int32_t length,
  *           in case the user specifies the buffer to be
  *           U_SHAPE_TEXT_DIRECTION_LOGICAL
  */
-static void 
+static void
+/* BEGIN android-changed */
 invertBuffer(UChar *buffer,int32_t size,uint64_t options,int32_t lowlimit,int32_t highlimit) {
+/* END android-changed */
     UChar temp;
     int32_t i=0,j=0;
     for(i=lowlimit,j=size-highlimit-1;i<j;i++,j--) {
@@ -442,7 +437,9 @@ getLink(UChar ch) {
  *           at each end of the logical buffer
  */
 static void
+/* BEGIN android-changed */
 countSpaces(UChar *dest,int32_t size,uint64_t options,int32_t *spacesCountl,int32_t *spacesCountr) {
+/* END android-changed */
     int32_t i = 0;
     int32_t countl = 0,countr = 0;
     while(dest[i] == SPACE_CHAR) {
@@ -609,9 +606,11 @@ isIsolatedTashkeelChar(UChar ch){
  *           destination buffer will be resized.
  */
 
+/* BEGIN android-changed */
 static int32_t
 calculateSize(const UChar *source, int32_t sourceLength,
 int32_t destSize,uint64_t options) {
+/* END android-changed */
     int32_t i = 0;
     
     int lamAlefOption = 0;
@@ -666,10 +665,12 @@ int32_t destSize,uint64_t options) {
  *            Case 3: if the Tashkeel is isolated replace it with Space.
  *
  */
+/* BEGIN android-changed */
 static int32_t
 handleTashkeelWithTatweel(UChar *dest, int32_t sourceLength,
              int32_t destSize,uint64_t options,
              UErrorCode *pErrorCode) {
+/* END android-changed */
                  int i;
                  for(i = 0; i < sourceLength; i++){
                      if((isTashkeelOnTatweelChar(dest[i]) == 1)){
@@ -704,11 +705,13 @@ handleTashkeelWithTatweel(UChar *dest, int32_t sourceLength,
  *           BEGIN will place the space at the end of the buffer. 
  */
 
+/* BEGIN android-changed */
 static int32_t
 handleGeneratedSpaces(UChar *dest, int32_t sourceLength,
                     int32_t destSize,
                     uint64_t options,
                     UErrorCode *pErrorCode ) {
+/* END android-changed */
 
     int32_t i = 0, j = 0;
     int32_t count = 0;
@@ -763,12 +766,14 @@ handleGeneratedSpaces(UChar *dest, int32_t sourceLength,
       lamAlefOption = 0;
 
     if (shapingMode == 0){
+        /* BEGIN android-changed */
         if ( (options&U_SHAPE_LAMALEF_MASK) == U_SHAPE_LAMALEF_NEAR &&
-             (options&U_SHAPE_X_LAMALEF_SUB_ALTERNATE) == 0) { // if set, leave LAMALEF_SPACE_SUB in the output
+             (options&U_SHAPE_X_LAMALEF_SUB_ALTERNATE) == 0) { /* if set, leave LAMALEF_SPACE_SUB in the output */   
+        /* END android-changed */
             lamAlefOption = 1;
         }
     }
-
+    
     if (lamAlefOption){
         /* Lam+Alef is already shaped into LamAlef + FFFF */
         i = 0;
@@ -824,6 +829,8 @@ handleGeneratedSpaces(UChar *dest, int32_t sourceLength,
         uprv_memcpy(dest, tempbuffer, sourceLength*U_SIZEOF_UCHAR);
         destSize = sourceLength;
     }
+
+
 
     lamAlefOption = 0;
     tashkeelOption = 0;
@@ -1066,11 +1073,12 @@ expandCompositCharAtNear(UChar *dest, int32_t sourceLength, int32_t destSize,UEr
  *            If there are no spaces to expand these characters, an error will be set to 
  *            U_NO_SPACE_AVAILABLE as defined in utypes.h 
  */
- 
+/* BEGIN android-changed */ 
 static int32_t
 expandCompositChar(UChar *dest, int32_t sourceLength,
               int32_t destSize,uint64_t options,
               UErrorCode *pErrorCode, int shapingMode) {
+/* END android-changed */ 
 
     int32_t      i = 0,j = 0;
 
@@ -1180,11 +1188,13 @@ expandCompositChar(UChar *dest, int32_t sourceLength,
  *Function : Converts an Arabic Unicode buffer in 06xx Range into a shaped
  *           arabic Unicode buffer in FExx Range
  */
+/* BEGIN android-changed */ 
 static int32_t
 shapeUnicode(UChar *dest, int32_t sourceLength,
              int32_t destSize,uint64_t options,
              UErrorCode *pErrorCode,
              int tashkeelFlag) {
+/* END android-changed */ 
 
     int32_t          i, iend;
     int32_t          step;
@@ -1348,10 +1358,12 @@ shapeUnicode(UChar *dest, int32_t sourceLength,
  *Function : Converts an Arabic Unicode buffer in FExx Range into unshaped
  *           arabic Unicode buffer in 06xx Range
  */
+/* BEGIN android-changed */ 
 static int32_t
 deShapeUnicode(UChar *dest, int32_t sourceLength,
                int32_t destSize,uint64_t options,
                UErrorCode *pErrorCode) {
+/* END android-changed */ 
     int32_t i = 0;
     int32_t lamalef_found = 0;
     int32_t yehHamzaComposeEnabled = 0;
@@ -1395,19 +1407,22 @@ deShapeUnicode(UChar *dest, int32_t sourceLength,
    return destSize;
 }
 
-/*
+/* 
  ****************************************
  * u_shapeArabic
  ****************************************
- */
+ */    
 
+/* BEGIN android-changed */ 
 U_CAPI int32_t U_EXPORT2
 u_shapeArabic(const UChar *source, int32_t sourceLength,
               UChar *dest, int32_t destCapacity,
-              uint64_t options, UErrorCode *pErrorCode) {
+              uint64_t options,
+              UErrorCode *pErrorCode) {
+/* END android-changed */ 
 
     int32_t destLength;
-
+    
     spacesRelativeToTextBeginEnd = 0;
     uShapeLamalefBegin = U_SHAPE_LAMALEF_BEGIN;
     uShapeLamalefEnd = U_SHAPE_LAMALEF_END;

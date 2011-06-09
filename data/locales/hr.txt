@@ -21,26 +21,17 @@ hr{
         "Latn",
     }
     NumberElements{
-        ",",
-        ".",
-        ";",
-        "%",
-        "0",
-        "#",
-        "-",
-        "E",
-        "‰",
-        "∞",
-        "NaN",
-        "+",
+        latn{
+            patterns{
+                currencyFormat{"#,##0.00 ¤"}
+            }
+            symbols{
+                decimal{","}
+                group{"."}
+            }
+        }
     }
-    NumberPatterns{
-        "#,##0.###",
-        "#,##0.00 ¤",
-        "#,##0%",
-        "#E0",
-    }
-    Version{"2.0.48.64"}
+    Version{"2.0.50.96"}
     calendar{
         buddhist{
             DateTimePatterns{
@@ -101,32 +92,32 @@ hr{
                 H{"HH"}
                 Hm{"HH:mm"}
                 Hms{"HH:mm:ss"}
-                MEd{"E, d.M."}
+                MEd{"E, d. M."}
                 MMM{"LLL."}
-                MMMEd{"E, d.MMM."}
+                MMMEd{"E, d. MMM."}
                 MMMMEd{"E, d. MMMM"}
                 MMMMd{"d. MMMM"}
                 MMMMdd{"dd. MMMM"}
-                MMMd{"d.MMM."}
-                MMdd{"dd.MM."}
-                Md{"d.M."}
+                MMMd{"d. MMM."}
+                MMdd{"dd. MM."}
+                Md{"d. M."}
                 d{"d."}
                 h{"hh a"}
                 hm{"hh:mm a"}
                 hms{"hh:mm:ss a"}
                 ms{"mm:ss"}
                 y{"y."}
-                yM{"M.yyyy."}
-                yMEd{"EEE, d.M.y."}
-                yMMM{"MMM.y."}
-                yMMMEd{"EEE, d.MMM.y."}
+                yM{"M. yyyy."}
+                yMEd{"EEE, d. M. y."}
+                yMMM{"MMM. y."}
+                yMMMEd{"EEE, d. MMM. y."}
                 yMMMM{"MMMM y."}
                 yQ{"Q. yyyy."}
                 yQQQ{"QQQ y."}
-                yyMMMEEEd{"EEE, d.MMM.yy."}
+                yyMMMEEEd{"EEE, d. MMM. yy."}
                 yyQ{"Q yy."}
                 yyQQQQ{"QQQQ yy."}
-                yyyyMM{"MM.yyyy."}
+                yyyyMM{"MM. yyyy."}
                 yyyyMMMM{"MMMM y."}
             }
             dayNames{
@@ -304,8 +295,8 @@ hr{
                     y{"E, dd.MMM.y. - E, dd.MMM.y."}
                 }
                 yMMMM{
-                    M{"MM. - MM.yyyy."}
-                    y{"MM.yyyy. - MM.yyyy."}
+                    M{"LLLL.-LLLL.y."}
+                    y{"LLLL.y. - LLLL.y."}
                 }
                 yMMMd{
                     M{"dd.MMM. - dd.MMM.y."}
@@ -441,6 +432,7 @@ hr{
                 "{1} {0}",
             }
             availableFormats{
+                Ed{"E, d."}
                 yyyy{"y. G"}
                 yyyyM{"M.y. G"}
                 yyyyMEd{"EEE, d.M.y. G"}

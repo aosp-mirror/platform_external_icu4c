@@ -1,7 +1,7 @@
 /*
  ******************************************************************************
- * Copyright (C) 1996-2009, International Business Machines Corporation and   *
- * others. All Rights Reserved.                                               *
+ * Copyright (C) 1996-2010, International Business Machines Corporation and
+ * others. All Rights Reserved.
  ******************************************************************************
  */
 
@@ -53,6 +53,8 @@
  *                          to implementation file.
  * 01/29/01     synwee      Modified into a C++ wrapper calling C APIs (ucol.h)
  */
+
+#include <typeinfo>  // for 'typeid' to work
 
 #include "unicode/utypes.h"
 
@@ -193,7 +195,7 @@ UBool RuleBasedCollator::operator==(const Collator& that) const
   if (Collator::operator==(that))
     return TRUE;
 
-  if (getDynamicClassID() != that.getDynamicClassID())
+  if (typeid(*this) != typeid(that))
     return FALSE;  /* not the same class */
 
   RuleBasedCollator& thatAlias = (RuleBasedCollator&)that;
@@ -584,6 +586,21 @@ void RuleBasedCollator::setStrength(ECollationStrength newStrength)
     UCollationStrength strength = getUCollationStrength(newStrength);
     ucol_setAttribute(ucollator, UCOL_STRENGTH, strength, &intStatus);
 }
+
+int32_t RuleBasedCollator::getReorderCodes(int32_t *dest,
+                                          int32_t destCapacity,
+                                          UErrorCode& status) const
+{
+    return ucol_getReorderCodes(ucollator, dest, destCapacity, &status);
+}
+
+void RuleBasedCollator::setReorderCodes(const int32_t *reorderCodes,
+                                       int32_t reorderCodesLength,
+                                       UErrorCode& status)
+{
+    ucol_setReorderCodes(ucollator, reorderCodes, reorderCodesLength, &status);
+}
+
 
 /**
 * Create a hash code for this collation. Just hash the main rule table -- that

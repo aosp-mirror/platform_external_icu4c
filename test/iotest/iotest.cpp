@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 2002-2009, International Business Machines
+*   Copyright (C) 2002-2010, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *   file name:  iotest.cpp
@@ -812,7 +812,7 @@ int main(int argc, char* argv[])
     UDate startTime, endTime;
     int32_t diffTime;
 
-    startTime = uprv_getUTCtime();
+    startTime = uprv_getRawUTCtime();
 
     /* Check whether ICU will initialize without forcing the build data directory into
     *  the ICU_DATA path.  Success here means either the data dll contains data, or that
@@ -856,6 +856,7 @@ int main(int argc, char* argv[])
         /* This should delete any temporary files. */
         if (fileToRemove) {
             fclose(fileToRemove);
+            log_verbose("Deleting: %s\n", STANDARD_TEST_FILE);
             if (remove(STANDARD_TEST_FILE) != 0) {
                 /* Maybe someone didn't close the file correctly. */
                 fprintf(stderr, "FAIL: Could not delete %s\n", STANDARD_TEST_FILE);
@@ -869,7 +870,7 @@ int main(int argc, char* argv[])
     DataDrivenLogger::cleanUp();
     u_cleanup();
 
-    endTime = uprv_getUTCtime();
+    endTime = uprv_getRawUTCtime();
     diffTime = (int32_t)(endTime - startTime);
     printf("Elapsed Time: %02d:%02d:%02d.%03d\n",
         (int)((diffTime%U_MILLIS_PER_DAY)/U_MILLIS_PER_HOUR),

@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-*   Copyright (C) 1996-2009, International Business Machines
+*   Copyright (C) 1996-2010, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *******************************************************************************
 */
@@ -32,8 +32,8 @@ U_NAMESPACE_USE
  * @param status error code, will be set to failure if there is a familure or the fmt is NULL.
  */
 static void verifyIsSimpleDateFormat(const UDateFormat* fmt, UErrorCode *status) {
-   if(!U_FAILURE(*status) && 
-       ((DateFormat*)fmt)->getDynamicClassID()!=SimpleDateFormat::getStaticClassID()) {
+   if(U_SUCCESS(*status) &&
+       dynamic_cast<const SimpleDateFormat*>(reinterpret_cast<const DateFormat*>(fmt))==NULL) {
        *status = U_ILLEGAL_ARGUMENT_ERROR;
    }
 }
@@ -337,13 +337,16 @@ udat_toPattern(    const   UDateFormat     *fmt,
         res.setTo(result, 0, resultLength);
     }
 
-    if ( ((DateFormat*)fmt)->getDynamicClassID()==SimpleDateFormat::getStaticClassID() ) {
+    const DateFormat *df=reinterpret_cast<const DateFormat *>(fmt);
+    const SimpleDateFormat *sdtfmt=dynamic_cast<const SimpleDateFormat *>(df);
+    const RelativeDateFormat *reldtfmt;
+    if (sdtfmt!=NULL) {
         if(localized)
-            ((SimpleDateFormat*)fmt)->toLocalizedPattern(res, *status);
+            sdtfmt->toLocalizedPattern(res, *status);
         else
-            ((SimpleDateFormat*)fmt)->toPattern(res);
-    } else if ( !localized && ((DateFormat*)fmt)->getDynamicClassID()==RelativeDateFormat::getStaticClassID() ) {
-        ((RelativeDateFormat*)fmt)->toPattern(res, *status);
+            sdtfmt->toPattern(res);
+    } else if (!localized && (reldtfmt=dynamic_cast<const RelativeDateFormat *>(df))!=NULL) {
+        reldtfmt->toPattern(res, *status);
     } else {
         *status = U_ILLEGAL_ARGUMENT_ERROR;
         return -1;
@@ -783,7 +786,7 @@ udat_setSymbols(    UDateFormat             *format,
             int32_t                 valueLength,
             UErrorCode              *status)
 {
-
+    verifyIsSimpleDateFormat(format, status);
     if(U_FAILURE(*status)) return;
 
     DateFormatSymbols *syms = (DateFormatSymbols *)((SimpleDateFormat *)format)->getDateFormatSymbols();
@@ -896,8 +899,8 @@ udat_getLocaleByType(const UDateFormat *fmt,
  * @param status error code, will be set to failure if there is a familure or the fmt is NULL.
  */
 static void verifyIsRelativeDateFormat(const UDateFormat* fmt, UErrorCode *status) {
-   if(!U_FAILURE(*status) && 
-       ((DateFormat*)fmt)->getDynamicClassID()!=RelativeDateFormat::getStaticClassID()) {
+   if(U_SUCCESS(*status) &&
+       dynamic_cast<const RelativeDateFormat*>(reinterpret_cast<const DateFormat*>(fmt))==NULL) {
        *status = U_ILLEGAL_ARGUMENT_ERROR;
    }
 }

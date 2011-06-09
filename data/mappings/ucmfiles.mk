@@ -32,6 +32,7 @@
 # If you are planning to exclude EBCDIC mappings in you data then please delete
 # ucmebcdic.mk from the <icu>/source/data directory
 #
+# Note: noop-*.ucm are for Android only to prevent 2022 security attack.
 
 UCM_SOURCE_FILES = ibm-437_P100-1995.ucm\
 ibm-737_P100-1997.ucm\
@@ -113,5 +114,8 @@ jisx-212.ucm\
 noop-cns-11643.ucm noop-gb2312_gl.ucm noop-iso-ir-165.ucm\
 iso-ir-165.ucm cns-11643-1992.ucm\
 ibm-5478_P100-1995.ucm\
-icu-internal-25546.ucm lmb-excp.ucm
+icu-internal-25546.ucm lmb-excp.ucm \
+icu-internal-compound-d1.ucm icu-internal-compound-d2.ucm icu-internal-compound-d3.ucm icu-internal-compound-d4.ucm\
+icu-internal-compound-d5.ucm icu-internal-compound-d6.ucm icu-internal-compound-d7.ucm \
+icu-internal-compound-s1.ucm icu-internal-compound-s2.ucm icu-internal-compound-s3.ucm icu-internal-compound-t.ucm
 

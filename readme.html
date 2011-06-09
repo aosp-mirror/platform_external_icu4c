@@ -4,7 +4,7 @@
 <html lang="en-US" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US">
   <head>
 
-    <title>ReadMe for ICU 4.4.1</title>
+    <title>ReadMe for ICU 4.6</title>
     <meta name="COPYRIGHT" content=
     "Copyright (c) 1997-2010 IBM Corporation and others. All Rights Reserved." />
     <meta name="KEYWORDS" content=
@@ -15,11 +15,11 @@
 	<link type="text/css" href="./icu4c.css" rel="stylesheet"/>
   </head>
 
-  <body>
+  <body class="draft">
     <h1>International Components for Unicode<br />
-     <abbr title="International Components for Unicode">ICU</abbr> 4.4.1 ReadMe</h1>
+     <abbr title="International Components for Unicode">ICU</abbr> 4.6 ReadMe</h1>
 
-    <p>Last updated: 2010 Apr 22nd<br />
+    <p>Last updated: 2010-Dec-01<br />
      Copyright &copy; 1997-2010 International Business Machines Corporation and
     others. All Rights Reserved.</p>
     <!-- Remember that there is a copyright at the end too -->
@@ -42,8 +42,6 @@
         <a href="#HowToBuild">How To Build And Install ICU</a> 
 
         <ul >
-          <li><a href="#HowToBuildSupported">Supported Platforms</a></li>
-
           <li><a href="#RecBuild">Recommended Build Options</a></li>
 
           <li><a href="#HowToBuildWindows">Windows</a></li>
@@ -168,6 +166,12 @@
       </tr>
 
       <tr>
+        <td>How To Use ICU</td>
+
+        <td><a href="http://userguide.icu-project.org/howtouseicu">http://userguide.icu-project.org/howtouseicu</a></td>
+      </tr>
+
+      <tr>
         <td>Download ICU Releases</td>
 
         <td><a href=
@@ -204,10 +208,30 @@
 
     <p>To see which APIs are new or changed in this release, view the <a href="APIChangeReport.html">ICU4C API Change Report</a>. </p>
 
-    <p><!-- The following list concentrates on <em>changes that affect existing
-    applications migrating from previous ICU releases</em>. --> For more news about
+    <p>The following list concentrates on <em>changes that affect existing
+    applications migrating from previous ICU releases</em>.
+    For more news about
     this release, see the <a href="http://site.icu-project.org/download">ICU
     download page</a>.</p>
+
+    <ul>
+      <li><strong>Compiler RTTI</strong><br />
+        ICU 4.6 requires compiler RTTI to be turned on.
+        It is used with many of ICU's polymorphic classes
+        (classes with virtual functions; they are subclasses of UObject).<br />
+        Existing "poor man's RTTI" functions continue to be available, but
+        the ICU code does not use them any more and users are encouraged
+        to use real C++ RTTI as well where necessary.
+        (<code>dynamic_cast&lt;pointer&gt;</code> for casting and testing whether
+        an object is an instance of a class <em>or subclass</em>,
+        and <code>typeid(object or type)</code> for testing for type equality.)<br />
+        New ICU class hierarchies (new immediate subclasses of UObject) will not
+        add "poor man's RTTI" functions.<br />
+        On AIX with the Visual Age compiler, RTTI must be turned on explicitly
+        via the the <code>-qrtti</code> option.
+        When using ICU's own makefiles, this is done automatically via the
+        <code><a href="source/config/mh-aix-va">mh-aix-va</a></code> file.</li>
+    </ul>
 
     <h2><a name="Download" href="#Download" id="Download">How To Download the
     Source Code</a></h2>
@@ -487,284 +511,6 @@
     <h2><a name="HowToBuild" href="#HowToBuild" id="HowToBuild">How To Build And
     Install ICU</a></h2>
 
-    <h3><a name="HowToBuildSupported" href="#HowToBuildSupported" id=
-    "HowToBuildSupported">Supported Platforms</a></h3>
-
-    <table class="rtable" summary=
-    "ICU can be built on many platforms.">
-      <caption>
-        Here is the status of building ICU on several different platforms.
-      </caption>
-
-        
-            <tr>
-                <td>AIX 6.1 (power, 64-bit)</td>
-                <td>VisualAge 9</td>
-                <td class="works">Frequently Tested</td>
-
-            </tr>
-        
-            <tr>
-                <td>HP/UX 11iv3 (ia64, 64-bit)</td>
-                <td>aCC A.06.15</td>
-                <td class="works">Frequently Tested</td>
-
-            </tr>
-        
-            <tr>
-                <td>Red Hat Enterprise Linux 5 (x86, 32-bit)</td>
-                <td>gcc 4.1.2</td>
-                <td class="works">Frequently Tested</td>
-
-            </tr>
-        
-            <tr>
-                <td>Red Hat Enterprise Linux 5 (x86, 64-bit)</td>
-                <td>gcc 4.1.2</td>
-                <td class="works">Frequently Tested</td>
-
-            </tr>
-        
-            <tr>
-                <td>Solaris 10 (sparc, 64-bit)</td>
-                <td>Sun Studio 12</td>
-                <td class="works">Frequently Tested</td>
-
-            </tr>
-        
-            <tr>
-                <td>Windows Vista SP1 (x86, 32-bit)</td>
-                <td>MS Visual Studio 9</td>
-                <td class="works">Frequently Tested</td>
-
-            </tr>
-        
-            <tr>
-                <td>AIX 5.2 (power, 64-bit)</td>
-                <td>VisualAge 6</td>
-                <td class="works">Frequently Tested</td>
-
-            </tr>
-        
-            <tr>
-                <td>AIX 5.3 (power, 64-bit)</td>
-                <td>VisualAge 8</td>
-                <td class="works">Frequently Tested</td>
-
-            </tr>
-        
-            <tr>
-                <td>AIX 6.1 (power, 64-bit)</td>
-                <td>gcc 4.2.4</td>
-                <td class="works">Frequently Tested</td>
-
-            </tr>
-        
-            <tr>
-                <td>HP/UX 11i (hppa, 64-bit)</td>
-                <td>aCC A.03.85</td>
-                <td class="works">Frequently Tested</td>
-
-            </tr>
-        
-            <tr>
-                <td>MacOSX 10.5 Leopard (x86, 32-bit)</td>
-                <td>gcc 4.0.1</td>
-                <td class="works">Frequently Tested</td>
-
-            </tr>
-        
-            <tr>
-                <td>MacOSX 10.5 Leopard (x86, 64-bit)</td>
-                <td>gcc 4.0.1</td>
-                <td class="works">Frequently Tested</td>
-
-            </tr>
-        
-            <tr>
-                <td>Red Hat Enterprise Linux 4.2 (x86, 32-bit)</td>
-                <td>gcc 3.4.6</td>
-                <td class="works">Frequently Tested</td>
-
-            </tr>
-        
-            <tr>
-                <td>Red Hat Enterprise Linux 4u7 (x86, 32-bit)</td>
-                <td>gcc 4.2.4</td>
-                <td class="works">Frequently Tested</td>
-
-            </tr>
-
-            <tr>
-                <td>Red Hat Enterprise Linux 5 (x86, 32-bit)</td>
-                <td>icc 11.0</td>
-                <td class="works">Frequently Tested<br/><b>[<a href="#LinuxICCValueSafeOptimization">See Change</a>]</b></td>
-            </tr>
-
-            <tr>
-                <td>Solaris 10 (sparc, 64-bit)</td>
-                <td>gcc 4.2.1</td>
-                <td class="works">Frequently Tested</td>
-
-            </tr>
-        
-            <tr>
-                <td>SuSE 10 (x86, 64-bit)</td>
-                <td>gcc 4.1.0</td>
-                <td class="works">Frequently Tested</td>
-
-            </tr>
-        
-            <tr>
-                <td>Windows 2000 Professional (x86, 32-bit)</td>
-                <td>MS Visual Studio 2003 via Cygwin</td>
-                <td class="works">Frequently Tested</td>
-
-            </tr>
-        
-            <tr>
-                <td>Windows 2000 Professional (x86, 32-bit)</td>
-                <td>gcc 3.4.4 via Cygwin</td>
-                <td class="works">Frequently Tested</td>
-
-            </tr>
-        
-            <tr>
-                <td>Windows Server 2003 (x86, 64-bit)</td>
-                <td>MS Visual Studio 8 via Cygwin</td>
-                <td class="works">Frequently Tested</td>
-
-            </tr>
-        
-            <tr>
-                <td>Windows Server 2008 (x86, 64-bit)</td>
-                <td>MS Visual Studio 9</td>
-                <td class="works">Frequently Tested</td>
-
-            </tr>
-        
-            <tr>
-                <td>Windows XP Professional (x86, 32-bit)</td>
-                <td>MS Visual Studio 9</td>
-                <td class="works">Frequently Tested</td>
-
-            </tr>
-            
-            <tr>
-                <td>Windows Server 2008 (x86, 64-bit)</td>
-                <td>MS Visual Studio 9 via Cygwin</td>
-                <td class="works">Frequently Tested</td>
-
-            </tr>
-        
-            <tr class="broken">
-                <td>SuSe Linux 7.2 (x86, 32-bit)</td>
-                <td>icc 9.0</td>
-                <td class="broken">Broken <b><a href="http://bugs.icu-project.org/trac/ticket/6888">#6888</a></b></td>
-
-            </tr>
-        
-
-<!-- end IBM lab data -->
-
-      <tr class="rarely">
-        <td>z/OS 1.7</td>
-
-        <td>cxx 1.7</td>
-
-        <td>Rarely tested</td>
-      </tr>
-
-      <tr class="rarely">
-        <td>IBM i family (IBM i, i5/OS, OS/400)</td>
-
-        <td>iCC</td>
-
-        <td>Rarely tested</td>
-      </tr>
-
-
-      <tr class="rarely">
-        <td>MinGW</td>
-
-        <td>gcc</td>
-
-        <td>Rarely tested</td>
-      </tr>
-
-      <tr class="rarely">
-        <td>NetBSD, OpenBSD, FreeBSD</td>
-
-        <td>gcc</td>
-
-        <td>Rarely tested</td>
-      </tr>
-
-      <tr class="rarely">
-        <td>SUSE Linux Enterprise Server 9 (PowerPC)</td>
-
-        <td>IBM XL C/C++ 8.0</td>
-
-        <td>Rarely tested</td>
-      </tr>
-
-      <tr class="rarely">
-        <td>QNX</td>
-
-        <td>gcc</td>
-
-        <td>Rarely tested</td>
-      </tr>
-
-      <tr class="rarely">
-        <td>BeOS/Haiku</td>
-
-        <td>gcc</td>
-
-        <td>Rarely tested</td>
-      </tr>
-
-      <tr class="rarely">
-        <td>SGI/IRIX</td>
-
-        <td>MIPSpro CC</td>
-
-        <td>Rarely tested</td>
-      </tr>
-
-      <tr class="rarely">
-        <td>Tru64 (OSF)</td>
-
-        <td>Compaq's cxx compiler</td>
-
-        <td>Rarely tested</td>
-      </tr>
-
-      <tr class="rarely">
-        <td>MP-RAS</td>
-
-        <td>NCR MP-RAS C/C++ Compiler</td>
-
-        <td>Rarely tested</td>
-      </tr>
-    </table>
-
-    <p><br />
-    </p>
-
-    <h4>Key to testing frequency</h4>
-
-    <dl>
-      <dt><i>Frequently tested</i></dt>
-
-      <dd>ICU will work on these platforms with these compilers</dd>
-
-      <dt><i>Rarely tested</i></dt>
-
-      <dd>ICU has been ported to these platforms but may not have been tested
-      there recently</dd>
-    </dl>
-
     <h3><a name="RecBuild" href="#RecBuild" id=
     "RecBuild">Recommended Build Options</a></h3>
 
@@ -875,9 +621,10 @@
     <ul>
       <li><b>Data path:</b> For a system-level library, it is best to load
         ICU data from the .dat package file because the file system path
-        to the .dat package file can be hardcoded.
-        Set <code>-DICU_DATA_DIR=/path/to/icu/data</code> when building
-        the ICU code. (Used by source/common/putil.c.)<br>
+        to the .dat package file can be hardcoded. ICU will automatically set
+        the path to the final install location using U_ICU_DATA_DEFAULT_DIR.
+        Alternatively, you can set <code>-DICU_DATA_DIR=/path/to/icu/data</code>
+        when building the ICU code. (Used by source/common/putil.c.)<br>
         Consider also setting <code>-DICU_NO_USER_DATA_OVERRIDE</code>
         if you do not want the "ICU_DATA" environment variable to be used.
         (An application can still override the data path via
@@ -909,9 +656,9 @@
     <p>Building International Components for Unicode requires:</p>
 
     <ul>
-      <li>Microsoft Windows 2000 or above</li>
+      <li>Microsoft Windows</li>
 
-      <li>Microsoft Visual C++ 2008</li>
+      <li>Microsoft Visual C++</li>
 
       <li><a href="#HowToBuildCygwin">Cygwin</a> is required when other versions
       of Microsoft Visual C++ and other compilers are used to build ICU.</li>
@@ -929,7 +676,7 @@
       not work without the location of the ICU DLL files in the path.</li>
 
       <li>Open the "<i>&lt;ICU&gt;</i>\source\allinone\allinone.sln" workspace
-      file in Microsoft Visual Studio 2003. (This solution includes all the
+      file in Microsoft Visual Studio. (This solution includes all the
       International Components for Unicode libraries, necessary ICU building
       tools, and the test suite projects). Please see the <a href=
       "#HowToBuildWindowsCommandLine">command line note below</a> if you want to
@@ -942,6 +689,31 @@
       build the Debug and Release at the same time, see the <a href=
       "#HowToBuildWindowsBatch">batch configuration note</a> below.</li>
 
+
+      <li>Run the tests. They can be run from the command line or from within Visual Studio.
+
+	 <h4>Running the Tests from the Windows Command Line (cmd)</h4>
+	<ul>
+	   <li>For x86 (32 bit) and Debug, use: <br />
+
+	<tt><i>&lt;ICU&gt;</i>\source\allinone\icucheck.bat  <i>Platform</i> <i>Configuration</i>
+		</tt> <br />
+       </li>
+	<li>So, for example:
+				 <br />
+		<tt><i>&lt;ICU&gt;</i>\source\allinone\icucheck.bat  <b>x86</b> <b>Debug</b>
+		</tt>
+				<br/>  or <br />
+		<tt><i>&lt;ICU&gt;</i>\source\allinone\icucheck.bat  <b>x86</b> <b>Release</b>
+		</tt>
+				<br/>  or <br />
+		<tt><i>&lt;ICU&gt;</i>\source\allinone\icucheck.bat  <b>x64</b> <b>Release</b>
+		</tt></li>
+	</ul>	
+
+         <h4>Running the Tests from within Visual Studio</h4>
+
+	<ol>
       <li>Run the C++ test suite, "intltest". To do this: set the active startup
       project to "intltest", and press Ctrl+F5 to run it. Make sure that it
       passes without any errors.</li>
@@ -953,6 +725,10 @@
       <li>Run the I/O test suite, "iotest". To do this: set the active startup
       project to "iotest", and press Ctrl+F5 to run it. Make sure that it passes
       without any errors.</li>
+
+	</ol>
+
+	</li>
 
       <li>You are now able to develop applications with ICU by using the
       libraries and tools in <i>&lt;ICU&gt;</i>\bin\. The headers are in
@@ -1014,9 +790,9 @@
     requires:</p>
 
     <ul>
-      <li>Microsoft 2000 or above</li>
+      <li>Microsoft Windows</li>
 
-      <li>Microsoft Visual C++ 2003 or above (when gcc isn't used).</li>
+      <li>Microsoft Visual C++ (when gcc isn't used).</li>
 
       <li>
         Cygwin with the following installed: 
@@ -1358,7 +1134,7 @@ Data set name type  : PDS</samp>
       <li>QSHELL interpreter installed (install base option 30, operating system)
       <!--li>QShell Utilities, PRPQ 5799-XEH (not required for V4R5)</li--></li>
 
-      <li>ILE C/C++ Compiler installed on the system
+      <li>ILE C/C++ Compiler installed on the system</li>
 
       <li>The latest GNU facilities (You can get the GNU facilities 
       from <a href=
@@ -1387,7 +1163,7 @@ ADDENVVAR ENVVAR(OUTPUTDIR) VALUE('<i>libraryname</i>') REPLACE(*YES)   </samp>
 <pre>
 <samp>ADDENVVAR ENVVAR(MAKE) VALUE('/usr/bin/gmake') REPLACE(*YES)
 CHGJOB CCSID(37)</samp>
-</pre>
+</pre></li>
 
       <li>Run <tt>'QSH'</tt></li>
 
@@ -1399,7 +1175,7 @@ CHGJOB CCSID(37)</samp>
       <li>Change your current directory to icu/source.</li>
 
       <li>Run <tt>'./runConfigureICU IBMi'</tt>  (See <a href="#HowToConfigureICU">configuration
-      note</a> for details).</li></li>
+      note</a> for details).</li>
 
       <li>Run <tt>'gmake'</tt> to build ICU.</li>
 
@@ -1419,13 +1195,13 @@ CHGJOB CCSID(37)</samp>
 		<p>Three initially-empty directories will be used in this example:</p>
 		<table summary="Three directories used in this example" class="docTable">
 			<tr>
-				<th align=left>/icu</th><td>a copy of the ICU source</td>
+				<th align="left">/icu</th><td>a copy of the ICU source</td>
 			</tr>
 			<tr>
-				<th align=left>/buildA</th><td>an empty directory, it will contain ICU built for A<br>(MacOSX in this case)</td>
+				<th align="left">/buildA</th><td>an empty directory, it will contain ICU built for A<br>(MacOSX in this case)</td>
 			</tr>
 			<tr>
-				<th align=left>/buildB</th><td>an empty directory, it will contain ICU built for B<br>(HaikuOS in this case)</td>
+				<th align="left">/buildB</th><td>an empty directory, it will contain ICU built for B<br>(HaikuOS in this case)</td>
 			</tr>
 		</table>
 		

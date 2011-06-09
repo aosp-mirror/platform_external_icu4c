@@ -1094,7 +1094,7 @@ static uint32_t uprv_uca_finalizeAddition(tempUCATable *t, UCAElements *element,
             } else {
                 /*ucmpe32_set(t->mapping, element->cPoints[0], element->mapCE);*/
                 utrie_set32(t->mapping, element->cPoints[0], element->mapCE);
-                if ((element->prefixSize!=0) && (getCETag(CE)!=IMPLICIT_TAG)) {
+                if ((element->prefixSize!=0) && (!isSpecial(CE) || (getCETag(CE)!=IMPLICIT_TAG))) {
                     UCAElements *origElem = (UCAElements *)uprv_malloc(sizeof(UCAElements));
                     /* test for NULL */
                     if (origElem== NULL) {
@@ -1175,8 +1175,8 @@ uprv_uca_addAnElement(tempUCATable *t, UCAElements *element, UErrorCode *status)
         }
         else {
             expansion = (uint32_t)(UCOL_SPECIAL_FLAG | (EXPANSION_TAG<<UCOL_TAG_SHIFT) 
-                | ((uprv_uca_addExpansion(expansions, element->CEs[0], status)+(headersize>>2))<<4)
-                & 0xFFFFF0);
+                | (((uprv_uca_addExpansion(expansions, element->CEs[0], status)+(headersize>>2))<<4)
+                   & 0xFFFFF0));
 
             for(i = 1; i<element->noOfCEs; i++) {
                 uprv_uca_addExpansion(expansions, element->CEs[i], status);
@@ -1402,12 +1402,13 @@ U_CDECL_END
 #ifdef UCOL_DEBUG
 // This is a debug function to print the contents of a trie.
 // It is used in conjuction with the code around utrie_unserialize call
-void enumRange(const void *context, UChar32 start, UChar32 limit, uint32_t value) {
+UBool enumRange(const void *context, UChar32 start, UChar32 limit, uint32_t value) {
     if(start<0x10000) {
         fprintf(stdout, "%08X, %08X, %08X\n", start, limit, value);
     } else {
         fprintf(stdout, "%08X=%04X %04X, %08X=%04X %04X, %08X\n", start, UTF16_LEAD(start), UTF16_TRAIL(start), limit, UTF16_LEAD(limit), UTF16_TRAIL(limit), value);
     }
+    return TRUE;
 }
 
 int32_t 
@@ -1541,7 +1542,7 @@ uprv_uca_assembleTable(tempUCATable *t, UErrorCode *status) {
         if(U_SUCCESS(*status)) {
             utrie_enum(&UCAt, NULL, enumRange, NULL);
         }
-        trieWord = UTRIE_GET32_FROM_LEAD(UCAt, 0xDC01) 
+        trieWord = UTRIE_GET32_FROM_LEAD(&UCAt, 0xDC01);
     }
 #endif
     tableOffset += paddedsize(mappingSize);
@@ -1605,6 +1606,7 @@ struct enumStruct {
     UCollator *tempColl;
     UCollationElements* colEl;
     const Normalizer2Impl *nfcImpl;
+    UnicodeSet *closed;
     int32_t noOfClosures;
     UErrorCode *status;
 };
@@ -1637,13 +1639,32 @@ _enumCategoryRangeClosureCategory(const void *context, UChar32 start, UChar32 li
                 U16_APPEND_UNSAFE(comp, len, u32);
                 if(ucol_strcoll(tempColl, comp, len, decomp, noOfDec) != UCOL_EQUAL) {
 #ifdef UCOL_DEBUG
-                    fprintf(stderr, "Closure: %08X -> ", u32);
-                    uint32_t i = 0;
-                    for(i = 0; i<noOfDec; i++) {
-                        fprintf(stderr, "%04X ", decomp[i]);
+                    fprintf(stderr, "Closure: U+%04X -> ", u32);
+                    UChar32 c;
+                    int32_t i = 0;
+                    while(i < noOfDec) {
+                        U16_NEXT(decomp, i, noOfDec, c);
+                        fprintf(stderr, "%04X ", c);
                     }
                     fprintf(stderr, "\n");
+                    // print CEs for code point vs. decomposition
+                    fprintf(stderr, "U+%04X CEs: ", u32);
+                    UCollationElements *iter = ucol_openElements(tempColl, comp, len, status);
+                    int32_t ce;
+                    while((ce = ucol_next(iter, status)) != UCOL_NULLORDER) {
+                        fprintf(stderr, "%08X ", ce);
+                    }
+                    fprintf(stderr, "\nDecomp CEs: ");
+                    ucol_setText(iter, decomp, noOfDec, status);
+                    while((ce = ucol_next(iter, status)) != UCOL_NULLORDER) {
+                        fprintf(stderr, "%08X ", ce);
+                    }
+                    fprintf(stderr, "\n");
+                    ucol_closeElements(iter);
 #endif
+                    if(((enumStruct *)context)->closed != NULL) {
+                        ((enumStruct *)context)->closed->add(u32);
+                    }
                     ((enumStruct *)context)->noOfClosures++;
                     el.cPoints = (UChar *)decomp;
                     el.cSize = noOfDec;
@@ -1697,8 +1718,8 @@ uprv_uca_setMapCE(tempUCATable *t, UCAElements *element, UErrorCode *status) {
                 | ((element->CEs[1]>>24) & 0xFF);   // third byte of primary
         } else {
             expansion = (uint32_t)(UCOL_SPECIAL_FLAG | (EXPANSION_TAG<<UCOL_TAG_SHIFT)
-                | ((uprv_uca_addExpansion(expansions, element->CEs[0], status)+(headersize>>2))<<4)
-                & 0xFFFFF0);
+                | (((uprv_uca_addExpansion(expansions, element->CEs[0], status)+(headersize>>2))<<4)
+                   & 0xFFFFF0));
 
             for(j = 1; j<(int32_t)element->noOfCEs; j++) {
                 uprv_uca_addExpansion(expansions, element->CEs[j], status);
@@ -1933,9 +1954,11 @@ uprv_uca_addTailCanonicalClosures(tempUCATable *t,
 U_CFUNC int32_t U_EXPORT2
 uprv_uca_canonicalClosure(tempUCATable *t,
                           UColTokenParser *src,
+                          UnicodeSet *closed,
                           UErrorCode *status)
 {
     enumStruct context;
+    context.closed = closed;
     context.noOfClosures = 0;
     UCAElements el;
     UColToken *tok;
@@ -2034,7 +2057,7 @@ uprv_uca_canonicalClosure(tempUCATable *t,
     }
     ucol_closeElements(colEl);
     ucol_close(tempColl);
-    
+
     return context.noOfClosures;
 }
 

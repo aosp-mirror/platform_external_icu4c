@@ -10,6 +10,12 @@
  *  ICU <specials> source: <path>/xml/main/en.xml
  */
 en{
+    Keys{
+        calendar{"Calendar"}
+        collation{"Collation"}
+        currency{"Currency"}
+        numbers{"Numbers"}
+    }
     Languages{
         aa{"Afar"}
         ab{"Abkhazian"}
@@ -72,6 +78,7 @@ en{
         bo{"Tibetan"}
         br{"Breton"}
         bra{"Braj"}
+        brx{"Bodo"}
         bs{"Bosnian"}
         btk{"Batak"}
         bua{"Buriat"}
@@ -516,7 +523,7 @@ en{
         uga{"Ugaritic"}
         uk{"Ukrainian"}
         umb{"Umbundu"}
-        und{"Unknown or Invalid Language"}
+        und{"Unknown Language"}
         ur{"Urdu"}
         uz{"Uzbek"}
         vai{"Vai"}
@@ -654,7 +661,6 @@ en{
         Phnx{"Phoenician"}
         Plrd{"Pollard Phonetic"}
         Prti{"Inscriptional Parthian"}
-        Qaai{"Inherited"}
         Rjng{"Rejang"}
         Roro{"Rongorongo"}
         Runr{"Runic"}
@@ -690,11 +696,12 @@ en{
         Xpeo{"Old Persian"}
         Xsux{"Sumero-Akkadian Cuneiform"}
         Yiii{"Yi"}
+        Zinh{"Inherited"}
         Zmth{"Mathematical Notation"}
         Zsym{"Symbols"}
         Zxxx{"Unwritten"}
         Zyyy{"Common"}
-        Zzzz{"Unknown or Invalid Script"}
+        Zzzz{"Unknown Script"}
     }
     Types{
         calendar{
@@ -710,7 +717,7 @@ en{
             islamic-civil{"Islamic-Civil Calendar"}
             japanese{"Japanese Calendar"}
             persian{"Persian Calendar"}
-            roc{"Republic of China Calendar"}
+            roc{"Minguo Calendar"}
         }
         collation{
             big5han{"Traditional Chinese Sort Order - Big5"}
@@ -718,6 +725,7 @@ en{
             gb2312han{"Simplified Chinese Sort Order - GB2312"}
             phonebook{"Phonebook Sort Order"}
             pinyin{"Simplified Chinese Pinyin Sort Order"}
+            search{"General-Purpose Search"}
             stroke{"Traditional Chinese Stroke Sort Order"}
             traditional{"Traditional Sort Order"}
         }
@@ -799,7 +807,7 @@ en{
         VALENCIA{"Valencian"}
         WADEGILE{"Wade-Giles Romanization"}
     }
-    Version{"2.0.48.46"}
+    Version{"2.0.51.59"}
     codePatterns{
         language{"Language: {0}"}
         script{"Script: {0}"}

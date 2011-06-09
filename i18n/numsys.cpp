@@ -22,7 +22,7 @@
 #include "unicode/uloc.h"
 #include "unicode/schriter.h"
 #include "unicode/numsys.h"
-
+#include "cstring.h"
 #include "uresimp.h"
 
 #if !UCONFIG_NO_FORMATTING
@@ -33,10 +33,12 @@ U_NAMESPACE_BEGIN
 
 #define DEFAULT_DIGITS UNICODE_STRING_SIMPLE("0123456789");
 static const char gNumberingSystems[] = "numberingSystems";
-static const char gDefaultNumberingSystem[] = "defaultNumberingSystem";
+static const char gNumberElements[] = "NumberElements";
+static const char gDefault[] = "default";
 static const char gDesc[] = "desc";
 static const char gRadix[] = "radix";
 static const char gAlgorithmic[] = "algorithmic";
+static const char gLatn[] = "latn";
 
 
 UOBJECT_DEFINE_RTTI_IMPLEMENTATION(NumberingSystem)
@@ -52,6 +54,7 @@ NumberingSystem::NumberingSystem() {
      algorithmic = FALSE;
      UnicodeString defaultDigits = DEFAULT_DIGITS;
      desc.setTo(defaultDigits);
+     uprv_strcpy(name,gLatn);
 }
 
     /**
@@ -66,6 +69,10 @@ NumberingSystem::NumberingSystem(const NumberingSystem& other)
 
 NumberingSystem* U_EXPORT2
 NumberingSystem::createInstance(int32_t radix_in, UBool isAlgorithmic_in, const UnicodeString & desc_in, UErrorCode &status) {
+
+    if (U_FAILURE(status)) {
+        return NULL;
+    }
 
     if ( radix_in < 2 ) {
         status = U_ILLEGAL_ARGUMENT_ERROR;
@@ -84,6 +91,7 @@ NumberingSystem::createInstance(int32_t radix_in, UBool isAlgorithmic_in, const 
     ns->setRadix(radix_in);
     ns->setDesc(desc_in);
     ns->setAlgorithmic(isAlgorithmic_in);
+    ns->setName(NULL);
     return ns;
     
 }
@@ -92,23 +100,29 @@ NumberingSystem::createInstance(int32_t radix_in, UBool isAlgorithmic_in, const 
 NumberingSystem* U_EXPORT2
 NumberingSystem::createInstance(const Locale & inLocale, UErrorCode& status) {
 
+    if (U_FAILURE(status)) {
+        return NULL;
+    } 
+
     char buffer[ULOC_KEYWORDS_CAPACITY];
     int32_t count = inLocale.getKeywordValue("numbers",buffer, sizeof(buffer),status);
     if ( count > 0 ) { // @numbers keyword was specified in the locale
         buffer[count] = '\0'; // Make sure it is null terminated.
         return NumberingSystem::createInstanceByName(buffer,status);
     } else { // Find the default numbering system for this locale.
-        LocalUResourceBundlePointer resource(ures_open(NULL, inLocale.getName(), &status));
+        UResourceBundle *resource = ures_open(NULL, inLocale.getName(), &status);
+        UResourceBundle *numberElementsRes = ures_getByKey(resource,gNumberElements,NULL,&status);
+        const UChar *defaultNSName =
+            ures_getStringByKeyWithFallback(numberElementsRes, gDefault, &count, &status);
+        ures_close(numberElementsRes);
+        ures_close(resource);
+
         if (U_FAILURE(status)) {
             status = U_USING_FALLBACK_WARNING;
             NumberingSystem *ns = new NumberingSystem();
             return ns;
         } 
-        const UChar *defaultNSName =
-            ures_getStringByKeyWithFallback(resource.getAlias(), gDefaultNumberingSystem, &count, &status);
-        if (U_FAILURE(status)) {
-               return NULL;
-        }
+
         if ( count > 0 && count < ULOC_KEYWORDS_CAPACITY ) { // Default numbering system found
            u_UCharsToChars(defaultNSName,buffer,count); 
            buffer[count] = '\0'; // Make sure it is null terminated.
@@ -161,8 +175,9 @@ NumberingSystem::createInstanceByName(const char *name, UErrorCode& status) {
          return NULL;
      }
 
-     return NumberingSystem::createInstance(radix,isAlgorithmic,nsd,status);
-
+     NumberingSystem* ns = NumberingSystem::createInstance(radix,isAlgorithmic,nsd,status);
+     ns->setName(name);
+     return ns;
 }
 
     /**
@@ -180,6 +195,10 @@ UnicodeString NumberingSystem::getDescription() {
     return desc;
 }
 
+const char * NumberingSystem::getName() {
+    return name;
+}
+
 void NumberingSystem::setRadix(int32_t r) {
     radix = r;
 }
@@ -191,7 +210,14 @@ void NumberingSystem::setAlgorithmic(UBool c) {
 void NumberingSystem::setDesc(UnicodeString d) {
     desc.setTo(d);
 }
-
+void NumberingSystem::setName(const char *n) {
+    if ( n == NULL ) {
+        name[0] = (char) 0;
+    } else {
+        uprv_strncpy(name,n,NUMSYS_NAME_CAPACITY);
+        name[NUMSYS_NAME_CAPACITY] = (char)0; // Make sure it is null terminated.
+    }
+}
 UBool NumberingSystem::isAlgorithmic() const {
     return ( algorithmic );
 }
@@ -206,12 +232,6 @@ UBool NumberingSystem::isValidDigitString(const UnicodeString& str) {
 
     for ( it.setToStart(); it.hasNext(); ) {
        c = it.next32PostInc();
-       if ( u_charDigitValue(c) != i ) {  // Digits outside the Unicode decimal digit class are not currently supported
-           return FALSE;
-       }
-       if ( prev != 0 && c != prev + 1 ) { // Non-contiguous digits are not currently supported
-          return FALSE;
-       }
        if ( c > 0xFFFF ) { // Digits outside the BMP are not currently supported
           return FALSE;
        }

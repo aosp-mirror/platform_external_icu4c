@@ -35,6 +35,7 @@
 #include "cstring.h"
 #include "ucol_imp.h"
 #include "ucol_tok.h"
+#include "uparse.h"
 #include <stdio.h>
 
 extern uint8_t ucol_uprv_getCaseBits(const UChar *, uint32_t, UErrorCode *);
@@ -786,7 +787,7 @@ static void TestMaxExpansion()
     UChar               ch     = 0;
     UChar32             unassigned = 0xEFFFD;
     UChar               supplementary[2];
-    uint32_t            index = 0;
+    uint32_t            stringOffset = 0;
     UBool               isError = FALSE;
     uint32_t            sorder = 0;
     UCollationElements *iter   ;/*= ucol_openElements(coll, &ch, 1, &status);*/
@@ -858,7 +859,7 @@ static void TestMaxExpansion()
                   ch, 3);
       }
 
-      U16_APPEND(supplementary, index, 2, unassigned, isError);
+      U16_APPEND(supplementary, stringOffset, 2, unassigned, isError);
       ucol_setText(iter, supplementary, 2, &status);
       sorder = ucol_previous(iter, &status);
 
@@ -1028,41 +1029,40 @@ static int32_t hex2num(char hex) {
 * @param codepoints array for storage, assuming size > 5
 * @return position at the end of the codepoint section
 */
-static char * getCodePoints(char *str, UChar *codepoints, UChar *contextCPs) {
-    char *pStartCP = str;
-    char *pEndCP   = str + 4;
-
-    *codepoints = (UChar)((hex2num(*pStartCP) << 12) |
-                          (hex2num(*(pStartCP + 1)) << 8) |
-                          (hex2num(*(pStartCP + 2)) << 4) |
-                          (hex2num(*(pStartCP + 3))));
-    if (*pEndCP == '|' || *(pEndCP+1) == '|') {
-        /* pre-context rule */
-        pStartCP = pEndCP;
-        while (*pStartCP==' ' || *pStartCP== '|' ) {
-            pStartCP++;
-        }
-        pEndCP = pStartCP+4;
-        *contextCPs = *codepoints;
-        *(++codepoints) = (UChar)((hex2num(*pStartCP) << 12) |
-                                  (hex2num(*(pStartCP + 1)) << 8) |
-                                  (hex2num(*(pStartCP + 2)) << 4) |
-                                  (hex2num(*(pStartCP + 3))));
-        contextCPs++;
-    }
-    *contextCPs = 0;
-    codepoints ++;
-    while (*pEndCP != ';') {
-        pStartCP = pEndCP + 1;
-        *codepoints = (UChar)((hex2num(*pStartCP) << 12) |
-                          (hex2num(*(pStartCP + 1)) << 8) |
-                          (hex2num(*(pStartCP + 2)) << 4) |
-                          (hex2num(*(pStartCP + 3))));
-        codepoints ++;
-        pEndCP = pStartCP + 4;
-    }
+static char *getCodePoints(char *str, UChar *codepoints, UChar *contextCPs) {
+    UErrorCode errorCode = U_ZERO_ERROR;
+    char *semi = uprv_strchr(str, ';');
+    char *pipe = uprv_strchr(str, '|');
+    char *s;
     *codepoints = 0;
-    return pEndCP + 1;
+    *contextCPs = 0;
+    if(semi == NULL) {
+        log_err("expected semicolon after code point string in FractionalUCA.txt %s\n", str);
+        return str;
+    }
+    if(pipe != NULL) {
+        int32_t contextLength;
+        *pipe = 0;
+        contextLength = u_parseString(str, contextCPs, 99, NULL, &errorCode);
+        *pipe = '|';
+        if(U_FAILURE(errorCode)) {
+            log_err("error parsing precontext string from FractionalUCA.txt %s\n", str);
+            return str;
+        }
+        /* prepend the precontext string to the codepoints */
+        u_memcpy(codepoints, contextCPs, contextLength);
+        codepoints += contextLength;
+        /* start of the code point string */
+        s = pipe + 1;
+    } else {
+        s = str;
+    }
+    u_parseString(s, codepoints, 99, NULL, &errorCode);
+    if(U_FAILURE(errorCode)) {
+        log_err("error parsing code point string from FractionalUCA.txt %s\n", str);
+        return str;
+    }
+    return semi + 1;
 }
 
 /**
@@ -1262,7 +1262,7 @@ static FileStream * getFractionalUCA(void)
 */
 static void TestCEs() {
     FileStream *file = NULL;
-    char        line[1024];
+    char        line[2048];
     char       *str;
     UChar       codepoints[10];
     uint32_t    ces[20];
@@ -1496,147 +1496,192 @@ static void TestCEBufferOverflow()
 }
 
 /**
-* Byte bounds checks. Checks if each byte in data is between upper and lower
-* inclusive.
+* Checking collation element validity.
 */
-static UBool checkByteBounds(uint32_t data, char upper, char lower)
-{
-    int count = 4;
-    while (count > 0) {
-        char b = (char)(data & 0xFF);
-        if (b > upper || b < lower) {
-            return FALSE;
-        }
-        data = data >> 8;
-        count --;
+#define MAX_CODEPOINTS_TO_SHOW 10
+static void showCodepoints(const UChar *codepoints, int length, char * codepointText) {
+    int i, lengthToUse = length;
+    if (lengthToUse > MAX_CODEPOINTS_TO_SHOW) {
+        lengthToUse = MAX_CODEPOINTS_TO_SHOW;
     }
-    return TRUE;
+    for (i = 0; i < lengthToUse; ++i) {
+        int bytesWritten = sprintf(codepointText, " %04X", *codepoints++);
+        if (bytesWritten <= 0) {
+            break;
+        }
+        codepointText += bytesWritten;
+    }
+    if (i < length) {
+        sprintf(codepointText, " ...");
+    }
 }
 
-/**
-* Determines case of the string of codepoints.
-* If it is a multiple codepoints it has to treated as a contraction.
-*/
-#if 0
-static uint8_t getCase(const UChar *s, uint32_t len) {
-    UBool       lower = FALSE;
-    UBool       upper = FALSE;
-    UBool       title = FALSE;
-    UErrorCode  status = U_ZERO_ERROR;
-    UChar       str[256];
-    const UChar      *ps = s;
-
-    if (len == 0) {
-        return UCOL_LOWER_CASE;
-    }
-
-    while (len > 0) {
-        UChar c = *ps ++;
-
-        if (u_islower(c)) {
-            lower = TRUE;
-        }
-        if (u_isupper(c)) {
-            upper = TRUE;
-        }
-        if (u_istitle(c)) {
-            title = TRUE;
-        }
-
-        len --;
-    }
-    if ((lower && !upper && !title) || (!lower && !upper && !title)){
-        return UCOL_LOWER_CASE;
-    }
-    if (upper && !lower && !title) {
-        return UCOL_UPPER_CASE;
-    }
-    /* mix of cases here */
-    /* len = unorm_normalize(s, len, UNORM_NFKD, 0, str, 256, &status);
-    if (U_FAILURE(status)) {
-        log_err("Error normalizing data string\n");
-        return UCOL_LOWER_CASE;
-    }*/
-
-    if ((title && len >= 2) || (lower && upper)) {
-        return UCOL_MIXED_CASE;
-    }
-    if (u_isupper(s[0])) {
-        return UCOL_UPPER_CASE;
-    }
-    return UCOL_LOWER_CASE;
-}
-#endif
-
-/**
-* Checking collation element validity given the boundary arguments.
-*/
 static UBool checkCEValidity(const UCollator *coll, const UChar *codepoints,
-                             int length, uint32_t primarymax,
-                             uint32_t secondarymax)
+                             int length)
 {
     UErrorCode          status = U_ZERO_ERROR;
     UCollationElements *iter   = ucol_openElements(coll, codepoints, length,
                                                   &status);
-    uint32_t            ce;
-    UBool               first  = TRUE;
-/*
-    UBool               upper  = FALSE;
-    UBool               lower  = FALSE;
-*/
+    UBool result = FALSE;
+    UBool primaryDone = FALSE, secondaryDone = FALSE, tertiaryDone = FALSE;
+    const char * collLocale;
 
     if (U_FAILURE(status)) {
         log_err("Error creating iterator for testing validity\n");
+        return FALSE;
+    }
+    collLocale = ucol_getLocale(coll, ULOC_VALID_LOCALE, &status);
+    if (U_FAILURE(status) || collLocale==NULL) {
+        status = U_ZERO_ERROR;
+        collLocale = "?";
     }
 
-    ce = ucol_next(iter, &status);
+    for (;;) {
+        uint32_t ce = ucol_next(iter, &status);
+        uint32_t primary, p1, p2, secondary, tertiary;
+        if (ce == UCOL_NULLORDER) {
+            result = TRUE;
+            break;
+        }
+        if (ce == 0) {
+            continue;
+        }
+        if (ce == 0x02000202) {
+            /* special CE for merge-sort character */
+            if (*codepoints == 0xFFFE /* && length == 1 */) {
+                /*
+                 * Note: We should check for length==1 but the token parser appears
+                 * to give us trailing NUL characters.
+                 * TODO: Ticket #8047: Change TestCEValidity to use ucol_getTailoredSet()
+                 *                     rather than the internal collation rule parser
+                 */
+                continue;
+            } else {
+                log_err("Special 02/02/02 weight for code point U+%04X [len %d] != U+FFFE\n",
+                        (int)*codepoints, (int)length);
+                break;
+            }
+        }
+        primary   = UCOL_PRIMARYORDER(ce);
+        p1 = primary >> 8;
+        p2 = primary & 0xFF;
+        secondary = UCOL_SECONDARYORDER(ce);
+        tertiary  = UCOL_TERTIARYORDER(ce) & UCOL_REMOVE_CONTINUATION;
 
-    while (ce != UCOL_NULLORDER) {
-       if (ce != 0) {
-           uint32_t primary   = UCOL_PRIMARYORDER(ce);
-           uint32_t secondary = UCOL_SECONDARYORDER(ce);
-           uint32_t tertiary  = UCOL_TERTIARYORDER(ce);
-/*           uint32_t scasebits = tertiary & 0xC0;*/
-
-           if ((tertiary == 0 && secondary != 0) ||
-               (tertiary < 0xC0 && secondary == 0 && primary != 0)) {
-               /* n-1th level is not zero when the nth level is
-                  except for continuations, this is wrong */
-               log_err("Lower level weight not 0 when high level weight is 0\n");
-               goto fail;
-           }
-           else {
-               /* checks if any byte is illegal ie = 01 02 03. */
-               if (checkByteBounds(ce, 0x3, 0x1)) {
-                   log_err("Byte range in CE lies in illegal bounds 0x1 - 0x3\n");
-                   goto fail;
-               }
-           }
-           if ((primary != 0 && primary < primarymax) 
-               || ((primary & 0xFF) == 0xFF) || (((primary>>8) & 0xFF) == 0xFF) 
-               || ((primary & 0xFF) && ((primary & 0xFF) <= 2)) 
-               || (((primary>>8) & 0xFF) && ((primary>>8) & 0xFF) <= 2)
-               || (primary >= 0xFE00 && !isContinuation(ce))) {
-               log_err("UCA primary weight out of bounds: %04X for string starting with %04X\n", 
-                   primary, codepoints[0]);
-               goto fail;
-           }
-           /* case matching not done since data generated by ken */
-           if (first) {
-               if (secondary >= 6 && secondary <= secondarymax) {
-                   log_err("Secondary weight out of range\n");
-                   goto fail;
-               }
-               first = FALSE;
-           }
-       }
-       ce   = ucol_next(iter, &status);
-   }
-   ucol_closeElements(iter);
-   return TRUE;
-fail :
-   ucol_closeElements(iter);
-   return FALSE;
+        if (!isContinuation(ce)) {
+            if ((ce & UCOL_REMOVE_CONTINUATION) == 0) {
+                log_err("Empty CE %08lX except for case bits\n", (long)ce);
+                break;
+            }
+            if (p1 == 0) {
+                if (p2 != 0) {
+                    log_err("Primary 00 xx in %08lX\n", (long)ce);
+                    break;
+                }
+                primaryDone = TRUE;
+            } else {
+                if (p1 <= 2 || p1 >= 0xF0) {
+                    /* Primary first bytes F0..FF are specials. */
+                    log_err("Primary first byte of %08lX out of range\n", (long)ce);
+                    break;
+                }
+                if (p2 == 0) {
+                    primaryDone = TRUE;
+                } else {
+                    if (p2 <= 3 || p2 >= 0xFF) {
+                        /* Primary second bytes 03 and FF are sort key compression terminators. */
+                        log_err("Primary second byte of %08lX out of range\n", (long)ce);
+                        break;
+                    }
+                    primaryDone = FALSE;
+                }
+            }
+            if (secondary == 0) {
+                if (primary != 0) {
+                    log_err("Primary!=0 secondary==0 in %08lX\n", (long)ce);
+                    break;
+                }
+                secondaryDone = TRUE;
+            } else {
+                if (secondary <= 2 ||
+                    (UCOL_BYTE_COMMON < secondary && secondary <= (UCOL_BYTE_COMMON + 0x80))
+                ) {
+                    /* Secondary first bytes common+1..+0x80 are used for sort key compression. */
+                    log_err("Secondary byte of %08lX out of range\n", (long)ce);
+                    break;
+                }
+                secondaryDone = FALSE;
+            }
+            if (tertiary == 0) {
+                /* We know that ce != 0. */
+                log_err("Primary!=0 or secondary!=0 but tertiary==0 in %08lX\n", (long)ce);
+                break;
+            }
+            if (tertiary <= 2) {
+                log_err("Tertiary byte of %08lX out of range\n", (long)ce);
+                break;
+            }
+            tertiaryDone = FALSE;
+        } else {
+            if ((ce & UCOL_REMOVE_CONTINUATION) == 0) {
+                log_err("Empty continuation %08lX\n", (long)ce);
+                break;
+            }
+            if (primaryDone && primary != 0) {
+                log_err("Primary was done but continues in %08lX\n", (long)ce);
+                break;
+            }
+            if (p1 == 0) {
+                if (p2 != 0) {
+                    log_err("Primary 00 xx in %08lX\n", (long)ce);
+                    break;
+                }
+                primaryDone = TRUE;
+            } else {
+                if (p1 <= 2) {
+                    log_err("Primary first byte of %08lX out of range\n", (long)ce);
+                    break;
+                }
+                if (p2 == 0) {
+                    primaryDone = TRUE;
+                } else {
+                    if (p2 <= 3) {
+                        log_err("Primary second byte of %08lX out of range\n", (long)ce);
+                        break;
+                    }
+                }
+            }
+            if (secondaryDone && secondary != 0) {
+                log_err("Secondary was done but continues in %08lX\n", (long)ce);
+                break;
+            }
+            if (secondary == 0) {
+                secondaryDone = TRUE;
+            } else {
+                if (secondary <= 2) {
+                    log_err("Secondary byte of %08lX out of range\n", (long)ce);
+                    break;
+                }
+            }
+            if (tertiaryDone && tertiary != 0) {
+                log_err("Tertiary was done but continues in %08lX\n", (long)ce);
+                break;
+            }
+            if (tertiary == 0) {
+                tertiaryDone = TRUE;
+            } else if (tertiary <= 2) {
+                log_err("Tertiary byte of %08lX out of range\n", (long)ce);
+                break;
+            }
+        }
+    }
+    if (!result) {
+        char codepointText[5*MAX_CODEPOINTS_TO_SHOW + 5];
+        showCodepoints(codepoints, length, codepointText);
+        log_err("Locale: %s  Code point string: %s\n", collLocale, codepointText);
+    }
+    ucol_closeElements(iter);
+    return result;
 }
 
 static void TestCEValidity()
@@ -1649,8 +1694,8 @@ static void TestCEValidity()
     char        locale[][11] = {"fr_FR", "ko_KR", "sh_YU", "th_TH", "zh_CN", "zh__PINYIN"};
     const char *loc;
     FileStream *file = NULL;
-    char        line[1024];
-    UChar       codepoints[10];
+    char        line[2048];
+    UChar       codepoints[11];
     int         count = 0;
     int         maxCount = 0;
     UChar       contextCPs[3];
@@ -1674,21 +1719,21 @@ static void TestCEValidity()
         }
 
         getCodePoints(line, codepoints, contextCPs);
-        checkCEValidity(coll, codepoints, u_strlen(codepoints), 5, 86);
+        checkCEValidity(coll, codepoints, u_strlen(codepoints));
     }
 
     log_verbose("Testing UCA elements for the whole range of unicode characters\n");
     for (c = 0; c <= 0xffff; ++c) {
         if (u_isdefined(c)) {
             codepoints[0] = (UChar)c;
-            checkCEValidity(coll, codepoints, 1, 5, 86);
+            checkCEValidity(coll, codepoints, 1);
         }
     }
     for (; c <= 0x10ffff; ++c) {
         if (u_isdefined(c)) {
             int32_t i = 0;
             U16_APPEND_UNSAFE(codepoints, i, c);
-            checkCEValidity(coll, codepoints, i, 5, 86);
+            checkCEValidity(coll, codepoints, i);
         }
     }
 
@@ -1696,7 +1741,7 @@ static void TestCEValidity()
 
     /* testing tailored collation elements */
     log_verbose("Testing tailored elements\n");
-    if(QUICK) {
+    if(getTestOption(QUICK_OPTION)) {
         maxCount = sizeof(locale)/sizeof(locale[0]);
     } else {
         maxCount = uloc_countAvailable();
@@ -1719,7 +1764,7 @@ static void TestCEValidity()
         UColTokenParser src;
         uint32_t strength = 0;
         uint16_t specs = 0;
-        if(QUICK) {
+        if(getTestOption(QUICK_OPTION)) {
             loc = locale[count];
         } else {
             loc = uloc_getAvailable(count);
@@ -1728,6 +1773,8 @@ static void TestCEValidity()
                 continue;
             }
         }
+
+        uprv_memset(&src, 0, sizeof(UColTokenParser));
 
         log_verbose("Testing CEs for %s\n", loc);
 
@@ -1741,7 +1788,7 @@ static void TestCEValidity()
         rules = ucol_getRules(coll, &ruleLen);
 
         if (ruleLen > 0) {
-            rulesCopy = (UChar *)malloc((ruleLen +
+            rulesCopy = (UChar *)uprv_malloc((ruleLen +
                 UCOL_TOK_EXTRA_RULE_SPACE_SIZE) * sizeof(UChar));
             uprv_memcpy(rulesCopy, rules, ruleLen * sizeof(UChar));
             src.current = src.source = rulesCopy;
@@ -1749,6 +1796,8 @@ static void TestCEValidity()
             src.extraCurrent = src.end;
             src.extraEnd = src.end + UCOL_TOK_EXTRA_RULE_SPACE_SIZE;
 
+	        /* Note that as a result of tickets 7015 or 6912, ucol_tok_parseNextToken can cause the pointer to
+	           the rules copy in src.source to get reallocated, freeing the original pointer in rulesCopy */
             while ((current = ucol_tok_parseNextToken(&src, startOfRules, &parseError,&status)) != NULL) {
               strength = src.parsedToken.strength;
               chOffset = src.parsedToken.charsOffset;
@@ -1763,9 +1812,9 @@ static void TestCEValidity()
                 uprv_memcpy(codepoints, src.source + chOffset,
                                                        chLen * sizeof(UChar));
                 codepoints[chLen] = 0;
-                checkCEValidity(coll, codepoints, chLen, 4, 85);
+                checkCEValidity(coll, codepoints, chLen);
             }
-            free(rulesCopy);
+            uprv_free(src.source);
         }
 
         ucol_close(coll);
@@ -1804,7 +1853,7 @@ static UBool checkSortKeyValidity(UCollator *coll,
                                       UCOL_TERTIARY, UCOL_QUATERNARY,
                                       UCOL_IDENTICAL};
     int        strengthlen = 5;
-    int        index       = 0;
+    int        strengthIndex = 0;
     int        caselevel   = 0;
 
     while (caselevel < 1) {
@@ -1815,16 +1864,16 @@ static UBool checkSortKeyValidity(UCollator *coll,
             ucol_setAttribute(coll, UCOL_CASE_LEVEL, UCOL_ON, &status);
         }
 
-        while (index < strengthlen) {
+        while (strengthIndex < strengthlen) {
             int        count01 = 0;
             uint32_t   count   = 0;
             uint8_t    sortkey[128];
             uint32_t   sklen;
 
-            ucol_setStrength(coll, strength[index]);
+            ucol_setStrength(coll, strength[strengthIndex]);
             sklen = ucol_getSortKey(coll, codepoints, length, sortkey, 128);
             while (sortkey[count] != 0) {
-                if (sortkey[count] == 2 || (sortkey[count] == 3 && count01 > 0 && index != 4)) {
+                if (sortkey[count] == 2 || (sortkey[count] == 3 && count01 > 0 && strengthIndex != 4)) {
                     printSortKeyError(codepoints, length, sortkey, sklen);
                     return FALSE;
                 }
@@ -1834,11 +1883,11 @@ static UBool checkSortKeyValidity(UCollator *coll,
                 count ++;
             }
 
-            if (count + 1 != sklen || (count01 != index + caselevel)) {
+            if (count + 1 != sklen || (count01 != strengthIndex + caselevel)) {
                 printSortKeyError(codepoints, length, sortkey, sklen);
                 return FALSE;
             }
-            index ++;
+            strengthIndex ++;
         }
         caselevel ++;
     }
@@ -1854,7 +1903,7 @@ static void TestSortKeyValidity(void)
     /* tailored locales */
     char        locale[][6] = {"fr_FR", "ko_KR", "sh_YU", "th_TH", "zh_CN"};
     FileStream *file = NULL;
-    char        line[1024];
+    char        line[2048];
     UChar       codepoints[10];
     int         count = 0;
     UChar       contextCPs[5];
@@ -1877,6 +1926,10 @@ static void TestSortKeyValidity(void)
         }
 
         getCodePoints(line, codepoints, contextCPs);
+        if(codepoints[0] == 0xFFFE) {
+            /* Skip special merge-sort character U+FFFE which has otherwise illegal 02 weight bytes. */
+            continue;
+        }
         checkSortKeyValidity(coll, codepoints, u_strlen(codepoints));
     }
 
@@ -1913,6 +1966,8 @@ static void TestSortKeyValidity(void)
         uint32_t strength = 0;
         uint16_t specs = 0;
 
+        uprv_memset(&src, 0, sizeof(UColTokenParser));
+
         coll      = ucol_open(locale[count], &status);
         if (U_FAILURE(status)) {
             log_err("%s collator creation failed\n", locale[count]);
@@ -1923,7 +1978,7 @@ static void TestSortKeyValidity(void)
         rules = ucol_getRules(coll, &ruleLen);
 
         if (ruleLen > 0) {
-            rulesCopy = (UChar *)malloc((ruleLen +
+            rulesCopy = (UChar *)uprv_malloc((ruleLen +
                 UCOL_TOK_EXTRA_RULE_SPACE_SIZE) * sizeof(UChar));
             uprv_memcpy(rulesCopy, rules, ruleLen * sizeof(UChar));
             src.current = src.source = rulesCopy;
@@ -1931,6 +1986,8 @@ static void TestSortKeyValidity(void)
             src.extraCurrent = src.end;
             src.extraEnd = src.end + UCOL_TOK_EXTRA_RULE_SPACE_SIZE;
 
+	        /* Note that as a result of tickets 7015 or 6912, ucol_tok_parseNextToken can cause the pointer to
+	           the rules copy in src.source to get reallocated, freeing the original pointer in rulesCopy */
             while ((current = ucol_tok_parseNextToken(&src, startOfRules,&parseError, &status)) != NULL) {
                 strength = src.parsedToken.strength;
                 chOffset = src.parsedToken.charsOffset;
@@ -1945,9 +2002,13 @@ static void TestSortKeyValidity(void)
                 uprv_memcpy(codepoints, src.source + chOffset,
                                                        chLen * sizeof(UChar));
                 codepoints[chLen] = 0;
+                if(codepoints[0] == 0xFFFE) {
+                    /* Skip special merge-sort character U+FFFE which has otherwise illegal 02 weight bytes. */
+                    continue;
+                }
                 checkSortKeyValidity(coll, codepoints, chLen);
             }
-            free(rulesCopy);
+            uprv_free(src.source);
         }
 
         ucol_close(coll);

@@ -24,6 +24,8 @@
 *******************************************************************************
 */
 
+#include <typeinfo>  // for 'typeid' to work 
+
 #include "unicode/utypes.h"
 
 #if !UCONFIG_NO_FORMATTING
@@ -371,7 +373,7 @@ protected:
 
     virtual UObject* create(const ICUServiceKey& key, const ICUService* /*service*/, UErrorCode& status) const {
 #ifdef U_DEBUG_CALSVC
-        if(key.getDynamicClassID() != LocaleKey::getStaticClassID()) {
+        if(dynamic_cast<const LocaleKey*>(&key) == NULL) {
             fprintf(stderr, "::create - not a LocaleKey!\n");
         }
 #endif
@@ -442,8 +444,9 @@ public:
     }
 
     virtual UObject* cloneInstance(UObject* instance) const {
-        if(instance->getDynamicClassID() == UnicodeString::getStaticClassID()) {
-            return ((UnicodeString*)instance)->clone(); 
+        UnicodeString *s = dynamic_cast<UnicodeString *>(instance);
+        if(s != NULL) {
+            return s->clone(); 
         } else {
 #ifdef U_DEBUG_CALSVC_F
             UErrorCode status2 = U_ZERO_ERROR;
@@ -811,13 +814,12 @@ Calendar::createInstance(TimeZone* zone, const Locale& aLocale, UErrorCode& succ
     }
 
 #if !UCONFIG_NO_SERVICE
-    if(u->getDynamicClassID() == UnicodeString::getStaticClassID()) {
+    const UnicodeString* str = dynamic_cast<const UnicodeString*>(u);
+    if(str != NULL) {
         // It's a unicode string telling us what type of calendar to load ("gregorian", etc)
-        const UnicodeString& str = *(UnicodeString*)u;
-
         // Create a Locale over this string
         Locale l("");
-        LocaleUtility::initLocaleFromName(str, l);
+        LocaleUtility::initLocaleFromName(*str, l);
 
 #ifdef U_DEBUG_CALSVC
         fprintf(stderr, "Calendar::createInstance(%s), looking up [%s]\n", aLocale.getName(), l.getName());
@@ -840,19 +842,19 @@ Calendar::createInstance(TimeZone* zone, const Locale& aLocale, UErrorCode& succ
             return NULL;
         }
 
-        if(c->getDynamicClassID() == UnicodeString::getStaticClassID()) {
+        str = dynamic_cast<const UnicodeString*>(c);
+        if(str != NULL) {
             // recursed! Second lookup returned a UnicodeString. 
             // Perhaps DefaultCalendar{} was set to another locale.
 #ifdef U_DEBUG_CALSVC
             char tmp[200];
-            const UnicodeString& str = *(UnicodeString*)c;
             // Extract a char* out of it..
-            int32_t len = str.length();
+            int32_t len = str->length();
             int32_t actLen = sizeof(tmp)-1;
             if(len > actLen) {
                 len = actLen;
             }
-            str.extract(0,len,tmp);
+            str->extract(0,len,tmp);
             tmp[len]=0;
 
             fprintf(stderr, "err - recursed, 2nd lookup was unistring %s\n", tmp);
@@ -907,7 +909,7 @@ Calendar::operator==(const Calendar& that) const
 UBool 
 Calendar::isEquivalentTo(const Calendar& other) const
 {
-    return getDynamicClassID() == other.getDynamicClassID() &&
+    return typeid(*this) == typeid(other) &&
         fLenient                == other.fLenient &&
         fFirstDayOfWeek         == other.fFirstDayOfWeek &&
         fMinimalDaysInFirstWeek == other.fMinimalDaysInFirstWeek &&
@@ -3188,8 +3190,8 @@ int32_t Calendar::getActualHelper(UCalendarDateFields field, int32_t startValue,
     // not unique.  For example, last several days in the previous month
     // is week 5, and the rest of week is week 1.
     int32_t result = startValue;
-    if (work->get(field, status) != startValue
-        && field != UCAL_WEEK_OF_MONTH && delta > 0 || U_FAILURE(status)) {
+    if ((work->get(field, status) != startValue
+         && field != UCAL_WEEK_OF_MONTH && delta > 0 ) || U_FAILURE(status)) {
 #if defined (U_DEBUG_CAL) 
         fprintf(stderr, "getActualHelper(fld %d) - got  %d (not %d) - %s\n", field, work->get(field,status), startValue, u_errorName(status));
 #endif
@@ -3240,7 +3242,32 @@ Calendar::setWeekData(const Locale& desiredLocale, const char *type, UErrorCode&
     fWeekendCease = UCAL_SUNDAY;
     fWeekendCeaseMillis = 86400000; // 24*60*60*1000
 
-    CalendarData calData(desiredLocale, type, status);
+    // Since week and weekend data is territory based instead of language based,
+    // we may need to tweak the locale that we are using to try to get the appropriate
+    // values, using the following logic:
+    // 1). If the locale has a language but no territory, use the territory as defined by 
+    //     the likely subtags.
+    // 2). If the locale has a script designation then we ignore it,
+    //     then remove it ( i.e. "en_Latn_US" becomes "en_US" )
+ 
+    char minLocaleID[ULOC_FULLNAME_CAPACITY] = { 0 };
+    UErrorCode myStatus = U_ZERO_ERROR;
+
+    uloc_minimizeSubtags(desiredLocale.getName(),minLocaleID,ULOC_FULLNAME_CAPACITY,&myStatus);
+    Locale min = Locale::createFromName(minLocaleID);
+    Locale useLocale;
+    if ( uprv_strlen(desiredLocale.getCountry()) == 0 || 
+         uprv_strlen(desiredLocale.getScript()) > 0 && uprv_strlen(min.getScript()) == 0 ) {
+        char maxLocaleID[ULOC_FULLNAME_CAPACITY] = { 0 };
+        myStatus = U_ZERO_ERROR;
+        uloc_addLikelySubtags(desiredLocale.getName(),maxLocaleID,ULOC_FULLNAME_CAPACITY,&myStatus);
+        Locale max = Locale::createFromName(maxLocaleID);
+        useLocale = Locale(max.getLanguage(),max.getCountry());
+    } else {
+        useLocale = Locale(desiredLocale);
+    }
+ 
+    CalendarData calData(useLocale, type, status);
     // If the resource data doesn't seem to be present at all, then use last-resort
     // hard-coded data.
     UResourceBundle *dateTimeElements = calData.getByKey(gDateTimeElements, status);

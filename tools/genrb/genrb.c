@@ -22,7 +22,7 @@
 #include "ucmndata.h"  /* TODO: for reading the pool bundle */
 
 /* Protos */
-static void  processFile(const char *filename, const char* cp, const char *inputDir, const char *outputDir, const char *packageName, UErrorCode *status);
+void  processFile(const char *filename, const char* cp, const char *inputDir, const char *outputDir, const char *packageName, UErrorCode *status);
 static char *make_res_filename(const char *filename, const char *outputDir,
                                const char *packageName, UErrorCode *status);
 
@@ -59,7 +59,8 @@ enum
     NO_COLLATION_RULES,
     FORMAT_VERSION,
     WRITE_POOL_BUNDLE,
-    USE_POOL_BUNDLE
+    USE_POOL_BUNDLE,
+    INCLUDE_UNIHAN_COLL
 };
 
 UOption options[]={
@@ -84,6 +85,7 @@ UOption options[]={
                       UOPTION_DEF("formatVersion", '\x01', UOPT_REQUIRES_ARG),/* 18 */
                       UOPTION_DEF("writePoolBundle", '\x01', UOPT_NO_ARG),/* 19 */
                       UOPTION_DEF("usePoolBundle", '\x01', UOPT_OPTIONAL_ARG),/* 20 */
+                      UOPTION_DEF("includeUnihanColl", '\x01', UOPT_NO_ARG),/* 21 */ /* temporary, don't display in usage info */
                   };
 
 static     UBool       write_java = FALSE;
@@ -92,6 +94,7 @@ static     const char* outputEnc ="";
 static     const char* gPackageName=NULL;
 static     const char* bundleName=NULL;
 static     struct SRBRoot *newPoolBundle = NULL;
+           UBool       gIncludeUnihanColl = FALSE;
 
 /* TODO: separate header file for ResFile? */
 typedef struct ResFile {
@@ -398,8 +401,12 @@ main(int argc,
         setUsePoolBundle(TRUE);
     }
 
+    if(options[INCLUDE_UNIHAN_COLL].doesOccur) {
+        gIncludeUnihanColl = TRUE;
+    }
+
     if((argc-1)!=1) {
-    	printf("genrb number of files: %d\n", argc - 1);
+        printf("genrb number of files: %d\n", argc - 1);
     }
     /* generate the binary files */
     for(i = 1; i < argc; ++i) {
@@ -440,7 +447,7 @@ main(int argc,
 }
 
 /* Process a file */
-static void
+void
 processFile(const char *filename, const char *cp, const char *inputDir, const char *outputDir, const char *packageName, UErrorCode *status) {
     /*FileStream     *in           = NULL;*/
     struct SRBRoot *data         = NULL;
@@ -453,6 +460,7 @@ processFile(const char *filename, const char *cp, const char *inputDir, const ch
 
     int32_t dirlen  = 0;
     int32_t filelen = 0;
+
 
     if (status==NULL || U_FAILURE(*status)) {
         return;
@@ -533,7 +541,6 @@ processFile(const char *filename, const char *cp, const char *inputDir, const ch
     uprv_strcat(openFileName, filename);
 
     ucbuf = ucbuf_open(openFileName, &cp,getShowWarning(),TRUE, status);
-
     if(*status == U_FILE_ACCESS_ERROR) {
 
         fprintf(stderr, "couldn't open file %s\n", openFileName == NULL ? filename : openFileName);

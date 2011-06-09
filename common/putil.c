@@ -52,7 +52,7 @@
 Poorly upgraded Solaris machines can't have this defined.
 Cleanly installed Solaris can use this #define.
 */
-#if !defined(_XOPEN_SOURCE_EXTENDED) && (!defined(__STDC_VERSION__) || __STDC_VERSION__ >= 199901L)
+#if !defined(_XOPEN_SOURCE_EXTENDED) && ((!defined(__STDC_VERSION__) || __STDC_VERSION__ >= 199901L) || defined(__xlc__))
 #define _XOPEN_SOURCE_EXTENDED 1
 #endif
 
@@ -191,7 +191,6 @@ u_topNBytesOfDouble(double* d, int n)
     return (char*)(d + 1) - n;
 #endif
 }
-#endif
 
 static char*
 u_bottomNBytesOfDouble(double* d, int n)
@@ -202,6 +201,22 @@ u_bottomNBytesOfDouble(double* d, int n)
     return (char*)d;
 #endif
 }
+#endif   /* !IEEE_754 */
+
+#if IEEE_754
+static UBool
+u_signBit(double d) {
+    uint8_t hiByte;
+#if U_IS_BIG_ENDIAN
+    hiByte = *(uint8_t *)&d;
+#else
+    hiByte = *(((uint8_t *)&d) + sizeof(double) - 1);
+#endif
+    return (hiByte & 0x80) != 0;
+}
+#endif
+
+
 
 #if defined (U_DEBUG_FAKETIME)
 /* Override the clock to test things without having to move the system clock.
@@ -223,13 +238,17 @@ static UDate getUTCtime_fake() {
     if(!fakeClock_set) {
         UDate real = getUTCtime_real();
         const char *fake_start = getenv("U_FAKETIME_START");
-        if(fake_start!=NULL) {
+        if((fake_start!=NULL) && (fake_start[0]!=0)) {
             sscanf(fake_start,"%lf",&fakeClock_t0);
+            fakeClock_dt = fakeClock_t0 - real;
+            fprintf(stderr,"U_DEBUG_FAKETIME was set at compile time, so the ICU clock will start at a preset value\n"
+                    "env variable U_FAKETIME_START=%.0f (%s) for an offset of %.0f ms from the current time %.0f\n",
+                    fakeClock_t0, fake_start, fakeClock_dt, real);
+        } else {
+          fakeClock_dt = 0;
+            fprintf(stderr,"U_DEBUG_FAKETIME was set at compile time, but U_FAKETIME_START was not set.\n"
+                    "Set U_FAKETIME_START to the number of milliseconds since 1/1/1970 to set the ICU clock.\n");
         }
-        fakeClock_dt = fakeClock_t0 - real;
-        fprintf(stderr,"U_DEBUG_FAKETIME was set at compile time, so the ICU clock will start at a preset value\n"
-                       "U_FAKETIME_START=%.0f (%s) for an offset of %.0f ms from the current time %.0f\n",
-                            fakeClock_t0, fake_start, fakeClock_dt, real);
         fakeClock_set = TRUE;
     }
     umtx_unlock(&fakeClockMutex);
@@ -257,13 +276,21 @@ typedef union {
   implementations.
 ---------------------------------------------------------------------------*/
 
-/* Return UTC (GMT) time measured in milliseconds since 0:00 on 1/1/70.*/
 U_CAPI UDate U_EXPORT2
 uprv_getUTCtime()
 {
 #if defined(U_DEBUG_FAKETIME)
     return getUTCtime_fake(); /* Hook for overriding the clock */
-#elif defined(XP_MAC)
+#else
+    return uprv_getRawUTCtime();
+#endif
+}
+
+/* Return UTC (GMT) time measured in milliseconds since 0:00 on 1/1/70.*/
+U_CAPI UDate U_EXPORT2
+uprv_getRawUTCtime()
+{
+#if defined(XP_MAC)
     time_t t, t1, t2;
     struct tm tmrec;
 
@@ -460,20 +487,17 @@ U_CAPI double U_EXPORT2
 uprv_fmax(double x, double y)
 {
 #if IEEE_754
-    int32_t lowBits;
-
     /* first handle NaN*/
     if(uprv_isNaN(x) || uprv_isNaN(y))
         return uprv_getNaN();
 
     /* check for -0 and 0*/
-    lowBits = *(uint32_t*) u_bottomNBytesOfDouble(&x, sizeof(uint32_t));
-    if(x == 0.0 && y == 0.0 && (lowBits & SIGN))
+    if(x == 0.0 && y == 0.0 && u_signBit(x))
         return y;
 
 #endif
 
-    /* this should work for all flt point w/o NaN and Infpecial cases */
+    /* this should work for all flt point w/o NaN and Inf special cases */
     return (x > y ? x : y);
 }
 
@@ -481,15 +505,12 @@ U_CAPI double U_EXPORT2
 uprv_fmin(double x, double y)
 {
 #if IEEE_754
-    int32_t lowBits;
-
     /* first handle NaN*/
     if(uprv_isNaN(x) || uprv_isNaN(y))
         return uprv_getNaN();
 
     /* check for -0 and 0*/
-    lowBits = *(uint32_t*) u_bottomNBytesOfDouble(&y, sizeof(uint32_t));
-    if(x == 0.0 && y == 0.0 && (lowBits & SIGN))
+    if(x == 0.0 && y == 0.0 && u_signBit(y))
         return y;
 
 #endif
@@ -509,16 +530,13 @@ U_CAPI double U_EXPORT2
 uprv_trunc(double d)
 {
 #if IEEE_754
-    int32_t lowBits;
-
     /* handle error cases*/
     if(uprv_isNaN(d))
         return uprv_getNaN();
     if(uprv_isInfinite(d))
         return uprv_getInfinity();
 
-    lowBits = *(uint32_t*) u_bottomNBytesOfDouble(&d, sizeof(uint32_t));
-    if( (d == 0.0 && (lowBits & SIGN)) || d < 0)
+    if(u_signBit(d))    /* Signbit() picks up -0.0;  d<0 does not. */
         return ceil(d);
     else
         return floor(d);
@@ -637,17 +655,16 @@ extern U_IMPORT char *U_TZNAME[];
 #if defined(U_DARWIN)
 #include <tzfile.h>
 #define TZZONEINFO      (TZDIR "/")
-/* BEGIN Android-added */
-#elif defined(HAVE_ANDROID_OS)
-#define TZDEFAULT       ""
-#define TZZONEINFO      "/system/usr/share/zoneinfo/"
-/* END Android-added */
 #else
 #define TZDEFAULT       "/etc/localtime"
 #define TZZONEINFO      "/usr/share/zoneinfo/"
 #endif
 #if U_HAVE_DIRENT_H
 #define TZFILE_SKIP     "posixrules" /* tz file to skip when searching. */
+/* Some Linux distributions have 'localtime' in /usr/share/zoneinfo
+   symlinked to /etc/localtime, which makes searchForTZFile return
+   'localtime' when it's the first match. */
+#define TZFILE_SKIP2    "localtime"
 #define SEARCH_TZFILE
 #include <dirent.h>  /* Needed to search through system timezone files */
 #endif
@@ -675,6 +692,26 @@ static UBool isValidOlsonID(const char *id) {
         || uprv_strcmp(id, "MST7MDT") == 0
         || uprv_strcmp(id, "CST6CDT") == 0
         || uprv_strcmp(id, "EST5EDT") == 0);
+}
+
+/* On some Unix-like OS, 'posix' subdirectory in
+   /usr/share/zoneinfo replicates the top-level contents. 'right'
+   subdirectory has the same set of files, but individual files
+   are different from those in the top-level directory or 'posix'
+   because 'right' has files for TAI (Int'l Atomic Time) while 'posix'
+   has files for UTC.
+   When the first match for /etc/localtime is in either of them
+   (usually in posix because 'right' has different file contents),
+   or TZ environment variable points to one of them, createTimeZone
+   fails because, say, 'posix/America/New_York' is not an Olson
+   timezone id ('America/New_York' is). So, we have to skip
+   'posix/' and 'right/' at the beginning. */
+static void skipZoneIDPrefix(const char** id) {
+    if (uprv_strncmp(*id, "posix/", 6) == 0
+        || uprv_strncmp(*id, "right/", 6) == 0)
+    {
+        *id += 6;
+    }
 }
 #endif
 
@@ -883,20 +920,33 @@ static char* searchForTZFile(const char* path, DefaultTZInfo* tzInfo) {
 
     /* Check each entry in the directory. */
     while((dirEntry = readdir(dirp)) != NULL) {
-        if (uprv_strcmp(dirEntry->d_name, SKIP1) != 0 && uprv_strcmp(dirEntry->d_name, SKIP2) != 0) {
+        const char* dirName = dirEntry->d_name;
+        if (uprv_strcmp(dirName, SKIP1) != 0 && uprv_strcmp(dirName, SKIP2) != 0) {
             /* Create a newpath with the new entry to test each entry in the directory. */
             char newpath[MAX_PATH_SIZE];
             uprv_strcpy(newpath, curpath);
-            uprv_strcat(newpath, dirEntry->d_name);
+            uprv_strcat(newpath, dirName);
 
             if ((subDirp = opendir(newpath)) != NULL) {
                 /* If this new path is a directory, make a recursive call with the newpath. */
                 closedir(subDirp);
                 uprv_strcat(newpath, "/");
                 result = searchForTZFile(newpath, tzInfo);
-            } else if (uprv_strcmp(TZFILE_SKIP, dirEntry->d_name) != 0) {
+                /*
+                 Have to get out here. Otherwise, we'd keep looking
+                 and return the first match in the top-level directory
+                 if there's a match in the top-level. If not, this function
+                 would return NULL and set gTimeZoneBufferPtr to NULL in initDefault().
+                 It worked without this in most cases because we have a fallback of calling
+                 localtime_r to figure out the default timezone.
+                */
+                if (result != NULL)
+                    break;
+            } else if (uprv_strcmp(TZFILE_SKIP, dirName) != 0 && uprv_strcmp(TZFILE_SKIP2, dirName) != 0) {
                 if(compareBinaryFiles(TZDEFAULT, newpath, tzInfo)) {
-                    uprv_strcpy(SEARCH_TZFILE_RESULT, newpath + (sizeof(TZZONEINFO) - 1));
+                    const char* zoneid = newpath + (sizeof(TZZONEINFO)) - 1;
+                    skipZoneIDPrefix(&zoneid);
+                    uprv_strcpy(SEARCH_TZFILE_RESULT, zoneid);
                     result = SEARCH_TZFILE_RESULT;
                     /* Get out after the first one found. */
                     break;
@@ -935,12 +985,7 @@ uprv_tzname(int n)
     if (tzid != NULL && isValidOlsonID(tzid))
     {
         /* This might be a good Olson ID. */
-        if (uprv_strncmp(tzid, "posix/", 6) == 0
-            || uprv_strncmp(tzid, "right/", 6) == 0)
-        {
-            /* Remove the posix/ or right/ prefix. */
-            tzid += 6;
-        }
+        skipZoneIDPrefix(&tzid);
         return tzid;
     }
     /* else U_TZNAME will give a better result. */
@@ -1128,6 +1173,14 @@ uprv_pathIsAbsolute(const char *path)
   return FALSE;
 }
 
+/* Temporary backup setting of ICU_DATA_DIR_PREFIX_ENV_VAR
+   until some client wrapper makefiles are updated */
+#if defined(U_DARWIN) && TARGET_IPHONE_SIMULATOR
+# if !defined(ICU_DATA_DIR_PREFIX_ENV_VAR)
+#  define ICU_DATA_DIR_PREFIX_ENV_VAR "IPHONE_SIMULATOR_ROOT"
+# endif
+#endif
+
 U_CAPI const char * U_EXPORT2
 u_getDataDirectory(void) {
     const char *path = NULL;
@@ -1160,21 +1213,31 @@ u_getDataDirectory(void) {
     path=getenv("ICU_DATA");
 #   endif
 
-    /* ICU_DATA_DIR may be set as a compile option */
-#   ifdef ICU_DATA_DIR
+    /* ICU_DATA_DIR may be set as a compile option.
+     * U_ICU_DATA_DEFAULT_DIR is provided and is set by ICU at compile time
+     * and is used only when data is built in archive mode eliminating the need
+     * for ICU_DATA_DIR to be set. U_ICU_DATA_DEFAULT_DIR is set to the installation
+     * directory of the data dat file. Users should use ICU_DATA_DIR if they want to
+     * set their own path.
+     */
+#if defined(ICU_DATA_DIR) || defined(U_ICU_DATA_DEFAULT_DIR)
     if(path==NULL || *path==0) {
-#       if defined(ICU_DATA_DIR_PREFIX_ENV_VAR)
+# if defined(ICU_DATA_DIR_PREFIX_ENV_VAR)
         const char *prefix = getenv(ICU_DATA_DIR_PREFIX_ENV_VAR);
+# endif
+# ifdef ICU_DATA_DIR
+        path=ICU_DATA_DIR;
+# else
+        path=U_ICU_DATA_DEFAULT_DIR;
+# endif
+# if defined(ICU_DATA_DIR_PREFIX_ENV_VAR)
         if (prefix != NULL) {
-            snprintf(datadir_path_buffer, sizeof(datadir_path_buffer),
-                     "%s%s", prefix, ICU_DATA_DIR);
+            snprintf(datadir_path_buffer, PATH_MAX, "%s%s", prefix, path);
             path=datadir_path_buffer;
-        } else {
-            path=ICU_DATA_DIR;
         }
-#       endif
+# endif
     }
-#   endif
+#endif
 
     if(path==NULL) {
         /* It looks really bad, set it to something. */
@@ -1295,11 +1358,14 @@ static const mac_lc_rec mac_lc_recs[] = {
 #endif
 
 #if U_POSIX_LOCALE
-/* Return just the POSIX id, whatever happens to be in it */
-static const char *uprv_getPOSIXID(void)
+/* A helper function used by uprv_getPOSIXIDForDefaultLocale and
+ * uprv_getPOSIXIDForDefaultCodepage. Returns the posix locale id for
+ * LC_CTYPE and LC_MESSAGES. It doesn't support other locale categories.
+ */
+static const char *uprv_getPOSIXIDForCategory(int category)
 {
-    static const char* posixID = NULL;
-    if (posixID == 0) {
+    const char* posixID = NULL;
+    if (category == LC_MESSAGES || category == LC_CTYPE) {
         /*
         * On Solaris two different calls to setlocale can result in
         * different values. Only get this value once.
@@ -1318,7 +1384,7 @@ static const char *uprv_getPOSIXID(void)
         * Do not call setlocale(LC_*, "")! Using an empty string instead
         * of NULL, will modify the libc behavior.
         */
-        posixID = setlocale(LC_CTYPE, NULL);
+        posixID = setlocale(category, NULL);
         if ((posixID == 0)
             || (uprv_strcmp("C", posixID) == 0)
             || (uprv_strcmp("POSIX", posixID) == 0))
@@ -1326,22 +1392,44 @@ static const char *uprv_getPOSIXID(void)
             /* Maybe we got some garbage.  Try something more reasonable */
             posixID = getenv("LC_ALL");
             if (posixID == 0) {
-                posixID = getenv("LC_CTYPE");
+                posixID = getenv(category == LC_MESSAGES ? "LC_MESSAGES" : "LC_CTYPE");
                 if (posixID == 0) {
                     posixID = getenv("LANG");
                 }
             }
         }
-
-        if ((posixID==0)
-            || (uprv_strcmp("C", posixID) == 0)
-            || (uprv_strcmp("POSIX", posixID) == 0))
-        {
-            /* Nothing worked.  Give it a nice POSIX default value. */
-            posixID = "en_US_POSIX";
-        }
     }
+    if ((posixID==0)
+        || (uprv_strcmp("C", posixID) == 0)
+        || (uprv_strcmp("POSIX", posixID) == 0))
+    {
+        /* Nothing worked.  Give it a nice POSIX default value. */
+        posixID = "en_US_POSIX";
+    }
+    return posixID;
+}
 
+/* Return just the POSIX id for the default locale, whatever happens to be in
+ * it. It gets the value from LC_MESSAGES and indirectly from LC_ALL and LANG.
+ */
+static const char *uprv_getPOSIXIDForDefaultLocale(void)
+{
+    static const char* posixID = NULL;
+    if (posixID == 0) {
+        posixID = uprv_getPOSIXIDForCategory(LC_MESSAGES);
+    }
+    return posixID;
+}
+
+/* Return just the POSIX id for the default codepage, whatever happens to be in
+ * it. It gets the value from LC_CTYPE and indirectly from LC_ALL and LANG.
+ */
+static const char *uprv_getPOSIXIDForDefaultCodepage(void)
+{
+    static const char* posixID = NULL;
+    if (posixID == 0) {
+        posixID = uprv_getPOSIXIDForCategory(LC_CTYPE);
+    }
     return posixID;
 }
 #endif
@@ -1374,7 +1462,7 @@ The 'rightmost' variant (@xxx) wins.
 The leftmost codepage (.xxx) wins.
 */
     char *correctedPOSIXLocale = 0;
-    const char* posixID = uprv_getPOSIXID();
+    const char* posixID = uprv_getPOSIXIDForDefaultLocale();
     const char *p;
     const char *q;
     int32_t len;
@@ -1733,6 +1821,11 @@ remapPlatformDependentCodepage(const char *locale, const char *name) {
          */
         name = "UTF-8";
     }
+    /*
+     * Linux returns ANSI_X3.4-1968 for C/POSIX, but the call site takes care of
+     * it by falling back to 'US-ASCII' when NULL is returned from this
+     * function. So, we don't have to worry about it here.
+     */
 #endif
     /* return NULL when "" is passed in */
     if (*name == 0) {
@@ -1809,25 +1902,11 @@ int_getDefaultCodepage()
     const char *localeName = NULL;
     const char *name = NULL;
 
+    localeName = uprv_getPOSIXIDForDefaultCodepage();
     uprv_memset(codesetName, 0, sizeof(codesetName));
-
-    /* Use setlocale in a nice way, and then check some environment variables.
-       Maybe the application used setlocale already.
-    */
-    localeName = uprv_getPOSIXID();
-    name = getCodepageFromPOSIXID(localeName, codesetName, sizeof(codesetName));
-    if (name) {
-        /* if we can find the codeset name from setlocale, return that. */
-        return name;
-    }
-    /* else "C" was probably returned. That's underspecified. */
-
 #if U_HAVE_NL_LANGINFO_CODESET
-    if (*codesetName) {
-        uprv_memset(codesetName, 0, sizeof(codesetName));
-    }
-    /* When available, check nl_langinfo because it usually gives more
-       useful names. It depends on LC_CTYPE and not LANG or LC_ALL.
+    /* When available, check nl_langinfo first because it usually gives more
+       useful names. It depends on LC_CTYPE.
        nl_langinfo may use the same buffer as setlocale. */
     {
         const char *codeset = nl_langinfo(U_NL_LANGINFO_CODESET);
@@ -1851,6 +1930,16 @@ int_getDefaultCodepage()
         }
     }
 #endif
+
+    /* Use setlocale in a nice way, and then check some environment variables.
+       Maybe the application used setlocale already.
+    */
+    uprv_memset(codesetName, 0, sizeof(codesetName));
+    name = getCodepageFromPOSIXID(localeName, codesetName, sizeof(codesetName));
+    if (name) {
+        /* if we can find the codeset name from setlocale, return that. */
+        return name;
+    }
 
     if (*codesetName == 0)
     {
@@ -2003,34 +2092,33 @@ u_getVersion(UVersionInfo versionArray) {
 
 U_INTERNAL void * U_EXPORT2
 uprv_dl_open(const char *libName, UErrorCode *status) {
-    void *ret = NULL;
-    if(U_FAILURE(*status)) return ret;
-    ret =  dlopen(libName, RTLD_NOW|RTLD_GLOBAL);
-    if(ret==NULL) {
-        perror("dlopen");
-        *status = U_MISSING_RESOURCE_ERROR;
-        /* TODO: read errno and translate. */
-    }
-    return ret;
+  void *ret = NULL;
+  if(U_FAILURE(*status)) return ret;
+  ret =  dlopen(libName, RTLD_NOW|RTLD_GLOBAL);
+  if(ret==NULL) {
+#ifndef U_TRACE_DYLOAD
+    perror("dlopen");
+#endif
+    *status = U_MISSING_RESOURCE_ERROR;
+  }
+  return ret;
 }
 
 U_INTERNAL void U_EXPORT2
 uprv_dl_close(void *lib, UErrorCode *status) {
-    if(U_FAILURE(*status)) return;
-    dlclose(lib);
-    /* TODO: translate errno? */
+  if(U_FAILURE(*status)) return;
+  dlclose(lib);
 }
 
 U_INTERNAL void* U_EXPORT2
 uprv_dl_sym(void *lib, const char* sym, UErrorCode *status) {
-    void *ret = NULL;
-    if(U_FAILURE(*status)) return ret;
-    ret = dlsym(lib, sym);
-    if(ret == NULL) {
-        *status = U_MISSING_RESOURCE_ERROR;
-        /* TODO: translate errno? */
-    }
-    return ret;
+  void *ret = NULL;
+  if(U_FAILURE(*status)) return ret;
+  ret = dlsym(lib, sym);
+  if(ret == NULL) {
+    *status = U_MISSING_RESOURCE_ERROR;
+  }
+  return ret;
 }
 
 #else
@@ -2039,24 +2127,24 @@ uprv_dl_sym(void *lib, const char* sym, UErrorCode *status) {
 
 U_INTERNAL void * U_EXPORT2
 uprv_dl_open(const char *libName, UErrorCode *status) {
-    if(U_FAILURE(*status)) return NULL;
-    *status = U_UNSUPPORTED_ERROR;
-    return NULL;
+  if(U_FAILURE(*status)) return NULL;
+  *status = U_UNSUPPORTED_ERROR;
+  return NULL;
 }
 
 U_INTERNAL void U_EXPORT2
 uprv_dl_close(void *lib, UErrorCode *status) {
-    if(U_FAILURE(*status)) return;
-    *status = U_UNSUPPORTED_ERROR;
-    return;
+  if(U_FAILURE(*status)) return;
+  *status = U_UNSUPPORTED_ERROR;
+  return;
 }
 
 
 U_INTERNAL void* U_EXPORT2
 uprv_dl_sym(void *lib, const char* sym, UErrorCode *status) {
-    if(U_FAILURE(*status)) return NULL;
-    *status = U_UNSUPPORTED_ERROR;
-    return NULL;
+  if(U_FAILURE(*status)) return NULL;
+  *status = U_UNSUPPORTED_ERROR;
+  return NULL;
 }
 
 
@@ -2067,49 +2155,49 @@ uprv_dl_sym(void *lib, const char* sym, UErrorCode *status) {
 
 U_INTERNAL void * U_EXPORT2
 uprv_dl_open(const char *libName, UErrorCode *status) {
-   	HMODULE lib = NULL;
-
-	if(U_FAILURE(*status)) return NULL;
-    
-	lib = LoadLibrary(libName);
-
-	if(lib==NULL) {
-		*status = U_MISSING_RESOURCE_ERROR;
-	}
-
-    return (void*)lib;
+  HMODULE lib = NULL;
+  
+  if(U_FAILURE(*status)) return NULL;
+  
+  lib = LoadLibrary(libName);
+  
+  if(lib==NULL) {
+    *status = U_MISSING_RESOURCE_ERROR;
+  }
+  
+  return (void*)lib;
 }
 
 U_INTERNAL void U_EXPORT2
 uprv_dl_close(void *lib, UErrorCode *status) {
-	HMODULE handle = (HMODULE)lib;
-    if(U_FAILURE(*status)) return;
-    
-	FreeLibrary(handle);
-
-    return;
+  HMODULE handle = (HMODULE)lib;
+  if(U_FAILURE(*status)) return;
+  
+  FreeLibrary(handle);
+  
+  return;
 }
 
 
 U_INTERNAL void* U_EXPORT2
 uprv_dl_sym(void *lib, const char* sym, UErrorCode *status) {
-	HMODULE handle = (HMODULE)lib;
-	void * addr = NULL;
-
-	if(U_FAILURE(*status) || lib==NULL) return NULL;
-   
-	addr = GetProcAddress(handle, sym);
-
-	if(addr==NULL) {
-		DWORD lastError = GetLastError();
-		if(lastError == ERROR_PROC_NOT_FOUND) {
-			*status = U_MISSING_RESOURCE_ERROR;
-		} else {
-			*status = U_UNSUPPORTED_ERROR; /* other unknown error. */
-		}
-	}
-
-    return addr;
+  HMODULE handle = (HMODULE)lib;
+  void * addr = NULL;
+  
+  if(U_FAILURE(*status) || lib==NULL) return NULL;
+  
+  addr = GetProcAddress(handle, sym);
+  
+  if(addr==NULL) {
+    DWORD lastError = GetLastError();
+    if(lastError == ERROR_PROC_NOT_FOUND) {
+      *status = U_MISSING_RESOURCE_ERROR;
+    } else {
+      *status = U_UNSUPPORTED_ERROR; /* other unknown error. */
+    }
+  }
+  
+  return addr;
 }
 
 
@@ -2143,6 +2231,22 @@ uprv_dl_sym(void *lib, const char* sym, UErrorCode *status) {
 #endif
 
 #endif /* U_ENABLE_DYLOAD */
+
+/* BEGIN Andriod-added */
+/* Remove this after Android RTTI supports exception */
+U_CAPI void U_EXPORT2
+__cxa_bad_cast (void)
+{
+ abort();
+}
+
+U_CAPI void U_EXPORT2
+__cxa_bad_typeid (void)
+{
+ abort();
+}
+
+/* END Android-added */
 
 /*
  * Hey, Emacs, please set the following:

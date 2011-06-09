@@ -54,10 +54,10 @@ src_files := \
 	ustring.c          ustrtrns.c         \
 	ustr_wcs.c         utf_impl.c         \
 	utrace.c           utrie.c            \
- 	utypes.c           wintz.c            \
- 	utrie2_builder.c   icuplug.c          \
- 	propsvec.c         ulist.c            \
- 	uloc_tag.c
+	utypes.c           wintz.c            \
+	utrie2_builder.c   icuplug.c          \
+	propsvec.c         ulist.c            \
+	uloc_tag.c
 
 src_files += \
         bmpset.cpp      unisetspan.cpp   \
@@ -98,7 +98,8 @@ src_files += \
 	loclikely.cpp            locresdata.cpp     \
 	normalizer2impl.cpp      normalizer2.cpp    \
 	filterednormalizer2.cpp  ucol_swp.cpp       \
-	uprops.cpp      utrie2.cpp
+	uprops.cpp      utrie2.cpp \
+        charstr.cpp     uts46.cpp
 
 
 # This is the empty compiled-in icu data structure
@@ -125,8 +126,11 @@ local_ldlibs := -lpthread -lm
 
 include $(CLEAR_VARS)
 LOCAL_SRC_FILES := $(src_files)
-LOCAL_C_INCLUDES := $(c_includes)
+LOCAL_C_INCLUDES := $(c_includes) \
+                    abi/cpp/include
 LOCAL_CFLAGS := $(local_cflags) -DPIC -fPIC
+LOCAL_RTTI_FLAG := -frtti
+LOCAL_SHARED_LIBRARIES += libgabi++
 LOCAL_LDLIBS += $(local_ldlibs)
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := libicuuc

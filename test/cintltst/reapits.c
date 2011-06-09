@@ -119,8 +119,9 @@ static void test_assert_utext(const char *expected, UText *actual, const char *f
 static void TestRegexCAPI(void);
 static void TestBug4315(void);
 static void TestUTextAPI(void);
+
 /* BEGIN android-added
-   Removed this function after Android upgrade to ICU4.6.
+   Removed this function after Android upgrade to ICU4.8.
 */
 static void TestRefreshInput(void);
 /* END android-added */
@@ -133,7 +134,7 @@ void addURegexTest(TestNode** root)
     addTest(root, &TestBug4315,   "regex/TestBug4315");
     addTest(root, &TestUTextAPI,  "regex/TestUTextAPI");
     /* BEGIN android-added
-       Removed this after Android upgrade to ICU4.6.
+       Removed this after Android upgrade to ICU4.8.
     */
     addTest(root, &TestRefreshInput, "regex/TestRefreshInput");
     /* END android-added */
@@ -1741,21 +1742,50 @@ static void TestUTextAPI(void) {
 
         /*  Capture Group 0, the full match.  Should succeed.  */
         status = U_ZERO_ERROR;
-        actual = uregex_groupUText(re, 0, NULL, &status);
+        actual = uregex_groupUTextDeep(re, 0, NULL, &status);
         TEST_ASSERT_SUCCESS(status);
         TEST_ASSERT_UTEXT(str_abcinteriordef, actual);
         utext_close(actual);
 
+        /*  Capture Group 0 with shallow clone API.  Should succeed.  */
+        status = U_ZERO_ERROR;
+        {
+            int64_t      group_len;
+            int32_t      len16;
+            UErrorCode   shallowStatus = U_ZERO_ERROR;
+            int64_t      nativeIndex;
+            UChar *groupChars;
+            UText groupText = UTEXT_INITIALIZER;
+
+            actual = uregex_groupUText(re, 0, NULL, &group_len, &status);
+            TEST_ASSERT_SUCCESS(status);
+
+            nativeIndex = utext_getNativeIndex(actual);
+            /*  Following returns U_INDEX_OUTOFBOUNDS_ERROR... looks like a bug in ucstrFuncs UTextFuncs [utext.cpp]  */
+            /*  len16 = utext_extract(actual, nativeIndex, nativeIndex + group_len, NULL, 0, &shallowStatus);  */
+            len16 = group_len;
+            
+            groupChars = (UChar *)malloc(sizeof(UChar)*(len16+1));
+            utext_extract(actual, nativeIndex, nativeIndex + group_len, groupChars, len16+1, &shallowStatus);
+
+            utext_openUChars(&groupText, groupChars, len16, &shallowStatus);
+            
+            TEST_ASSERT_UTEXT(str_abcinteriordef, &groupText);
+            utext_close(&groupText);
+            free(groupChars);
+        }
+        utext_close(actual);
+
         /*  Capture group #1.  Should succeed. */
         status = U_ZERO_ERROR;
-        actual = uregex_groupUText(re, 1, NULL, &status);
+        actual = uregex_groupUTextDeep(re, 1, NULL, &status);
         TEST_ASSERT_SUCCESS(status);
         TEST_ASSERT_UTEXT(str_interior, actual);
         utext_close(actual);
 
         /*  Capture group out of range.  Error. */
         status = U_ZERO_ERROR;
-        actual = uregex_groupUText(re, 2, NULL, &status);
+        actual = uregex_groupUTextDeep(re, 2, NULL, &status);
         TEST_ASSERT(status == U_INDEX_OUTOFBOUNDS_ERROR);
         TEST_ASSERT(utext_nativeLength(actual) == 0);
         utext_close(actual);
@@ -2132,7 +2162,7 @@ static void TestUTextAPI(void) {
 }
 
 /* BEGIN android-added
-   Removed this function after Android upgrade to ICU4.6.
+   Removed this function after Android upgrade to ICU4.8.
 */
 static void TestRefreshInput(void) {
     /*

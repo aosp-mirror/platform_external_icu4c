@@ -28,6 +28,8 @@
 #define INFINITE 0
 #endif
 
+static const UVersionInfo ICU_452 = {4,5,2,0};
+
 // Define this to test just a single locale
 //#define TEST_ONE_LOC  "cs_CZ"
 
@@ -435,7 +437,7 @@ void DateFormatRoundTripTest::test(DateFormat *fmt, const Locale &origLocale, UB
 
             if(dmatch > maxDmatch || smatch > maxSmatch) { // Special case for Japanese and Islamic (could have large negative years)
               const char *type = fmt->getCalendar()->getType();
-              if(!strcmp(type,"japanese")) {
+              if(!strcmp(type,"japanese") || (!strcmp(type,"buddhist"))) {
                 maxSmatch = 4;
                 maxDmatch = 4;
               }

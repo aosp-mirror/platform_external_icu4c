@@ -25,7 +25,7 @@
 #include "cmemory.h"
 #endif
 
-#include "../common/util.h"
+#include "util.h"
 
 U_NAMESPACE_BEGIN
 

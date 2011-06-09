@@ -21,26 +21,16 @@ pa{
         "Guru",
     }
     NumberElements{
-        ".",
-        ",",
-        ";",
-        "%",
-        "੦",
-        "#",
-        "-",
-        "E",
-        "‰",
-        "∞",
-        "NaN",
-        "+",
+        default{"guru"}
+        latn{
+            patterns{
+                currencyFormat{"¤ #,##,##0.00"}
+                decimalFormat{"#,##,##0.###"}
+                percentFormat{"#,##,##0%"}
+            }
+        }
     }
-    NumberPatterns{
-        "#,##,##0.###",
-        "¤ #,##,##0.00",
-        "#,##,##0%",
-        "#E0",
-    }
-    Version{"2.0.47.63"}
+    Version{"2.0.50.30"}
     calendar{
         gregorian{
             AmPmMarkers{
@@ -188,5 +178,4 @@ pa{
             }
         }
     }
-    defaultNumberingSystem{"guru"}
 }

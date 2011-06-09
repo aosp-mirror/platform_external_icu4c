@@ -96,11 +96,13 @@
  *         the return value indicates the necessary destination buffer size.
  * @stable ICU 2.0
  */
+/* BEGIN android-changed */
 U_STABLE int32_t U_EXPORT2
 u_shapeArabic(const UChar *source, int32_t sourceLength,
               UChar *dest, int32_t destSize,
               uint64_t options,
               UErrorCode *pErrorCode);
+/* END android-changed */
 
 /**
  * Memory option: allow the result to have a different length than the source.
@@ -113,7 +115,7 @@ u_shapeArabic(const UChar *source, int32_t sourceLength,
  * Memory option: allow the result to have a different length than the source.
  * Affects: LamAlef options
  * This option is an alias to U_SHAPE_LENGTH_GROW_SHRINK
- * @draft ICU 4.2
+ * @stable ICU 4.2
  */
 #define U_SHAPE_LAMALEF_RESIZE                  0 
 
@@ -129,7 +131,7 @@ u_shapeArabic(const UChar *source, int32_t sourceLength,
  * If more room is necessary, then try to consume spaces next to modified characters.
  * Affects: LamAlef options
  * This option is an alias to U_SHAPE_LENGTH_FIXED_SPACES_NEAR
- * @draft ICU 4.2
+ * @stable ICU 4.2
  */
 #define U_SHAPE_LAMALEF_NEAR                    1 
 
@@ -145,7 +147,7 @@ u_shapeArabic(const UChar *source, int32_t sourceLength,
  * If more room is necessary, then try to consume spaces at the end of the text.
  * Affects: LamAlef options
  * This option is an alias to U_SHAPE_LENGTH_FIXED_SPACES_AT_END
- * @draft ICU 4.2
+ * @stable ICU 4.2
  */
 #define U_SHAPE_LAMALEF_END                     2 
 
@@ -161,7 +163,7 @@ u_shapeArabic(const UChar *source, int32_t sourceLength,
  * If more room is necessary, then try to consume spaces at the beginning of the text.
  * Affects: LamAlef options
  * This option is an alias to U_SHAPE_LENGTH_FIXED_SPACES_AT_BEGINNING
- * @draft ICU 4.2
+ * @stable ICU 4.2
  */
 #define U_SHAPE_LAMALEF_BEGIN                    3 
 
@@ -177,7 +179,7 @@ u_shapeArabic(const UChar *source, int32_t sourceLength,
  *
  * Deshaping Mode: Perform the same function as the flag equals U_SHAPE_LAMALEF_END. 
  * Affects: LamAlef options
- * @draft ICU 4.2
+ * @stable ICU 4.2
  */
 #define U_SHAPE_LAMALEF_AUTO                     0x10000 
 
@@ -187,7 +189,7 @@ u_shapeArabic(const UChar *source, int32_t sourceLength,
 
 /**
  * Bit mask for LamAlef memory options.
- * @draft ICU 4.2
+ * @stable ICU 4.2
  */
 #define U_SHAPE_LAMALEF_MASK                     0x10003 /* updated */
 
@@ -199,7 +201,7 @@ u_shapeArabic(const UChar *source, int32_t sourceLength,
  * the source is in visual RTL order,
  * the rightmost displayed character stored first.
  * This option is an alias to U_SHAPE_TEXT_DIRECTION_LOGICAL
- * @draft ICU 4.2
+ * @stable ICU 4.2
  */
 #define U_SHAPE_TEXT_DIRECTION_VISUAL_RTL       0
 
@@ -339,13 +341,13 @@ u_shapeArabic(const UChar *source, int32_t sourceLength,
  * De-shaping mode: Any Seen character followed by Tail character will be
  *                  replaced by one cell Seen and a space will replace the Tail.
  * Affects: Seen options
- * @draft ICU 4.2
+ * @stable ICU 4.2
  */
 #define U_SHAPE_SEEN_TWOCELL_NEAR     0x200000
 
 /**
  * Bit mask for Seen memory options. 
- * @draft ICU 4.2
+ * @stable ICU 4.2
  */
 #define U_SHAPE_SEEN_MASK             0x700000
 
@@ -360,14 +362,14 @@ u_shapeArabic(const UChar *source, int32_t sourceLength,
  * De-shaping mode: Any Yeh (final or isolated) character followed by Hamza character will be
  *                  replaced by one cell YehHamza and space will replace the Hamza.
  * Affects: YehHamza options
- * @draft ICU 4.2
+ * @stable ICU 4.2
  */
 #define U_SHAPE_YEHHAMZA_TWOCELL_NEAR      0x1000000
 
 
 /**
  * Bit mask for YehHamza memory options. 
- * @draft ICU 4.2
+ * @stable ICU 4.2
  */
 #define U_SHAPE_YEHHAMZA_MASK              0x3800000
 
@@ -379,7 +381,7 @@ u_shapeArabic(const UChar *source, int32_t sourceLength,
  *
  * De-shaping mode: N/A
  * Affects: Tashkeel options
- * @draft ICU 4.2
+ * @stable ICU 4.2
  */
 #define U_SHAPE_TASHKEEL_BEGIN                      0x40000
 
@@ -390,7 +392,7 @@ u_shapeArabic(const UChar *source, int32_t sourceLength,
  *
  * De-shaping mode: N/A
  * Affects: Tashkeel options
- * @draft ICU 4.2
+ * @stable ICU 4.2
  */
 #define U_SHAPE_TASHKEEL_END                        0x60000
 
@@ -400,7 +402,7 @@ u_shapeArabic(const UChar *source, int32_t sourceLength,
  * De-shaping mode: N/A 
  *
  * Affect: Tashkeel options
- * @draft ICU 4.2
+ * @stable ICU 4.2
  */
 #define U_SHAPE_TASHKEEL_RESIZE                     0x80000
 
@@ -411,13 +413,13 @@ u_shapeArabic(const UChar *source, int32_t sourceLength,
  *
  * De-shaping mode: N/A
  * Affects: YehHamza options
- * @draft ICU 4.2
+ * @stable ICU 4.2
  */
 #define U_SHAPE_TASHKEEL_REPLACE_BY_TATWEEL         0xC0000
 
 /** 
  * Bit mask for Tashkeel replacement with Space or Tatweel memory options. 
- * @draft ICU 4.2
+ * @stable ICU 4.2
  */
 #define U_SHAPE_TASHKEEL_MASK                       0xE0000
 
@@ -441,13 +443,13 @@ u_shapeArabic(const UChar *source, int32_t sourceLength,
  *       to the physical memory address beginning for Visual LTR text, Same as BEGIN in default behavior.
  *    D. END For Logical text: Same as END in default behavior). 
  * Affects: All LamAlef BEGIN, END and AUTO options.
- * @draft ICU 4.2
+ * @stable ICU 4.2
  */
 #define U_SHAPE_SPACES_RELATIVE_TO_TEXT_BEGIN_END 0x4000000
 
 /**
  * Bit mask for swapping BEGIN and END for Visual LTR text 
- * @draft ICU 4.2
+ * @stable ICU 4.2
  */
 #define U_SHAPE_SPACES_RELATIVE_TO_TEXT_MASK      0x4000000
 
@@ -471,12 +473,13 @@ u_shapeArabic(const UChar *source, int32_t sourceLength,
  */
 #define SHAPE_TAIL_TYPE_MASK          0x8000000
 
+/* BEGIN Android-added */
 /**
  * Option used when forming LamAlef ligatures and
  * U_SHAPE_LAMALEF_NEAR is set.  When this option is selected, inserts
  * 0xffff instead of 0x0020 (space) after the ligature.  Use this when
  * you need to identify these substitutions during later processing.
  */
+/* END Android-added */
 #define U_SHAPE_X_LAMALEF_SUB_ALTERNATE (0x1ULL << 32)
-
 #endif

@@ -44,20 +44,20 @@ void IntlTestUtilities::runIndexedTest( int32_t index, UBool exec, const char* &
 {
     if (exec) logln("TestSuite Utilities: ");
     switch (index) {
-        CASE(0, MultithreadTest); 
-        CASE(1, StringTest); 
-        CASE(2, UnicodeStringTest); 
-        CASE(3, LocaleTest); 
-        CASE(4, CharIterTest); 
-        CASE(5, UnicodeTest); 
-        CASE(6, ResourceBundleTest); 
-        CASE(7, NewResourceBundleTest); 
-        CASE(8, PUtilTest); 
-        CASE(9, UObjectTest); 
-        CASE(10, UVector32Test); 
-        CASE(11, UVectorTest); 
-        CASE(12, UTextTest); 
-        CASE(13, LocaleAliasTest); 
+        CASE(0, MultithreadTest);
+        CASE(1, StringTest);
+        CASE(2, UnicodeStringTest);
+        CASE(3, LocaleTest);
+        CASE(4, CharIterTest);
+        CASE(5, UObjectTest);
+        CASE(6, UnicodeTest);
+        CASE(7, ResourceBundleTest);
+        CASE(8, NewResourceBundleTest);
+        CASE(9, PUtilTest);
+        CASE(10, UVector32Test);
+        CASE(11, UVectorTest);
+        CASE(12, UTextTest);
+        CASE(13, LocaleAliasTest);
         CASE(14, UnicodeSetTest);
         CASE(15, ErrorCodeTest);
         case 16:
@@ -271,6 +271,7 @@ void LocalPointerTest::TestLocalArray() {
 #include "unicode/ucnvsel.h"
 #include "unicode/ucal.h"
 #include "unicode/udatpg.h"
+#include "unicode/uidna.h"
 #include "unicode/uldnames.h"
 #include "unicode/umsg.h"
 #include "unicode/unorm2.h"
@@ -344,6 +345,17 @@ void LocalPointerTest::TestLocalXyzPointer() {
         return;
     }
 #endif /* !UCONFIG_NO_NORMALIZATION */
+
+#if !UCONFIG_NO_IDNA
+    LocalUIDNAPointer idna(uidna_openUTS46(0, errorCode));
+    if(errorCode.logIfFailureAndReset("uidna_openUTS46()")) {
+        return;
+    }
+    if(idna.isNull()) {
+        errln("LocalUIDNAPointer failure");
+        return;
+    }
+#endif  /* !UCONFIG_NO_IDNA */
 
 #if !UCONFIG_NO_REGULAR_EXPRESSIONS
     UnicodeString pattern=UNICODE_STRING_SIMPLE("abc|xy+z");

@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1997-2009, International Business Machines Corporation and
+ * Copyright (c) 1997-2010, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -35,9 +35,9 @@
 #include "cmemory.h"
 #include "uoptions.h"
 
-#include "putilimp.h" // for uprv_getUTCtime()
+#include "putilimp.h" // for uprv_getRawUTCtime()
 #include "unicode/locid.h"
-
+#include "unicode/ctest.h" // for str_timeDelta
 
 #ifdef XP_MAC_CONSOLE
 #include <console.h>
@@ -123,7 +123,7 @@ operator+(const UnicodeString& left,
 #if !UCONFIG_NO_FORMATTING
 
 /**
- * Return a string display for for this, without surrounding braces.
+ * Return a string display for this, without surrounding braces.
  */
 UnicodeString _toString(const Formattable& f) {
     UnicodeString s;
@@ -170,15 +170,15 @@ UnicodeString _toString(const Formattable& f) {
             }
         }
         break;
-    case Formattable::kObject:
-        if (f.getObject()->getDynamicClassID() ==
-            CurrencyAmount::getStaticClassID()) {
-            const CurrencyAmount& c = (const CurrencyAmount&) *f.getObject();
-            s = _toString(c.getNumber()) + " " + UnicodeString(c.getISOCurrency());
+    case Formattable::kObject: {
+        const CurrencyAmount* c = dynamic_cast<const CurrencyAmount*>(f.getObject());
+        if (c != NULL) {
+            s = _toString(c->getNumber()) + " " + UnicodeString(c->getISOCurrency());
         } else {
             s = UnicodeString("Unknown UObject");
         }
         break;
+    }
     default:
         s = UnicodeString("Unknown Formattable type=") + (int32_t)f.getType();
         break;
@@ -258,6 +258,10 @@ IntlTest::appendHex(uint32_t number,
     return target;
 }
 
+static inline UBool isPrintable(UChar32 c) {
+    return c <= 0x7E && (c >= 0x20 || c == 9 || c == 0xA || c == 0xD);
+}
+
 // Replace nonprintable characters with unicode escapes
 UnicodeString&
 IntlTest::prettify(const UnicodeString &source,
@@ -271,9 +275,9 @@ IntlTest::prettify(const UnicodeString &source,
     for (i = 0; i < source.length(); )
     {
         UChar32 ch = source.char32At(i);
-        i += UTF_CHAR_LENGTH(ch);
+        i += U16_LENGTH(ch);
 
-        if (ch < 0x09 || (ch > 0x0A && ch < 0x20)|| ch > 0x7E)
+        if (!isPrintable(ch))
         {
             if (ch <= 0xFFFF) {
                 target += "\\u";
@@ -306,9 +310,9 @@ IntlTest::prettify(const UnicodeString &source, UBool parseBackslash)
     for (i = 0; i < source.length();)
     {
         UChar32 ch = source.char32At(i);
-        i += UTF_CHAR_LENGTH(ch);
+        i += U16_LENGTH(ch);
 
-        if (ch < 0x09 || (ch > 0x0A && ch < 0x20)|| ch > 0x7E)
+        if (!isPrintable(ch))
         {
             if (parseBackslash) {
                 // If we are preceded by an odd number of backslashes,
@@ -512,6 +516,7 @@ IntlTest::IntlTest()
     testoutfp = stdout;
     LL_indentlevel = indentLevel_offset;
     numProps = 0;
+    strcpy(basePath, "/");
 }
 
 void IntlTest::setCaller( IntlTest* callingTest )
@@ -535,7 +540,10 @@ UBool IntlTest::callTest( IntlTest& testToBeCalled, char* par )
 {
     execCount--; // correct a previously assumed test-exec, as this only calls a subtest
     testToBeCalled.setCaller( this );
-    return testToBeCalled.runTest( testPath, par );
+    strcpy(testToBeCalled.basePath, this->basePath );
+    UBool result = testToBeCalled.runTest( testPath, par, testToBeCalled.basePath );
+    strcpy(testToBeCalled.basePath, this->basePath ); // reset it.
+    return result;
 }
 
 void IntlTest::setPath( char* pathVal )
@@ -595,10 +603,18 @@ int32_t IntlTest::getDataErrors( void )
     return dataErrorCount;
 }
 
-UBool IntlTest::runTest( char* name, char* par )
+UBool IntlTest::runTest( char* name, char* par, char *baseName )
 {
     UBool rval;
     char* pos = NULL;
+
+    char* baseNameBuffer = NULL;
+
+    if(baseName == NULL) {
+      baseNameBuffer = (char*)malloc(1024);
+      baseName=baseNameBuffer;
+      strcpy(baseName, "/");
+    }
 
     if (name)
         pos = strchr( name, delim ); // check if name contains path (by looking for '/')
@@ -610,18 +626,21 @@ UBool IntlTest::runTest( char* name, char* par )
     }
 
     if (!name || (name[0] == 0) || (strcmp(name, "*") == 0)) {
-        rval = runTestLoop( NULL, par );
+      rval = runTestLoop( NULL, par, baseName );
 
     }else if (strcmp( name, "LIST" ) == 0) {
         this->usage();
         rval = TRUE;
 
     }else{
-        rval = runTestLoop( name, par );
+      rval = runTestLoop( name, par, baseName );
     }
 
     if (pos)
         *pos = delim;  // restore original value at pos
+    if(baseNameBuffer!=NULL) {
+      free(baseNameBuffer);
+    }
     return rval;
 }
 
@@ -641,7 +660,7 @@ void IntlTest::runIndexedTest( int32_t index, UBool exec, const char* &name, cha
 }
 
 
-UBool IntlTest::runTestLoop( char* testname, char* par )
+UBool IntlTest::runTestLoop( char* testname, char* par, char *baseName )
 {
     int32_t    index = 0;
     const char*   name;
@@ -649,6 +668,17 @@ UBool IntlTest::runTestLoop( char* testname, char* par )
     int32_t    lastErrorCount;
     UBool  rval = FALSE;
     UBool   lastTestFailed;
+
+    if(baseName == NULL) {
+      printf("ERROR: baseName can't be null.\n");
+      return FALSE;
+    } else {
+      if ((char *)this->basePath != baseName) {
+        strcpy(this->basePath, baseName);
+      }
+    }
+
+    char * saveBaseLoc = baseName+strlen(baseName);
 
     IntlTest* saveTest = gTest;
     gTest = this;
@@ -668,14 +698,36 @@ UBool IntlTest::runTestLoop( char* testname, char* par )
         if (run_this_test) {
             lastErrorCount = errorCount;
             execCount++;
-            this->runIndexedTest( index, TRUE, name, par );
-            rval = TRUE; // at least one test has been called
             char msg[256];
+            sprintf(msg, "%s {", name);
+            LL_message(msg, TRUE);
+            UDate timeStart = uprv_getRawUTCtime();
+            strcpy(saveBaseLoc,name);
+            strcat(saveBaseLoc,"/");
+
+            this->runIndexedTest( index, TRUE, name, par );
+
+            UDate timeStop = uprv_getRawUTCtime();
+            rval = TRUE; // at least one test has been called
+            char secs[256];
+            sprintf(secs, "%f", (timeStop-timeStart)/1000.0);
+            
+
+            strcpy(saveBaseLoc,name);
+
+
+            ctest_xml_testcase(baseName, name, secs, (lastErrorCount!=errorCount)?"err":NULL);
+            
+
+            saveBaseLoc[0]=0; /* reset path */
+            
             if (lastErrorCount == errorCount) {
-                sprintf( msg, "---OK:   %s", name );
+                sprintf( msg, "   } OK:   %s ", name );
+                str_timeDelta(msg+strlen(msg),timeStop-timeStart);
                 lastTestFailed = FALSE;
             }else{
-                sprintf(msg, "---ERRORS (%li) in %s", (long)(errorCount-lastErrorCount), name);
+                sprintf(msg,  "   } ERRORS (%li) in %s", (long)(errorCount-lastErrorCount), name);
+                str_timeDelta(msg+strlen(msg),timeStop-timeStart);
 
                 for(int i=0;i<LL_indentlevel;i++) {
                     errorList += " ";
@@ -696,6 +748,8 @@ UBool IntlTest::runTestLoop( char* testname, char* par )
         }
         index++;
     }while(name);
+
+    *saveBaseLoc = 0;
 
     gTest = saveTest;
     return rval;
@@ -1035,7 +1089,7 @@ main(int argc, char* argv[])
 
     U_MAIN_INIT_ARGS(argc, argv);
 
-    startTime = uprv_getUTCtime();
+    startTime = uprv_getRawUTCtime();
 
     for (int i = 1; i < argc; ++i) {
         if (argv[i][0] == '-') {
@@ -1055,7 +1109,15 @@ main(int argc, char* argv[])
             else if (strcmp("leaks", str) == 0 ||
                      strcmp("l", str) == 0)
                 leaks = TRUE;
-            else if (strcmp("w", str) == 0) {
+            else if (strcmp("x", str)==0) {
+              if(++i>=argc) {
+                printf("* Error: '-x' option requires an argument. usage: '-x outfile.xml'.\n");
+                syntax = TRUE;
+              }
+              if(ctest_xml_setFileName(argv[i])) { /* set the name */
+                return 1; /* error */
+              }
+            } else if (strcmp("w", str) == 0) {
               warnOnMissingData = TRUE;
               warnOrErr = "WARNING";
             }
@@ -1088,7 +1150,7 @@ main(int argc, char* argv[])
                 "### IntlTest [-option1 -option2 ...] [testname1 testname2 ...] \n"
                 "### \n"
                 "### Options are: verbose (v), all (a), noerrormsg (n), \n"
-                "### exhaustive (e), leaks (l), prop:<propery>=<value>, \n"
+                "### exhaustive (e), leaks (l), -x xmlfile.xml, prop:<propery>=<value>, \n"
                 "### threads:<threadCount> (Mulithreading must first be \n"
                 "###     enabled otherwise this will be ignored. \n"
                 "###     The default thread count is 1.),\n"
@@ -1122,9 +1184,13 @@ main(int argc, char* argv[])
     for (int32_t i = 0; i < nProps; i++) {
         major.setProperty(props[i]);
     }
+
+
     fprintf(stdout, "-----------------------------------------------\n");
     fprintf(stdout, " IntlTest (C++) Test Suite for                 \n");
     fprintf(stdout, "   International Components for Unicode %s\n", U_ICU_VERSION);
+
+
     {
 	const char *charsetFamily = "Unknown";
         int32_t voidSize = (int32_t)sizeof(void*);
@@ -1244,6 +1310,10 @@ main(int argc, char* argv[])
 
     Locale originalLocale;  // Save the default locale for comparison later on.
 
+    if(ctest_xml_init("intltest")) 
+      return 1;
+
+
     /* TODO: Add option to call u_cleanup and rerun tests. */
     if (all) {
         major.runTest();
@@ -1255,13 +1325,17 @@ main(int argc, char* argv[])
             if (argv[i][0] != '-') {
                 char* name = argv[i];
                 fprintf(stdout, "\n=== Handling test: %s: ===\n", name);
+
+                char baseName[1024];
+                sprintf(baseName, "/%s/", name);
+
                 char* parameter = strchr( name, '@' );
                 if (parameter) {
                     *parameter = 0;
                     parameter += 1;
                 }
                 execCount = 0;
-                UBool res = major.runTest( name, parameter );
+                UBool res = major.runTest( name, parameter, baseName );
                 if (leaks && res) {
                     major.run_phase2( name, parameter );
                 }
@@ -1269,9 +1343,12 @@ main(int argc, char* argv[])
                     fprintf(stdout, "\n---ERROR: Test doesn't exist: %s!\n", name);
                     all_tests_exist = FALSE;
                 }
+            } else if(!strcmp(argv[i],"-x")) {
+              i++;
             }
         }
     }
+
 
 #if !UCONFIG_NO_FORMATTING
     CalendarTimeZoneTest::cleanup();
@@ -1317,13 +1394,17 @@ main(int argc, char* argv[])
     if (execCount <= 0) {
         fprintf(stdout, "***** Not all called tests actually exist! *****\n");
     }
-    endTime = uprv_getUTCtime();
+    endTime = uprv_getRawUTCtime();
     diffTime = (int32_t)(endTime - startTime);
     printf("Elapsed Time: %02d:%02d:%02d.%03d\n",
         (int)((diffTime%U_MILLIS_PER_DAY)/U_MILLIS_PER_HOUR),
         (int)((diffTime%U_MILLIS_PER_HOUR)/U_MILLIS_PER_MINUTE),
         (int)((diffTime%U_MILLIS_PER_MINUTE)/U_MILLIS_PER_SECOND),
         (int)(diffTime%U_MILLIS_PER_SECOND));
+
+    if(ctest_xml_fini())
+      return 1;
+
     return major.getErrors();
 }
 
@@ -1460,12 +1541,11 @@ const char *  IntlTest::pathToDataDirectory()
 
 /*
  * This is a variant of cintltst/ccolltst.c:CharsToUChars().
- * It converts a character string into a UnicodeString, with
+ * It converts an invariant-character string into a UnicodeString, with
  * unescaping \u sequences.
  */
 UnicodeString CharsToUnicodeString(const char* chars){
-    UnicodeString str(chars, ""); // Invariant conversion
-    return str.unescape();
+    return UnicodeString(chars, -1, US_INV).unescape();
 }
 
 UnicodeString ctou(const char* chars) {

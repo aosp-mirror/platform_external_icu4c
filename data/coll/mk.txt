@@ -10,6 +10,11 @@
  *  ICU <specials> source: <path>/xml/collation/mk.xml
  */
 mk{
-    Version{"2.0.41.26"}
-    collations:alias{"ru/collations"}
+    Version{"2.0.49.75"}
+    collations{
+        standard{
+            Sequence{"[suppressContractions [АаӘәЕеЖжЗзИиІіОоӨөУуЧчЫыЭэѴѵ] ]"}
+            Version{"1.9"}
+        }
+    }
 }

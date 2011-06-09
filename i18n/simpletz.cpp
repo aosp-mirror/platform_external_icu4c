@@ -1,7 +1,7 @@
 /*
  *******************************************************************************
- * Copyright (C) 1997-2009, International Business Machines Corporation and    *
- * others. All Rights Reserved.                                                *
+ * Copyright (C) 1997-2010, International Business Machines Corporation and
+ * others. All Rights Reserved.
  *******************************************************************************
  *
  * File SIMPLETZ.H
@@ -20,6 +20,8 @@
  *                           methods that take TimeMode. Whitespace cleanup.
  ********************************************************************************
  */
+
+#include <typeinfo>  // for 'typeid' to work
 
 #include "unicode/utypes.h"
 
@@ -229,7 +231,7 @@ UBool
 SimpleTimeZone::operator==(const TimeZone& that) const
 {
     return ((this == &that) ||
-            (getDynamicClassID() == that.getDynamicClassID() &&
+            (typeid(*this) == typeid(that) &&
             TimeZone::operator==(that) &&
             hasSameRules(that)));
 }
@@ -529,13 +531,13 @@ SimpleTimeZone::getOffsetFromLocal(UDate date, int32_t nonExistingTimeOpt, int32
     // Now we need some adjustment
     if (savingsDST > 0) {
         if ((nonExistingTimeOpt & kStdDstMask) == kStandard
-            || (nonExistingTimeOpt & kStdDstMask) != kDaylight && (nonExistingTimeOpt & kFormerLatterMask) != kLatter) {
+            || ((nonExistingTimeOpt & kStdDstMask) != kDaylight && (nonExistingTimeOpt & kFormerLatterMask) != kLatter)) {
             date -= getDSTSavings();
             recalc = TRUE;
         }
     } else {
         if ((duplicatedTimeOpt & kStdDstMask) == kDaylight
-                || (duplicatedTimeOpt & kStdDstMask) != kStandard && (duplicatedTimeOpt & kFormerLatterMask) == kFormer) {
+                || ((duplicatedTimeOpt & kStdDstMask) != kStandard && (duplicatedTimeOpt & kFormerLatterMask) == kFormer)) {
             date -= getDSTSavings();
             recalc = TRUE;
         }
@@ -741,7 +743,7 @@ UBool
 SimpleTimeZone::hasSameRules(const TimeZone& other) const
 {
     if (this == &other) return TRUE;
-    if (other.getDynamicClassID() != SimpleTimeZone::getStaticClassID()) return FALSE;
+    if (typeid(*this) != typeid(other)) return FALSE;
     SimpleTimeZone *that = (SimpleTimeZone*)&other;
     return rawOffset     == that->rawOffset &&
         useDaylight     == that->useDaylight &&

@@ -25,7 +25,7 @@ include $(CLEAR_VARS)
 # 'all' includes all ICU's locale data, but is currently missing some Android
 # extensions (mostly extra charset converters).
 #
-# 'default' (icudt44l-default.txt) includes all the most-used locales,
+# 'default' (icudt46l-default.txt) includes all the most-used locales,
 #   covering 94% of internet users
 #   (http://googleblog.blogspot.com/2008/07/hitting-40-languages.html):
 #   ar, bg, ca, cs, da, de, el, en, es, fa, fi, fil, fr, he, hi, hr, hu, in,

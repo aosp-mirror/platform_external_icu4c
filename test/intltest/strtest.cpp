@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2009, International Business Machines Corporation and
+ * Copyright (c) 1997-2010, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /*   file name:  strtest.cpp
@@ -12,14 +12,17 @@
 *   created by: Markus W. Scherer
 */
 
+#include <string.h>
+
 #include "unicode/utypes.h"
 #include "unicode/putil.h"
-#include "intltest.h"
-#include "strtest.h"
-#include "unicode/ustring.h"
 #include "unicode/std_string.h"
 #include "unicode/stringpiece.h"
-#include <string.h>
+#include "unicode/unistr.h"
+#include "unicode/ustring.h"
+#include "charstr.h"
+#include "intltest.h"
+#include "strtest.h"
 
 StringTest::~StringTest() {}
 
@@ -79,8 +82,8 @@ void StringTest::TestSizeofTypes(void) {
 
 void StringTest::TestCharsetFamily(void) {
     unsigned char c='A';
-    if( U_CHARSET_FAMILY==U_ASCII_FAMILY && c!=0x41 ||
-        U_CHARSET_FAMILY==U_EBCDIC_FAMILY && c!=0xc1
+    if( (U_CHARSET_FAMILY==U_ASCII_FAMILY && c!=0x41) ||
+        (U_CHARSET_FAMILY==U_EBCDIC_FAMILY && c!=0xc1)
     ) {
         errln("TestCharsetFamily: U_CHARSET_FAMILY needs to be fixed in platform.h");
     }
@@ -88,137 +91,86 @@ void StringTest::TestCharsetFamily(void) {
 
 U_STRING_DECL(ustringVar, "aZ0 -", 5);
 
+void
+StringTest::Test_U_STRING() {
+    U_STRING_INIT(ustringVar, "aZ0 -", 5);
+    if( sizeof(ustringVar)/sizeof(*ustringVar)!=6 ||
+        ustringVar[0]!=0x61 ||
+        ustringVar[1]!=0x5a ||
+        ustringVar[2]!=0x30 ||
+        ustringVar[3]!=0x20 ||
+        ustringVar[4]!=0x2d ||
+        ustringVar[5]!=0
+    ) {
+        errln("Test_U_STRING: U_STRING_DECL with U_STRING_INIT does not work right! "
+              "See putil.h and utypes.h with platform.h.");
+    }
+}
+
+void
+StringTest::Test_UNICODE_STRING() {
+    UnicodeString ustringVar=UNICODE_STRING("aZ0 -", 5);
+    if( ustringVar.length()!=5 ||
+        ustringVar[0]!=0x61 ||
+        ustringVar[1]!=0x5a ||
+        ustringVar[2]!=0x30 ||
+        ustringVar[3]!=0x20 ||
+        ustringVar[4]!=0x2d
+    ) {
+        errln("Test_UNICODE_STRING: UNICODE_STRING does not work right! "
+              "See unistr.h and utypes.h with platform.h.");
+    }
+}
+
+void
+StringTest::Test_UNICODE_STRING_SIMPLE() {
+    UnicodeString ustringVar=UNICODE_STRING_SIMPLE("aZ0 -");
+    if( ustringVar.length()!=5 ||
+        ustringVar[0]!=0x61 ||
+        ustringVar[1]!=0x5a ||
+        ustringVar[2]!=0x30 ||
+        ustringVar[3]!=0x20 ||
+        ustringVar[4]!=0x2d
+    ) {
+        errln("Test_UNICODE_STRING_SIMPLE: UNICODE_STRING_SIMPLE does not work right! "
+              "See unistr.h and utypes.h with platform.h.");
+    }
+}
+
+void
+StringTest::Test_UTF8_COUNT_TRAIL_BYTES() {
+    if(UTF8_COUNT_TRAIL_BYTES(0x7F) != 0
+        || UTF8_COUNT_TRAIL_BYTES(0xC0) != 1
+        || UTF8_COUNT_TRAIL_BYTES(0xE0) != 2
+        || UTF8_COUNT_TRAIL_BYTES(0xF0) != 3)
+    {
+        errln("Test_UTF8_COUNT_TRAIL_BYTES: UTF8_COUNT_TRAIL_BYTES does not work right! "
+              "See utf8.h.");
+    }
+}
+
 void StringTest::runIndexedTest(int32_t index, UBool exec, const char *&name, char * /*par*/) {
     if(exec) {
         logln("TestSuite Character and String Test: ");
     }
-    switch(index) {
-    case 0:
-        name="TestEndian";
-        if(exec) {
-            TestEndian();
-        }
-        break;
-    case 1:
-        name="TestSizeofTypes";
-        if(exec) {
-            TestSizeofTypes();
-        }
-        break;
-    case 2:
-        name="TestCharsetFamily";
-        if(exec) {
-            TestCharsetFamily();
-        }
-        break;
-    case 3:
-        name="Test_U_STRING";
-        if(exec) {
-            U_STRING_INIT(ustringVar, "aZ0 -", 5);
-            if( sizeof(ustringVar)/sizeof(*ustringVar)!=6 ||
-                ustringVar[0]!=0x61 ||
-                ustringVar[1]!=0x5a ||
-                ustringVar[2]!=0x30 ||
-                ustringVar[3]!=0x20 ||
-                ustringVar[4]!=0x2d ||
-                ustringVar[5]!=0
-            ) {
-                errln("Test_U_STRING: U_STRING_DECL with U_STRING_INIT does not work right! "
-                      "See putil.h and utypes.h with platform.h.");
-            }
-        }
-        break;
-    case 4:
-        name="Test_UNICODE_STRING";
-        if(exec) {
-            UnicodeString ustringVar=UNICODE_STRING("aZ0 -", 5);
-            if( ustringVar.length()!=5 ||
-                ustringVar[0]!=0x61 ||
-                ustringVar[1]!=0x5a ||
-                ustringVar[2]!=0x30 ||
-                ustringVar[3]!=0x20 ||
-                ustringVar[4]!=0x2d
-            ) {
-                errln("Test_UNICODE_STRING: UNICODE_STRING does not work right! "
-                      "See unistr.h and utypes.h with platform.h.");
-            }
-        }
-        break;
-    case 5:
-        name="Test_UNICODE_STRING_SIMPLE";
-        if(exec) {
-            UnicodeString ustringVar=UNICODE_STRING_SIMPLE("aZ0 -");
-            if( ustringVar.length()!=5 ||
-                ustringVar[0]!=0x61 ||
-                ustringVar[1]!=0x5a ||
-                ustringVar[2]!=0x30 ||
-                ustringVar[3]!=0x20 ||
-                ustringVar[4]!=0x2d
-            ) {
-                errln("Test_UNICODE_STRING_SIMPLE: UNICODE_STRING_SIMPLE does not work right! "
-                      "See unistr.h and utypes.h with platform.h.");
-            }
-        }
-        break;
-    case 6:
-        name="Test_UTF8_COUNT_TRAIL_BYTES";
-        if(exec) {
-            if(UTF8_COUNT_TRAIL_BYTES(0x7F) != 0
-                || UTF8_COUNT_TRAIL_BYTES(0xC0) != 1
-                || UTF8_COUNT_TRAIL_BYTES(0xE0) != 2
-                || UTF8_COUNT_TRAIL_BYTES(0xF0) != 3)
-            {
-                errln("Test_UTF8_COUNT_TRAIL_BYTES: UTF8_COUNT_TRAIL_BYTES does not work right! "
-                      "See utf8.h.");
-            }
-        }
-        break;
-    case 7:
-        name="TestSTLCompatibility";
-        if(exec) {
-            TestSTLCompatibility();
-        }
-        break;
-    case 8:
-        name="TestStdNamespaceQualifier";
-        if(exec) {
-            TestStdNamespaceQualifier();
-        }
-        break;
-    case 9:
-        name="TestUsingStdNamespace";
-        if(exec) {
-            TestUsingStdNamespace();
-        }
-        break;
-    case 10:
-        name="TestStringPiece";
-        if(exec) {
-            TestStringPiece();
-        }
-        break;
-    case 11:
-        name="TestByteSink";
-        if(exec) {
-            TestByteSink();
-        }
-        break;
-    case 12:
-        name="TestCheckedArrayByteSink";
-        if(exec) {
-            TestCheckedArrayByteSink();
-        }
-        break;
-    case 13:
-        name="TestStringByteSink";
-        if(exec) {
-            TestStringByteSink();
-        }
-        break;
-    default:
-        name="";
-        break;
-    }
+    TESTCASE_AUTO_BEGIN;
+    TESTCASE_AUTO(TestEndian);
+    TESTCASE_AUTO(TestSizeofTypes);
+    TESTCASE_AUTO(TestCharsetFamily);
+    TESTCASE_AUTO(Test_U_STRING);
+    TESTCASE_AUTO(Test_UNICODE_STRING);
+    TESTCASE_AUTO(Test_UNICODE_STRING_SIMPLE);
+    TESTCASE_AUTO(Test_UTF8_COUNT_TRAIL_BYTES);
+    TESTCASE_AUTO(TestSTLCompatibility);
+    TESTCASE_AUTO(TestStdNamespaceQualifier);
+    TESTCASE_AUTO(TestUsingStdNamespace);
+    TESTCASE_AUTO(TestStringPiece);
+    TESTCASE_AUTO(TestStringPieceComparisons);
+    TESTCASE_AUTO(TestByteSink);
+    TESTCASE_AUTO(TestCheckedArrayByteSink);
+    TESTCASE_AUTO(TestStringByteSink);
+    TESTCASE_AUTO(TestCharString);
+    TESTCASE_AUTO_END;
 }
 
 // Syntax check for the correct namespace qualifier for the standard string class.
@@ -388,6 +340,31 @@ StringTest::TestStringPiece() {
     }
 }
 
+void
+StringTest::TestStringPieceComparisons() {
+    StringPiece empty;
+    StringPiece null(NULL);
+    StringPiece abc("abc");
+    StringPiece abcd("abcdefg", 4);
+    StringPiece abx("abx");
+    if(empty!=null) {
+        errln("empty!=null");
+    }
+    if(empty==abc) {
+        errln("empty==abc");
+    }
+    if(abc==abcd) {
+        errln("abc==abcd");
+    }
+    abcd.remove_suffix(1);
+    if(abc!=abcd) {
+        errln("abc!=abcd.remove_suffix(1)");
+    }
+    if(abc==abx) {
+        errln("abc==abx");
+    }
+}
+
 // Verify that ByteSink is subclassable and Flush() overridable.
 class SimpleByteSink : public ByteSink {
 public:
@@ -442,7 +419,10 @@ StringTest::TestCheckedArrayByteSink() {
     buffer[3] = '!';
     CheckedArrayByteSink sink(buffer, (int32_t)sizeof(buffer));
     sink.Append("abc", 3);
-    if(!(sink.NumberOfBytesWritten() == 3 && 0 == memcmp("abc", buffer, 3) && buffer[3] == '!')) {
+    if(!(sink.NumberOfBytesAppended() == 3 && sink.NumberOfBytesWritten() == 3 &&
+         0 == memcmp("abc", buffer, 3) && buffer[3] == '!') &&
+         !sink.Overflowed()
+    ) {
         errln("CheckedArrayByteSink did not Append() as expected");
         return;
     }
@@ -465,7 +445,7 @@ StringTest::TestCheckedArrayByteSink() {
     }
     memcpy(dest, "defghijklm", 10);
     sink.Append(dest, 10);
-    if(!(sink.NumberOfBytesWritten() == 13 &&
+    if(!(sink.NumberOfBytesAppended() == 13 && sink.NumberOfBytesWritten() == 13 &&
          0 == memcmp("abcdefghijklm", buffer, 13) &&
          !sink.Overflowed())
     ) {
@@ -478,11 +458,20 @@ StringTest::TestCheckedArrayByteSink() {
     }
     memcpy(dest, "nopqrstuvw", 10);
     sink.Append(dest, 10);
-    if(!(sink.NumberOfBytesWritten() == (int32_t)sizeof(buffer) &&
+    if(!(sink.NumberOfBytesAppended() == 23 &&
+         sink.NumberOfBytesWritten() == (int32_t)sizeof(buffer) &&
          0 == memcmp("abcdefghijklmnopqrstuvwxyz", buffer, (int32_t)sizeof(buffer)) &&
          sink.Overflowed())
     ) {
         errln("CheckedArrayByteSink did not Append(scratch buffer) as expected");
+        return;
+    }
+    sink.Reset().Append("123", 3);
+    if(!(sink.NumberOfBytesAppended() == 3 && sink.NumberOfBytesWritten() == 3 &&
+         0 == memcmp("123defghijklmnopqrstuvwxyz", buffer, (int32_t)sizeof(buffer)) &&
+         !sink.Overflowed())
+    ) {
+        errln("CheckedArrayByteSink did not Reset().Append() as expected");
         return;
     }
 }
@@ -512,4 +501,56 @@ StringTest::TestSTLCompatibility() {
     std::vector<UnicodeString> myvect;
     myvect.push_back(UnicodeString("blah"));
 #endif
+}
+
+void
+StringTest::TestCharString() {
+    IcuTestErrorCode errorCode(*this, "TestCharString()");
+    char expected[400];
+    static const char longStr[] =
+        "This is a long string that is meant to cause reallocation of the internal buffer of CharString.";
+    CharString chStr(longStr, errorCode);
+    if (0 != strcmp(longStr, chStr.data()) || (int32_t)strlen(longStr) != chStr.length()) {
+        errln("CharString(longStr) failed.");
+    }
+    CharString test("Test", errorCode);
+    CharString copy(test,errorCode);
+    copy.copyFrom(chStr, errorCode);
+    if (0 != strcmp(longStr, copy.data()) || (int32_t)strlen(longStr) != copy.length()) {
+        errln("CharString.copyFrom() failed.");
+    }
+    StringPiece sp(chStr.toStringPiece());
+    sp.remove_prefix(4);
+    chStr.append(sp, errorCode).append(chStr, errorCode);
+    strcpy(expected, longStr);
+    strcat(expected, longStr+4);
+    strcat(expected, longStr);
+    strcat(expected, longStr+4);
+    if (0 != strcmp(expected, chStr.data()) || (int32_t)strlen(expected) != chStr.length()) {
+        errln("CharString(longStr).append(substring of self).append(self) failed.");
+    }
+    chStr.clear().append("abc", errorCode).append("defghij", 3, errorCode);
+    if (0 != strcmp("abcdef", chStr.data()) || 6 != chStr.length()) {
+        errln("CharString.clear().append(abc).append(defghij, 3) failed.");
+    }
+    chStr.appendInvariantChars(UNICODE_STRING_SIMPLE(
+        "This is a long string that is meant to cause reallocation of the internal buffer of CharString."),
+        errorCode);
+    strcpy(expected, "abcdef");
+    strcat(expected, longStr);
+    if (0 != strcmp(expected, chStr.data()) || (int32_t)strlen(expected) != chStr.length()) {
+        errln("CharString.appendInvariantChars(longStr) failed.");
+    }
+    int32_t appendCapacity = 0;
+    char *buffer = chStr.getAppendBuffer(5, 10, appendCapacity, errorCode);
+    if (errorCode.isFailure()) {
+        return;
+    }
+    memcpy(buffer, "*****", 5);
+    chStr.append(buffer, 5, errorCode);
+    chStr.truncate(chStr.length()-3);
+    strcat(expected, "**");
+    if (0 != strcmp(expected, chStr.data()) || (int32_t)strlen(expected) != chStr.length()) {
+        errln("CharString.getAppendBuffer().append(**) failed.");
+    }
 }

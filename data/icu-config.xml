@@ -7,6 +7,7 @@
 */
 -->
 <config type="icu-config">
+    <!-- This is used by CLDRBuild.java and CLDRConverterTool.java in org/unicode/cldr/ant/ -->
     <locales>
         <include locales="af"/>
         <include locales="af_NA"/>
@@ -59,6 +60,8 @@
         <include locales="bo"/>
         <include locales="bo_CN"/>
         <include locales="bo_IN"/>
+        <include locales="bs"/>
+        <include locales="bs_BA"/>
         <include locales="ca"/>
         <include locales="ca_ES"/>
         <include locales="cgg"/>
@@ -89,17 +92,20 @@
         <include locales="el_CY"/> 
         <include locales="el_GR"/> 
         <include locales="en"/>
+        <include locales="en_AS"/> 
         <include locales="en_AU"/> 
         <include locales="en_BE"/> 
         <include locales="en_BW"/>
         <include locales="en_BZ"/> 
         <include locales="en_CA"/> 
         <include locales="en_GB"/> 
+        <include locales="en_GU"/> 
         <include locales="en_HK"/> 
         <include locales="en_IE"/> 
         <include locales="en_IN"/> 
         <include locales="en_JM"/> 
         <include locales="en_MH"/> 
+        <include locales="en_MP"/>
         <include locales="en_MT"/>
         <include locales="en_MU"/>
         <include locales="en_NA"/>
@@ -109,6 +115,7 @@
         <include locales="en_RH"/>
         <include locales="en_SG"/> 
         <include locales="en_TT"/> 
+        <include locales="en_UM"/>
         <include locales="en_US"/>
         <include locales="en_US_POSIX"/>        
         <include locales="en_VI"/>
@@ -116,6 +123,7 @@
         <include locales="en_ZW"/>
         <include locales="eo"/>
         <include locales="es"/>
+        <include locales="es_419"/>
         <include locales="es_AR"/> 
         <include locales="es_BO"/> 
         <include locales="es_CL"/> 
@@ -154,15 +162,24 @@
         <include locales="fo_FO"/>
         <include locales="fr"/>        
         <include locales="fr_BE"/> 
+        <include locales="fr_BF"/> 
+        <include locales="fr_BI"/> 
+        <include locales="fr_BJ"/> 
         <include locales="fr_BL"/>
         <include locales="fr_CA"/> 
+        <include locales="fr_CD"/> 
         <include locales="fr_CF"/>
+        <include locales="fr_CG"/> 
         <include locales="fr_CH"/> 
         <include locales="fr_CI"/>
         <include locales="fr_CM"/>
+        <include locales="fr_DJ"/> 
         <include locales="fr_FR"/> 
+        <include locales="fr_GA"/> 
         <include locales="fr_GN"/>
         <include locales="fr_GP"/>
+        <include locales="fr_GQ"/> 
+        <include locales="fr_KM"/> 
         <include locales="fr_LU"/> 
         <include locales="fr_MC"/> 
         <include locales="fr_MF"/>
@@ -171,7 +188,10 @@
         <include locales="fr_MQ"/>
         <include locales="fr_NE"/>
         <include locales="fr_RE"/>
+        <include locales="fr_RW"/> 
         <include locales="fr_SN"/> 
+        <include locales="fr_TD"/> 
+        <include locales="fr_TG"/> 
         <include locales="ga"/>
         <include locales="ga_IE"/>
         <include locales="gl"/>
@@ -280,6 +300,7 @@
         <include locales="mk_MK"/>
         <include locales="ml"/>
         <include locales="ml_IN"/>
+        <include locales="mo"/>
         <include locales="mr"/>        
         <include locales="mr_IN"/>
         <include locales="ms"/> 
@@ -287,6 +308,8 @@
         <include locales="ms_MY"/>
         <include locales="mt"/> 
         <include locales="mt_MT"/>
+        <include locales="my"/> 
+        <include locales="my_MM"/> 
         <include locales="naq"/>
         <include locales="naq_NA"/>
         <include locales="nb"/>
@@ -413,6 +436,7 @@
         <include locales="ti_ER"/>
         <include locales="ti_ET"/>
         <include locales="tl"/>
+        <include locales="tl_PH"/>
         <include locales="to"/>
         <include locales="to_TO"/>
         <include locales="tr"/>        
@@ -463,12 +487,26 @@
     </locales>    
     <paths>
         <include xpath="//ldml/.*"/>
+        <include xpath="//ldml/collations/.*" alt="short"/>
         <include xpath="//ldml/.*" draft="contributed"/>
         <include xpath="//ldml/.*/special/.*"/>
         <include xpath="//supplementalData/.*"/>
         <include xpath="//supplementalMetaData/.*"/>
         <!-- Exclude unusable data -->
-        <exclude xpath="//ldml/.*" alt=".*"/>
+        <!-- Need to allow alt=.* for ldml/collations, but exclude for others -->
+        <exclude xpath="//ldml/fallback/.*" alt=".*"/>
+        <exclude xpath="//ldml/localeDisplayNames/.*" alt=".*"/>
+        <exclude xpath="//ldml/layout/.*" alt=".*"/>
+        <exclude xpath="//ldml/characters/.*" alt=".*"/>
+        <exclude xpath="//ldml/delimiters/.*" alt=".*"/>
+        <exclude xpath="//ldml/measurement/.*" alt=".*"/>
+        <exclude xpath="//ldml/dates/.*" alt=".*"/>
+        <exclude xpath="//ldml/numbers/.*" alt=".*"/>
+        <exclude xpath="//ldml/units/.*" alt=".*"/>
+        <exclude xpath="//ldml/listPatterns/.*" alt=".*"/>
+        <exclude xpath="//ldml/posix/.*" alt=".*"/>
+        <exclude xpath="//ldml/segmentations/.*" alt=".*"/>
+        <exclude xpath="//ldml/rbnf/.*" alt=".*"/>
         <exclude xpath="//ldml/.*" draft="provisional"/>
         <exclude xpath="//ldml/.*" draft="unconfirmed"/>
         <exclude xpath="//ldml/dates/localizedPatternChars.*"/>

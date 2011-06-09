@@ -18,7 +18,7 @@
 
 U_NAMESPACE_BEGIN
 
-UOBJECT_DEFINE_RTTI_IMPLEMENTATION(FieldPositionIterator)
+UOBJECT_DEFINE_NO_RTTI_IMPLEMENTATION(FieldPositionIterator)
 
 FieldPositionIterator::~FieldPositionIterator() {
   delete data;
@@ -58,6 +58,7 @@ UBool FieldPositionIterator::operator==(const FieldPositionIterator &rhs) const 
   return rhs.data ? data->operator==(*rhs.data) : FALSE;
 }
 
+// BEGIN android-added
 int32_t FieldPositionIterator::getData(int32_t *dest, int32_t capacity) const {
   int32_t len = data ? data->size() : 0;
   if (len && dest) {
@@ -69,6 +70,7 @@ int32_t FieldPositionIterator::getData(int32_t *dest, int32_t capacity) const {
   }
   return len;
 }
+// END android-added
 
 void FieldPositionIterator::setData(UVector32 *adopt, UErrorCode& status) {
   // Verify that adopt has valid data, and update status if it doesn't.
@@ -118,3 +120,4 @@ UBool FieldPositionIterator::next(FieldPosition& fp) {
 U_NAMESPACE_END
 
 #endif /* #if !UCONFIG_NO_FORMATTING */
+

@@ -2339,7 +2339,7 @@ void        RegexCompile::compileInterval(int32_t InitOp,  int32_t LoopOp)
     fRXPat->fCompiledPat->addElement(op, *fStatus);
 
     if ((fIntervalLow & 0xff000000) != 0 ||
-        fIntervalUpper > 0 && (fIntervalUpper & 0xff000000) != 0) {
+        (fIntervalUpper > 0 && (fIntervalUpper & 0xff000000) != 0)) {
             error(U_REGEX_NUMBER_TOO_BIG);
         }
 
@@ -3657,7 +3657,7 @@ UChar32  RegexCompile::nextCharLL() {
     if (ch == chCR ||
         ch == chNEL ||
         ch == chLS   ||
-        ch == chLF && fLastChar != chCR) {
+        (ch == chLF && fLastChar != chCR)) {
         // Character is starting a new line.  Bump up the line number, and
         //  reset the column to 0.
         fLineNum++;
@@ -4087,7 +4087,25 @@ UnicodeSet *RegexCompile::createSetForProperty(const UnicodeString &propName, UB
     
     //
     //  The property as it was didn't work.
-    //    Do emergency fixes -
+
+    //  Do [:word:]. It is not recognized as a property by UnicodeSet.  "word" not standard POSIX 
+    //     or standard Java, but many other regular expression packages do recognize it.
+    
+    if (propName.caseCompare(UNICODE_STRING_SIMPLE("word"), 0) == 0) {
+        *fStatus = U_ZERO_ERROR;
+        set = new UnicodeSet(*(fRXPat->fStaticSets[URX_ISWORD_SET]));
+        if (set == NULL) {
+            *fStatus = U_MEMORY_ALLOCATION_ERROR;
+            return set;
+        }
+        if (negated) {
+            set->complement();
+        }
+        return set;
+    }
+
+
+    //    Do Java fixes -
     //       InGreek -> InGreek or Coptic, that being the official Unicode name for that block.
     //       InCombiningMarksforSymbols -> InCombiningDiacriticalMarksforSymbols.
     //

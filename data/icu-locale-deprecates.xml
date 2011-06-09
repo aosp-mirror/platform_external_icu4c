@@ -21,6 +21,7 @@
     <aliasLocale locale="kk_KZ" />
     <aliasLocale locale="in" />
     <aliasLocale locale="iw" />
+    <aliasLocale locale="mo" />
     <aliasLocale locale="no" />
     <aliasLocale locale="pa_IN" />
     <aliasLocale locale="pa_PK" />
@@ -39,6 +40,7 @@
     <aliasLocale locale="sr_Latn_YU" />
     <aliasLocale locale="sr_Latn_CS" />
     <aliasLocale locale="tl" />
+    <aliasLocale locale="tl_PH" />
     <aliasLocale locale="tzm_MA" />
     <aliasLocale locale="uz_AF" />
     <aliasLocale locale="uz_UZ" />

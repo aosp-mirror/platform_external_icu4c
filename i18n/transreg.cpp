@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (c) 2001-2008, International Business Machines
+*   Copyright (c) 2001-2010, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *   Date        Name        Description
@@ -239,7 +239,6 @@ TransliteratorSpec::TransliteratorSpec(const UnicodeString& theSpec)
   res(0)
 {
     UErrorCode status = U_ZERO_ERROR;
-    CharString topch(theSpec);
     Locale topLoc("");
     LocaleUtility::initLocaleFromName(theSpec, topLoc);
     if (!topLoc.isBogus()) {
@@ -258,7 +257,8 @@ TransliteratorSpec::TransliteratorSpec(const UnicodeString& theSpec)
     status = U_ZERO_ERROR;
     static const int32_t capacity = 10;
     UScriptCode script[capacity]={USCRIPT_INVALID_CODE};
-    int32_t num = uscript_getCode(topch,script,capacity, &status);
+    int32_t num = uscript_getCode(CharString().appendInvariantChars(theSpec, status).data(),
+                                  script, capacity, &status);
     if (num > 0 && script[0] != USCRIPT_INVALID_CODE) {
         scriptName = UnicodeString(uscript_getName(script[0]), -1, US_INV);
     }
@@ -936,7 +936,7 @@ void TransliteratorRegistry::registerSTV(const UnicodeString& source,
         if (U_FAILURE(status) || targets == 0) {
             return;
         }
-        targets->setValueDeleter(uhash_deleteUVector);
+        targets->setValueDeleter(uhash_deleteUObject);
         specDAG.put(source, targets, status);
     }
     UVector *variants = (UVector*) targets->get(target);
@@ -1079,30 +1079,27 @@ TransliteratorEntry* TransliteratorRegistry::findInBundle(const TransliteratorSp
         }
         UnicodeString s(specToFind.get());
         utag.append(s.toUpper(""));
-        CharString tag(utag);
-        
         UErrorCode status = U_ZERO_ERROR;
-        ResourceBundle subres(specToOpen.getBundle().get(tag, status));
+        ResourceBundle subres(specToOpen.getBundle().get(
+            CharString().appendInvariantChars(utag, status).data(), status));
         if (U_FAILURE(status) || status == U_USING_DEFAULT_WARNING) {
             continue;
         }
-        
+
         s.truncate(0);
         if (specToOpen.get() != LocaleUtility::initNameFromLocale(subres.getLocale(), s)) {
             continue;
         }
-        
+
         if (variant.length() != 0) {
-            CharString var(variant);
             status = U_ZERO_ERROR;
-            resStr = subres.getStringEx(var, status);
+            resStr = subres.getStringEx(
+                CharString().appendInvariantChars(variant, status).data(), status);
             if (U_SUCCESS(status)) {
                 // Exit loop successfully
                 break;
             }
-        }
-        
-        else {
+        } else {
             // Variant is empty, which means match the first variant listed.
             status = U_ZERO_ERROR;
             resStr = subres.getStringEx(1, status);
@@ -1175,6 +1172,18 @@ TransliteratorEntry* TransliteratorRegistry::find(UnicodeString& source,
     TransliteratorSpec src(source);
     TransliteratorSpec trg(target);
     TransliteratorEntry* entry;
+
+    // Seek exact match in hashtable.  Temporary fix for ICU 4.6.
+    // TODO: The general logic for finding a matching transliterator needs to be reviewed.
+    // ICU ticket #8089
+    UnicodeString ID;
+    TransliteratorIDParser::STVtoID(source, target, variant, ID);
+    entry = (TransliteratorEntry*) registry.get(ID);
+    if (entry != 0) {
+        // std::string ss;
+        // std::cout << ID.toUTF8String(ss) << std::endl;
+        return entry;
+    }
 
     if (variant.length() != 0) {
         

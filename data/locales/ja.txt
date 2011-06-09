@@ -74,27 +74,66 @@ ja{
         "Hani",
     }
     NumberElements{
-        ".",
-        ",",
-        ";",
-        "%",
-        "0",
-        "#",
-        "-",
-        "E",
-        "‰",
-        "∞",
-        "NaN",
-        "+",
+        latn{
+            patterns{
+                currencyFormat{"¤#,##0.00"}
+                decimalFormat{"#,##0.###"}
+                percentFormat{"#,##0%"}
+                scientificFormat{"#E0"}
+            }
+            symbols{
+                decimal{"."}
+                group{","}
+            }
+        }
     }
-    NumberPatterns{
-        "#,##0.###",
-        "¤#,##0.00",
-        "#,##0%",
-        "#E0",
-    }
-    Version{"2.0.48.46"}
+    Version{"2.0.50.94"}
     calendar{
+        buddhist{
+            DateTimePatterns{
+                "H時mm分ss秒 zzzz",
+                "H:mm:ss z",
+                "H:mm:ss",
+                "H:mm",
+                "Gy年M月d日EEEE",
+                "Gy年M月d日",
+                "Gy/MM/dd",
+                "Gy/MM/dd",
+                "{1} {0}",
+                "{1}{0}",
+                "{1}{0}",
+                "{1} {0}",
+                "{1} {0}",
+            }
+            availableFormats{
+                Ed{"d日(EEE)"}
+                GGGGyMd{"GGGGy年M月d日"}
+                H{"H時"}
+                Hm{"H:mm"}
+                Hms{"H:mm:ss"}
+                M{"M月"}
+                MEd{"M/d(E)"}
+                MMM{"LLL"}
+                MMMEd{"M月d日(E)"}
+                MMMd{"M月d日"}
+                MMdd{"MM/dd"}
+                Md{"M/d"}
+                d{"d日"}
+                h{"ah時"}
+                hm{"ah:mm"}
+                hms{"ah:mm:ss"}
+                ms{"mm:ss"}
+                y{"Gy年"}
+                yyyy{"Gy年"}
+                yyyyMEd{"Gyy/M/d(E)"}
+                yyyyMM{"Gyy/MM"}
+                yyyyMMM{"Gy年M月"}
+                yyyyMMMEd{"Gy年M月d日(EEE)"}
+                yyyyMMMd{"Gy年M月d日"}
+                yyyyMd{"Gyy/M/d"}
+                yyyyQ{"Gyy/Q"}
+            }
+        }
         gregorian{
             AmPmMarkers{
                 "午前",
@@ -121,7 +160,7 @@ ja{
                 H{"H時"}
                 Hm{"H:mm"}
                 Hms{"H:mm:ss"}
-                M{"L"}
+                M{"M月"}
                 MEd{"M/d(E)"}
                 MMM{"LLL"}
                 MMMEd{"M月d日(E)"}
@@ -129,11 +168,11 @@ ja{
                 MMdd{"MM/dd"}
                 Md{"M/d"}
                 d{"d日"}
-                h{"ah"}
+                h{"ah時"}
                 hm{"ah:mm"}
                 hms{"ah:mm:ss"}
                 ms{"mm:ss"}
-                y{"y"}
+                y{"y年"}
                 yM{"y/M"}
                 yMEd{"y/M/d(EEE)"}
                 yMMM{"y年M月"}
@@ -406,12 +445,13 @@ ja{
                 H{"H時"}
                 Hm{"H:mm"}
                 Hms{"H:mm:ss"}
+                M{"M月"}
                 MEd{"M/d(E)"}
                 MMMEd{"M月d日(EEE)"}
                 MMMd{"M月d日"}
                 Md{"M/d"}
                 d{"d日"}
-                h{"ah"}
+                h{"ah時"}
                 hm{"ah:mm"}
                 hms{"ah:mm:ss"}
                 y{"Gy年"}
@@ -673,13 +713,38 @@ ja{
                 "H:mm",
                 "Gy年M月d日EEEE",
                 "Gy年M月d日EEEE",
-                "Gy/MM/dd(EE)",
-                "Gy/MM/dd(E)",
+                "Gy/MM/dd",
+                "Gy/MM/dd",
                 "{1} {0}",
                 "{1}{0}",
                 "{1}{0}",
                 "{1} {0}",
                 "{1} {0}",
+            }
+            availableFormats{
+                Ed{"d日(EEE)"}
+                H{"H時"}
+                Hm{"H:mm"}
+                Hms{"H:mm:ss"}
+                M{"M月"}
+                MEd{"M/d(E)"}
+                MMM{"LLL"}
+                MMMEd{"M月d日(EEE)"}
+                MMMd{"M月d日"}
+                Md{"M/d"}
+                d{"d日"}
+                h{"ah時"}
+                hm{"ah:mm"}
+                hms{"ah:mm:ss"}
+                y{"Gy年"}
+                yyyy{"Gy年"}
+                yyyyMEd{"Gyy/M/d(E)"}
+                yyyyMM{"Gyy/MM"}
+                yyyyMMM{"Gy年M月"}
+                yyyyMMMEd{"Gy年M月d日(EEE)"}
+                yyyyMMMd{"Gy年M月d日"}
+                yyyyMd{"Gyy/M/d"}
+                yyyyQ{"Gyy/Q"}
             }
             eras{
                 abbreviated{
@@ -709,48 +774,48 @@ ja{
     }
     units{
         day{
-            other{"{0} 日"}
+            other{"{0}日"}
         }
         hour{
-            other{"{0} 時間"}
+            other{"{0}時間"}
         }
         minute{
-            other{"{0} 分"}
+            other{"{0}分"}
         }
         month{
-            other{"{0} か月"}
+            other{"{0}か月"}
         }
         second{
-            other{"{0} 秒"}
+            other{"{0}秒"}
         }
         week{
-            other{"{0} 週"}
+            other{"{0}週"}
         }
         year{
-            other{"{0} 年"}
+            other{"{0}年"}
         }
     }
     unitsShort{
         day{
-            other{"{0} 日"}
+            other{"{0}日"}
         }
         hour{
-            other{"{0} 時間"}
+            other{"{0}時間"}
         }
         minute{
-            other{"{0} 分"}
+            other{"{0}分"}
         }
         month{
-            other{"{0} か月"}
+            other{"{0}か月"}
         }
         second{
-            other{"{0} 秒"}
+            other{"{0}秒"}
         }
         week{
-            other{"{0} 週"}
+            other{"{0}週"}
         }
         year{
-            other{"{0} 年"}
+            other{"{0}年"}
         }
     }
 }

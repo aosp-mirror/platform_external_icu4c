@@ -14,7 +14,7 @@
 #include "hebrwcal.h"
 #include "unicode/smpdtfmt.h"
 #include "unicode/simpletz.h"
-#include "unicode/dbgutil.h"
+#include "dbgutil.h"
 #include "unicode/udat.h"
 #include "unicode/ustring.h"
 
@@ -1323,7 +1323,7 @@ CalendarTest::TestEpochStartFields()
 }
  
 int32_t CalendarTest::EPOCH_FIELDS[] = {
-    1, 1970, 0, 1, 1, 1, 1, 5, 1, 0, 0, 0, 0, 0, 0, - 28800000, 0
+    1, 1970, 0, 53, 0, 1, 1, 5, 1, 0, 0, 0, 0, 0, 0, - 28800000, 0
 };
  
 // -------------------------------------
@@ -2034,7 +2034,7 @@ static UDate doMinDateOfCalendar(Calendar* adopt, UBool &isGregorian, UErrorCode
   adopt->clear();
   adopt->set(UCAL_EXTENDED_YEAR, adopt->getActualMinimum(UCAL_EXTENDED_YEAR, status));
   UDate ret = adopt->getTime(status);
-  isGregorian = (adopt->getDynamicClassID() == GregorianCalendar::getStaticClassID());
+  isGregorian = dynamic_cast<GregorianCalendar*>(adopt) != NULL;
   delete adopt;
   return ret;
 }

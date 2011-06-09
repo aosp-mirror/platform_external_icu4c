@@ -361,6 +361,8 @@ ucurr_forLocale(const char* locale,
             if ((resLen = uloc_getKeywordValue(locale, "currency", id, ULOC_FULLNAME_CAPACITY, &localStatus))) {
                 // there is a currency keyword. Try to see if it's valid
                 if(buffCapacity > resLen) {
+                    /* Normalize the currency keyword value to upper case. */
+                    T_CString_toUpperCase(id);
                     u_charsToUChars(id, buff, resLen);
                 }
             } else {
@@ -514,7 +516,10 @@ ucurr_getName(const UChar* currency,
 
     char buf[ISO_COUNTRY_CODE_LENGTH+1];
     myUCharsToChars(buf, currency);
-
+    
+    /* Normalize the keyword value to uppercase */
+    T_CString_toUpperCase(buf);
+    
     const UChar* s = NULL;
     ec2 = U_ZERO_ERROR;
     UResourceBundle* rb = ures_open(U_ICUDATA_CURR, loc, &ec2);
@@ -875,9 +880,8 @@ collectCurrencyNames(const char* locale,
             // Add currency ISO code.
             (*currencySymbols)[*total_currency_symbol_count].IsoCode = iso;
             (*currencySymbols)[*total_currency_symbol_count].currencyName = (UChar*)uprv_malloc(sizeof(UChar)*3);
-            (*currencySymbols)[*total_currency_symbol_count].currencyName[0] = iso[0];
-            (*currencySymbols)[*total_currency_symbol_count].currencyName[1] = iso[1];
-            (*currencySymbols)[*total_currency_symbol_count].currencyName[2] = iso[2];
+            // Must convert iso[] into Unicode
+            u_charsToUChars(iso, (*currencySymbols)[*total_currency_symbol_count].currencyName, 3);
             (*currencySymbols)[*total_currency_symbol_count].flag = NEED_TO_BE_DELETED;
             (*currencySymbols)[(*total_currency_symbol_count)++].currencyNameLen = 3;
 
@@ -1835,7 +1839,6 @@ ucurr_countCurrencies(const char* locale,
 {
     int32_t currCount = 0;
     int32_t resLen = 0;
-    const UChar* s = NULL;
 
     if (ec != NULL && U_SUCCESS(*ec)) 
     {
@@ -1872,7 +1875,6 @@ ucurr_countCurrencies(const char* locale,
             {
                 // get the currency resource
                 UResourceBundle *currencyRes = ures_getByIndex(countryArray, i, NULL, &localStatus);
-                s = ures_getStringByKey(currencyRes, "id", &resLen, &localStatus);
 
                 // get the from date
                 int32_t fromLength = 0;

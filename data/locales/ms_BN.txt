@@ -8,37 +8,28 @@
 // ***************************************************************************
 ms_BN{
     NumberElements{
-        ",",
-        ".",
-        ";",
-        "%",
-        "0",
-        "#",
-        "-",
-        "E",
-        "‰",
-        "∞",
-        "NaN",
-        "+",
+        latn{
+            patterns{
+                currencyFormat{"¤ #,##0.00"}
+            }
+            symbols{
+                decimal{","}
+                group{"."}
+            }
+        }
     }
-    NumberPatterns{
-        "#,##0.###",
-        "¤ #,##0.00",
-        "#,##0%",
-        "#E0",
-    }
-    Version{"2.0.45.82"}
+    Version{"2.0.51.57"}
     calendar{
         gregorian{
             DateTimePatterns{
-                "h:mm:ss aa zzzz",
-                "H:mm:ss z",
-                "H:mm:ss",
-                "H:mm",
+                "h:mm:ss a zzzz",
+                "h:mm:ss a z",
+                "h:mm:ss a",
+                "h:mm a",
                 "dd MMMM y",
-                "y MMMM d",
+                "d MMMM y",
                 "dd/MM/yyyy",
-                "yyyy-MM-dd",
+                "d/MM/yy",
                 "{1} {0}",
                 "{1} {0}",
                 "{1} {0}",

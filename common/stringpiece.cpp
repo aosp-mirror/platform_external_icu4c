@@ -55,12 +55,16 @@ operator==(const StringPiece& x, const StringPiece& y) {
   if (len != y.size()) {
     return false;
   }
+  if (len == 0) {
+    return true;
+  }
   const char* p = x.data();
   const char* p2 = y.data();
   // Test last byte in case strings share large common prefix
-  if ((len > 0) && (p[len-1] != p2[len-1])) return false;
+  --len;
+  if (p[len] != p2[len]) return false;
   // At this point we can, but don't have to, ignore the last byte.
-  return uprv_memcmp(p, p2, len-1) == 0;
+  return uprv_memcmp(p, p2, len) == 0;
 }
 
 
@@ -71,7 +75,7 @@ operator==(const StringPiece& x, const StringPiece& y) {
  * Visual Studios 9.0.
  * Cygwin with MSVC 9.0 also complains here about redefinition.
  */
-#if (!defined(_MSC_VER) || (_MSC_VER >= 1500)) && !defined(CYGWINMSVC)
+#if (!defined(_MSC_VER) || (_MSC_VER > 1500)) && !defined(CYGWINMSVC)
 const int32_t StringPiece::npos;
 #endif
 

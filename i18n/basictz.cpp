@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
-* Copyright (C) 2007-2009, International Business Machines Corporation and    *
-* others. All Rights Reserved.                                                *
+* Copyright (C) 2007-2010, International Business Machines Corporation and
+* others. All Rights Reserved.
 *******************************************************************************
 */
 
@@ -72,17 +72,27 @@ BasicTimeZone::hasEquivalentTransitions(/*const*/ BasicTimeZone& tz, UDate start
 
         if (ignoreDstAmount) {
             // Skip a transition which only differ the amount of DST savings
-            if (avail1
-                    && (tr1.getFrom()->getRawOffset() + tr1.getFrom()->getDSTSavings()
-                            == tr1.getTo()->getRawOffset() + tr1.getTo()->getDSTSavings())
-                    && (tr1.getFrom()->getDSTSavings() != 0 && tr1.getTo()->getDSTSavings() != 0)) {
-                getNextTransition(tr1.getTime(), FALSE, tr1);
+            while (TRUE) {
+                if (avail1
+                        && tr1.getTime() <= end
+                        && (tr1.getFrom()->getRawOffset() + tr1.getFrom()->getDSTSavings()
+                                == tr1.getTo()->getRawOffset() + tr1.getTo()->getDSTSavings())
+                        && (tr1.getFrom()->getDSTSavings() != 0 && tr1.getTo()->getDSTSavings() != 0)) {
+                    getNextTransition(tr1.getTime(), FALSE, tr1);
+                } else {
+                    break;
+                }
             }
-            if (avail2
-                    && (tr2.getFrom()->getRawOffset() + tr2.getFrom()->getDSTSavings()
-                            == tr2.getTo()->getRawOffset() + tr2.getTo()->getDSTSavings())
-                    && (tr2.getFrom()->getDSTSavings() != 0 && tr2.getTo()->getDSTSavings() != 0)) {
-                getNextTransition(tr2.getTime(), FALSE, tr2);
+            while (TRUE) {
+                if (avail2
+                        && tr2.getTime() <= end
+                        && (tr2.getFrom()->getRawOffset() + tr2.getFrom()->getDSTSavings()
+                                == tr2.getTo()->getRawOffset() + tr2.getTo()->getDSTSavings())
+                        && (tr2.getFrom()->getDSTSavings() != 0 && tr2.getTo()->getDSTSavings() != 0)) {
+                    tz.getNextTransition(tr2.getTime(), FALSE, tr2);
+                } else {
+                    break;
+                }
             }
         }
 
@@ -101,8 +111,8 @@ BasicTimeZone::hasEquivalentTransitions(/*const*/ BasicTimeZone& tz, UDate start
         if (ignoreDstAmount) {
             if (tr1.getTo()->getRawOffset() + tr1.getTo()->getDSTSavings()
                         != tr2.getTo()->getRawOffset() + tr2.getTo()->getDSTSavings()
-                    || tr1.getTo()->getDSTSavings() != 0 &&  tr2.getTo()->getDSTSavings() == 0
-                    || tr1.getTo()->getDSTSavings() == 0 &&  tr2.getTo()->getDSTSavings() != 0) {
+                    || (tr1.getTo()->getDSTSavings() != 0 &&  tr2.getTo()->getDSTSavings() == 0)
+                    || (tr1.getTo()->getDSTSavings() == 0 &&  tr2.getTo()->getDSTSavings() != 0)) {
                 return FALSE;
             }
         } else {
@@ -360,7 +370,15 @@ BasicTimeZone::getTimeZoneRulesAfter(UDate start, InitialTimeZoneRule*& initial,
         if (!avail) {
             break;
         }
-        time = tzt.getTime();
+        UDate updatedTime = tzt.getTime();
+        if (updatedTime == time) {
+            // Can get here if rules for start & end of daylight time have exactly
+            // the same time.  
+            // TODO:  fix getNextTransition() to prevent it?
+            status = U_INVALID_STATE_ERROR;
+            goto error;
+        }
+        time = updatedTime;
  
         const TimeZoneRule *toRule = tzt.getTo();
         for (i = 0; i < ruleCount; i++) {
@@ -377,9 +395,9 @@ BasicTimeZone::getTimeZoneRulesAfter(UDate start, InitialTimeZoneRule*& initial,
         if (done[i]) {
             continue;
         }
-        if (toRule->getDynamicClassID() == TimeArrayTimeZoneRule::getStaticClassID()) {
-            TimeArrayTimeZoneRule *tar = (TimeArrayTimeZoneRule*)toRule;
-
+        const TimeArrayTimeZoneRule *tar = dynamic_cast<const TimeArrayTimeZoneRule *>(toRule);
+        const AnnualTimeZoneRule *ar;
+        if (tar != NULL) {
             // Get the previous raw offset and DST savings before the very first start time
             TimeZoneTransition tzt0;
             t = start;
@@ -448,8 +466,7 @@ BasicTimeZone::getTimeZoneRulesAfter(UDate start, InitialTimeZoneRule*& initial,
                     }
                 }
             }
-        } else if (toRule->getDynamicClassID() == AnnualTimeZoneRule::getStaticClassID()) {
-            AnnualTimeZoneRule *ar = (AnnualTimeZoneRule*)toRule;
+        } else if ((ar = dynamic_cast<const AnnualTimeZoneRule *>(toRule)) != NULL) {
             ar->getFirstStart(tzt.getFrom()->getRawOffset(), tzt.getFrom()->getDSTSavings(), firstStart);
             if (firstStart == tzt.getTime()) {
                 // Just add the rule as is
@@ -512,6 +529,14 @@ error:
         delete orgRules;
     }
     if (done != NULL) {
+        if (filteredRules != NULL) {
+            while (!filteredRules->isEmpty()) {
+                r = (TimeZoneRule*)filteredRules->orphanElementAt(0);
+                delete r;
+            }
+            delete filteredRules;
+        }
+        delete res_initial;
         uprv_free(done);
     }
 

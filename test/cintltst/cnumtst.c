@@ -24,8 +24,10 @@
 #if !UCONFIG_NO_FORMATTING
 
 #include "unicode/uloc.h"
+#include "unicode/umisc.h"
 #include "unicode/unum.h"
 #include "unicode/ustring.h"
+
 #include "cintltst.h"
 #include "cnumtst.h"
 #include "cmemory.h"
@@ -36,6 +38,7 @@
 void addNumForTest(TestNode** root);
 static void TestTextAttributeCrash(void);
 static void TestNBSPInPattern(void);
+static void TestInt64Parse(void);
 
 #define TESTCASE(x) addTest(root, &x, "tsformat/cnumtst/" #x)
 
@@ -44,6 +47,7 @@ void addNumForTest(TestNode** root)
     TESTCASE(TestNumberFormat);
     TESTCASE(TestSpelloutNumberParse);
     TESTCASE(TestSignificantDigits);
+    TESTCASE(TestSigDigRounding);
     TESTCASE(TestNumberFormatPadding);
     TESTCASE(TestInt64Format);
     TESTCASE(TestNonExistentCurrency);
@@ -51,6 +55,7 @@ void addNumForTest(TestNode** root)
     TESTCASE(TestTextAttributeCrash);
     TESTCASE(TestRBNFFormat);
     TESTCASE(TestNBSPInPattern);
+    TESTCASE(TestInt64Parse);
 }
 
 /** copy src to dst with unicode-escapes for values < 0x20 and > 0x7e, null terminate if possible */
@@ -85,6 +90,50 @@ static int32_t ustrToAstr(const UChar* src, int32_t srcLength, char* dst, int32_
         *p = 0;
     }
     return (int32_t)(p - dst);
+}
+
+/* test Parse int 64 */
+
+static void TestInt64Parse()
+{
+
+    UErrorCode st = U_ZERO_ERROR;
+    UErrorCode* status = &st;
+    
+    const char* st1 = "009223372036854775808";
+    const int size = 21;
+    UChar text[21];
+    
+	
+    UNumberFormat* nf;
+
+    int64_t a;
+
+    u_charsToUChars(st1, text, size);
+    nf = unum_open(UNUM_DEFAULT, NULL, -1, NULL, NULL, status);
+
+    if(U_FAILURE(*status))
+    {
+        log_data_err("Error in unum_open() %s \n", myErrorName(*status));
+        return;
+    }
+
+    log_verbose("About to test unum_parseInt64() with out of range number\n");
+
+    a = unum_parseInt64(nf, text, size, 0, status);
+	
+
+    if(!U_FAILURE(*status))
+    {
+        log_err("Error in unum_parseInt64(): %s \n", myErrorName(*status));
+    }
+    else
+    {
+        log_verbose("unum_parseInt64() successful\n");
+    }
+
+    unum_close(nf);
+    return;
 }
 
 /* test Number Format API */
@@ -358,7 +407,13 @@ free(result);
         log_err("parse failed. The error is  : %s\n", myErrorName(status));
     }
 
-    if(d1!=462.12345)
+    /*
+     * Note: "for strict standard conformance all operations and constants are now supposed to be 
+              evaluated in precision of long double".  So,  we assign a1 before comparing to a double. Bug #7932.
+     */
+    a1 = 462.12345;
+
+    if(d1!=a1)
         log_err("Fail: Error in parsing\n");
     else
         log_verbose("Pass: parsing successful\n");
@@ -770,6 +825,103 @@ free(result);
         }
         unum_close(dec_en);
     }
+    
+    {   /* Test parse & format of big decimals.  Use a number with too many digits to fit in a double,
+                                         to verify that it is taking the pure decimal path. */
+        UNumberFormat *fmt;
+        const char *bdpattern = "#,##0.#########";   
+        const char *numInitial     = "12345678900987654321.1234567896";  
+        const char *numFormatted  = "12,345,678,900,987,654,321.12345679";
+        const char *parseExpected = "12345678900987654321.12345679";
+        int32_t resultSize    = 0;
+        int32_t parsePos      = 0;     /* Output parameter for Parse operations. */
+        #define DESTCAPACITY 100
+        UChar dest[DESTCAPACITY];
+        char  desta[DESTCAPACITY];
+        UFieldPosition fieldPos = {0};
+
+        /* Format */
+
+        status = U_ZERO_ERROR;
+        u_uastrcpy(dest, bdpattern);
+        fmt = unum_open(UNUM_PATTERN_DECIMAL, dest, -1, "en", NULL /*parseError*/, &status);
+        if (U_FAILURE(status)) log_err("File %s, Line %d, status = %s\n", __FILE__, __LINE__, u_errorName(status));
+
+        resultSize = unum_formatDecimal(fmt, numInitial, -1, dest, DESTCAPACITY, NULL, &status); 
+        if (U_FAILURE(status)) {
+            log_err("File %s, Line %d, status = %s\n", __FILE__, __LINE__, u_errorName(status));
+        }
+        u_austrncpy(desta, dest, DESTCAPACITY);
+        if (strcmp(numFormatted, desta) != 0) {
+            log_err("File %s, Line %d, (expected, acutal) =  (\"%s\", \"%s\")\n",
+                    __FILE__, __LINE__, numFormatted, desta);
+        }
+        if (strlen(numFormatted) != resultSize) {
+            log_err("File %s, Line %d, (expected, actual) = (%d, %d)\n", 
+                     __FILE__, __LINE__, strlen(numFormatted), resultSize);
+        }
+
+        /* Format with a FieldPosition parameter */
+
+        fieldPos.field = 2;   /* Ticket 8034 - need enum constants for the field values. */
+                              /*  2 =  kDecimalSeparatorField   */
+        resultSize = unum_formatDecimal(fmt, numInitial, -1, dest, DESTCAPACITY, &fieldPos, &status); 
+        if (U_FAILURE(status)) {
+            log_err("File %s, Line %d, status = %s\n", __FILE__, __LINE__, u_errorName(status));
+        }
+        u_austrncpy(desta, dest, DESTCAPACITY);
+        if (strcmp(numFormatted, desta) != 0) {
+            log_err("File %s, Line %d, (expected, acutal) =  (\"%s\", \"%s\")\n",
+                    __FILE__, __LINE__, numFormatted, desta);
+        }
+        if (fieldPos.beginIndex != 26) {  /* index of "." in formatted number */
+            log_err("File %s, Line %d, (expected, acutal) =  (%d, %d)\n",
+                    __FILE__, __LINE__, 0, fieldPos.beginIndex);
+        }
+        if (fieldPos.endIndex != 27) {
+            log_err("File %s, Line %d, (expected, acutal) =  (%d, %d)\n",
+                    __FILE__, __LINE__, 0, fieldPos.endIndex);
+        }
+        
+        /* Parse */
+
+        status = U_ZERO_ERROR;
+        u_uastrcpy(dest, numFormatted);   /* Parse the expected output of the formatting test */
+        resultSize = unum_parseDecimal(fmt, dest, -1, NULL, desta, DESTCAPACITY, &status);
+        if (U_FAILURE(status)) {
+            log_err("File %s, Line %d, status = %s\n", __FILE__, __LINE__, u_errorName(status));
+        }
+        if (strcmp(parseExpected, desta) != 0) {
+            log_err("File %s, Line %d, (expected, actual) = (\"%s\", \"%s\")\n",
+                    __FILE__, __LINE__, parseExpected, desta);
+        }
+        if (strlen(parseExpected) != resultSize) {
+            log_err("File %s, Line %d, (expected, actual) = (%d, %d)\n",
+                    __FILE__, __LINE__, strlen(parseExpected), resultSize);
+        }
+
+        /* Parse with a parsePos parameter */
+        
+        status = U_ZERO_ERROR;
+        u_uastrcpy(dest, numFormatted);   /* Parse the expected output of the formatting test */
+        parsePos = 3;                 /*      12,345,678,900,987,654,321.12345679         */
+                                      /* start parsing at the the third char              */
+        resultSize = unum_parseDecimal(fmt, dest, -1, &parsePos, desta, DESTCAPACITY, &status);
+        if (U_FAILURE(status)) {
+            log_err("File %s, Line %d, status = %s\n", __FILE__, __LINE__, u_errorName(status));
+        }
+        if (strcmp(parseExpected+2, desta) != 0) {   /*  "345678900987654321.12345679" */
+            log_err("File %s, Line %d, (expected, actual) = (\"%s\", \"%s\")\n",
+                    __FILE__, __LINE__, parseExpected+2, desta);
+        }
+        if (strlen(numFormatted) != parsePos) {
+            log_err("File %s, Line %d, parsePos (expected, actual) = (\"%d\", \"%d\")\n",
+                    __FILE__, __LINE__, strlen(parseExpected), parsePos);
+        }
+
+        unum_close(fmt);
+    }
+
 
     /*closing the NumberFormat() using unum_close(UNumberFormat*)")*/
     unum_close(def);
@@ -886,6 +1038,43 @@ static void TestSignificantDigits()
     unum_close(fmt);
 }
 
+static void TestSigDigRounding()
+{
+    UErrorCode status = U_ZERO_ERROR;
+    UChar expected[128];
+    UChar result[128];
+    char		temp1[128];
+    char		temp2[128];
+    UNumberFormat* fmt;
+    double d = 123.4;
+
+    fmt=unum_open(UNUM_DECIMAL, NULL, 0, NULL /* "en_US"*/, NULL, &status);
+    if (U_FAILURE(status)) {
+        log_data_err("got unexpected error for unum_open: '%s'\n", u_errorName(status));
+        return;
+    }
+    unum_setAttribute(fmt, UNUM_LENIENT_PARSE, FALSE);
+    unum_setAttribute(fmt, UNUM_SIGNIFICANT_DIGITS_USED, TRUE);
+    unum_setAttribute(fmt, UNUM_MAX_SIGNIFICANT_DIGITS, 2);
+    /* unum_setAttribute(fmt, UNUM_MAX_FRACTION_DIGITS, 0); */
+
+    unum_setAttribute(fmt, UNUM_ROUNDING_MODE, UNUM_ROUND_UP);
+    unum_setDoubleAttribute(fmt, UNUM_ROUNDING_INCREMENT, 20.0);
+
+    (void)unum_formatDouble(fmt, d, result, sizeof(result) / sizeof(result[0]), NULL, &status);
+    if(U_FAILURE(status))
+    {
+        log_err("Error in formatting using unum_formatDouble(.....): %s\n", myErrorName(status));
+        return;
+    }
+
+    u_uastrcpy(expected, "140");
+    if(u_strcmp(result, expected)!=0)
+        log_err("FAIL: Error in unum_formatDouble result %s instead of %s\n", u_austrcpy(temp1, result), u_austrcpy(temp2, expected) );
+    
+    unum_close(fmt);
+}
+
 static void TestNumberFormatPadding()
 {
     UChar *result=NULL;
@@ -969,7 +1158,7 @@ free(result);
             if(u_strcmp(result, temp1)==0)
                 log_verbose("Pass: Number Formatting using unum_formatDouble() padding Successful\n");
             else
-                log_err("FAIL: Error in number formatting using unum_formatDouble() with padding\n");
+                log_data_err("FAIL: Error in number formatting using unum_formatDouble() with padding\n");
             if(pos1.beginIndex == 13 && pos1.endIndex == 15)
                 log_verbose("Pass: Complete number formatting using unum_formatDouble() successful\n");
             else
@@ -1309,24 +1498,28 @@ static void TestRBNFFormat() {
     formats[0] = unum_open(UNUM_PATTERN_DECIMAL, pat, -1, "en_US", &perr, &status);
     if (U_FAILURE(status)) {
         log_err_status(status, "unable to open decimal pattern -> %s\n", u_errorName(status));
+        return;
     }
 
     status = U_ZERO_ERROR;
     formats[1] = unum_open(UNUM_SPELLOUT, NULL, 0, "en_US", &perr, &status);
     if (U_FAILURE(status)) {
         log_err_status(status, "unable to open spellout -> %s\n", u_errorName(status));
+        return;
     }
 
     status = U_ZERO_ERROR;
     formats[2] = unum_open(UNUM_ORDINAL, NULL, 0, "en_US", &perr, &status);
     if (U_FAILURE(status)) {
         log_err_status(status, "unable to open ordinal -> %s\n", u_errorName(status));
+        return;
     }
 
     status = U_ZERO_ERROR;
     formats[3] = unum_open(UNUM_DURATION, NULL, 0, "en_US", &perr, &status);
     if (U_FAILURE(status)) {
         log_err_status(status, "unable to open duration %s\n", u_errorName(status));
+        return;
     }
 
     status = U_ZERO_ERROR;

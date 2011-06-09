@@ -62,13 +62,13 @@ src_files += \
 	umsg.cpp        unesctrn.cpp uni2name.cpp \
 	unum.cpp        uregexc.cpp  uregex.cpp   \
 	usearch.cpp     utrans.cpp   windtfmt.cpp \
- 	winnmfmt.cpp    zonemeta.cpp zstrfmt.cpp  \
- 	numsys.cpp      chnsecal.cpp \
- 	cecal.cpp       coptccal.cpp ethpccal.cpp \
- 	brktrans.cpp    wintzimpl.cpp plurrule.cpp \
- 	plurfmt.cpp     dtitvfmt.cpp dtitvinf.cpp \
- 	tmunit.cpp      tmutamt.cpp  tmutfmt.cpp  \
- 	colldata.cpp    bmsearch.cpp bms.cpp      \
+	winnmfmt.cpp    zonemeta.cpp zstrfmt.cpp  \
+	numsys.cpp      chnsecal.cpp \
+	cecal.cpp       coptccal.cpp ethpccal.cpp \
+	brktrans.cpp    wintzimpl.cpp plurrule.cpp \
+	plurfmt.cpp     dtitvfmt.cpp dtitvinf.cpp \
+	tmunit.cpp      tmutamt.cpp  tmutfmt.cpp  \
+	colldata.cpp    bmsearch.cpp bms.cpp      \
         currpinf.cpp    uspoof.cpp   uspoof_impl.cpp \
         uspoof_build.cpp     \
         regextxt.cpp    selfmt.cpp   uspoof_conf.cpp \
@@ -91,9 +91,11 @@ local_ldlibs := -lpthread -lm
 
 include $(CLEAR_VARS)
 LOCAL_SRC_FILES := $(src_files)
-LOCAL_C_INCLUDES := $(c_includes)
+LOCAL_C_INCLUDES := $(c_includes) \
+                    abi/cpp/include
 LOCAL_CFLAGS += $(local_cflags) -DPIC -fPIC
-LOCAL_SHARED_LIBRARIES += libicuuc
+LOCAL_RTTI_FLAG := -frtti
+LOCAL_SHARED_LIBRARIES += libicuuc libgabi++
 LOCAL_LDLIBS += $(local_ldlibs)
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := libicui18n

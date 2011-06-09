@@ -7,6 +7,9 @@
 // *
 // ***************************************************************************
 ar_DZ{
+    NumberElements{
+        default{"latn"}
+    }
     Version{"2.0.48.49"}
     calendar{
         gregorian{
@@ -57,5 +60,4 @@ ar_DZ{
             }
         }
     }
-    defaultNumberingSystem{"latn"}
 }

@@ -18,26 +18,28 @@ pl{
         "Latn",
     }
     NumberElements{
-        ",",
-        " ",
-        ";",
-        "%",
-        "0",
-        "#",
-        "-",
-        "E",
-        "‰",
-        "∞",
-        "NaN",
-        "+",
+        latn{
+            patterns{
+                currencyFormat{"#,##0.00 ¤"}
+                decimalFormat{"#,##0.###"}
+                percentFormat{"#,##0%"}
+                scientificFormat{"#E0"}
+            }
+            symbols{
+                decimal{","}
+                exponential{"E"}
+                group{" "}
+                infinity{"∞"}
+                list{";"}
+                minusSign{"-"}
+                nan{"NaN"}
+                perMille{"‰"}
+                percentSign{"%"}
+                plusSign{"+"}
+            }
+        }
     }
-    NumberPatterns{
-        "#,##0.###",
-        "#,##0.00 ¤",
-        "#,##0%",
-        "#E0",
-    }
-    Version{"2.0.48.65"}
+    Version{"2.0.51.52"}
     calendar{
         buddhist{
             DateTimePatterns{
@@ -47,13 +49,43 @@ pl{
                 "HH:mm",
                 "EEEE, d MMMM, y G",
                 "d MMMM, y G",
-                "d MMM, y G",
-                "M/d/yyyy",
+                "d MMM y G",
+                "dd.MM.yyyy G",
                 "{1} {0}",
                 "{1} {0}",
                 "{1} {0}",
                 "{1} {0}",
                 "{1} {0}",
+            }
+            availableFormats{
+                Ed{"E, d"}
+                Hm{"HH:mm"}
+                Hms{"HH:mm:ss"}
+                M{"L"}
+                MEd{"E, d.MM"}
+                MMM{"LLL"}
+                MMMEd{"E, d MMM"}
+                MMMMd{"d MMMM"}
+                MMMd{"d MMM"}
+                MMdd{"d.MM"}
+                Md{"d.MM"}
+                d{"d"}
+                h{"hh a"}
+                hm{"hh:mm a"}
+                hms{"hh:mm:ss a"}
+                ms{"mm:ss"}
+                y{"y G"}
+                yM{"MM.yyyy G"}
+                yMEd{"EEE, d.MM.yyyy G"}
+                yMMMEd{"EEE, d MMM y G"}
+                yMMMM{"LLLL y G"}
+                yMd{"d.MM.yyyy G"}
+                yQ{"G y Q"}
+                yQQQ{"G y QQQ"}
+                yyMMM{"MMM y G"}
+                yyQ{"Q y G"}
+                yyyyMM{"MM.yyyy G"}
+                yyyyMMMM{"LLLL y G"}
             }
         }
         gregorian{
@@ -68,8 +100,8 @@ pl{
                 "HH:mm",
                 "EEEE, d MMMM y",
                 "d MMMM y",
-                "dd-MM-yyyy",
-                "dd-MM-yyyy",
+                "d MMM y",
+                "dd.MM.yyyy",
                 "{1} {0}",
                 "{1} {0}",
                 "{1} {0}",
@@ -77,32 +109,32 @@ pl{
                 "{1} {0}",
             }
             availableFormats{
+                Ed{"E, d"}
                 Hm{"HH:mm"}
                 Hms{"HH:mm:ss"}
                 M{"L"}
-                MEd{"E, d-M"}
+                MEd{"E, d.MM"}
                 MMM{"LLL"}
-                MMMEd{"d MMM E"}
+                MMMEd{"E, d MMM"}
                 MMMMd{"d MMMM"}
                 MMMd{"d MMM"}
-                MMdd{"dd-MM"}
-                Md{"d-M"}
+                MMdd{"d.MM"}
+                Md{"d.MM"}
                 d{"d"}
                 h{"hh a"}
                 hm{"hh:mm a"}
                 hms{"hh:mm:ss a"}
                 ms{"mm:ss"}
                 y{"y"}
-                yM{"M-y"}
-                yMEd{"EEE, d-M-y"}
+                yM{"MM.yyyy"}
+                yMEd{"EEE, d.MM.yyyy"}
                 yMMMEd{"EEE, d MMM y"}
                 yMMMM{"LLLL y"}
                 yQ{"yyyy Q"}
                 yQQQ{"y QQQ"}
-                yyMM{"MM/yy"}
                 yyMMM{"MMM yy"}
                 yyQ{"Q yy"}
-                yyyyMM{"yyyy-MM"}
+                yyyyMM{"MM.yyyy"}
                 yyyyMMMM{"LLLL y"}
             }
             dayNames{
@@ -280,8 +312,8 @@ pl{
                     y{"E, d MMM y - E, d MMM y"}
                 }
                 yMMMM{
-                    M{"MM.yyyy - MM.yyyy"}
-                    y{"MM.yyyy - MM.yyyy"}
+                    M{"LLLL-LLLL y"}
+                    y{"LLLL y - LLLL y"}
                 }
                 yMMMd{
                     M{"d MMM - d MMM y"}
@@ -381,6 +413,140 @@ pl{
                 }
             }
         }
+        islamic{
+            DateTimePatterns{
+                "HH:mm:ss zzzz",
+                "HH:mm:ss z",
+                "HH:mm:ss",
+                "HH:mm",
+                "EEEE, d MMMM, y G",
+                "d MMMM, y G",
+                "d MMM y G",
+                "dd.MM.yyyy G",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+            }
+            availableFormats{
+                Ed{"E, d"}
+                Hm{"HH:mm"}
+                Hms{"HH:mm:ss"}
+                M{"L"}
+                MEd{"E, d.MM"}
+                MMM{"LLL"}
+                MMMEd{"E, d MMM"}
+                MMMMd{"d MMMM"}
+                MMMd{"d MMM"}
+                MMdd{"d.MM"}
+                Md{"d.MM"}
+                d{"d"}
+                h{"hh a"}
+                hm{"hh:mm a"}
+                hms{"hh:mm:ss a"}
+                ms{"mm:ss"}
+                yyMMM{"MMM yy G"}
+                yyQ{"Q y G"}
+                yyyy{"y G"}
+                yyyyMM{"MM.yyyy G"}
+                yyyyMMMEd{"EEE, d MMM y G"}
+                yyyyMMMM{"LLLL y G"}
+                yyyyQ{"G y Q"}
+                yyyyQQQ{"G y QQQ"}
+            }
+        }
+        japanese{
+            DateTimePatterns{
+                "HH:mm:ss zzzz",
+                "HH:mm:ss z",
+                "HH:mm:ss",
+                "HH:mm",
+                "EEEE, d MMMM, y G",
+                "d MMMM, y G",
+                "d MMM y G",
+                "dd.MM.yyyy G",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+            }
+            availableFormats{
+                Ed{"E, d"}
+                Hm{"HH:mm"}
+                Hms{"HH:mm:ss"}
+                M{"L"}
+                MEd{"E, d.MM"}
+                MMM{"LLL"}
+                MMMEd{"E, d MMM"}
+                MMMMd{"d MMMM"}
+                MMMd{"d MMM"}
+                MMdd{"dd.MM"}
+                Md{"d.MM"}
+                d{"d"}
+                h{"hh a"}
+                hm{"hh:mm a"}
+                hms{"hh:mm:ss a"}
+                ms{"mm:ss"}
+                yyMMM{"MMM yy G"}
+                yyQ{"Q y G"}
+                yyyy{"y G"}
+                yyyyM{"M.y G"}
+                yyyyMEd{"EEE, dd.MM.y G"}
+                yyyyMM{"MM.y G"}
+                yyyyMMMEd{"EEE, d MMM y G"}
+                yyyyMMMM{"LLLL y G"}
+                yyyyQ{"G y Q"}
+                yyyyQQQ{"G y QQQ"}
+            }
+        }
+        roc{
+            DateTimePatterns{
+                "HH:mm:ss zzzz",
+                "HH:mm:ss z",
+                "HH:mm:ss",
+                "HH:mm",
+                "EEEE, d MMMM, y G",
+                "d MMMM, y G",
+                "d MMM y G",
+                "dd.MM.yyyy G",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+            }
+            availableFormats{
+                Ed{"E, d"}
+                Hm{"HH:mm"}
+                Hms{"HH:mm:ss"}
+                M{"L"}
+                MEd{"E, d.MM"}
+                MMM{"LLL"}
+                MMMEd{"E, d MMM"}
+                MMMMd{"d MMMM"}
+                MMMd{"d MMM"}
+                MMdd{"dd.MM"}
+                Md{"d.MM"}
+                d{"d"}
+                h{"hh a"}
+                hm{"hh:mm a"}
+                hms{"hh:mm:ss a"}
+                ms{"mm:ss"}
+                yyMM{"MM/y G"}
+                yyMMM{"MMM y G"}
+                yyQ{"Q y G"}
+                yyyy{"y G"}
+                yyyyM{"M.y G"}
+                yyyyMEd{"EEE, d.MM.y G"}
+                yyyyMM{"MM.yyyy G"}
+                yyyyMMMEd{"EEE, d MMM y G"}
+                yyyyMMMM{"LLLL y G"}
+                yyyyQ{"G y Q"}
+                yyyyQQQ{"G y QQQ"}
+            }
+        }
     }
     delimiters{
         alternateQuotationEnd{"”"}
@@ -401,75 +567,75 @@ pl{
     units{
         day{
             few{"{0} dni"}
+            many{"{0} dni"}
             one{"{0} dzień"}
-            other{"{0} dni"}
         }
         hour{
             few{"{0} godziny"}
+            many{"{0} godzin"}
             one{"{0} godzina"}
-            other{"{0} godzin"}
         }
         minute{
             few{"{0} minuty"}
+            many{"{0} minut"}
             one{"{0} minuta"}
-            other{"{0} minut"}
         }
         month{
             few{"{0} miesiące"}
+            many{"{0} miesięcy"}
             one{"{0} miesiąc"}
-            other{"{0} miesięcy"}
         }
         second{
             few{"{0} sekundy"}
+            many{"{0} sekund"}
             one{"{0} sekunda"}
-            other{"{0} sekund"}
         }
         week{
             few{"{0} tygodnie"}
+            many{"{0} tygodni"}
             one{"{0} tydzień"}
-            other{"{0} tygodni"}
         }
         year{
             few{"{0} lata"}
+            many{"{0} lat"}
             one{"{0} rok"}
-            other{"{0} lat"}
         }
     }
     unitsShort{
         day{
             few{"{0} dni"}
+            many{"{0} dni"}
             one{"{0} dzień"}
-            other{"{0} dni"}
         }
         hour{
             few{"{0} godz."}
+            many{"{0} godz."}
             one{"{0} godz."}
-            other{"{0} godz."}
         }
         minute{
             few{"{0} min."}
+            many{"{0} min."}
             one{"{0} min."}
-            other{"{0} min."}
         }
         month{
             few{"{0} mies."}
+            many{"{0} mies."}
             one{"{0} mies."}
-            other{"{0} mies."}
         }
         second{
             few{"{0} sek."}
+            many{"{0} sek."}
             one{"{0} sek."}
-            other{"{0} sek."}
         }
         week{
             few{"{0} tyg."}
+            many{"{0} tyg."}
             one{"{0} tydz."}
-            other{"{0} tyg."}
         }
         year{
             few{"{0} lata"}
+            many{"{0} lat"}
             one{"{0} rok"}
-            other{"{0} lat"}
         }
     }
 }

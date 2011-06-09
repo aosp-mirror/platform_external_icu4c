@@ -1,6 +1,6 @@
 #******************************************************************************
 #
-#   Copyright (C) 1999-2009, International Business Machines
+#   Copyright (C) 1999-2010, International Business Machines
 #   Corporation and others.  All Rights Reserved.
 #
 #******************************************************************************
@@ -32,10 +32,10 @@ endif
 
 ifneq ($(ENABLE_SHARED),)
 SO_TARGET = $(LIBDIR)/$(LIBICU)$(TARGET_STUBNAME)$(ICULIBSUFFIX).$(SO)
-ALL_SO_MODULES = $(SO_TARGET) $(MIDDLE_SO_TARGET) $(FINAL_SO_TARGET) $(SHARED_OBJECT)
+ALL_SO_TARGETS = $(SO_TARGET) $(MIDDLE_SO_TARGET) $(FINAL_SO_TARGET) $(SHARED_OBJECT)
 endif
 
-ALL_MODULES = $(TARGET) $(ALL_SO_MODULES)
+ALL_TARGETS = $(TARGET) $(ALL_SO_TARGETS)
 
 DYNAMICCPPFLAGS = $(SHAREDLIBCPPFLAGS)
 DYNAMICCFLAGS = $(SHAREDLIBCFLAGS)
@@ -54,7 +54,8 @@ LIBS = $(LIBICUI18N) $(LIBICUUC) $(DEFAULT_LIBS)
 OBJECTS = filestrm.o package.o pkgitems.o swapimpl.o toolutil.o unewdata.o \
 ucm.o ucmstate.o uoptions.o uparse.o \
 ucbuf.o xmlparser.o writesrc.o \
-pkg_icu.o pkg_genc.o pkg_gencmn.o flagparser.o filetools.o
+pkg_icu.o pkg_genc.o pkg_gencmn.o flagparser.o filetools.o \
+udbgutil.o dbgutil.o ucln_tu.o
 
 STATIC_OBJECTS = $(OBJECTS:.o=.$(STATIC_O))
 
@@ -78,7 +79,7 @@ distclean : distclean-local
 dist: dist-local
 check: all check-local
 
-all-local: $(ALL_MODULES)
+all-local: $(ALL_TARGETS)
 
 install-local: install-library
 
@@ -110,7 +111,7 @@ dist-local:
 
 clean-local:
 	test -z "$(CLEANFILES)" || $(RMV) $(CLEANFILES)
-	$(RMV) $(OBJECTS) $(STATIC_OBJECTS) $(ALL_MODULES)
+	$(RMV) $(OBJECTS) $(STATIC_OBJECTS) $(ALL_TARGETS)
 
 distclean-local: clean-local
 	$(RMV) Makefile

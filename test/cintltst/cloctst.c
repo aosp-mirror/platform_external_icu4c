@@ -34,13 +34,15 @@
 #include "unicode/utypes.h"
 #include "unicode/ulocdata.h"
 #include "unicode/parseerr.h" /* may not be included with some uconfig switches */
-#include "unicode/udbgutil.h"
+#include "udbgutil.h"
 #define LENGTHOF(array) (int32_t)(sizeof(array)/sizeof((array)[0]))
 
 static void TestNullDefault(void);
 static void TestNonexistentLanguageExemplars(void);
 static void TestLocDataErrorCodeChaining(void);
 static void TestLanguageExemplarsFallbacks(void);
+
+static void TestUnicodeDefines(void);
 
 void PrintDataTable();
 
@@ -81,7 +83,7 @@ static const char* const rawData2[LOCALE_INFO_SIZE][LOCALE_SIZE] = {
     /* display name (English) */
     {   "English (United States)", "French (France)", "Catalan (Spain)", 
         "Greek (Greece)", "Norwegian (Norway, NY)", "Chinese (Simplified Han, China)", 
-        "German (Germany, collation=Phonebook Sort Order)", "Spanish (collation=Traditional Sort Order)", "Japanese (Japan, calendar=Japanese Calendar)" },
+        "German (Germany, Collation=Phonebook Sort Order)", "Spanish (Collation=Traditional Sort Order)", "Japanese (Japan, Calendar=Japanese Calendar)" },
 
     /* display language (French) */
     {   "anglais",  "fran\\u00E7ais",   "catalan", "grec",    "norv\\u00E9gien",    "chinois", "allemand", "espagnol", "japonais"     },
@@ -241,6 +243,7 @@ void addLocaleTest(TestNode** root)
     TESTCASE(TestToLanguageTag);
     TESTCASE(TestForLanguageTag);
     TESTCASE(TestTrailingNull);
+    TESTCASE(TestUnicodeDefines);
 }
 
 
@@ -394,6 +397,9 @@ static void TestPrefixes() {
         {"i-hakka", "", "CN", "", "i-hakka_CN", "i-hakka_CN", NULL},
         {"i-hakka", "", "MX", "", "I-hakka_MX", "i-hakka_MX", NULL},
         {"x-klingon", "", "US", "SANJOSE", "X-KLINGON_us_SANJOSE", "x-klingon_US_SANJOSE", NULL},
+        
+        {"zh", "Hans", "", "PINYIN", "zh-Hans-pinyin", "zh_Hans_PINYIN", "zh_Hans@collation=pinyin"},
+        {"hy", "", "", "AREVMDA", "hy_AREVMDA", "hy_AREVMDA", NULL},
         
         {"mr", "", "", "", "mr.utf8", "mr.utf8", "mr"},
         {"de", "", "TV", "", "de-tv.koi8r", "de_TV.koi8r", "de_TV"},
@@ -606,7 +612,7 @@ static void TestDisplayNames()
             "fr_FR", 
             "ca_ES",
             "el_GR" };
-        static const char *expect[] = { "Spanish (calendar=Japanese Calendar, collation=Traditional Sort Order)", /* note sorted order of keywords */
+        static const char *expect[] = { "Spanish (Calendar=Japanese Calendar, Collation=Traditional Sort Order)", /* note sorted order of keywords */
             "espagnol (Calendrier=Calendrier japonais, Ordonnancement=Ordre traditionnel)",
             "espanyol (calendari=calendari japon\\u00e8s, ordre alfab\\u00e8tic=ordre tradicional)",
             "\\u0399\\u03C3\\u03C0\\u03B1\\u03BD\\u03B9\\u03BA\\u03AC (\\u03B7\\u03BC\\u03B5\\u03C1\\u03BF\\u03BB\\u03CC\\u03B3\\u03B9\\u03BF=\\u0399\\u03B1\\u03C0\\u03C9\\u03BD\\u03B9\\u03BA\\u03CC \\u03B7\\u03BC\\u03B5\\u03C1\\u03BF\\u03BB\\u03CC\\u03B3\\u03B9\\u03BF, \\u03C4\\u03B1\\u03BA\\u03C4\\u03BF\\u03C0\\u03BF\\u03AF\\u03B7\\u03C3\\u03B7=\\u03A0\\u03B1\\u03C1\\u03B1\\u03B4\\u03BF\\u03C3\\u03B9\\u03B1\\u03BA\\u03AE \\u03C3\\u03B5\\u03B9\\u03C1\\u03AC \\u03C4\\u03B1\\u03BE\\u03B9\\u03BD\\u03CC\\u03BC\\u03B7\\u03C3\\u03B7\\u03C2)" };
@@ -5395,8 +5401,9 @@ const char* const locale_to_langtag[][3] = {
     {"en_US",       "en-US",        "en-US"},
     {"iw_IL",       "he-IL",        "he-IL"},
     {"sr_Latn_SR",  "sr-Latn-SR",   "sr-Latn-SR"},
-    {"en__POSIX",   "en-posix",     "en-posix"},
-    {"en_POSIX",    "en",           "en"},
+    {"en__POSIX",   "en-u-va-posix", "en-u-va-posix"},
+    {"en_POSIX",    "en-u-va-posix", "en-u-va-posix"},
+    {"en_US_POSIX@ca=japanese",  "en-US-u-ca-japanese-va-posix", "en-US-u-ca-japanese-va-posix"},
     {"und_555",     "und-555",      "und-555"},
     {"123",         "und",          NULL},
     {"%$#&",        "und",          NULL},
@@ -5421,6 +5428,9 @@ const char* const locale_to_langtag[][3] = {
     {"en@timezone=US/Eastern",  "en-u-tz-usnyc",    "en-u-tz-usnyc"},
     {"en@x=x-y-z;a=a-b-c",  "en-x-x-y-z",   NULL},
     {"it@collation=badcollationtype;colStrength=identical;cu=usd-eur", "it-u-ks-identic",  NULL},
+    {"en_US_POSIX", "en-US-u-va-posix", "en-US-u-va-posix"},
+    {"en_US_POSIX@calendar=japanese;currency=EUR","en-US-u-ca-japanese-cu-EUR-va-posix", "en-US-u-ca-japanese-cu-EUR-va-posix"},
+
     {NULL,          NULL,           NULL}
 };
 
@@ -5509,6 +5519,7 @@ static const struct {
     {"und-varzero-var1-vartwo", "__VARZERO",        11},
     {"en-u-ca-gregory",     "en@calendar=gregorian",    15},
     {"en-U-cu-USD",         "en@currency=usd",      11},
+    {"en-US-u-va-posix",    "en_US_POSIX",          16},
     {"ar-x-1-2-3",          "ar@x=1-2-3",           10},
     {"fr-u-nu-latn-cu-eur", "fr@currency=eur;numbers=latn", 19},
     {"de-k-kext-u-co-phonebk-nu-latn",  "de@collation=phonebook;k=kext;numbers=latn",   30},
@@ -5543,4 +5554,25 @@ static void TestForLanguageTag(void) {
             }
         }
     }
+}
+
+static void test_unicode_define(const char *namech, char ch, const char *nameu, UChar uch)
+{
+  UChar asUch[1];
+  asUch[0]=0;
+  log_verbose("Testing whether %s[\\x%02x,'%c'] == %s[U+%04X]\n", namech, ch,(int)ch, nameu, (int) uch);
+  u_charsToUChars(&ch, asUch, 1);
+  if(asUch[0] != uch) {
+    log_err("FAIL:  %s[\\x%02x,'%c'] maps to U+%04X, but %s = U+%04X\n", namech, ch, (int)ch, (int)asUch[0], nameu, (int)uch);
+  } else {
+    log_verbose(" .. OK, == U+%04X\n", (int)asUch[0]);
+  }
+}
+
+#define TEST_UNICODE_DEFINE(x,y) test_unicode_define(#x, (char)(x), #y, (UChar)(y))
+
+static void TestUnicodeDefines(void) {
+  TEST_UNICODE_DEFINE(ULOC_KEYWORD_SEPARATOR, ULOC_KEYWORD_SEPARATOR_UNICODE);
+  TEST_UNICODE_DEFINE(ULOC_KEYWORD_ASSIGN, ULOC_KEYWORD_ASSIGN_UNICODE);
+  TEST_UNICODE_DEFINE(ULOC_KEYWORD_ITEM_SEPARATOR, ULOC_KEYWORD_ITEM_SEPARATOR_UNICODE);
 }

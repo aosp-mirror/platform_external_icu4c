@@ -10,7 +10,7 @@
  *  ICU <specials> source: <path>/xml/main/sk.xml
  */
 sk{
-    AuxExemplarCharacters{"[à ă â å ā æ ç è ĕ ê ë ē ì ĭ î ï ī ñ ò ŏ ö ø ō œ ù ŭ û ü ū ÿ]"}
+    AuxExemplarCharacters{"[à ă â å ā æ ç è ĕ ê ë ē ì ĭ î ï ī ñ ò ŏ ö ø ō œ ř ù ŭ û ü ū ÿ]"}
     ExemplarCharacters{
         "[a á ä b c č d ď e é f g h {ch} i í j k l ĺ ľ m n ň o ó ô p q r ŕ s š t ť u "
         "ú v w x y ý z ž]"
@@ -20,26 +20,17 @@ sk{
         "Latn",
     }
     NumberElements{
-        ",",
-        " ",
-        ";",
-        "%",
-        "0",
-        "#",
-        "-",
-        "E",
-        "‰",
-        "∞",
-        "NaN",
-        "+",
+        latn{
+            patterns{
+                currencyFormat{"#,##0.00 ¤"}
+            }
+            symbols{
+                decimal{","}
+                group{" "}
+            }
+        }
     }
-    NumberPatterns{
-        "#,##0.###",
-        "#,##0.00 ¤",
-        "#,##0%",
-        "#E0",
-    }
-    Version{"2.0.48.56"}
+    Version{"2.0.50.88"}
     calendar{
         gregorian{
             AmPmMarkers{
@@ -238,8 +229,8 @@ sk{
                     y{"E, d.M.yy - E, d.M.yy"}
                 }
                 yMMM{
-                    M{"MMM - MMM y"}
-                    y{"MMM y - MMM y"}
+                    M{"LLL - LLL y"}
+                    y{"LLL y - LLL y"}
                 }
                 yMMMEd{
                     M{"E, d. MMM - E, d. MMM y"}
@@ -247,7 +238,8 @@ sk{
                     y{"E, d. MMM y - E, d. MMM y"}
                 }
                 yMMMM{
-                    y{"MM-yyyy – MM-yyyy"}
+                    M{"LLLL - LLLL y"}
+                    y{"LLLL y - LLLL y"}
                 }
                 yMMMd{
                     M{"d. MMM - d. MMM y"}

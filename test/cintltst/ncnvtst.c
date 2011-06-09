@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2009, International Business Machines Corporation and
+ * Copyright (c) 1997-2010, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /*****************************************************************************
@@ -178,7 +178,6 @@ static void TestSurrogateBehaviour(){
             log_err("u-> ibm-1363 [UCNV_MBCS] not match.\n");
     }
 
-
    /* BEGIN android-removed */
    /* To save space, Android does not build full ISO2022 CJK tables.
       We skip the tests for ISO-2022. */
@@ -263,6 +262,7 @@ static void TestSurrogateBehaviour(){
     }
     */
     /* END android-removed */
+
         log_verbose("Testing for HZ\n");
     {
         static const UChar    sampleText[] =   { 0x4e00, 0xd801, 0xdc01, 0x04e01, 0x0031, 0xd801, 0xdc01, 0x0032};
@@ -397,6 +397,7 @@ static void TestErrorBehaviour(){
         /* END android-changed */
         static const int32_t offsets4MBCS[]        = { 0x00, 0x01, 0x01, 0x01, 0x02, 0x02 };
 
+
         /*DBCS*/
         if(!convertFromU(sampleText, sizeof(sampleText)/sizeof(sampleText[0]),
                 expectedSUB, sizeof(expectedSUB), "ibm-1363", 0, TRUE, U_ZERO_ERROR))
@@ -452,6 +453,7 @@ static void TestErrorBehaviour(){
                 expected4MBCS, sizeof(expected4MBCS), "euc-jp", offsets4MBCS, FALSE, U_ZERO_ERROR))
             log_err("u-> euc-jp [UCNV_MBCS] \n");
     }
+
     /* BEGIN android-removed */
     /* To save space, Android does not build full ISO2022 CJK tables.
        We skip the tests for ISO-2022. */
@@ -1290,7 +1292,7 @@ static UBool testConvertFromU( const UChar *source, int sourceLen,  const uint8_
 
     log_verbose("\nConversion done [%d uchars in -> %d chars out]. \nResult :",
         sourceLen, targ-junkout);
-    if(VERBOSITY)
+    if(getTestOption(VERBOSITY_OPTION))
     {
         char junk[999];
         char offset_str[999];
@@ -1465,7 +1467,7 @@ static UBool testConvertToU( const uint8_t *source, int sourcelen, const UChar *
 
     log_verbose("\nConversion done. %d bytes -> %d chars.\nResult :",
         sourcelen, targ-junkout);
-    if(VERBOSITY)
+    if(getTestOption(VERBOSITY_OPTION))
     {
         char junk[999];
         char offset_str[999];
@@ -1699,6 +1701,7 @@ static void TestResetBehaviour(void){
     }
     */
     /* END android-removed */
+
 
         log_verbose("Testing Reset for HZ\n");
     {

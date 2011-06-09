@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1997-2009, International Business Machines Corporation and
+ * Copyright (c) 1997-2010, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -373,11 +373,11 @@ void CollationRegressionTest::Test4062418(/* char* par */)
 
     RuleBasedCollator *c = NULL;
 
-    c = (RuleBasedCollator *) Collator::createInstance(Locale::getFrance(), status);
+    c = (RuleBasedCollator *) Collator::createInstance(Locale::getCanadaFrench(), status);
 
     if (c == NULL || U_FAILURE(status))
     {
-        errln("Failed to create collator for Locale::getFrance()");
+        errln("Failed to create collator for Locale::getCanadaFrench()");
         delete c;
         return;
     }
@@ -453,11 +453,11 @@ void CollationRegressionTest::Test4066696(/* char* par */)
     UErrorCode status = U_ZERO_ERROR;
     RuleBasedCollator *c = NULL;
 
-    c = (RuleBasedCollator *)Collator::createInstance(Locale::getFrance(), status);
+    c = (RuleBasedCollator *)Collator::createInstance(Locale::getCanadaFrench(), status);
 
     if (c == NULL || U_FAILURE(status))
     {
-        errln("Failure creating collator for Locale::getFrance()");
+        errln("Failure creating collator for Locale::getCanadaFrench()");
         delete c;
         return;
     }
@@ -840,12 +840,12 @@ void CollationRegressionTest::Test4132736(/* char* par */)
 
     Collator *c = NULL;
 
-    c = Collator::createInstance(Locale::getFrance(), status);
+    c = Collator::createInstance(Locale::getCanadaFrench(), status);
     c->setStrength(Collator::TERTIARY);
 
     if (c == NULL || U_FAILURE(status))
     {
-        errln("Failed to create a collator for Locale::getFrance()");
+        errln("Failed to create a collator for Locale::getCanadaFrench()");
         delete c;
         return;
     }
@@ -1081,7 +1081,7 @@ void CollationRegressionTest::Test4146160(/* char* par */)
 // Ticket 7189
 //
 // nextSortKeyPart incorrect for EO_S1 collation
-static int32_t calcKeyIncremental(UCollator *coll, const UChar* text, int32_t len, uint8_t *keyBuf, int32_t keyBufLen, UErrorCode& status) {
+static int32_t calcKeyIncremental(UCollator *coll, const UChar* text, int32_t len, uint8_t *keyBuf, int32_t /*keyBufLen*/, UErrorCode& status) {
     UCharIterator uiter;
     uint32_t state[2] = { 0, 0 };
     int32_t keyLen;

@@ -20,20 +20,9 @@ pa_Arab{
         "Arab",
     }
     NumberElements{
-        ".",
-        ",",
-        ";",
-        "%",
-        "٠",
-        "#",
-        "-",
-        "E",
-        "‰",
-        "∞",
-        "NaN",
-        "+",
+        default{"arab"}
     }
-    Version{"2.0.47.30"}
+    Version{"2.0.50.30"}
     calendar{
         gregorian{
             DateTimePatterns{
@@ -133,7 +122,6 @@ pa_Arab{
             }
         }
     }
-    defaultNumberingSystem{"arab"}
     layout{
         characters{"right-to-left"}
         lines{"top-to-bottom"}

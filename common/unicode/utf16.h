@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 1999-2008, International Business Machines
+*   Copyright (C) 1999-2010, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -87,7 +87,7 @@
  * is it a trail surrogate?
  * @param c 16-bit code unit
  * @return TRUE or FALSE
- * @draft ICU 4.2
+ * @stable ICU 4.2
  */
 #define U16_IS_SURROGATE_TRAIL(c) (((c)&0x400)!=0)
 
@@ -203,7 +203,7 @@
                 (c)=U16_GET_SUPPLEMENTARY((c), __c2); \
             } \
         } else { \
-            if((i)-1>=(start) && U16_IS_LEAD(__c2=(s)[(i)-1])) { \
+            if((i)>(start) && U16_IS_LEAD(__c2=(s)[(i)-1])) { \
                 (c)=U16_GET_SUPPLEMENTARY(__c2, (c)); \
             } \
         } \

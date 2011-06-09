@@ -54,13 +54,13 @@
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.6
  */
-#define U_ICU_VERSION_MINOR_NUM 4
+#define U_ICU_VERSION_MINOR_NUM 6
 
 /** The current ICU patchlevel version as an integer.  
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.4
  */
-#define U_ICU_VERSION_PATCHLEVEL_NUM 1
+#define U_ICU_VERSION_PATCHLEVEL_NUM 0
 
 /** The current ICU build level version as an integer.  
  *  This value is for use by ICU clients. It defaults to 0.
@@ -74,16 +74,16 @@
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.6
  */
-#define U_ICU_VERSION_SUFFIX _44
+#define U_ICU_VERSION_SUFFIX _46
 
 /** Glued version suffix function for renamers 
  *  This value will change in the subsequent releases of ICU.
  *  If a custom suffix (such as matching library suffixes) is desired, this can be modified.
  *  Note that if present, platform.h may contain an earlier definition of this macro.
- *  @draft ICU 4.2
+ *  @stable ICU 4.2
  */
 #ifndef U_ICU_ENTRY_POINT_RENAME
-#define U_ICU_ENTRY_POINT_RENAME(x)    x ## _44
+#define U_ICU_ENTRY_POINT_RENAME(x)    x ## _46
 #endif
 
 /** The current ICU library version as a dotted-decimal string. The patchlevel
@@ -91,18 +91,18 @@
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.4
  */
-#define U_ICU_VERSION "4.4.1"
+#define U_ICU_VERSION "4.6"
 
 /** The current ICU library major/minor version as a string without dots, for library name suffixes. 
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.6
  */
-#define U_ICU_VERSION_SHORT "44"
+#define U_ICU_VERSION_SHORT "46"
 
 /** Data version in ICU4C.
  * @internal ICU 4.4 Internal Use Only
  **/
-#define U_ICU_DATA_VERSION "4.4.0.1"
+#define U_ICU_DATA_VERSION "4.6"
 
 /*===========================================================================
  * ICU collation framework version information                               
@@ -132,11 +132,14 @@
  * version 6 - ICU 2.8 - fixed bug in builder that allowed 0xFF in primary values
  * version 7 - ICU 3.4 - with the UCA 4.1 Thai tag is no longer processed, complete ignorables
  *                       now break contractions
+ * version 8 - ICU 4.6 - the addition of collation reordering. It should in general be
+ *                       compatible since the data is at the end of the file. However,
+ *                       if data parsers make assumptions about lengths this will cause problems.
  * Backward compatible with the old rules. 
  * This value may change in the subsequent releases of ICU
  * @stable ICU 2.4
  */
-#define UCOL_BUILDER_VERSION 7
+#define UCOL_BUILDER_VERSION 8
 
 /** This is the version of the tailorings 
  *  This value may change in the subsequent releases of ICU

@@ -132,6 +132,20 @@ typedef enum {
 
 } UColAttributeValue;
 
+/** Enum containing the codes for reordering segments of the collation table that are not script
+ *  codes. These reordering codes are to be used in conjunction with the script codes.
+ *  @internal
+ */
+typedef enum {
+    UCOL_REORDER_CODE_SPACE          = 0x1000,
+    UCOL_REORDER_CODE_FIRST          = UCOL_REORDER_CODE_SPACE,
+    UCOL_REORDER_CODE_PUNCTUATION    = 0x1001,
+    UCOL_REORDER_CODE_SYMBOL         = 0x1002,
+    UCOL_REORDER_CODE_CURRENCY       = 0x1003,
+    UCOL_REORDER_CODE_DIGIT          = 0x1004,
+    UCOL_REORDER_CODE_LIMIT          = 0x1005
+} UColReorderCode;
+
 /**
  * Base letter represents a primary difference.  Set comparison
  * level to UCOL_PRIMARY to ignore secondary and tertiary differences.
@@ -391,7 +405,7 @@ U_NAMESPACE_BEGIN
  *
  * @see LocalPointerBase
  * @see LocalPointer
- * @draft ICU 4.4
+ * @stable ICU 4.4
  */
 U_DEFINE_LOCAL_OPEN_POINTER(LocalUCollatorPointer, UCollator, ucol_close);
 
@@ -520,6 +534,37 @@ ucol_getStrength(const UCollator *coll);
 U_STABLE void U_EXPORT2 
 ucol_setStrength(UCollator *coll,
                  UCollationStrength strength);
+
+/**
+ * Get the current reordering of scripts (if one has been set).
+ * @param coll The UCollator to query.
+ * @param dest The array to fill with the script ordering.
+ * @param destCapacity The length of dest. If it is 0, then dest may be NULL and the function will only return the length of the result without writing any of the result string (pre-flighting).
+ * @param pErrorCode Must be a valid pointer to an error code value, which must not indicate a failure before the function call.
+ * @return The length of the array of the script ordering.
+ * @see ucol_setReorderCodes
+ * @internal 
+ */
+U_INTERNAL int32_t U_EXPORT2 
+ucol_getReorderCodes(const UCollator* coll,
+                    int32_t* dest,
+                    int32_t destCapacity,
+                    UErrorCode *pErrorCode);
+
+/**
+ * Set the ordering of scripts for this collator.
+ * @param coll The UCollator to set.
+ * @param reorderCodes An array of script codes in the new order.
+ * @param reorderCodesLength The length of reorderCodes.
+ * @param pErrorCode Must be a valid pointer to an error code value, which must not indicate a failure before the function call.
+ * @see ucol_getReorderCodes
+ * @internal 
+ */
+U_INTERNAL void U_EXPORT2 
+ucol_setReorderCodes(UCollator* coll,
+                    const int32_t* reorderCodes,
+                    int32_t reorderCodesLength,
+                    UErrorCode *pErrorCode);
 
 /**
  * Get the display name for a UCollator.
@@ -729,6 +774,11 @@ ucol_normalizeShortDefinitionString(const char *source,
 /**
  * Get a sort key for a string from a UCollator.
  * Sort keys may be compared using <TT>strcmp</TT>.
+ *
+ * Like ICU functions that write to an output buffer, the buffer contents
+ * is undefined if the buffer capacity (resultLength parameter) is too small.
+ * Unlike ICU functions that write a string to an output buffer,
+ * the terminating zero byte is counted in the sort key length.
  * @param coll The UCollator containing the collation rules.
  * @param source The string to transform.
  * @param sourceLength The length of source, or -1 if null-terminated.
@@ -1175,4 +1225,3 @@ ucol_openBinary(const uint8_t *bin, int32_t length,
 #endif /* #if !UCONFIG_NO_COLLATION */
 
 #endif
-

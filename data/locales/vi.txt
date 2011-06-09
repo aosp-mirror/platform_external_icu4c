@@ -22,27 +22,70 @@ vi{
         "Latn",
     }
     NumberElements{
-        ",",
-        ".",
-        ";",
-        "%",
-        "0",
-        "#",
-        "-",
-        "E",
-        "‰",
-        "∞",
-        "NaN",
-        "+",
+        latn{
+            patterns{
+                currencyFormat{"#,##0.00 ¤"}
+                decimalFormat{"#,##0.###"}
+                percentFormat{"#,##0%"}
+                scientificFormat{"#E0"}
+            }
+            symbols{
+                decimal{","}
+                exponential{"E"}
+                group{"."}
+                infinity{"∞"}
+                list{";"}
+                minusSign{"-"}
+                nan{"NaN"}
+                perMille{"‰"}
+                percentSign{"%"}
+                plusSign{"+"}
+            }
+        }
     }
-    NumberPatterns{
-        "#,##0.###",
-        "#,##0.00 ¤",
-        "#,##0%",
-        "#E0",
-    }
-    Version{"2.0.48.64"}
+    Version{"2.0.50.96"}
     calendar{
+        buddhist{
+            DateTimePatterns{
+                "HH:mm:ss zzzz",
+                "HH:mm:ss z",
+                "HH:mm:ss",
+                "HH:mm",
+                "EEEE, 'ngày' dd MMMM 'năm' y G",
+                "'Ngày' dd 'tháng' M 'năm' y G",
+                "dd-MM-yyyy G",
+                "dd/MM/yyyy G",
+                "{0} {1}",
+                "{0} {1}",
+                "{0} {1}",
+                "{0} {1}",
+                "{0} {1}",
+            }
+            availableFormats{
+                Ed{"E, d"}
+                MEd{"E, d-M"}
+                MMMEd{"E d MMM"}
+                MMMMEd{"E d MMMM"}
+                MMMMd{"d MMMM"}
+                MMMd{"d MMM"}
+                MMdd{"dd-MM"}
+                Md{"d-M"}
+                d{"'Ngày' d"}
+                mmss{"mm:ss"}
+                y{"'Năm' y G"}
+                yMEd{"EEE, d-M-yyyy G"}
+                yMMM{"MMM y G"}
+                yMMMEd{"EEE, d MMM y G"}
+                yMMMM{"MMMM y G"}
+                yMMMd{"d MMM y G"}
+                yQ{"Q yyyy G"}
+                yQQQ{"QQQ y G"}
+                yyQ{"Q yy G"}
+                yyyy{"'Năm' y G"}
+                yyyyMM{"MM-yyyy G"}
+                yyyyMd{"d-M-yyyy G"}
+            }
+        }
         gregorian{
             AmPmMarkers{
                 "SA",
@@ -64,6 +107,7 @@ vi{
                 "{0} {1}",
             }
             availableFormats{
+                Ed{"E, d"}
                 MEd{"E, d-M"}
                 MMMEd{"E d MMM"}
                 MMMMEd{"E d MMMM"}
@@ -71,7 +115,9 @@ vi{
                 MMMd{"d MMM"}
                 MMdd{"dd-MM"}
                 Md{"d-M"}
+                d{"'Ngày' d"}
                 mmss{"mm:ss"}
+                y{"'Năm' y"}
                 yMEd{"EEE, d-M-yyyy"}
                 yMMM{"MMM y"}
                 yMMMEd{"EEE, d MMM y"}
@@ -232,6 +278,126 @@ vi{
                         "tháng mười hai",
                     }
                 }
+            }
+        }
+        islamic{
+            DateTimePatterns{
+                "HH:mm:ss zzzz",
+                "HH:mm:ss z",
+                "HH:mm:ss",
+                "HH:mm",
+                "EEEE, 'ngày' dd MMMM 'năm' y G",
+                "'Ngày' dd 'tháng' M 'năm' y G",
+                "dd-MM-y G",
+                "dd/MM/y G",
+                "{0} {1}",
+                "{0} {1}",
+                "{0} {1}",
+                "{0} {1}",
+                "{0} {1}",
+            }
+            availableFormats{
+                Ed{"E, d"}
+                MEd{"E, d-M"}
+                MMMEd{"E d MMM"}
+                MMMMEd{"E d MMMM"}
+                MMMMd{"d MMMM"}
+                MMMd{"d MMM"}
+                MMdd{"dd-MM"}
+                Md{"d-M"}
+                d{"'Ngày' d"}
+                mmss{"mm:ss"}
+                yyQ{"Q yy G"}
+                yyyy{"'Năm' y G"}
+                yyyyMEd{"EEE, d-M-y G"}
+                yyyyMM{"MM-y G"}
+                yyyyMMM{"MMM y G"}
+                yyyyMMMEd{"EEE, d MMM y G"}
+                yyyyMMMM{"MMMM y G"}
+                yyyyMMMd{"d MMM y G"}
+                yyyyMd{"d-M-y G"}
+                yyyyQ{"Q y G"}
+                yyyyQQQ{"QQQ y G"}
+            }
+        }
+        japanese{
+            DateTimePatterns{
+                "HH:mm:ss zzzz",
+                "HH:mm:ss z",
+                "HH:mm:ss",
+                "HH:mm",
+                "EEEE, 'ngày' dd MMMM 'năm' y G",
+                "'Ngày' dd 'tháng' M 'năm' y G",
+                "dd-MM-y G",
+                "dd/MM/y G",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+            }
+            availableFormats{
+                Ed{"E, d"}
+                MEd{"E, d-M"}
+                MMMEd{"E d MMM"}
+                MMMMEd{"E d MMMM"}
+                MMMMd{"d MMMM"}
+                MMMd{"d MMM"}
+                MMdd{"dd-MM"}
+                Md{"d-M"}
+                d{"'Ngày' d"}
+                mmss{"mm:ss"}
+                yyQ{"Q yy G"}
+                yyyy{"'Năm' y G"}
+                yyyyMEd{"EEE, d-M-y G"}
+                yyyyMM{"MM-y G"}
+                yyyyMMM{"MMM y G"}
+                yyyyMMMEd{"EEE, d MMM y G"}
+                yyyyMMMM{"MMMM y G"}
+                yyyyMMMd{"d MMM y G"}
+                yyyyMd{"d-M-y G"}
+                yyyyQ{"Q y G"}
+                yyyyQQQ{"QQQ y G"}
+            }
+        }
+        roc{
+            DateTimePatterns{
+                "HH:mm:ss zzzz",
+                "HH:mm:ss z",
+                "HH:mm:ss",
+                "HH:mm",
+                "EEEE, 'ngày' dd MMMM 'năm' y G",
+                "'Ngày' dd 'tháng' M 'năm' y G",
+                "dd-MM-y G",
+                "dd/MM/y G",
+                "{0} {1}",
+                "{0} {1}",
+                "{0} {1}",
+                "{0} {1}",
+                "{0} {1}",
+            }
+            availableFormats{
+                Ed{"E, d"}
+                MEd{"E, d-M"}
+                MMMEd{"E d MMM"}
+                MMMMEd{"E d MMMM"}
+                MMMMd{"d MMMM"}
+                MMMd{"d MMM"}
+                MMdd{"dd-MM"}
+                Md{"d-M"}
+                d{"'Ngày' d"}
+                mmss{"mm:ss"}
+                yyQ{"Q yy G"}
+                yyyy{"'Năm' y G"}
+                yyyyMEd{"EEE, d-M-y G"}
+                yyyyMM{"MM-y G"}
+                yyyyMMM{"MMM y G"}
+                yyyyMMMEd{"EEE, d MMM y G"}
+                yyyyMMMM{"MMMM y G"}
+                yyyyMMMd{"d MMM y G"}
+                yyyyMd{"d-M-y G"}
+                yyyyQ{"Q y G"}
+                yyyyQQQ{"QQQ y G"}
             }
         }
     }

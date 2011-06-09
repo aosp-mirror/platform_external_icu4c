@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2009, International Business Machines
+*   Copyright (C) 2009-2010, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -65,7 +65,7 @@ extern IntlTest *createBiDiConformanceTest() {
     return new BiDiConformanceTest();
 }
 
-void BiDiConformanceTest::runIndexedTest(int32_t index, UBool exec, const char *&name, char *par) {
+void BiDiConformanceTest::runIndexedTest(int32_t index, UBool exec, const char *&name, char * /*par*/) {
     if(exec) {
         logln("TestSuite BiDiConformanceTest: ");
     }
@@ -114,9 +114,6 @@ char *BiDiConformanceTest::getUnidataPath(char path[]) {
 }
 
 U_DEFINE_LOCAL_OPEN_POINTER(LocalStdioFilePointer, FILE, fclose);
-
-// TODO: Make "public" in uparse.h.
-#define U_IS_INV_WHITESPACE(c) ((c)==' ' || (c)=='\t' || (c)=='\r' || (c)=='\n')
 
 UBool BiDiConformanceTest::parseLevels(const char *start) {
     directionBits=0;
@@ -180,7 +177,7 @@ static const UChar charFromBiDiClass[U_CHAR_DIRECTION_COUNT]={
 U_CDECL_BEGIN
 
 static UCharDirection U_CALLCONV
-biDiConfUBiDiClassCallback(const void *context, UChar32 c) {
+biDiConfUBiDiClassCallback(const void * /*context*/, UChar32 c) {
     for(int i=0; i<U_CHAR_DIRECTION_COUNT; ++i) {
         if(c==charFromBiDiClass[i]) {
             return (UCharDirection)i;
@@ -336,15 +333,15 @@ void BiDiConformanceTest::TestBidiTest() {
             }
             start=u_skipWhitespace(start+1);
             char *end;
-            uint32_t bitset=(uint32_t)strtoul(start, &end, 10);
+            uint32_t bitset=(uint32_t)strtoul(start, &end, 16);
             if(end<=start || (!U_IS_INV_WHITESPACE(*end) && *end!=';' && *end!=0)) {
                 errln("input bitset parse error at %s", start);
                 return;
             }
             // Loop over the bitset.
-            static const UBiDiLevel paraLevels[]={ UBIDI_DEFAULT_LTR, 0, 1 };
-            static const char *const paraLevelNames[]={ "auto/LTR", "LTR", "RTL" };
-            for(int i=0; i<=2; ++i) {
+            static const UBiDiLevel paraLevels[]={ UBIDI_DEFAULT_LTR, 0, 1, UBIDI_DEFAULT_RTL };
+            static const char *const paraLevelNames[]={ "auto/LTR", "LTR", "RTL", "auto/RTL" };
+            for(int i=0; i<=3; ++i) {
                 if(bitset&(1<<i)) {
                     ubidi_setPara(ubidi.getAlias(), inputString.getBuffer(), inputString.length(),
                                   paraLevels[i], NULL, errorCode);
