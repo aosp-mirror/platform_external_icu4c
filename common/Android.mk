@@ -40,7 +40,7 @@ src_files := \
 	ucnv_set.c         ucnv_u16.c         \
 	ucnv_u32.c         ucnv_u7.c          \
 	ucnv_u8.c                             \
-	udata.c            udatamem.c         \
+	udatamem.c         \
 	udataswp.c         uenum.c            \
 	uhash.c            uinit.c            \
 	uinvchar.c         uloc.c             \
@@ -99,7 +99,8 @@ src_files += \
 	normalizer2impl.cpp      normalizer2.cpp    \
 	filterednormalizer2.cpp  ucol_swp.cpp       \
 	uprops.cpp      utrie2.cpp \
-        charstr.cpp     uts46.cpp
+        charstr.cpp     uts46.cpp \
+        udata.cpp
 
 
 # This is the empty compiled-in icu data structure
