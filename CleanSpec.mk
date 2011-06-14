@@ -50,6 +50,8 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/ETC/icu.data_intermediates)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/ETC/icu.dat_intermediates)
 $(call add-clean-step, rm -rf $(HOST_OUT)/obj/SHARED_LIBRARIES/libicuuc_intermediates)
 $(call add-clean-step, rm -rf $(HOST_OUT)/obj/SHARED_LIBRARIES/libicui18n_intermediates)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/SHARED_LIBRARIES/libicuuc_intermediates)
+$(call add-clean-step, rm -rf $(HOST_OUT)/obj/SHARED_LIBRARIES/libicuuc_intermediates)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
