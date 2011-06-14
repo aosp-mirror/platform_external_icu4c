@@ -372,6 +372,12 @@
 /** @{ GCC built in functions for atomic memory operations                       */
 /*===========================================================================*/
 
+// BEGIN android-added
+#if !defined(__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4)
+#define U_HAVE_GCC_ATOMICS 0
+#endif
+// END android-added
+
 /**
  * \def U_HAVE_GCC_ATOMICS
  * @internal
