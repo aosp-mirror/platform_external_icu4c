@@ -53,6 +53,8 @@ $(call add-clean-step, rm -rf $(HOST_OUT)/obj/SHARED_LIBRARIES/libicui18n_interm
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/SHARED_LIBRARIES/libicuuc_intermediates)
 $(call add-clean-step, rm -rf $(HOST_OUT)/obj/SHARED_LIBRARIES/libicuuc_intermediates)
 $(call add-clean-step, touch -c external/icu4c/common/udata.cpp)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/SHARED_LIBRARIES/stubdata)
+$(call add-clean-step, rm -rf $(HOST_OUT)/obj/SHARED_LIBRARIES/stubdata)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
