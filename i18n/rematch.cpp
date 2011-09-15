@@ -5621,46 +5621,57 @@ GC_Done:
                 {
                     int32_t stringStartIdx, stringLen;
                     stringStartIdx = opValue;
-                    
+
                     op      = (int32_t)pat[fp->fPatIdx];
                     fp->fPatIdx++;
                     opType  = URX_TYPE(op);
                     opValue = URX_VAL(op);
                     U_ASSERT(opType == URX_STRING_LEN);
                     stringLen = opValue;
-                    
+
                     const UChar *patternChars = litText+stringStartIdx;
                     const UChar *patternEnd = patternChars+stringLen;
-                    
+
                     const UChar *foldChars = NULL;
                     int32_t foldOffset, foldLength;
                     UChar32 c;
-                    
+                    // BEGIN android-changed
+                    // For ICU ticket#8824
+                    UBool c_is_valid = FALSE;
+
                     #ifdef REGEX_SMART_BACKTRACKING
                     int32_t originalInputIdx = fp->fInputIdx;
                     #endif
                     UBool success = TRUE;
-                    
+
                     foldOffset = foldLength = 0;
 
                     while (patternChars < patternEnd && success) {
-                        if(foldOffset < foldLength) {
-                            U16_NEXT_UNSAFE(foldChars, foldOffset, c);
-                        } else {
-                            U16_NEXT(inputBuf, fp->fInputIdx, fActiveLimit, c);
-                            foldLength = ucase_toFullFolding(csp, c, &foldChars, U_FOLD_CASE_DEFAULT);
-                            if(foldLength >= 0) {
-                                if(foldLength <= UCASE_MAX_STRING_LENGTH) {   // !!!: Does not correctly handle chars that fold to 0-length strings
-                                    foldOffset = 0;
-                                    U16_NEXT_UNSAFE(foldChars, foldOffset, c);
-                                } else {
-                                    c = foldLength;
-                                    foldLength = foldOffset; // to avoid reading chars from the folding buffer
+                        if (fp->fInputIdx < fActiveLimit) {  // don't read past end of string
+                            if(foldOffset < foldLength) {
+                                U16_NEXT_UNSAFE(foldChars, foldOffset, c);
+                                c_is_valid = TRUE;
+                            } else {
+                                // test pre-condition of U16_NEXT: i < length
+                                U_ASSERT(fp->fInputIdx < fActiveLimit);
+                                U16_NEXT(inputBuf, fp->fInputIdx, fActiveLimit, c);
+                                c_is_valid = TRUE;
+                                foldLength = ucase_toFullFolding(csp, c, &foldChars, U_FOLD_CASE_DEFAULT);
+                                if(foldLength >= 0) {
+                                    if(foldLength <= UCASE_MAX_STRING_LENGTH) {   // !!!: Does not correctly handle chars that fold to 0-length strings
+                                        foldOffset = 0;
+                                        U16_NEXT_UNSAFE(foldChars, foldOffset, c);
+                                    } else {
+                                        c = foldLength;
+                                        foldLength = foldOffset; // to avoid reading chars from the folding buffer
+                                    }
                                 }
                             }
+                        } else {
+                            c_is_valid = FALSE;
                         }
-                        
-                        if (fp->fInputIdx <= fActiveLimit) {
+
+                        if (fp->fInputIdx <= fActiveLimit && c_is_valid) {
                             if (U_IS_BMP(c)) {
                                 success = (*patternChars == c);
                                 patternChars += 1;
@@ -5673,7 +5684,8 @@ GC_Done:
                             fHitEnd = TRUE;          //   TODO:  See ticket 6074
                         }
                     }
-                    
+                    // END android-changed
+
                     if (!success) {
                         #ifdef REGEX_SMART_BACKTRACKING
                         if (fp->fInputIdx > backSearchIndex && fStack->size()) {
@@ -5682,7 +5694,7 @@ GC_Done:
                                 // Reset to last start point
                                 int64_t reverseIndex = originalInputIdx;
                                 patternChars = litText+stringStartIdx;
-                                
+
                                 // Search backwards for a possible start
                                 do {
                                     U16_PREV(inputBuf, backSearchIndex, reverseIndex, c);
@@ -5696,14 +5708,14 @@ GC_Done:
                                             foldLength = foldOffset; // to avoid reading chars from the folding buffer
                                         }
                                     }
-                                    
+
                                     if ((U_IS_BMP(c) && *patternChars == c) ||
                                            (*patternChars == U16_LEAD(c) && *(patternChars+1) == U16_TRAIL(c))) {
                                         success = TRUE;
                                         break;
                                     }
                                 } while (reverseIndex > backSearchIndex);
-                                
+
                                 // And try again
                                 if (success) {
                                     fp = (REStackFrame *)fStack->popFrame(fFrameSize);
