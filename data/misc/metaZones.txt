@@ -2180,6 +2180,11 @@ metaZones:table(nofallback){
             {
                 "America_Eastern",
                 "2006-10-29 07:00",
+                "2007-03-11 08:00",
+            }
+            {
+                "America_Central",
+                "2007-03-11 08:00",
                 "9999-12-31 23:59",
             }
         }
