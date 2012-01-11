@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2010 International Business Machines
+// * Copyright (C) 2011 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/sr_Latn.xml
@@ -10,8 +10,7 @@
  *  ICU <specials> source: <path>/xml/main/sr_Latn.xml
  */
 sr_Latn{
-    %%ParentIsRoot:int{1}
-    Version{"2.0.50.94"}
+    Version{"2.0.59.68"}
     zoneStrings{
         "Africa:Abidjan"{
             ec{"Abidžan"}
@@ -940,8 +939,6 @@ sr_Latn{
         "meta:Acre"{
             ld{"Acre letnje računanje vremena"}
             ls{"Acre vreme"}
-            sd{"ACST (Acre)"}
-            ss{"ACT (Acre)"}
         }
         "meta:Afghanistan"{
             ls{"Avganistan vreme"}
@@ -986,33 +983,21 @@ sr_Latn{
             ld{"Centralno letnje merenje vremena (SAD)"}
             lg{"Centralno vreme (SAD)"}
             ls{"Centralno standardno vreme (SAD)"}
-            sd{"CDT (SAD)"}
-            sg{"CT (SAD)"}
-            ss{"CST (SAD)"}
         }
         "meta:America_Eastern"{
             ld{"Istočno letnje računanje vremena (SAD)"}
             lg{"Istočno vreme (SAD)"}
             ls{"Istočno standardno vreme (SAD)"}
-            sd{"EDT (SAD)"}
-            sg{"ET (SAD)"}
-            ss{"EST (SAD)"}
         }
         "meta:America_Mountain"{
             ld{"Planinsko letnje računanje vremena (SAD)"}
             lg{"Planinsko vreme (SAD)"}
             ls{"Planinsko standardno vreme (SAD)"}
-            sd{"MDT (SAD)"}
-            sg{"MT (SAD)"}
-            ss{"MST (SAD)"}
         }
         "meta:America_Pacific"{
             ld{"Pacifičko letnje računanje vremena (SAD)"}
             lg{"Pacifičko vreme (SAD)"}
             ls{"Pacifičko vreme (SAD)"}
-            sd{"PDT (SAD)"}
-            sg{"PT (SAD)"}
-            ss{"PST (SAD)"}
         }
         "meta:Anadyr"{
             ld{"Anadir letnje računanje vremena"}
@@ -1021,22 +1006,15 @@ sr_Latn{
         "meta:Aqtau"{
             ld{"Akvtau letnje računanje vremena"}
             ls{"Akvtau vreme"}
-            sd{"AQTST (Akvtau)"}
-            ss{"AQTT (Akvtau)"}
         }
         "meta:Aqtobe"{
             ld{"Akvtobe letnje računanje vremena"}
             ls{"Akvtobe vreme"}
-            sd{"AQTST (Akvtobe)"}
-            ss{"AQTT (Akvtobe)"}
         }
         "meta:Arabian"{
             ld{"Arapsko letnje računanje vremena"}
             lg{"Arabijsko vreme"}
             ls{"Arabijsko standardno vreme"}
-            sd{"ADT (Arabija)"}
-            sg{"AT (Arabija)"}
-            ss{"AST (Arabija)"}
         }
         "meta:Argentina"{
             ld{"Argentina letnje računanje vremena"}
@@ -1097,7 +1075,6 @@ sr_Latn{
             ld{"Bering letnje računanje vremena"}
             lg{"Bering vreme"}
             ls{"Bering standardno vreme"}
-            sg{"BT (Bering)"}
         }
         "meta:Bhutan"{
             ls{"Butan vreme"}
@@ -1139,9 +1116,6 @@ sr_Latn{
             ld{"Kina letnje računanje vremena"}
             lg{"Kina vreme"}
             ls{"Kinesko standardno vreme"}
-            sd{"CDT (Kina)"}
-            sg{"CT (Kina)"}
-            ss{"CST (Kina)"}
         }
         "meta:Choibalsan"{
             ld{"Čojbalsan letnje računanje vremena"}
@@ -1520,7 +1494,6 @@ sr_Latn{
         }
         "meta:South_Georgia"{
             ls{"Južna Džordžija vreme"}
-            ss{"GST (Sv. Džordžija)"}
         }
         "meta:Suriname"{
             ls{"Surinam vreme"}
@@ -1623,5 +1596,7 @@ sr_Latn{
             lg{"Jukon vreme"}
             ls{"Jukon standardno vreme"}
         }
+        fallbackRegionFormat{"{1} vreme ({0})"}
+        regionFormat{"{0} vreme"}
     }
 }

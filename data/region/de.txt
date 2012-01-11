@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2010 International Business Machines
+// * Copyright (C) 2011 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/de.xml
@@ -42,7 +42,7 @@ de{
         154{"Nordeuropa"}
         155{"Westeuropa"}
         172{"Gemeinschaft Unabhängiger Staaten"}
-        419{"Lateinamerika und Karibik"}
+        419{"Lateinamerika"}
         830{"Kanalinseln"}
         AC{"Ascension"}
         AD{"Andorra"}
@@ -299,7 +299,7 @@ de{
         ZA{"Südafrika"}
         ZM{"Sambia"}
         ZW{"Simbabwe"}
-        ZZ{"Unbekannte oder ungültige Region"}
+        ZZ{"Unbekannte Region"}
     }
-    Version{"2.0.51.59"}
+    Version{"2.0.59.83"}
 }

@@ -1,7 +1,7 @@
 
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 2001-2010, International Business Machines Corporation and
+ * Copyright (c) 2001-2011, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /*******************************************************************************
@@ -1671,7 +1671,7 @@ static void TestComposeDecompose(void) {
         log_err("Set was zero. Missing data?\n");
         return;
     }
-    t = malloc(charsToTestSize * sizeof(tester *));
+    t = (tester **)malloc(charsToTestSize * sizeof(tester *));
     t[0] = (tester *)malloc(sizeof(tester));
     log_verbose("Testing UCA extensively for %d characters\n", charsToTestSize);
 
@@ -5912,7 +5912,6 @@ static void TestNonLeadBytesDuringCollationReordering(void)
     UErrorCode status = U_ZERO_ERROR;
     UCollator  *myCollation;
     int32_t reorderCodes[1] = {USCRIPT_GREEK};
-    UCollationResult collResult;
 
     uint8_t baseKey[256];
     uint32_t baseKeyLength;
@@ -5921,7 +5920,7 @@ static void TestNonLeadBytesDuringCollationReordering(void)
 
     UChar testString[] = { 0x03b1, 0x03b2, 0x03b3 };
     
-    int i;
+    uint32_t i;
 
 
     log_verbose("Testing non-lead bytes in a sort key with and without reordering\n");
@@ -5943,7 +5942,7 @@ static void TestNonLeadBytesDuringCollationReordering(void)
     reorderKeyLength = ucol_getSortKey(myCollation, testString, LEN(testString), reorderKey, 256);
     
     if (baseKeyLength != reorderKeyLength) {
-        log_err("Key lengths not the same during reordering.\n", collResult);
+        log_err("Key lengths not the same during reordering.\n");
         return;
     }
     
@@ -5972,7 +5971,7 @@ static void TestNonLeadBytesDuringCollationReordering(void)
     reorderKeyLength = ucol_getSortKey(myCollation, testString, LEN(testString), reorderKey, 256);
     
     if (baseKeyLength != reorderKeyLength) {
-        log_err("Key lengths not the same during reordering.\n", collResult);
+        log_err("Key lengths not the same during reordering.\n");
         return;
     }
     
@@ -5993,10 +5992,14 @@ static void TestReorderingAPI(void)
     UErrorCode status = U_ZERO_ERROR;
     UCollator  *myCollation;
     int32_t reorderCodes[3] = {USCRIPT_GREEK, USCRIPT_HAN, UCOL_REORDER_CODE_PUNCTUATION};
+    int32_t duplicateReorderCodes[] = {USCRIPT_CUNEIFORM, USCRIPT_GREEK, UCOL_REORDER_CODE_CURRENCY, USCRIPT_EGYPTIAN_HIEROGLYPHS};
+    int32_t reorderCodesStartingWithDefault[] = {UCOL_REORDER_CODE_DEFAULT, USCRIPT_GREEK, USCRIPT_HAN, UCOL_REORDER_CODE_PUNCTUATION};
     UCollationResult collResult;
     int32_t retrievedReorderCodesLength;
+    int32_t retrievedReorderCodes[10];
     UChar greekString[] = { 0x03b1 };
     UChar punctuationString[] = { 0x203e };
+    int loopIndex;
 
     log_verbose("Testing non-lead bytes in a sort key with and without reordering\n");
 
@@ -6015,6 +6018,7 @@ static void TestReorderingAPI(void)
         return;
     }
     
+    /* get the reordering */
     retrievedReorderCodesLength = ucol_getReorderCodes(myCollation, NULL, 0, &status);
     if (status != U_BUFFER_OVERFLOW_ERROR) {
         log_err_status(status, "ERROR: getting error codes should have returned U_BUFFER_OVERFLOW_ERROR : %s\n", myErrorName(status));
@@ -6024,6 +6028,22 @@ static void TestReorderingAPI(void)
     if (retrievedReorderCodesLength != LEN(reorderCodes)) {
         log_err_status(status, "ERROR: retrieved reorder codes length was %d but should have been %d\n", retrievedReorderCodesLength, LEN(reorderCodes));
         return;
+    }
+    /* now let's really get it */
+    retrievedReorderCodesLength = ucol_getReorderCodes(myCollation, retrievedReorderCodes, LEN(retrievedReorderCodes), &status);
+    if (U_FAILURE(status)) {
+        log_err_status(status, "ERROR: getting reorder codes: %s\n", myErrorName(status));
+        return;
+    }
+    if (retrievedReorderCodesLength != LEN(reorderCodes)) {
+        log_err_status(status, "ERROR: retrieved reorder codes length was %d but should have been %d\n", retrievedReorderCodesLength, LEN(reorderCodes));
+        return;
+    }
+    for (loopIndex = 0; loopIndex < retrievedReorderCodesLength; loopIndex++) {
+        if (retrievedReorderCodes[loopIndex] != reorderCodes[loopIndex]) {
+            log_err_status(status, "ERROR: retrieved reorder code doesn't match set reorder code at index %d\n", loopIndex);
+            return;
+        }
     }
     collResult = ucol_strcoll(myCollation, greekString, LEN(greekString), punctuationString, LEN(punctuationString));
     if (collResult != UCOL_LESS) {
@@ -6038,6 +6058,136 @@ static void TestReorderingAPI(void)
         return;
     }
 
+    /* get the reordering again */
+    retrievedReorderCodesLength = ucol_getReorderCodes(myCollation, NULL, 0, &status);
+    if (retrievedReorderCodesLength != 0) {
+        log_err_status(status, "ERROR: retrieved reorder codes length was %d but should have been %d\n", retrievedReorderCodesLength, 0);
+        return;
+    }
+
+    collResult = ucol_strcoll(myCollation, greekString, LEN(greekString), punctuationString, LEN(punctuationString));
+    if (collResult != UCOL_GREATER) {
+        log_err_status(status, "ERROR: collation result should have been UCOL_GREATER\n");
+        return;
+    }
+
+    /* test for error condition on duplicate reorder codes */
+    ucol_setReorderCodes(myCollation, duplicateReorderCodes, LEN(duplicateReorderCodes), &status);
+    if (!U_FAILURE(status)) {
+        log_err_status(status, "ERROR: setting duplicate reorder codes did not generate a failure\n");
+        return;
+    }
+    
+    status = U_ZERO_ERROR;
+    /* test for reorder codes after a reset code */
+    ucol_setReorderCodes(myCollation, reorderCodesStartingWithDefault, LEN(reorderCodesStartingWithDefault), &status);
+    if (!U_FAILURE(status)) {
+        log_err_status(status, "ERROR: reorderd code sequence starting with default and having following codes didn't cause an error\n");
+        return;
+    }
+    
+    ucol_close(myCollation);
+}
+
+/*
+ * Test reordering API.
+ */
+static void TestReorderingAPIWithRuleCreatedCollator(void)
+{
+    UErrorCode status = U_ZERO_ERROR;
+    UCollator  *myCollation;
+    UChar rules[90];
+    int32_t rulesReorderCodes[2] = {USCRIPT_HAN, USCRIPT_GREEK};
+    int32_t reorderCodes[3] = {USCRIPT_GREEK, USCRIPT_HAN, UCOL_REORDER_CODE_PUNCTUATION};
+    UCollationResult collResult;
+    int32_t retrievedReorderCodesLength;
+    int32_t retrievedReorderCodes[10];
+    UChar greekString[] = { 0x03b1 };
+    UChar punctuationString[] = { 0x203e };
+    UChar hanString[] = { 0x65E5, 0x672C };
+    int loopIndex;
+
+    log_verbose("Testing non-lead bytes in a sort key with and without reordering\n");
+
+    /* build collator from rules */
+    u_uastrcpy(rules, "[reorder Hani Grek]");
+    myCollation = ucol_openRules(rules, u_strlen(rules), UCOL_DEFAULT, UCOL_TERTIARY, NULL, &status);
+    if(U_FAILURE(status)) {
+        log_err_status(status, "ERROR: in creation of collator: %s\n", myErrorName(status));
+        return;
+    }
+
+    /* get the reordering */
+    retrievedReorderCodesLength = ucol_getReorderCodes(myCollation, retrievedReorderCodes, LEN(retrievedReorderCodes), &status);
+    if (U_FAILURE(status)) {
+        log_err_status(status, "ERROR: getting reorder codes: %s\n", myErrorName(status));
+        return;
+    }
+    if (retrievedReorderCodesLength != LEN(rulesReorderCodes)) {
+        log_err_status(status, "ERROR: retrieved reorder codes length was %d but should have been %d\n", retrievedReorderCodesLength, LEN(rulesReorderCodes));
+        return;
+    }
+    for (loopIndex = 0; loopIndex < retrievedReorderCodesLength; loopIndex++) {
+        if (retrievedReorderCodes[loopIndex] != rulesReorderCodes[loopIndex]) {
+            log_err_status(status, "ERROR: retrieved reorder code doesn't match set reorder code at index %d\n", loopIndex);
+            return;
+        }
+    }
+    collResult = ucol_strcoll(myCollation, greekString, LEN(greekString), hanString, LEN(hanString));
+    if (collResult != UCOL_GREATER) {
+        log_err_status(status, "ERROR: collation result should have been UCOL_LESS\n");
+        return;
+    }
+    
+
+    /* set the reorderding */
+    ucol_setReorderCodes(myCollation, reorderCodes, LEN(reorderCodes), &status);
+    if (U_FAILURE(status)) {
+        log_err_status(status, "ERROR: setting reorder codes: %s\n", myErrorName(status));
+        return;
+    }
+    
+    /* get the reordering */
+    retrievedReorderCodesLength = ucol_getReorderCodes(myCollation, NULL, 0, &status);
+    if (status != U_BUFFER_OVERFLOW_ERROR) {
+        log_err_status(status, "ERROR: getting error codes should have returned U_BUFFER_OVERFLOW_ERROR : %s\n", myErrorName(status));
+        return;
+    }
+    status = U_ZERO_ERROR;
+    if (retrievedReorderCodesLength != LEN(reorderCodes)) {
+        log_err_status(status, "ERROR: retrieved reorder codes length was %d but should have been %d\n", retrievedReorderCodesLength, LEN(reorderCodes));
+        return;
+    }
+    /* now let's really get it */
+    retrievedReorderCodesLength = ucol_getReorderCodes(myCollation, retrievedReorderCodes, LEN(retrievedReorderCodes), &status);
+    if (U_FAILURE(status)) {
+        log_err_status(status, "ERROR: getting reorder codes: %s\n", myErrorName(status));
+        return;
+    }
+    if (retrievedReorderCodesLength != LEN(reorderCodes)) {
+        log_err_status(status, "ERROR: retrieved reorder codes length was %d but should have been %d\n", retrievedReorderCodesLength, LEN(reorderCodes));
+        return;
+    }
+    for (loopIndex = 0; loopIndex < retrievedReorderCodesLength; loopIndex++) {
+        if (retrievedReorderCodes[loopIndex] != reorderCodes[loopIndex]) {
+            log_err_status(status, "ERROR: retrieved reorder code doesn't match set reorder code at index %d\n", loopIndex);
+            return;
+        }
+    }
+    collResult = ucol_strcoll(myCollation, greekString, LEN(greekString), punctuationString, LEN(punctuationString));
+    if (collResult != UCOL_LESS) {
+        log_err_status(status, "ERROR: collation result should have been UCOL_LESS\n");
+        return;
+    }
+    
+    /* clear the reordering */
+    ucol_setReorderCodes(myCollation, NULL, 0, &status);    
+    if (U_FAILURE(status)) {
+        log_err_status(status, "ERROR: setting reorder codes to NULL: %s\n", myErrorName(status));
+        return;
+    }
+
+    /* get the reordering again */
     retrievedReorderCodesLength = ucol_getReorderCodes(myCollation, NULL, 0, &status);
     if (retrievedReorderCodesLength != 0) {
         log_err_status(status, "ERROR: retrieved reorder codes length was %d but should have been %d\n", retrievedReorderCodesLength, 0);
@@ -6053,40 +6203,174 @@ static void TestReorderingAPI(void)
     ucol_close(myCollation);
 }
 
+static int compareUScriptCodes(const void * a, const void * b)
+{
+  return ( *(int32_t*)a - *(int32_t*)b );
+}
+
+static void TestEquivalentReorderingScripts(void) {
+    UErrorCode status = U_ZERO_ERROR;
+    int32_t equivalentScripts[50];
+    int32_t equivalentScriptsLength;
+    int loopIndex;
+    int32_t equivalentScriptsResult[] = {
+        USCRIPT_BOPOMOFO,
+        USCRIPT_LISU,
+        USCRIPT_LYCIAN,
+        USCRIPT_CARIAN,
+        USCRIPT_LYDIAN,
+        USCRIPT_YI,
+        USCRIPT_OLD_ITALIC,
+        USCRIPT_GOTHIC,
+        USCRIPT_DESERET,
+        USCRIPT_SHAVIAN,
+        USCRIPT_OSMANYA,
+        USCRIPT_LINEAR_B,
+        USCRIPT_CYPRIOT,
+        USCRIPT_OLD_SOUTH_ARABIAN,
+        USCRIPT_AVESTAN,
+        USCRIPT_IMPERIAL_ARAMAIC,
+        USCRIPT_INSCRIPTIONAL_PARTHIAN,
+        USCRIPT_INSCRIPTIONAL_PAHLAVI,
+        USCRIPT_UGARITIC,
+        USCRIPT_OLD_PERSIAN,
+        USCRIPT_CUNEIFORM,
+        USCRIPT_EGYPTIAN_HIEROGLYPHS
+    };
+
+    qsort(equivalentScriptsResult, LEN(equivalentScriptsResult), sizeof(int32_t), compareUScriptCodes);
+    
+    /* UScript.GOTHIC */
+    equivalentScriptsLength = ucol_getEquivalentReorderCodes(USCRIPT_GOTHIC, equivalentScripts, LEN(equivalentScripts), &status);
+    if (U_FAILURE(status)) {
+        log_err_status(status, "ERROR: retrieving equivalent reorder codes: %s\n", myErrorName(status));
+        return;
+    }
+    /*
+    fprintf(stdout, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
+    fprintf(stdout, "equivalentScriptsLength = %d\n", equivalentScriptsLength);
+    for (loopIndex = 0; loopIndex < equivalentScriptsLength; loopIndex++) {
+        fprintf(stdout, "%d = %x\n", loopIndex, equivalentScripts[loopIndex]);
+    }
+    */
+    if (equivalentScriptsLength != LEN(equivalentScriptsResult)) {
+        log_err_status(status, "ERROR: retrieved equivalent script length wrong: expected = %d, was = %d\n", LEN(equivalentScriptsResult), equivalentScriptsLength);
+        return;
+    }
+    for (loopIndex = 0; loopIndex < equivalentScriptsLength; loopIndex++) {
+        if (equivalentScriptsResult[loopIndex] != equivalentScripts[loopIndex]) {
+            log_err_status(status, "ERROR: equivalent scripts results don't match: expected = %d, was = %d\n", equivalentScriptsResult[loopIndex], equivalentScripts[loopIndex]);
+            return;
+        }
+    }
+
+    /* UScript.SHAVIAN */
+    equivalentScriptsLength = ucol_getEquivalentReorderCodes(USCRIPT_SHAVIAN, equivalentScripts, LEN(equivalentScripts), &status);
+    if (U_FAILURE(status)) {
+        log_err_status(status, "ERROR: retrieving equivalent reorder codes: %s\n", myErrorName(status));
+        return;
+    }
+    if (equivalentScriptsLength != LEN(equivalentScriptsResult)) {
+        log_err_status(status, "ERROR: retrieved equivalent script length wrong: expected = %d, was = %d\n", LEN(equivalentScriptsResult), equivalentScriptsLength);
+        return;
+    }
+    for (loopIndex = 0; loopIndex < equivalentScriptsLength; loopIndex++) {
+        if (equivalentScriptsResult[loopIndex] != equivalentScripts[loopIndex]) {
+            log_err_status(status, "ERROR: equivalent scripts results don't match: expected = %d, was = %d\n", equivalentScriptsResult[loopIndex], equivalentScripts[loopIndex]);
+            return;
+        }
+    }
+}
+
+static void TestReorderingAcrossCloning(void) 
+{
+    UErrorCode status = U_ZERO_ERROR;
+    UCollator  *myCollation;
+    int32_t reorderCodes[3] = {USCRIPT_GREEK, USCRIPT_HAN, UCOL_REORDER_CODE_PUNCTUATION};
+    UCollator *clonedCollation;
+    int32_t bufferSize;
+    int32_t retrievedReorderCodesLength;
+    int32_t retrievedReorderCodes[10];
+    int loopIndex;
+
+    log_verbose("Testing non-lead bytes in a sort key with and without reordering\n");
+
+    /* build collator tertiary */
+    myCollation = ucol_open("", &status);
+    ucol_setStrength(myCollation, UCOL_TERTIARY);
+    if(U_FAILURE(status)) {
+        log_err_status(status, "ERROR: in creation of collator: %s\n", myErrorName(status));
+        return;
+    }
+
+    /* set the reorderding */
+    ucol_setReorderCodes(myCollation, reorderCodes, LEN(reorderCodes), &status);
+    if (U_FAILURE(status)) {
+        log_err_status(status, "ERROR: setting reorder codes: %s\n", myErrorName(status));
+        return;
+    }
+    
+    /* clone the collator */
+    clonedCollation = ucol_safeClone(myCollation, NULL, &bufferSize, &status);
+    if (U_FAILURE(status)) {
+        log_err_status(status, "ERROR: cloning collator: %s\n", myErrorName(status));
+        return;
+    }
+    
+    /* get the reordering */
+    retrievedReorderCodesLength = ucol_getReorderCodes(clonedCollation, retrievedReorderCodes, LEN(retrievedReorderCodes), &status);
+    if (U_FAILURE(status)) {
+        log_err_status(status, "ERROR: getting reorder codes: %s\n", myErrorName(status));
+        return;
+    }
+    if (retrievedReorderCodesLength != LEN(reorderCodes)) {
+        log_err_status(status, "ERROR: retrieved reorder codes length was %d but should have been %d\n", retrievedReorderCodesLength, LEN(reorderCodes));
+        return;
+    }
+    for (loopIndex = 0; loopIndex < retrievedReorderCodesLength; loopIndex++) {
+        if (retrievedReorderCodes[loopIndex] != reorderCodes[loopIndex]) {
+            log_err_status(status, "ERROR: retrieved reorder code doesn't match set reorder code at index %d\n", loopIndex);
+            return;
+        }
+    }
+    
+    /*uprv_free(buffer);*/
+    ucol_close(myCollation);
+    ucol_close(clonedCollation);
+}
+
 /*
- * Utility function to test one collation reordering test case.
+ * Utility function to test one collation reordering test case set.
  * @param testcases Array of test cases.
  * @param n_testcases Size of the array testcases.
- * @param str_rules Array of rules.  These rules should be specifying the same rule in different formats.
- * @param n_rules Size of the array str_rules.
+ * @param reorderTokens Array of reordering codes.
+ * @param reorderTokensLen Size of the array reorderTokens.
  */
 static void doTestOneReorderingAPITestCase(const OneTestCase testCases[], uint32_t testCasesLen, const int32_t reorderTokens[], int32_t reorderTokensLen)
 {
-    int testCaseNum;
+    uint32_t testCaseNum;
     UErrorCode status = U_ZERO_ERROR;
     UCollator  *myCollation;
 
-    for (testCaseNum = 0; testCaseNum < testCasesLen; ++testCaseNum) {
-        myCollation = ucol_open("", &status);
-        if (U_FAILURE(status)) {
-            log_err_status(status, "ERROR: in creation of collator: %s\n", myErrorName(status));
-            return;
-        }
-        ucol_setReorderCodes(myCollation, reorderTokens, reorderTokensLen, &status);
-        if(U_FAILURE(status)) {
-            log_err_status(status, "ERROR: while setting script order: %s\n", myErrorName(status));
-            return;
-        }
-        
-        for (testCaseNum = 0; testCaseNum < testCasesLen; ++testCaseNum) {
-            doTest(myCollation,
-                testCases[testCaseNum].source,
-                testCases[testCaseNum].target,
-                testCases[testCaseNum].result
-            );
-        }
-        ucol_close(myCollation);
+    myCollation = ucol_open("", &status);
+    if (U_FAILURE(status)) {
+        log_err_status(status, "ERROR: in creation of collator: %s\n", myErrorName(status));
+        return;
     }
+    ucol_setReorderCodes(myCollation, reorderTokens, reorderTokensLen, &status);
+    if(U_FAILURE(status)) {
+        log_err_status(status, "ERROR: while setting script order: %s\n", myErrorName(status));
+        return;
+    }
+        
+    for (testCaseNum = 0; testCaseNum < testCasesLen; ++testCaseNum) {
+        doTest(myCollation,
+            testCases[testCaseNum].source,
+            testCases[testCaseNum].target,
+            testCases[testCaseNum].result
+        );
+    }
+    ucol_close(myCollation);
 }
 
 static void TestGreekFirstReorder(void)
@@ -6191,6 +6475,29 @@ static void TestHaniReorder(void)
 
     /* Test collation reordering API */
     doTestOneReorderingAPITestCase(privateUseCharacterStrings, LEN(privateUseCharacterStrings), apiRules, LEN(apiRules));
+}
+
+static void TestMultipleReorder(void)
+{
+    const char* strRules[] = {
+        "[reorder Grek Zzzz DIGIT Latn Hani]"
+    };
+
+    const int32_t apiRules[] = {
+        USCRIPT_GREEK, USCRIPT_UNKNOWN, UCOL_REORDER_CODE_DIGIT, USCRIPT_LATIN, USCRIPT_HAN
+    };
+        
+    const static OneTestCase collationTestCases[] = {
+        { {0x0391}, {0x0041}, UCOL_LESS},
+        { {0x0031}, {0x0041}, UCOL_LESS},
+        { {0x0041}, {0x4e00}, UCOL_LESS},
+    };
+
+    /* Test rules creation */
+    doTestOneTestCase(collationTestCases, LEN(collationTestCases), strRules, LEN(strRules));
+
+    /* Test collation reordering API */
+    doTestOneReorderingAPITestCase(collationTestCases, LEN(collationTestCases), apiRules, LEN(apiRules));
 }
 
 static int compare_uint8_t_arrays(const uint8_t* a, const uint8_t* b)
@@ -6407,7 +6714,98 @@ static void TestImportWithType(void)
     ucol_close(importvidecoll);
     ucol_close(vicoll);
     ucol_close(decoll);
+}
 
+/* 'IV INTERNATIONAL SCIENTIFIC - PRACTICAL CONFERENCE "GEOPOLITICS, GEOECONOMICS AND INTERNATIONAL RELATIONS PROBLEMS" 22-23 June 2010, St. Petersburg, Russia' */
+static const UChar longUpperStr1[]= { /* 155 chars */
+    0x49, 0x56, 0x20, 0x49, 0x4E, 0x54, 0x45, 0x52, 0x4E, 0x41, 0x54, 0x49, 0x4F, 0x4E, 0x41, 0x4C,
+    0x20, 0x53, 0x43, 0x49, 0x45, 0x4E, 0x54, 0x49, 0x46, 0x49, 0x43, 0x20, 0x2D, 0x20, 0x50, 0x52,
+    0x41, 0x43, 0x54, 0x49, 0x43, 0x41, 0x4C, 0x20, 0x43, 0x4F, 0x4E, 0x46, 0x45, 0x52, 0x45, 0x4E,
+    0x43, 0x45, 0x20, 0x22, 0x47, 0x45, 0x4F, 0x50, 0x4F, 0x4C, 0x49, 0x54, 0x49, 0x43, 0x53, 0x2C,
+    0x20, 0x47, 0x45, 0x4F, 0x45, 0x43, 0x4F, 0x4E, 0x4F, 0x4D, 0x49, 0x43, 0x53, 0x20, 0x41, 0x4E,
+    0x44, 0x20, 0x49, 0x4E, 0x54, 0x45, 0x52, 0x4E, 0x41, 0x54, 0x49, 0x4F, 0x4E, 0x41, 0x4C, 0x20,
+    0x52, 0x45, 0x4C, 0x41, 0x54, 0x49, 0x4F, 0x4E, 0x53, 0x20, 0x50, 0x52, 0x4F, 0x42, 0x4C, 0x45,
+    0x4D, 0x53, 0x22, 0x20, 0x32, 0x32, 0x2D, 0x32, 0x33, 0x20, 0x4A, 0x75, 0x6E, 0x65, 0x20, 0x32,
+    0x30, 0x31, 0x30, 0x2C, 0x20, 0x53, 0x74, 0x2E, 0x20, 0x50, 0x65, 0x74, 0x65, 0x72, 0x73, 0x62,
+    0x75, 0x72, 0x67, 0x2C, 0x20, 0x52, 0x75, 0x73, 0x73, 0x69, 0x61
+};
+
+/* 'BACEDIFOGUHAJEKILOMUNAPE ' with diacritics on vowels, repeated 5 times */
+static const UChar longUpperStr2[]= { /* 125 chars, > 128 collation elements */
+    0x42,0xC1,0x43,0xC9,0x44,0xCD,0x46,0xD3,0x47,0xDA,0x48,0xC0,0x4A,0xC8,0x4B,0xCC,0x4C,0xD2,0x4D,0xD9,0x4E,0xC2,0x50,0xCA,0x20,
+    0x42,0xC1,0x43,0xC9,0x44,0xCD,0x46,0xD3,0x47,0xDA,0x48,0xC0,0x4A,0xC8,0x4B,0xCC,0x4C,0xD2,0x4D,0xD9,0x4E,0xC2,0x50,0xCA,0x20,
+    0x42,0xC1,0x43,0xC9,0x44,0xCD,0x46,0xD3,0x47,0xDA,0x48,0xC0,0x4A,0xC8,0x4B,0xCC,0x4C,0xD2,0x4D,0xD9,0x4E,0xC2,0x50,0xCA,0x20,
+    0x42,0xC1,0x43,0xC9,0x44,0xCD,0x46,0xD3,0x47,0xDA,0x48,0xC0,0x4A,0xC8,0x4B,0xCC,0x4C,0xD2,0x4D,0xD9,0x4E,0xC2,0x50,0xCA,0x20,
+    0x42,0xC1,0x43,0xC9,0x44,0xCD,0x46,0xD3,0x47,0xDA,0x48,0xC0,0x4A,0xC8,0x4B,0xCC,0x4C,0xD2,0x4D,0xD9,0x4E,0xC2,0x50,0xCA,0x20
+};
+
+/* 'ABCDEFGHIJKLMNOPQRSTUVWXYZ ' repeated 12 times */
+static const UChar longUpperStr3[]= { /* 324 chars */
+    0x41,0x42,0x43,0x44,0x45,0x46,0x47,0x48,0x49,0x4A,0x4B,0x4C,0x4D,0x4E,0x4F,0x50,0x51,0x52,0x53,0x54,0x55,0x56,0x57,0x58,0x59,0x5A,0x20,
+    0x41,0x42,0x43,0x44,0x45,0x46,0x47,0x48,0x49,0x4A,0x4B,0x4C,0x4D,0x4E,0x4F,0x50,0x51,0x52,0x53,0x54,0x55,0x56,0x57,0x58,0x59,0x5A,0x20,
+    0x41,0x42,0x43,0x44,0x45,0x46,0x47,0x48,0x49,0x4A,0x4B,0x4C,0x4D,0x4E,0x4F,0x50,0x51,0x52,0x53,0x54,0x55,0x56,0x57,0x58,0x59,0x5A,0x20,
+    0x41,0x42,0x43,0x44,0x45,0x46,0x47,0x48,0x49,0x4A,0x4B,0x4C,0x4D,0x4E,0x4F,0x50,0x51,0x52,0x53,0x54,0x55,0x56,0x57,0x58,0x59,0x5A,0x20,
+    0x41,0x42,0x43,0x44,0x45,0x46,0x47,0x48,0x49,0x4A,0x4B,0x4C,0x4D,0x4E,0x4F,0x50,0x51,0x52,0x53,0x54,0x55,0x56,0x57,0x58,0x59,0x5A,0x20,
+    0x41,0x42,0x43,0x44,0x45,0x46,0x47,0x48,0x49,0x4A,0x4B,0x4C,0x4D,0x4E,0x4F,0x50,0x51,0x52,0x53,0x54,0x55,0x56,0x57,0x58,0x59,0x5A,0x20,
+    0x41,0x42,0x43,0x44,0x45,0x46,0x47,0x48,0x49,0x4A,0x4B,0x4C,0x4D,0x4E,0x4F,0x50,0x51,0x52,0x53,0x54,0x55,0x56,0x57,0x58,0x59,0x5A,0x20,
+    0x41,0x42,0x43,0x44,0x45,0x46,0x47,0x48,0x49,0x4A,0x4B,0x4C,0x4D,0x4E,0x4F,0x50,0x51,0x52,0x53,0x54,0x55,0x56,0x57,0x58,0x59,0x5A,0x20,
+    0x41,0x42,0x43,0x44,0x45,0x46,0x47,0x48,0x49,0x4A,0x4B,0x4C,0x4D,0x4E,0x4F,0x50,0x51,0x52,0x53,0x54,0x55,0x56,0x57,0x58,0x59,0x5A,0x20,
+    0x41,0x42,0x43,0x44,0x45,0x46,0x47,0x48,0x49,0x4A,0x4B,0x4C,0x4D,0x4E,0x4F,0x50,0x51,0x52,0x53,0x54,0x55,0x56,0x57,0x58,0x59,0x5A,0x20,
+    0x41,0x42,0x43,0x44,0x45,0x46,0x47,0x48,0x49,0x4A,0x4B,0x4C,0x4D,0x4E,0x4F,0x50,0x51,0x52,0x53,0x54,0x55,0x56,0x57,0x58,0x59,0x5A,0x20,
+    0x41,0x42,0x43,0x44,0x45,0x46,0x47,0x48,0x49,0x4A,0x4B,0x4C,0x4D,0x4E,0x4F,0x50,0x51,0x52,0x53,0x54,0x55,0x56,0x57,0x58,0x59,0x5A,0x20
+};
+
+#define MY_ARRAY_LEN(array) (sizeof(array)/sizeof(array[0]))
+
+typedef struct {
+    const UChar * longUpperStrPtr;
+    int32_t       longUpperStrLen;
+} LongUpperStrItem;
+
+/* String pointers must be in reverse collation order of the corresponding strings */
+static const LongUpperStrItem longUpperStrItems[] = {
+    { longUpperStr1, MY_ARRAY_LEN(longUpperStr1) },
+    { longUpperStr2, MY_ARRAY_LEN(longUpperStr2) },
+    { longUpperStr3, MY_ARRAY_LEN(longUpperStr3) },
+    { NULL,          0                           }
+};
+
+enum { kCollKeyLenMax = 800 }; /* longest expected is 749, but may change with collation changes */
+
+/* Text fix for #8445; without fix, could have crash due to stack or heap corruption */
+static void TestCaseLevelBufferOverflow(void)
+{
+    UErrorCode status = U_ZERO_ERROR;
+    UCollator * ucol = ucol_open("root", &status);
+    if ( U_SUCCESS(status) ) {
+        ucol_setAttribute(ucol, UCOL_CASE_LEVEL, UCOL_ON, &status);
+        if ( U_SUCCESS(status) ) {
+            const LongUpperStrItem * itemPtr;
+            uint8_t sortKeyA[kCollKeyLenMax], sortKeyB[kCollKeyLenMax];
+            for ( itemPtr = longUpperStrItems; itemPtr->longUpperStrPtr != NULL; itemPtr++ ) {
+                int32_t sortKeyLen;
+                if (itemPtr > longUpperStrItems) {
+                    uprv_strcpy((char *)sortKeyB, (char *)sortKeyA);
+                }
+                sortKeyLen = ucol_getSortKey(ucol, itemPtr->longUpperStrPtr, itemPtr->longUpperStrLen, sortKeyA, kCollKeyLenMax);
+                if (sortKeyLen <= 0 || sortKeyLen > kCollKeyLenMax) {
+                    log_err("ERROR sort key length from ucol_getSortKey is %d\n", sortKeyLen);
+                    break;
+                }
+                if ( itemPtr > longUpperStrItems ) {
+                    int compareResult = uprv_strcmp((char *)sortKeyA, (char *)sortKeyB);
+                    if (compareResult >= 0) {
+                        log_err("ERROR in sort key comparison result, expected -1, got %d\n", compareResult);
+                    }
+                }
+            }
+        } else {
+            log_err_status(status, "ERROR in ucol_setAttribute UCOL_CASE_LEVEL on: %s\n", myErrorName(status));
+        }
+        ucol_close(ucol);
+    } else {
+        log_err_status(status, "ERROR in ucol_open for root: %s\n", myErrorName(status));
+    }
 }
 
 
@@ -6425,7 +6823,7 @@ void addMiscCollTest(TestNode** root)
     /*TEST(TestLimitations);*/
     TEST(TestNonChars);
     TEST(TestExtremeCompression);
-    TEST(TestSurrogates);
+    TEST(TestSurrogates); 
     /* BEGIN android-removed
        To save space, Android does not include the collation tailoring rules.
        We skip the tailing tests for collations. */
@@ -6503,16 +6901,24 @@ void addMiscCollTest(TestNode** root)
     TEST(TestPrivateUseCharactersInList);
     TEST(TestPrivateUseCharactersInRange);
     TEST(TestInvalidListsAndRanges);
+    /* BEGIN android-removed: Due to Android does not include reverse UCA table.
     TEST(TestImport);
     TEST(TestImportWithType);
+    END android-removed */
 
     TEST(TestBeforeRuleWithScriptReordering);
     TEST(TestNonLeadBytesDuringCollationReordering);
     TEST(TestReorderingAPI);
+    TEST(TestReorderingAPIWithRuleCreatedCollator);
+    TEST(TestEquivalentReorderingScripts);
     TEST(TestGreekFirstReorder);
     TEST(TestGreekLastReorder);
     TEST(TestNonScriptReorder);
     TEST(TestHaniReorder);
+    TEST(TestMultipleReorder);
+    TEST(TestReorderingAcrossCloning);
+
+    TEST(TestCaseLevelBufferOverflow);
 }
 
 #endif /* #if !UCONFIG_NO_COLLATION */

@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-* Copyright (C) 2010, International Business Machines Corporation 
+* Copyright (C) 2011, International Business Machines Corporation 
 * and others.  All Rights Reserved.
 **********************************************************************
 */
@@ -91,7 +91,13 @@ void IntlTestSpoof::runIndexedTest( int32_t index, UBool exec, const char* &name
                 testConfData();
             }
             break;
-        default: name=""; break;
+          case 5:
+            name = "testBug8654";
+            if (exec) {
+                testBug8654();
+            }
+            break;
+         default: name=""; break;
     }
 }
 
@@ -153,12 +159,6 @@ void IntlTestSpoof::testSkeleton() {
                " A long 'identifier' that vvill overflovv irnplernentation stack buffers, forcing heap allocations."
                " A long 'identifier' that vvill overflovv irnplernentation stack buffers, forcing heap allocations.")
 
-        // FC5F ;	FE74 0651 ;   ML  #* ARABIC LIGATURE SHADDA WITH KASRATAN ISOLATED FORM to
-        //                                ARABIC KASRATAN ISOLATED FORM, ARABIC SHADDA	
-        //    This character NFKD normalizes to \u0020 \u064d \u0651, so its confusable mapping 
-        //    is never used in creating a skeleton.
-        CHECK_SKELETON(SL, "\\uFC5F", " \\u064d\\u0651");
-
         CHECK_SKELETON(SL, "nochange", "nochange");
         CHECK_SKELETON(MA, "love", "love"); 
         CHECK_SKELETON(MA, "1ove", "love");   // Digit 1 to letter l
@@ -198,6 +198,11 @@ void IntlTestSpoof::testSkeleton() {
         CHECK_SKELETON(SA, "\\u0022", "\\u0027\\u0027");
         CHECK_SKELETON(ML, "\\u0022", "\\u0027\\u0027");
         CHECK_SKELETON(MA, "\\u0022", "\\u0027\\u0027");
+
+        // 017F ;  0066 ;
+        // This mapping exists in the SA and MA tables
+        CHECK_SKELETON(MA, "\\u017F", "f");
+        CHECK_SKELETON(SA, "\\u017F", "f");
 
     TEST_TEARDOWN;
 }
@@ -252,7 +257,7 @@ void IntlTestSpoof::testInvisible() {
         TEST_ASSERT_SUCCESS(status);
         TEST_ASSERT_EQ(7, position);
 
-        // Tow acute accents, one from the composed a with acute accent, \u00e1,
+        // Two acute accents, one from the composed a with acute accent, \u00e1,
         // and one separate.
         position = -42;
         UnicodeString  s3 = UnicodeString("abcd\\u00e1\\u0301xyz").unescape();
@@ -262,6 +267,15 @@ void IntlTestSpoof::testInvisible() {
     TEST_TEARDOWN;
 }
 
+void IntlTestSpoof::testBug8654() {
+    TEST_SETUP
+        UnicodeString s = UnicodeString("B\\u00c1\\u0301").unescape();
+        int32_t position = -42;
+        TEST_ASSERT_EQ(USPOOF_INVISIBLE, uspoof_checkUnicodeString(sc, s, &position, &status) & USPOOF_INVISIBLE );
+        TEST_ASSERT_SUCCESS(status);
+        TEST_ASSERT_EQ(3, position);
+    TEST_TEARDOWN;
+}
 
 static UnicodeString parseHex(const UnicodeString &in) {
     // Convert a series of hex numbers in a Unicode String to a string with the
@@ -354,16 +368,16 @@ void IntlTestSpoof::testConfData() {
     TEST_ASSERT_SUCCESS(status);
     while (parseLine.find()) {
         UnicodeString from = parseHex(parseLine.group(1, status));
-        if (!Normalizer::isNormalized(from, UNORM_NFKD, status)) {
-            // The source character was not NFKD.
-            // Skip this case; the first step in obtaining a skeleton is to NFKD the input,
+        if (!Normalizer::isNormalized(from, UNORM_NFD, status)) {
+            // The source character was not NFD.
+            // Skip this case; the first step in obtaining a skeleton is to NFD the input,
             //  so the mapping in this line of confusables.txt will never be applied.
             continue;
         }
 
         UnicodeString rawExpected = parseHex(parseLine.group(2, status));
         UnicodeString expected;
-        Normalizer::decompose(rawExpected, TRUE, 0, expected, status);
+        Normalizer::decompose(rawExpected, FALSE /*NFD*/, 0, expected, status);
         TEST_ASSERT_SUCCESS(status);
 
         int32_t skeletonType = 0;

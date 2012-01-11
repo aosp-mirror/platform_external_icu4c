@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2010 International Business Machines
+// * Copyright (C) 2011 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/bcp47/*.xml
@@ -163,6 +163,7 @@ timezoneTypes:table(nofallback){
             "Africa:Gaborone"{"bwgbe"}
             "Africa:Harare"{"zwhre"}
             "Africa:Johannesburg"{"zajnb"}
+            "Africa:Juba"{"ssjub"}
             "Africa:Kampala"{"ugkla"}
             "Africa:Khartoum"{"sdkrt"}
             "Africa:Kigali"{"rwkgl"}
@@ -277,6 +278,7 @@ timezoneTypes:table(nofallback){
             "America:Mendoza"{"armdz"}
             "America:Menominee"{"usmnm"}
             "America:Merida"{"mxmid"}
+            "America:Metlakatla"{"usmtm"}
             "America:Mexico_City"{"mxmex"}
             "America:Miquelon"{"pmmqc"}
             "America:Moncton"{"camon"}
@@ -286,9 +288,10 @@ timezoneTypes:table(nofallback){
             "America:Montserrat"{"msmni"}
             "America:Nassau"{"bsnas"}
             "America:New_York"{"usnyc"}
-            "America:Nipigon"{"cathu"}
+            "America:Nipigon"{"canpg"}
             "America:Nome"{"usome"}
             "America:Noronha"{"brfen"}
+            "America:North_Dakota:Beulah"{"usxul"}
             "America:North_Dakota:Center"{"usndcnt"}
             "America:North_Dakota:New_Salem"{"usndnsl"}
             "America:Ojinaga"{"mxoji"}
@@ -313,6 +316,7 @@ timezoneTypes:table(nofallback){
             "America:Sao_Paulo"{"brsao"}
             "America:Scoresbysund"{"globy"}
             "America:Shiprock"{"usnavajo"}
+            "America:Sitka"{"ussit"}
             "America:St_Barthelemy"{"gpsbh"}
             "America:St_Johns"{"casjf"}
             "America:St_Kitts"{"knbas"}
@@ -368,6 +372,7 @@ timezoneTypes:table(nofallback){
             "Asia:Dushanbe"{"tjdyu"}
             "Asia:Gaza"{"gaza"}
             "Asia:Harbin"{"cnhrb"}
+            "Asia:Hebron"{"hebron"}
             "Asia:Hong_Kong"{"hkhkg"}
             "Asia:Hovd"{"mnhvd"}
             "Asia:Irkutsk"{"ruikt"}

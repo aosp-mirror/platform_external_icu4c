@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2010, International Business Machines Corporation and
+ * Copyright (c) 1997-2011, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -171,6 +171,8 @@ public: // package
 
     void TestFormalChineseDate(void);
 
+    void TestStandAloneGMTParse(void);
+
 public:
     /**
      * Test host-specific formatting.
@@ -209,6 +211,12 @@ public:
 /*   void TestRelativeError(void);
      void TestRelativeOther(void);
 */
+
+public:
+    /**
+     * Test parsing a number as a string
+     */
+    void TestNumberAsStringParsing(void);
 
  private:
       void TestRelative(int daysdelta, 

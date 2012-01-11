@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1997-2010, International Business Machines Corporation and
+ * Copyright (c) 1997-2011, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -13,6 +13,7 @@
 #include "unicode/coll.h"
 #include "cstring.h"
 #include <stdio.h>
+#include <string.h>
 #include "putilimp.h"
 #include "unicode/ustring.h"
 
@@ -38,7 +39,7 @@ static const char* const rawData[33][8] = {
         // display langage (English)
         {   "English",  "French",   "Catalan", "Greek",    "Norwegian",    "Italian",  "xx",   "Chinese" },
         // display script (English)
-        {   "",     "",     "",     "",     "",   "",     "",   "Simplified Han" },
+        {   "",     "",     "",     "",     "",   "",     "",   "Simplified" },
         // display country (English)
         {   "United States",    "France",   "Spain",  "Greece",   "Norway",   "",     "YY",   "China" },
         // display variant (English)
@@ -46,7 +47,7 @@ static const char* const rawData[33][8] = {
         // display name (English)
         // Updated no_NO_NY English display name for new pattern-based algorithm
         // (part of Euro support).
-        {   "English (United States)", "French (France)", "Catalan (Spain)", "Greek (Greece)", "Norwegian (Norway, NY)", "Italian", "xx (YY)", "Chinese (Simplified Han, China)" },
+        {   "English (United States)", "French (France)", "Catalan (Spain)", "Greek (Greece)", "Norwegian (Norway, NY)", "Italian", "xx (YY)", "Chinese (Simplified, China)" },
 
         // display langage (French)
         {   "anglais",  "fran\\u00E7ais",   "catalan", "grec",    "norv\\u00E9gien",    "italien", "xx", "chinois" },
@@ -64,13 +65,13 @@ static const char* const rawData[33][8] = {
         /* display language (Catalan) */
         {   "angl\\u00E8s", "franc\\u00E8s", "catal\\u00E0", "grec",  "noruec", "itali\\u00E0", "", "xin\\u00E8s" },
         /* display script (Catalan) */
-        {   "", "", "",                    "", "", "", "", "xin\\u00E8s simplificat" },
+        {   "", "", "",                    "", "", "", "", "simplificat" },
         /* display country (Catalan) */
         {   "Estats Units", "Fran\\u00E7a", "Espanya",  "Gr\\u00E8cia", "Noruega", "", "", "Xina" },
         /* display variant (Catalan) */
         {   "", "", "",                    "", "NY", "", "" },
         /* display name (Catalan) */
-        {   "angl\\u00E8s (Estats Units)", "franc\\u00E8s (Fran\\u00E7a)", "catal\\u00E0 (Espanya)", "grec (Gr\\u00E8cia)", "noruec (Noruega, NY)", "itali\\u00E0", "", "xin\\u00E8s (xin\\u00E8s simplificat, Xina)" },
+        {   "angl\\u00E8s (Estats Units)", "franc\\u00E8s (Fran\\u00E7a)", "catal\\u00E0 (Espanya)", "grec (Gr\\u00E8cia)", "noruec (Noruega, NY)", "itali\\u00E0", "", "xin\\u00E8s (simplificat, Xina)" },
 
         // display langage (Greek)[actual values listed below]
         {   "\\u0391\\u03b3\\u03b3\\u03bb\\u03b9\\u03ba\\u03ac",
@@ -867,8 +868,8 @@ LocaleTest::TestGetLangsAndCountries()
       ;
 
     /* TODO: Change this test to be more like the cloctst version? */
-    if (testCount != 491)
-        errln("Expected getISOLanguages() to return 491 languages; it returned %d", testCount);
+    if (testCount != 530)
+        errln("Expected getISOLanguages() to return 530 languages; it returned %d", testCount);
     else {
         for (i = 0; i < 15; i++) {
             int32_t j;
@@ -899,7 +900,7 @@ LocaleTest::TestGetLangsAndCountries()
       ;
 
     if (testCount != 246){
-        errln("Expected getISOCountries to return 240 countries; it returned %d", testCount);
+        errln("Expected getISOCountries to return 246 countries; it returned %d", testCount);
     }else {
         for (i = 0; i < spot2Len; i++) {
             int32_t j;
@@ -915,8 +916,8 @@ LocaleTest::TestGetLangsAndCountries()
                 errln("Couldn't find " + spotCheck2[i] + " in country list.");
         }
     }
-        for (i = 0; i < testCount; i++) {
-      UnicodeString testee(test[i],"");
+    for (i = 0; i < testCount; i++) {
+        UnicodeString testee(test[i],"");
         UnicodeString uc(test[i],"");
         if (testee != uc.toUpper())
             errln(testee + " is not all upper case.");
@@ -924,6 +925,26 @@ LocaleTest::TestGetLangsAndCountries()
             errln(testee + " is not two characters long.");
         if (i > 0 && testee.compare(test[i - 1]) <= 0)
             errln(testee + " appears in an out-of-order position in the list.");
+    }
+
+    // This getAvailableLocales and getISO3Language
+    {
+        int32_t numOfLocales;
+        Locale  enLoc ("en");
+        const Locale *pLocales = Locale::getAvailableLocales(numOfLocales);
+
+        for (int i = 0; i < numOfLocales; i++) {
+            const Locale    &loc(pLocales[i]);
+            UnicodeString   name;
+            char        szName[200];
+
+            loc.getDisplayName (enLoc, name);
+            name.extract (0, 200, szName, sizeof(szName));
+
+            if (strlen(loc.getISO3Language()) == 0) {
+                errln("getISO3Language() returned an empty string for: " + name);
+            }
+        }
     }
 }
 

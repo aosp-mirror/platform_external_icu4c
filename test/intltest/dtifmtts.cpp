@@ -1,7 +1,7 @@
 
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2010, International Business Machines Corporation and
+ * Copyright (c) 1997-2011, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -25,6 +25,7 @@
 #include "unicode/dtintrv.h"
 #include "unicode/dtitvinf.h"
 #include "unicode/dtitvfmt.h"
+#include "unicode/timezone.h"
 
 
 
@@ -262,6 +263,56 @@ void DateIntervalFormatTest::testAPI() {
 
     delete dtitvfmt;
 
+    //====== test setting time zone
+    logln("Testing DateIntervalFormat set & format with different time zones, get time zone");
+    status = U_ZERO_ERROR;
+    dtitvfmt = DateIntervalFormat::createInstance("MMMdHHmm", Locale::getEnglish(), status);
+    if ( U_SUCCESS(status) ) {
+        UDate date1 = 1299090600000.0; // 2011-Mar-02 1030 in US/Pacific, 2011-Mar-03 0330 in Asia/Tokyo
+        UDate date2 = 1299115800000.0; // 2011-Mar-02 1730 in US/Pacific, 2011-Mar-03 1030 in Asia/Tokyo
+        
+        DateInterval * dtitv12 = new DateInterval(date1, date2);
+        TimeZone * tzCalif = TimeZone::createTimeZone("US/Pacific");
+        TimeZone * tzTokyo = TimeZone::createTimeZone("Asia/Tokyo");
+        UnicodeString fmtCalif = UnicodeString(ctou("Mar 2 10:30 \\u2013 Mar 2 17:30"));
+        UnicodeString fmtTokyo = UnicodeString(ctou("Mar 3 03:30 \\u2013 Mar 3 10:30"));
+
+        dtitvfmt->adoptTimeZone(tzCalif);
+        res.remove();
+        pos = 0;
+        status = U_ZERO_ERROR;
+        dtitvfmt->format(dtitv12, res, pos, status);
+        if ( U_SUCCESS(status) ) {
+            if ( res.compare(fmtCalif) != 0 ) {
+                errln("ERROR: DateIntervalFormat::format for tzCalif, expect " + fmtCalif + ", get " + res);
+            }
+        } else {
+            errln("ERROR: DateIntervalFormat::format for tzCalif, status %s", u_errorName(status));
+        }
+
+        dtitvfmt->setTimeZone(*tzTokyo);
+        res.remove();
+        pos = 0;
+        status = U_ZERO_ERROR;
+        dtitvfmt->format(dtitv12, res, pos, status);
+        if ( U_SUCCESS(status) ) {
+            if ( res.compare(fmtTokyo) != 0 ) {
+                errln("ERROR: DateIntervalFormat::format for fmtTokyo, expect " + fmtTokyo + ", get " + res);
+            }
+        } else {
+            errln("ERROR: DateIntervalFormat::format for tzTokyo, status %s", u_errorName(status));
+        }
+        
+        if ( dtitvfmt->getTimeZone() != *tzTokyo ) {
+            errln("ERROR: DateIntervalFormat::getTimeZone returns mismatch.");
+        }
+
+        delete tzTokyo; // tzCalif was owned by dtitvfmt which should have deleted it
+        delete dtitv12;
+        delete dtitvfmt;
+    } else {
+        errln("ERROR: DateIntervalFormat::createInstance(\"MdHH\", Locale::getEnglish(), ...), status %s", u_errorName(status));
+    }
     //====== test format  in testFormat()
     
     //====== test DateInterval class (better coverage)
@@ -419,7 +470,7 @@ void DateIntervalFormatTest::testFormat() {
         
         "en", "2007 10 10 10:10:10", "2007 11 10 10:10:10", "MMM", "Oct\\u2013Nov", 
         
-        "en", "2007 10 10 10:10:10", "2007 11 10 10:10:10", "MMMM", "October-November", 
+        "en", "2007 10 10 10:10:10", "2007 11 10 10:10:10", "MMMM", "October\\u2013November", 
         
         "en", "2007 10 10 10:10:10", "2007 11 10 10:10:10", "hm", "10/10/2007 10:10 AM \\u2013 11/10/2007 10:10 AM", 
         "en", "2007 10 10 10:10:10", "2007 11 10 10:10:10", "Hm", "10/10/2007 10:10 \\u2013 11/10/2007 10:10", 
@@ -714,7 +765,7 @@ void DateIntervalFormatTest::testFormat() {
         "zh", "2007 10 10 10:10:10", "2007 11 10 10:10:10", "MMMMy", "2007\\u5e7410\\u6708\\u81f311\\u6708", 
         
         
-        "zh", "2007 10 10 10:10:10", "2007 11 10 10:10:10", "hmv", "2007\\u5e7410\\u670810\\u65e5 \\u4e0a\\u534810:10 \\u7f8e\\u56fd (\\u6d1b\\u6749\\u77f6)\\u20132007\\u5e7411\\u670810\\u65e5 \\u4e0a\\u534810:10 \\u7f8e\\u56fd (\\u6d1b\\u6749\\u77f6)", 
+        "zh", "2007 10 10 10:10:10", "2007 11 10 10:10:10", "hmv", "2007\\u5e7410\\u670810\\u65e5 \\u4e0a\\u534810:10 \\u7f8e\\u56fd\\u65F6\\u95F4\\uff08\\u6d1b\\u6749\\u77f6\\uff09\\u20132007\\u5e7411\\u670810\\u65e5 \\u4e0a\\u534810:10 \\u7f8e\\u56fd\\u65F6\\u95F4\\uff08\\u6d1b\\u6749\\u77f6\\uff09", 
         
         "zh", "2007 11 10 10:10:10", "2007 11 20 10:10:10", "EEEEdMMMMy", "2007\\u5e7411\\u670810\\u65e5\\u661f\\u671f\\u516d\\u81f320\\u65e5\\u661f\\u671f\\u4e8c", 
         
@@ -756,11 +807,11 @@ void DateIntervalFormatTest::testFormat() {
         
         "zh", "2007 01 10 10:00:10", "2007 01 10 14:10:10", "h", "\\u4e0a\\u534810\\u81f3\\u4e0b\\u53482\\u65f6", 
         
-        "zh", "2007 01 10 10:00:10", "2007 01 10 14:10:10", "hv", "\\u7f8e\\u56fd (\\u6d1b\\u6749\\u77f6)\\u4e0a\\u534810\\u81f3\\u4e0b\\u53482\\u65f6",
+        "zh", "2007 01 10 10:00:10", "2007 01 10 14:10:10", "hv", "\\u7f8e\\u56fd\\u65F6\\u95F4\\uff08\\u6d1b\\u6749\\u77f6\\uff09\\u4e0a\\u534810\\u81f3\\u4e0b\\u53482\\u65f6",
         
         "zh", "2007 01 10 10:00:10", "2007 01 10 10:20:10", "hm", "\\u4e0a\\u534810:00\\u81f310:20", 
         
-        "zh", "2007 01 10 10:00:10", "2007 01 10 10:20:10", "hmv", "\\u7f8e\\u56fd (\\u6d1b\\u6749\\u77f6)\\u4e0a\\u534810:00\\u81f310:20",
+        "zh", "2007 01 10 10:00:10", "2007 01 10 10:20:10", "hmv", "\\u7f8e\\u56fd\\u65F6\\u95F4\\uff08\\u6d1b\\u6749\\u77f6\\uff09\\u4e0a\\u534810:00\\u81f310:20",
         
         "zh", "2007 01 10 10:00:10", "2007 01 10 10:20:10", "hz", "\\u4e0a\\u534810\\u65f6 \\u683c\\u6797\\u5c3c\\u6cbb\\u6807\\u51c6\\u65f6\\u95f4-0800", 
         
@@ -842,7 +893,7 @@ void DateIntervalFormatTest::testFormat() {
         "de", "2007 11 10 10:10:10", "2007 11 20 10:10:10", "y", "2007", 
         
         
-        "de", "2007 11 10 10:10:10", "2007 11 20 10:10:10", "hmv", "10.11.2007 10:10 vorm. Vereinigte Staaten (Los Angeles) - 20.11.2007 10:10 vorm. Vereinigte Staaten (Los Angeles)", 
+        "de", "2007 11 10 10:10:10", "2007 11 20 10:10:10", "hmv", "10.11.2007 10:10 vorm. Vereinigte Staaten Zeit (Los Angeles) - 20.11.2007 10:10 vorm. Vereinigte Staaten Zeit (Los Angeles)", 
         
         "de", "2007 01 10 10:00:10", "2007 01 10 14:10:10", "EEEEdMMMy", "Mittwoch, 10. Jan 2007", 
         
@@ -860,7 +911,7 @@ void DateIntervalFormatTest::testFormat() {
         "de", "2007 01 10 10:00:10", "2007 01 10 10:20:10", "EEEEdMMM", "Mittwoch, 10. Jan", 
         
         
-        "de", "2007 01 10 10:00:10", "2007 01 10 10:20:10", "hmv", "10:00-10:20 vorm. Vereinigte Staaten (Los Angeles)", 
+        "de", "2007 01 10 10:00:10", "2007 01 10 10:20:10", "hmv", "10:00-10:20 vorm. Vereinigte Staaten Zeit (Los Angeles)", 
         
         "de", "2007 01 10 10:00:10", "2007 01 10 10:20:10", "hmz", "10:00-10:20 vorm. GMT-08:00", 
         
@@ -873,12 +924,12 @@ void DateIntervalFormatTest::testFormat() {
         "de", "2007 01 10 10:10:10", "2007 01 10 10:10:20", "EEEEdMMMy", "Mittwoch, 10. Jan 2007", 
         
         
-        "de", "2007 01 10 10:10:10", "2007 01 10 10:10:20", "hmv", "10:10 vorm. Vereinigte Staaten (Los Angeles)", 
+        "de", "2007 01 10 10:10:10", "2007 01 10 10:10:20", "hmv", "10:10 vorm. Vereinigte Staaten Zeit (Los Angeles)", 
         
         "de", "2007 01 10 10:10:10", "2007 01 10 10:10:20", "hmz", "10:10 vorm. GMT-08:00", 
         
         
-        "de", "2007 01 10 10:10:10", "2007 01 10 10:10:20", "hv", "10 vorm. Vereinigte Staaten (Los Angeles)", 
+        "de", "2007 01 10 10:10:10", "2007 01 10 10:10:20", "hv", "10 vorm. Vereinigte Staaten Zeit (Los Angeles)", 
         
         "de", "2007 01 10 10:10:10", "2007 01 10 10:10:20", "hz", "10 vorm. GMT-08:00", 
         
@@ -921,7 +972,7 @@ void DateIntervalFormatTest::testFormat() {
         
         "th", "2550 10 10 10:10:10", "2550 11 10 10:10:10", "d", "10/10 - 10/11", 
         
-        "th", "2550 10 10 10:10:10", "2550 11 10 10:10:10", "y", "2550", 
+        "th", "2550 10 10 10:10:10", "2550 11 10 10:10:10", "y", "\\u0E1E.\\u0E28. 2550", 
         
         
         "th", "2550 10 10 10:10:10", "2550 11 10 10:10:10", "MMM", "\\u0E15.\\u0E04.-\\u0E1E.\\u0E22.", 
@@ -1035,17 +1086,17 @@ void DateIntervalFormatTest::testFormatUserDII() {
         "de", "2007 01 10 10:00:10", "2007 01 10 10:20:10", "10. Jan 2007", 
         
         
-        "es", "2007 10 10 10:10:10", "2008 10 10 10:10:10", "10 de oct de 2007 --- 10 de oct de 2008", 
+        "es", "2007 10 10 10:10:10", "2008 10 10 10:10:10", "10 oct 2007 --- 10 oct 2008", 
         
         "es", "2007 10 10 10:10:10", "2007 11 10 10:10:10", "2007 oct 10 - nov 2007", 
         
-        "es", "2007 11 10 10:10:10", "2007 11 20 10:10:10", "10 de nov de 2007 --- 20 de nov de 2007", 
+        "es", "2007 11 10 10:10:10", "2007 11 20 10:10:10", "10 nov 2007 --- 20 nov 2007", 
         
-        "es", "2007 01 10 10:00:10", "2007 01 10 14:10:10", "10 de ene de 2007", 
+        "es", "2007 01 10 10:00:10", "2007 01 10 14:10:10", "10 ene 2007", 
         
-        "es", "2007 01 10 10:00:10", "2007 01 10 10:20:10", "10 de ene de 2007", 
-        
-        "es", "2007 01 10 10:10:10", "2007 01 10 10:10:20", "10 de ene de 2007", 
+        "es", "2007 01 10 10:00:10", "2007 01 10 10:20:10", "10 ene 2007", 
+       
+        "es", "2007 01 10 10:10:10", "2007 01 10 10:10:20", "10 ene 2007", 
     };
     expectUserDII(DATA, ARRAY_SIZE(DATA));
 }

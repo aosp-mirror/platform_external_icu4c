@@ -1,5 +1,5 @@
 /******************************************************************************
- *   Copyright (C) 2000-2010, International Business Machines
+ *   Copyright (C) 2000-2011, International Business Machines
  *   Corporation and others.  All Rights Reserved.
  *******************************************************************************
  *   file name:  pkgdata.c
@@ -30,8 +30,8 @@
 #include "unicode/utypes.h"
 
 #if U_HAVE_POPEN
-#if defined(U_CYGWIN) && defined(__STRICT_ANSI__)
-/* popen/pclose aren't defined in strict ANSI on Cygwin */
+#if (defined(U_CYGWIN) || defined(U_MINGW)) && defined(__STRICT_ANSI__)
+/* popen/pclose aren't defined in strict ANSI on Cygwin and MinGW */
 #undef __STRICT_ANSI__
 #endif
 #endif
@@ -99,6 +99,7 @@ U_CDECL_END
 
 #define LARGE_BUFFER_MAX_SIZE 2048
 #define SMALL_BUFFER_MAX_SIZE 512
+#define BUFFER_PADDING_SIZE 20
 
 static void loadLists(UPKGOptions *o, UErrorCode *status);
 
@@ -484,9 +485,8 @@ static int runCommand(const char* command, UBool specialHandling) {
 
     if (!specialHandling) {
 #if defined(USING_CYGWIN) || defined(OS400)
-#define CMD_PADDING_SIZE 20
-        if ((len + CMD_PADDING_SIZE) >= SMALL_BUFFER_MAX_SIZE) {
-            cmd = (char *)uprv_malloc(len + CMD_PADDING_SIZE);
+        if ((len + BUFFER_PADDING_SIZE) >= SMALL_BUFFER_MAX_SIZE) {
+            cmd = (char *)uprv_malloc(len + BUFFER_PADDING_SIZE);
         } else {
             cmd = cmdBuffer;
         }
@@ -826,7 +826,7 @@ static void createFileNames(UPKGOptions *o, const char mode, const char *version
         }
 
         if (version != NULL) {
-#ifdef U_CYGWIN
+#if defined(U_CYGWIN)
             sprintf(libFileNames[LIB_FILE_CYGWIN], "cyg%s.%s",
                     libName,
                     pkgDataFlags[SO_EXT]);
@@ -865,8 +865,8 @@ static void createFileNames(UPKGOptions *o, const char mode, const char *version
               fprintf(stdout, "# libFileName[LIB_FILE_VERSION] = %s\n", libFileNames[LIB_FILE_VERSION]);
             }
 
-#ifdef U_CYGWIN
-            /* Cygwin only deals with the version major number. */
+#if defined(U_CYGWIN) || defined(U_MINGW)
+            /* Cygwin and MinGW only deals with the version major number. */
             uprv_strcpy(libFileNames[LIB_FILE_VERSION_TMP], libFileNames[LIB_FILE_VERSION_MAJOR]);
 #endif
         }
@@ -885,6 +885,11 @@ static int32_t pkg_createSymLinks(const char *targetDir, UBool specialHandling) 
     char cmd[LARGE_BUFFER_MAX_SIZE];
     char name1[SMALL_BUFFER_MAX_SIZE]; /* symlink file name */
     char name2[SMALL_BUFFER_MAX_SIZE]; /* file name to symlink */
+
+#if defined (U_MINGW)
+    /* On MINGW, symbolic links don't need to be created. */
+    return result;
+#endif
 
 #ifndef USING_CYGWIN
     /* No symbolic link to make. */
@@ -961,7 +966,7 @@ static int32_t pkg_installLibrary(const char *installDir, const char *targetDir)
     if (result != 0) {
         return result;
     }
-#elif defined (U_CYGWIN)
+#elif defined(U_CYGWIN)
     sprintf(cmd, "cd %s && %s %s %s",
             targetDir,
             pkgDataFlags[INSTALL_CMD],
@@ -1133,6 +1138,7 @@ static int32_t pkg_generateLibraryFile(const char *targetDir, const char mode, c
     int32_t result = 0;
     char *cmd = NULL;
     UBool freeCmd = FALSE;
+    int32_t length = 0;
 
     /* This is necessary because if packaging is done without assembly code, objectFile might be extremely large
      * containing many object files and so the calling function should supply a command buffer that is large
@@ -1140,15 +1146,18 @@ static int32_t pkg_generateLibraryFile(const char *targetDir, const char mode, c
      */
     if (command != NULL) {
         cmd = command;
-    } else {
-        if ((cmd = (char *)uprv_malloc(sizeof(char) * LARGE_BUFFER_MAX_SIZE)) == NULL) {
-            fprintf(stderr, "Unable to allocate memory for command.\n");
-            return -1;
-        }
-        freeCmd = TRUE;
     }
 
     if (mode == MODE_STATIC) {
+        if (cmd == NULL) {
+            length = uprv_strlen(pkgDataFlags[AR]) + uprv_strlen(pkgDataFlags[ARFLAGS]) + uprv_strlen(targetDir) +
+                     uprv_strlen(libFileNames[LIB_FILE_VERSION]) + uprv_strlen(objectFile) + uprv_strlen(pkgDataFlags[RANLIB]) + BUFFER_PADDING_SIZE;
+            if ((cmd = (char *)uprv_malloc(sizeof(char) * length)) == NULL) {
+                fprintf(stderr, "Unable to allocate memory for command.\n");
+                return -1;
+            }
+            freeCmd = TRUE;
+        }
         sprintf(cmd, "%s %s %s%s %s",
                 pkgDataFlags[AR],
                 pkgDataFlags[ARFLAGS],
@@ -1166,7 +1175,22 @@ static int32_t pkg_generateLibraryFile(const char *targetDir, const char mode, c
             result = runCommand(cmd);
         }
     } else /* if (mode == MODE_DLL) */ {
+        if (cmd == NULL) {
+            length = uprv_strlen(pkgDataFlags[GENLIB]) + uprv_strlen(pkgDataFlags[LDICUDTFLAGS]) +
+                     uprv_strlen(targetDir) + uprv_strlen(libFileNames[LIB_FILE_VERSION_TMP]) +
+                     uprv_strlen(objectFile) + uprv_strlen(pkgDataFlags[LD_SONAME]) +
+                     uprv_strlen(pkgDataFlags[LD_SONAME][0] == 0 ? "" : libFileNames[LIB_FILE_VERSION_MAJOR]) +
+                     uprv_strlen(pkgDataFlags[RPATH_FLAGS]) + uprv_strlen(pkgDataFlags[BIR_FLAGS]) + BUFFER_PADDING_SIZE;
 #ifdef U_CYGWIN
+            length += uprv_strlen(targetDir) + uprv_strlen(libFileNames[LIB_FILE_CYGWIN_VERSION]);
+#endif
+            if ((cmd = (char *)uprv_malloc(sizeof(char) * length)) == NULL) {
+                fprintf(stderr, "Unable to allocate memory for command.\n");
+                return -1;
+            }
+            freeCmd = TRUE;
+        }
+#if defined(U_CYGWIN)
         sprintf(cmd, "%s%s%s %s -o %s%s %s %s%s %s %s",
                 pkgDataFlags[GENLIB],
                 targetDir,
@@ -1209,7 +1233,7 @@ static int32_t pkg_createWithAssemblyCode(const char *targetDir, const char mode
     tempObjectFile[uprv_strlen(tempObjectFile)-1] = 'o';
 
     length = uprv_strlen(pkgDataFlags[COMPILER]) + uprv_strlen(pkgDataFlags[LIBFLAGS])
-                    + uprv_strlen(tempObjectFile) + uprv_strlen(gencFilePath) + 10;
+                    + uprv_strlen(tempObjectFile) + uprv_strlen(gencFilePath) + BUFFER_PADDING_SIZE;
 
     cmd = (char *)uprv_malloc(sizeof(char) * length);
     if (cmd == NULL) {
@@ -1312,7 +1336,7 @@ static int32_t pkg_createWithoutAssemblyCode(UPKGOptions *o, const char *targetD
             uprv_strcpy(tempObjectFile, gencmnFile);
             tempObjectFile[uprv_strlen(tempObjectFile) - 1] = 'o';
             
-            sprintf(cmd, "%s %s -o %s %s"
+            sprintf(cmd, "%s %s -o %s %s",
                         pkgDataFlags[COMPILER],
                         pkgDataFlags[LIBFLAGS],
                         tempObjectFile,
@@ -1632,7 +1656,8 @@ static void loadLists(UPKGOptions *o, UErrorCode *status)
     char        line[16384];
     char       *linePtr, *lineNext;
     const uint32_t   lineMax = 16300;
-    char        tmp[1024];
+    char       *tmp;
+    int32_t     tmpLength = 0;
     char       *s;
     int32_t     ln=0; /* line number */
 
@@ -1717,10 +1742,16 @@ static void loadLists(UPKGOptions *o, UErrorCode *status)
                     fprintf(stderr, "pkgdata: Error: absolute path encountered. Old style paths are not supported. Use relative paths such as 'fur.res' or 'translit%cfur.res'.\n\tBad path: '%s'\n", U_FILE_SEP_CHAR, s);
                     exit(U_ILLEGAL_ARGUMENT_ERROR);
                 }
+                tmpLength = uprv_strlen(o->srcDir) + 
+                            uprv_strlen(s) + 5; /* 5 is to add a little extra space for, among other things, PKGDATA_FILE_SEP_STRING */
+                if((tmp = (char *)uprv_malloc(tmpLength)) == NULL) {
+                    fprintf(stderr, "pkgdata: Error: Unable to allocate tmp buffer size: %d\n", tmpLength);
+                    exit(U_MEMORY_ALLOCATION_ERROR);
+                }
                 uprv_strcpy(tmp, o->srcDir);
-                uprv_strcat(tmp, o->srcDir[uprv_strlen(o->srcDir)-1] == U_FILE_SEP_CHAR ? "" :PKGDATA_FILE_SEP_STRING);
+                uprv_strcat(tmp, o->srcDir[uprv_strlen(o->srcDir)-1] == U_FILE_SEP_CHAR ? "" : PKGDATA_FILE_SEP_STRING);
                 uprv_strcat(tmp, s);
-                o->filePaths = pkg_appendToList(o->filePaths, &tail2, uprv_strdup(tmp));
+                o->filePaths = pkg_appendToList(o->filePaths, &tail2, tmp);
                 linePtr = lineNext;
             } /* for each entry on line */
         } /* for each line */

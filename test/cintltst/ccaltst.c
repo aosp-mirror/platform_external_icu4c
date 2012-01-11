@@ -1,5 +1,5 @@
 /********************************************************************
- * Copyright (c) 1997-2010, International Business Machines
+ * Copyright (c) 1997-2011, International Business Machines
  * Corporation and others. All Rights Reserved.
  ********************************************************************
  *
@@ -31,6 +31,7 @@
 #include "ulist.h"
 
 void TestGregorianChange(void);
+void TestFieldDifference(void);
 
 void addCalTest(TestNode** root);
 
@@ -47,6 +48,7 @@ void addCalTest(TestNode** root)
     addTest(root, &TestGregorianChange, "tsformat/ccaltst/TestGregorianChange");
     addTest(root, &TestGetKeywordValuesForLocale, "tsformat/ccaltst/TestGetKeywordValuesForLocale");
     addTest(root, &TestWeekend, "tsformat/ccaltst/TestWeekend");
+    addTest(root, &TestFieldDifference, "tsformat/ccaltst/TestFieldDifference");
 }
 
 /* "GMT" */
@@ -123,14 +125,38 @@ static void TestCalendar()
     status=U_ZERO_ERROR;
 #endif
     
-    /*Test ucal_openTimeZones & ucal_openCountryTimeZones*/
-    for (j=0; j<2; ++j) {
-        const char* api = (j==0) ? "ucal_openTimeZones()" :
-            "ucal_openCountryTimeZones(US)";
-        uenum = (j==0) ? ucal_openTimeZones(&status) :
-            ucal_openCountryTimeZones("US", &status);
+    /*Test ucal_openTimeZones, ucal_openCountryTimeZones and ucal_openTimeZoneIDEnumeration */
+    for (j=0; j<6; ++j) {
+        const char *api = "?";
+        const int32_t offsetMinus5 = -5*60*60*1000;
+        switch (j) {
+        case 0:
+            api = "ucal_openTimeZones()";
+            uenum = ucal_openTimeZones(&status);
+            break;
+        case 1:
+            api = "ucal_openCountryTimeZones(US)";
+            uenum = ucal_openCountryTimeZones("US", &status);
+            break;
+        case 2:
+            api = "ucal_openTimeZoneIDEnumerarion(UCAL_ZONE_TYPE_CANONICAL, NULL, NULL)";
+            uenum = ucal_openTimeZoneIDEnumeration(UCAL_ZONE_TYPE_CANONICAL, NULL, NULL, &status);
+            break;
+        case 3:
+            api = "ucal_openTimeZoneIDEnumerarion(UCAL_ZONE_TYPE_CANONICAL_LOCATION, CA, NULL)";
+            uenum = ucal_openTimeZoneIDEnumeration(UCAL_ZONE_TYPE_CANONICAL_LOCATION, "CA", NULL, &status);
+            break;
+        case 4:
+            api = "ucal_openTimeZoneIDEnumerarion(UCAL_ZONE_TYPE_ANY, NULL, -5 hour)";
+            uenum = ucal_openTimeZoneIDEnumeration(UCAL_ZONE_TYPE_ANY, NULL, &offsetMinus5, &status);
+            break;
+        case 5:
+            api = "ucal_openTimeZoneIDEnumerarion(UCAL_ZONE_TYPE_ANY, US, -5 hour)";
+            uenum = ucal_openTimeZoneIDEnumeration(UCAL_ZONE_TYPE_ANY, "US", &offsetMinus5, &status);
+            break;
+        }
         if (U_FAILURE(status)) {
-            log_err("FAIL: %s failed with %s", api,
+            log_err_status(status, "FAIL: %s failed with %s\n", api,
                     u_errorName(status));
         } else {
             const char* id;
@@ -671,7 +697,7 @@ static void TestFieldGetSet()
         ucal_get(cal, UCAL_DATE, &status)!=12 || ucal_get(cal, UCAL_HOUR, &status)!=5)
         log_data_err("error in ucal_get() -> %s (Are you missing data?)\n", u_errorName(status));    
     else if(ucal_get(cal, UCAL_DAY_OF_WEEK_IN_MONTH, &status)!=2 || ucal_get(cal, UCAL_DAY_OF_WEEK, &status)!=6
-        || ucal_get(cal, UCAL_WEEK_OF_MONTH, &status)!=2 || ucal_get(cal, UCAL_WEEK_OF_YEAR, &status)!= 10)
+        || ucal_get(cal, UCAL_WEEK_OF_MONTH, &status)!=2 || ucal_get(cal, UCAL_WEEK_OF_YEAR, &status)!= 11)
         log_err("FAIL: error in ucal_get()\n");
     else
         log_verbose("PASS: ucal_get() works fine\n");
@@ -1583,6 +1609,9 @@ static void TestWeekend() {
     UDateFormat * fmt = udat_open(UDAT_NONE, UDAT_NONE, "en", NULL, 0, NULL, 0, &fmtStatus);
     if (U_SUCCESS(fmtStatus)) {
         udat_applyPattern(fmt, FALSE, logDateFormat, -1);
+    } else {
+        log_data_err("Unable to create UDateFormat - %s\n", u_errorName(fmtStatus));
+        return;
     }
 	for (count = sizeof(testDates)/sizeof(testDates[0]); count-- > 0; ++testDatesPtr) {
         UErrorCode status = U_ZERO_ERROR;
@@ -1652,6 +1681,63 @@ static void TestWeekend() {
             ucal_close(cal);
         } else {
             log_data_err("FAIL: ucal_open for locale %s failed: %s - (Are you missing data?)\n", testDaysPtr->locale, u_errorName(status) );
+        }
+    }
+}
+
+/**
+ * TestFieldDifference
+ */
+
+typedef struct {
+    const UChar * timezone;
+    const char *  locale;
+    UDate         start;
+    UDate         target;
+    int32_t       yDiff;
+    int32_t       MDiff;
+    int32_t       dDiff;
+    int32_t       HDiff;
+    int32_t       mDiff;
+} TFDItem;
+
+static const UChar tzUSPacific[] = { 0x55,0x53,0x2F,0x50,0x61,0x63,0x69,0x66,0x69,0x63,0 }; /* "US/Pacific" */
+
+static const TFDItem tfdItems[] = {
+    /* timezone    locale   start            target             yDf MDf dDf HDf mDf  */
+    { tzUSPacific, "en_US", 1267459800000.0, 1277772600000.0,    0,  3, 27,  9, 40 }, /* 2010-Mar-01 08:10 -> 2010-Jun-28 17:50 */
+    { tzUSPacific, "en_US", 1267459800000.0, 1299089280000.0,    1,  0,  1,  1, 58 }, /* 2010-Mar-01 08:10 -> 2011-Mar-02 10:08 */
+    { NULL,        NULL,    0.0,             0.0,                0,  0,  0,  0,  0 }  /* terminator */
+};
+
+void TestFieldDifference() {
+    const TFDItem * tfdItemPtr;
+    for (tfdItemPtr = tfdItems; tfdItemPtr->timezone != NULL; tfdItemPtr++) {
+        UErrorCode status = U_ZERO_ERROR;
+        UCalendar* ucal = ucal_open(tfdItemPtr->timezone, -1, tfdItemPtr->locale, UCAL_DEFAULT, &status);
+        if (U_FAILURE(status)) {
+            log_err("FAIL: for locale \"%s\", ucal_open had status %s\n", tfdItemPtr->locale, u_errorName(status) );
+        } else {
+            int32_t yDf, MDf, dDf, HDf, mDf; 
+            ucal_setMillis(ucal, tfdItemPtr->start, &status);
+            yDf = ucal_getFieldDifference(ucal, tfdItemPtr->target, UCAL_YEAR, &status);
+            MDf = ucal_getFieldDifference(ucal, tfdItemPtr->target, UCAL_MONTH, &status);
+            dDf = ucal_getFieldDifference(ucal, tfdItemPtr->target, UCAL_DATE, &status);
+            HDf = ucal_getFieldDifference(ucal, tfdItemPtr->target, UCAL_HOUR, &status);
+            mDf = ucal_getFieldDifference(ucal, tfdItemPtr->target, UCAL_MINUTE, &status);
+            if (U_FAILURE(status)) {
+                log_err("FAIL: for locale \"%s\", start %.1f, target %.1f, ucal_setMillis or ucal_getFieldDifference had status %s\n",
+                        tfdItemPtr->locale, tfdItemPtr->start, tfdItemPtr->target, u_errorName(status) );
+            } else if ( yDf !=  tfdItemPtr->yDiff ||
+                        MDf !=  tfdItemPtr->MDiff ||
+                        dDf !=  tfdItemPtr->dDiff ||
+                        HDf !=  tfdItemPtr->HDiff ||
+                        mDf !=  tfdItemPtr->mDiff ) {
+                log_data_err("FAIL: for locale \"%s\", start %.1f, target %.1f, expected y-M-d-H-m diffs %d-%d-%d-%d-%d, got %d-%d-%d-%d-%d\n",
+                        tfdItemPtr->locale, tfdItemPtr->start, tfdItemPtr->target,
+                        tfdItemPtr->yDiff, tfdItemPtr->MDiff, tfdItemPtr->dDiff, tfdItemPtr->HDiff, tfdItemPtr->mDiff, yDf, MDf, dDf, HDf, mDf);
+            }
+            ucal_close(ucal);
         }
     }
 }

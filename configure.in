@@ -1,14 +1,21 @@
 # -*-autoconf-*-
-AC_COPYRIGHT([ Copyright (c) 1999-2010, International Business Machines Corporation and others. All Rights Reserved. ])
+AC_COPYRIGHT([ Copyright (c) 1999-2011, International Business Machines Corporation and others. All Rights Reserved. ])
 # configure.in for ICU
 # Stephen F. Booth, heavily modified by Yves and others
 
 # Check for autoconf version
 AC_PREREQ(2.67)
 
-
 # Process this file with autoconf to produce a configure script
-AC_INIT
+AC_INIT([ICU])
+
+#TODO: IcuBug:8502
+#AC_INIT([ICU],
+#        m4_esyscmd_s([sed -n 's/^[ 	]*#[ 	]*define[ 	]*U_ICU_VERSION[ 	]*"\([^"]*\)".*/\1/p' "./common/unicode/uvernum.h]"),
+#        [http://icu-project.org/bugs],
+#        [International Components for Unicode],
+#        [http://icu-project.org])
+
 AC_CONFIG_SRCDIR([common/unicode/utypes.h])
 
 AC_CONFIG_HEADERS(common/icucfg.h)
@@ -44,18 +51,17 @@ getuversion() {
 }
 VERSION=`geticuversion $srcdir/common/unicode/uvernum.h`
 if test x"$VERSION" = x; then
-    VERSION=`geticuversion $srcdir/common/unicode/*.h`
-    if test x"$VERSION" = x; then
-        AC_MSG_ERROR([Cannot determine ICU version number from uvernum.h header file])
-    fi
+   as_fn_error $? "Cannot determine ICU version number from uvernum.h header file" "$LINENO" 5
 fi
+
+#TODO: IcuBug:8502
+#if test "$VERSION" != "$PACKAGE_VERSION"; then
+#   AC_MSG_ERROR([configure was generated for $PACKAGE_VERSION but uvernum.h has $VERSION - please rerun autoconf])
+#fi
 
 UNICODE_VERSION=`getuversion $srcdir/common/unicode/uchar.h`
 if test x"$UNICODE_VERSION" = x; then
-    UNICODE_VERSION=`getuversion $srcdir/common/unicode/*.h`
-    if test x"$UNICODE_VERSION" = x; then
-        AC_MSG_ERROR([Cannot determine Unicode version number from uchar.h header file])
-    fi
+    AC_MSG_ERROR([Cannot determine Unicode version number from uchar.h header file])
 fi
 # Compute a reasonable library version from the release version. This is
 # very bad, but that's wanted... We want to make sure that the LIB_VERSION
@@ -1267,7 +1273,8 @@ case "${host}" in
 	*-*-aix*) 	platform=U_AIX ;;
 	*-*-hpux*) 	platform=U_HPUX ;;
 	*-apple-darwin*|*-apple-rhapsody*)	platform=U_DARWIN ;;
-	*-*-cygwin*|*-*-mingw*)	platform=U_CYGWIN ;;
+	*-*-cygwin*)	platform=U_CYGWIN ;;
+	*-*-mingw*)	platform=U_MINGW ;;
 	*-*ibm-openedition*|*-*-os390*)	platform=OS390
 			if test "${ICU_ENABLE_ASCII_STRINGS}" != "1"; then
 				ICUDATA_CHAR="e"
@@ -1289,6 +1296,12 @@ platform_make_fragment_name="$icu_cv_host_frag"
 platform_make_fragment='$(top_srcdir)/config/'"$platform_make_fragment_name"
 AC_SUBST(platform_make_fragment_name)
 AC_SUBST(platform_make_fragment)
+
+U_USING_CYGWIN_MSVC=0
+if test "${icu_cv_host_frag}" = "mh-cygwin-msvc"; then
+U_USING_CYGWIN_MSVC=1
+fi
+AC_SUBST(U_USING_CYGWIN_MSVC)
 
 if test "${FORCE_LIBS}" != ""; then
    echo " *** Overriding automatically chosen [LIBS=$LIBS], using instead [FORCE_LIBS=${FORCE_LIBS}]"  1>&6
@@ -1354,6 +1367,7 @@ AC_CONFIG_FILES([icudefs.mk \
 		test/letest/Makefile \
 		test/perf/Makefile \
 		test/perf/collationperf/Makefile \
+		test/perf/dicttrieperf/Makefile \
 		test/perf/ubrkperf/Makefile \
 		test/perf/charperf/Makefile \
 		test/perf/convperf/Makefile \

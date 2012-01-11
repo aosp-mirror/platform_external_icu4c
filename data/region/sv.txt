@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2010 International Business Machines
+// * Copyright (C) 2011 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/sv.xml
@@ -42,7 +42,7 @@ sv{
         154{"Nordeuropa"}
         155{"Västeuropa"}
         172{"Oberoende staters samvälde"}
-        419{"Latinamerika och Karibien"}
+        419{"Latinamerika"}
         830{"Kanalöarna"}
         AC{"Ascension"}
         AD{"Andorra"}
@@ -138,7 +138,7 @@ sv{
         GP{"Guadeloupe"}
         GQ{"Ekvatorialguinea"}
         GR{"Grekland"}
-        GS{"Sydgeorgien och Södra Sandwichöarna"}
+        GS{"Sydgeorgien och Sydsandwichöarna"}
         GT{"Guatemala"}
         GU{"Guam"}
         GW{"Guinea-Bissau"}
@@ -301,5 +301,5 @@ sv{
         ZW{"Zimbabwe"}
         ZZ{"okänd eller ogiltig regionkod"}
     }
-    Version{"2.0.50.94"}
+    Version{"2.0.59.81"}
 }

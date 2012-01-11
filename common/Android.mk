@@ -57,7 +57,7 @@ src_files := \
 	utypes.c           wintz.c            \
 	utrie2_builder.c   icuplug.c          \
 	propsvec.c         ulist.c            \
-	uloc_tag.c
+	uloc_tag.c         ucnv_ct.c
 
 src_files += \
         bmpset.cpp      unisetspan.cpp   \
@@ -100,8 +100,10 @@ src_files += \
 	filterednormalizer2.cpp  ucol_swp.cpp       \
 	uprops.cpp      utrie2.cpp \
         charstr.cpp     uts46.cpp \
-        udata.cpp
-
+        udata.cpp   appendable.cpp  bytestrie.cpp \
+        bytestriebuilder.cpp  bytestrieiterator.cpp \
+        messagepattern.cpp patternprops.cpp stringtriebuilder.cpp \
+        ucharstrie.cpp ucharstriebuilder.cpp ucharstrieiterator.cpp
 
 # This is the empty compiled-in icu data structure
 # that we need to satisfy the linker.

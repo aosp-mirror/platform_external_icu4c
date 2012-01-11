@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2010 International Business Machines
+// * Copyright (C) 2011 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/mk.xml
@@ -570,6 +570,9 @@ mk{
         calendar{
             buddhist{"Будистички календар"}
             chinese{"Кинески календар"}
+            coptic{"Коптски календар"}
+            ethiopic{"Етиопски календар"}
+            ethiopic-amete-alem{"Етиопски Амет Алем календар"}
             gregorian{"Грегоријански календар"}
             hebrew{"Еврејски календар"}
             indian{"Индијски национален календар"}
@@ -587,12 +590,15 @@ mk{
             stroke{"Ритмички редослед"}
             traditional{"Традиционално сортирање"}
         }
+        numbers{
+            latn{"арапски броеви"}
+        }
     }
     Variants{
         PINYIN{"Пинјин романизација"}
         WADEGILE{"Вејд-Џајлс романизација"}
     }
-    Version{"2.0.47.63"}
+    Version{"2.0.59.68"}
     codePatterns{
         language{"Јазик: {0}"}
         script{"Писмо: {0}"}

@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2010 International Business Machines
+// * Copyright (C) 2011 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/metaZones.xml
@@ -138,13 +138,14 @@ metaZones:table(nofallback){
             AN{"America/Curacao"}
             AW{"America/Aruba"}
             BB{"America/Barbados"}
-            BM{"America/Bermuda"}
+            BM{"Atlantic/Bermuda"}
             DM{"America/Dominica"}
             GD{"America/Grenada"}
             GL{"America/Thule"}
             GP{"America/Guadeloupe"}
             KN{"America/St_Kitts"}
             LC{"America/St_Lucia"}
+            MF{"America/Marigot"}
             MQ{"America/Martinique"}
             MS{"America/Montserrat"}
             PR{"America/Puerto_Rico"}
@@ -296,10 +297,13 @@ metaZones:table(nofallback){
             SE{"Europe/Stockholm"}
             SI{"Europe/Ljubljana"}
             SK{"Europe/Bratislava"}
+            SM{"Europe/San_Marino"}
             TN{"Africa/Tunis"}
+            VA{"Europe/Vatican"}
         }
         Europe_Eastern{
             001{"Europe/Bucharest"}
+            AX{"Europe/Mariehamn"}
             BG{"Europe/Sofia"}
             CY{"Asia/Nicosia"}
             EG{"Africa/Cairo"}
@@ -480,6 +484,9 @@ metaZones:table(nofallback){
         }
         Macau{
             001{"Asia/Macau"}
+        }
+        Macquarie{
+            001{"Antarctica/Macquarie"}
         }
         Magadan{
             001{"Asia/Magadan"}
@@ -881,6 +888,18 @@ metaZones:table(nofallback){
                 "Africa_Southern",
             }
         }
+        "Africa:Juba"{
+            {
+                "Africa_Central",
+                "1970-01-01 00:00",
+                "2000-01-15 10:00",
+            }
+            {
+                "Africa_Eastern",
+                "2000-01-15 10:00",
+                "9999-12-31 23:59",
+            }
+        }
         "Africa:Kampala"{
             {
                 "Africa_Eastern",
@@ -1067,7 +1086,7 @@ metaZones:table(nofallback){
             }
             {
                 "Hawaii_Aleutian",
-                "1983-10-30 12:00",
+                "1983-11-30 10:00",
                 "9999-12-31 23:59",
             }
         }
@@ -1078,8 +1097,13 @@ metaZones:table(nofallback){
                 "1983-10-30 11:00",
             }
             {
-                "Alaska",
+                "Yukon",
                 "1983-10-30 11:00",
+                "1983-11-30 09:00",
+            }
+            {
+                "Alaska",
+                "1983-11-30 09:00",
                 "9999-12-31 23:59",
             }
         }
@@ -1783,11 +1807,26 @@ metaZones:table(nofallback){
             {
                 "America_Pacific",
                 "1970-01-01 00:00",
+                "1980-04-27 10:00",
+            }
+            {
+                "Yukon",
+                "1980-04-27 10:00",
+                "1980-10-26 10:00",
+            }
+            {
+                "America_Pacific",
+                "1980-10-26 10:00",
                 "1983-10-30 09:00",
             }
             {
-                "Alaska",
+                "Yukon",
                 "1983-10-30 09:00",
+                "1983-11-30 09:00",
+            }
+            {
+                "Alaska",
+                "1983-11-30 09:00",
                 "9999-12-31 23:59",
             }
         }
@@ -1955,6 +1994,11 @@ metaZones:table(nofallback){
                 "9999-12-31 23:59",
             }
         }
+        "America:Metlakatla"{
+            {
+                "America_Pacific",
+            }
+        }
         "America:Mexico_City"{
             {
                 "America_Central",
@@ -2019,14 +2063,31 @@ metaZones:table(nofallback){
                 "1983-10-30 12:00",
             }
             {
-                "Alaska",
+                "Yukon",
                 "1983-10-30 12:00",
+                "1983-11-30 09:00",
+            }
+            {
+                "Alaska",
+                "1983-11-30 09:00",
                 "9999-12-31 23:59",
             }
         }
         "America:Noronha"{
             {
                 "Noronha",
+            }
+        }
+        "America:North_Dakota:Beulah"{
+            {
+                "America_Mountain",
+                "1970-01-01 00:00",
+                "2010-11-07 08:00",
+            }
+            {
+                "America_Central",
+                "2010-11-07 08:00",
+                "9999-12-31 23:59",
             }
         }
         "America:North_Dakota:Center"{
@@ -2266,6 +2327,23 @@ metaZones:table(nofallback){
                 "America_Mountain",
             }
         }
+        "America:Sitka"{
+            {
+                "America_Pacific",
+                "1970-01-01 00:00",
+                "1983-10-30 09:00",
+            }
+            {
+                "Yukon",
+                "1983-10-30 09:00",
+                "1983-11-30 09:00",
+            }
+            {
+                "Alaska",
+                "1983-11-30 09:00",
+                "9999-12-31 23:59",
+            }
+        }
         "America:St_Barthelemy"{
             {
                 "Atlantic",
@@ -2357,11 +2435,11 @@ metaZones:table(nofallback){
             {
                 "Yukon",
                 "1970-01-01 00:00",
-                "1983-10-30 10:00",
+                "1983-11-30 09:00",
             }
             {
                 "Alaska",
-                "1983-10-30 10:00",
+                "1983-11-30 09:00",
                 "9999-12-31 23:59",
             }
         }
@@ -2402,6 +2480,11 @@ metaZones:table(nofallback){
                 "Australia_Eastern",
                 "1970-01-01 00:00",
                 "2010-04-03 16:00",
+            }
+            {
+                "Macquarie",
+                "2010-04-03 16:00",
+                "9999-12-31 23:59",
             }
         }
         "Antarctica:Mawson"{
@@ -2471,6 +2554,13 @@ metaZones:table(nofallback){
         "Asia:Anadyr"{
             {
                 "Anadyr",
+                "1970-01-01 00:00",
+                "2010-03-27 14:00",
+            }
+            {
+                "Magadan",
+                "2010-03-27 14:00",
+                "9999-12-31 23:59",
             }
         }
         "Asia:Aqtau"{
@@ -2696,6 +2786,18 @@ metaZones:table(nofallback){
                 "9999-12-31 23:59",
             }
         }
+        "Asia:Hebron"{
+            {
+                "Israel",
+                "1970-01-01 00:00",
+                "1995-12-31 22:00",
+            }
+            {
+                "Europe_Eastern",
+                "1995-12-31 22:00",
+                "9999-12-31 23:59",
+            }
+        }
         "Asia:Hong_Kong"{
             {
                 "Hong_Kong",
@@ -2734,6 +2836,13 @@ metaZones:table(nofallback){
         "Asia:Kamchatka"{
             {
                 "Kamchatka",
+                "1970-01-01 00:00",
+                "2010-03-27 14:00",
+            }
+            {
+                "Magadan",
+                "2010-03-27 14:00",
+                "9999-12-31 23:59",
             }
         }
         "Asia:Karachi"{
@@ -3375,7 +3484,7 @@ metaZones:table(nofallback){
             {
                 "Europe_Eastern",
                 "1991-03-30 23:00",
-                "9999-12-31 23:59",
+                "2011-03-27 00:00",
             }
         }
         "Europe:Kiev"{
@@ -3387,7 +3496,7 @@ metaZones:table(nofallback){
             {
                 "Europe_Eastern",
                 "1990-06-30 23:00",
-                "9999-12-31 23:59",
+                "2011-03-27 00:00",
             }
         }
         "Europe:Lisbon"{
@@ -3458,7 +3567,7 @@ metaZones:table(nofallback){
             {
                 "Europe_Eastern",
                 "1991-03-30 23:00",
-                "9999-12-31 23:59",
+                "2011-03-27 00:00",
             }
         }
         "Europe:Monaco"{
@@ -3529,6 +3638,11 @@ metaZones:table(nofallback){
             {
                 "Samara",
                 "1991-10-20 00:00",
+                "2010-03-27 22:00",
+            }
+            {
+                "Moscow",
+                "2010-03-27 22:00",
                 "9999-12-31 23:59",
             }
         }
@@ -3561,7 +3675,7 @@ metaZones:table(nofallback){
             {
                 "Europe_Eastern",
                 "1997-03-30 01:00",
-                "9999-12-31 23:59",
+                "2011-03-27 01:00",
             }
         }
         "Europe:Skopje"{
@@ -3610,7 +3724,7 @@ metaZones:table(nofallback){
             {
                 "Europe_Eastern",
                 "1991-03-31 02:00",
-                "9999-12-31 23:59",
+                "2011-03-27 01:00",
             }
         }
         "Europe:Vaduz"{
@@ -3674,7 +3788,7 @@ metaZones:table(nofallback){
             {
                 "Europe_Eastern",
                 "1991-03-30 23:00",
-                "9999-12-31 23:59",
+                "2011-03-27 01:00",
             }
         }
         "Europe:Zurich"{

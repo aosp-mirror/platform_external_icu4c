@@ -22,7 +22,7 @@ LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
 src_files := \
-	bocsu.c     ucln_in.c  decContext.c \
+	ucln_in.c  decContext.c \
 	ulocdata.c  utmscale.c decNumber.c
 
 src_files += \
@@ -62,7 +62,7 @@ src_files += \
 	umsg.cpp        unesctrn.cpp uni2name.cpp \
 	unum.cpp        uregexc.cpp  uregex.cpp   \
 	usearch.cpp     utrans.cpp   windtfmt.cpp \
-	winnmfmt.cpp    zonemeta.cpp zstrfmt.cpp  \
+	winnmfmt.cpp    zonemeta.cpp \
 	numsys.cpp      chnsecal.cpp \
 	cecal.cpp       coptccal.cpp ethpccal.cpp \
 	brktrans.cpp    wintzimpl.cpp plurrule.cpp \
@@ -74,7 +74,11 @@ src_files += \
         regextxt.cpp    selfmt.cpp   uspoof_conf.cpp \
         uspoof_wsconf.cpp ztrans.cpp zrule.cpp  \
         vzone.cpp       fphdlimp.cpp fpositer.cpp\
-        locdspnm.cpp    decnumstr.cpp ucol_wgt.cpp
+        locdspnm.cpp    ucol_wgt.cpp \
+        alphaindex.cpp  bocsu.cpp    decfmtst.cpp \
+        smpdtfst.cpp    smpdtfst.h   tzfmt.cpp \
+        tzgnames.cpp    tznames.cpp  tznames_impl.cpp \
+        udateintervalformat.cpp  upluralrules.cpp
 
 
 c_includes = \

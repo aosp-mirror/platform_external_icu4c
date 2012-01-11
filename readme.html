@@ -3,10 +3,9 @@
 
 <html lang="en-US" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US">
   <head>
-
-    <title>ReadMe for ICU 4.6</title>
+    <title>ReadMe for ICU 4.8.1.1</title>
     <meta name="COPYRIGHT" content=
-    "Copyright (c) 1997-2010 IBM Corporation and others. All Rights Reserved." />
+    "Copyright (c) 1997-2011 IBM Corporation and others. All Rights Reserved." />
     <meta name="KEYWORDS" content=
     "ICU; International Components for Unicode; ICU4C; what's new; readme; read me; introduction; downloads; downloading; building; installation;" />
     <meta name="DESCRIPTION" content=
@@ -17,10 +16,10 @@
 
   <body class="draft">
     <h1>International Components for Unicode<br />
-     <abbr title="International Components for Unicode">ICU</abbr> 4.6 ReadMe</h1>
+     <abbr title="International Components for Unicode">ICU</abbr> 4.8.1.1 ReadMe</h1>
 
-    <p>Last updated: 2010-Dec-01<br />
-     Copyright &copy; 1997-2010 International Business Machines Corporation and
+    <p>Last updated: 2011-Sep-20<br />
+     Copyright &copy; 1997-2011 International Business Machines Corporation and
     others. All Rights Reserved.</p>
     <!-- Remember that there is a copyright at the end too -->
     <hr />
@@ -206,7 +205,9 @@
     <h2><a name="News" href="#News" id="News">What is new in this
     release?</a></h2>
 
-    <p>To see which APIs are new or changed in this release, view the <a href="APIChangeReport.html">ICU4C API Change Report</a>. </p>
+	<p>This is a maintenance release of ICU 4.8. No new APIs were added.</p>
+
+    <p>To see which APIs are new or changed in the 4.8 release, view the <a href="APIChangeReport.html">ICU4C API Change Report</a>. </p>
 
     <p>The following list concentrates on <em>changes that affect existing
     applications migrating from previous ICU releases</em>.
@@ -214,24 +215,17 @@
     this release, see the <a href="http://site.icu-project.org/download">ICU
     download page</a>.</p>
 
-    <ul>
-      <li><strong>Compiler RTTI</strong><br />
-        ICU 4.6 requires compiler RTTI to be turned on.
-        It is used with many of ICU's polymorphic classes
-        (classes with virtual functions; they are subclasses of UObject).<br />
-        Existing "poor man's RTTI" functions continue to be available, but
-        the ICU code does not use them any more and users are encouraged
-        to use real C++ RTTI as well where necessary.
-        (<code>dynamic_cast&lt;pointer&gt;</code> for casting and testing whether
-        an object is an instance of a class <em>or subclass</em>,
-        and <code>typeid(object or type)</code> for testing for type equality.)<br />
-        New ICU class hierarchies (new immediate subclasses of UObject) will not
-        add "poor man's RTTI" functions.<br />
-        On AIX with the Visual Age compiler, RTTI must be turned on explicitly
-        via the the <code>-qrtti</code> option.
-        When using ICU's own makefiles, this is done automatically via the
-        <code><a href="source/config/mh-aix-va">mh-aix-va</a></code> file.</li>
-    </ul>
+    <h3>MessageFormat Changes</h3>
+    <p>MessageFormat and related classes (choice/plural/select) have been reimplemented,
+    with several improvements and some incompatible changes.
+    See the <a href="http://site.icu-project.org/download/48">ICU 4.8 download</a> page for details.</p>
+
+    <h3>Unknown system time zone - Etc/Unknown</h3>
+    <p>The behavior of the time zone factory method TimeZone::createTimeZone(const UnicodeString&amp;) has changed in this release.
+    When an unknown time zone ID is specified in the method, previous versions return a TimeZone instance
+    with ID "GMT" (offset 0 and no daylight saving time). In ICU 4.8, the method uses "Etc/Unknown" as the
+    time zone ID (but still offset 0 and no daylight saving time) for the case. Existing software checking
+    the returned time zone ID to validate the input ID may need to be updated to support the new behavior.</p>
 
     <h2><a name="Download" href="#Download" id="Download">How To Download the
     Source Code</a></h2>
@@ -1038,6 +1032,13 @@
       ICU, you should use the <code>--with-iostream=old</code> configure option
       when using runConfigureICU. This will prevent applications that use the
       icuio library from crashing.</li>
+      
+      <li>Also note that on current versions of z/OS, the <a href='http://www-01.ibm.com/support/docview.wss?uid=swg21202407&wv=1'>XPLINK version (C128) of the
+      C++ standard library is standard.</a> Therefore you may see an error when running
+      with XPLINK disabled. To avoid this error, set the following environment variable or similar:
+      	<pre><a href='http://www-01.ibm.com/support/docview.wss?uid=swg21376279'>export _CXX_PSYSIX="CEE.SCEELIB(C128N)":"CBC.SCLBSID(IOSTREAM,COMPLEX)"</a></pre>
+      </li>
+      
 
       <li>The rest of the instructions for building and testing ICU on z/OS with
       UNIX System Services are the same as the <a href="#HowToBuildUNIX">How To
@@ -1161,23 +1162,29 @@ ADDENVVAR ENVVAR(OUTPUTDIR) VALUE('<i>libraryname</i>') REPLACE(*YES)   </samp>
       <li>
       Set up the following environment variables and job characteristics in your build process
 <pre>
-<samp>ADDENVVAR ENVVAR(MAKE) VALUE('/usr/bin/gmake') REPLACE(*YES)
+<samp>ADDENVVAR ENVVAR(MAKE) VALUE('gmake') REPLACE(*YES)
 CHGJOB CCSID(37)</samp>
 </pre></li>
 
       <li>Run <tt>'QSH'</tt></li>
+      
+      <li>Run: <br><tt>export PATH=/QIBM/ProdData/DeveloperTools/qsh/bin:$PATH:/QOpenSys/usr/bin</tt>
+      </li>
 
-      <li>Run gunzip on the ICU source code compressed tar archive
+      <li>Run <b><tt>gzip -d</tt></b> on the ICU source code compressed tar archive
       (icu-<i>X</i>.<i>Y</i>.tgz).</li>
 
       <li>Run <a href='as_is/os400/unpax-icu.sh'>unpax-icu.sh</a> on the tar file generated from the previous step.</li>
 
+      <li>Change your current directory to icu/as_is/os400.</li>
+      <li>Run <tt>qsh bldiculd.sh</tt> to build the program ICULD which ICU will use for linkage.</li>
+
       <li>Change your current directory to icu/source.</li>
 
       <li>Run <tt>'./runConfigureICU IBMi'</tt>  (See <a href="#HowToConfigureICU">configuration
-      note</a> for details).</li>
+      note</a> for details). Note that --with-data-packaging=archive and setting the --prefix are recommended, building in default (dll) mode is currently not supported.</li>
 
-      <li>Run <tt>'gmake'</tt> to build ICU.</li>
+      <li>Run <tt>'gmake'</tt> to build ICU. (Do not use the -j option)</li>
 
       <li>Run <tt>'gmake check QIBM_MULTI_THREADED=Y'</tt> to build and run the tests.
       You can look at the <a href=
@@ -1665,7 +1672,7 @@ gnumake</pre>
     </ul>
     <hr />
 
-    <p>Copyright &copy; 1997-2010 International Business Machines Corporation and
+    <p>Copyright &copy; 1997-2011 International Business Machines Corporation and
     others. All Rights Reserved.<br />
      IBM Globalization Center of Competency - San Jos&eacute;<br />
      4400 North First Street<br />

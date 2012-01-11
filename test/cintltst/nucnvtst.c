@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1997-2010, International Business Machines Corporation and
+ * Copyright (c) 1997-2011, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /*******************************************************************************
@@ -24,6 +24,8 @@
 #include "unicode/ucol.h"
 #include "cmemory.h"
 #include "nucnvtst.h"
+
+#define LENGTHOF(array) (sizeof(array)/sizeof((array)[0]))
 
 static void TestNextUChar(UConverter* cnv, const char* source, const char* limit, const int32_t results[], const char* message);
 static void TestNextUCharError(UConverter* cnv, const char* source, const char* limit, UErrorCode expected, const char* message);
@@ -97,6 +99,8 @@ static void TestJitterbug2411(void);
 static void TestJB5275(void);
 static void TestJB5275_1(void);
 static void TestJitterbug6175(void);
+
+static void TestIsFixedWidth(void);
 #endif
 
 static void TestInBufSizes(void);
@@ -279,25 +283,19 @@ void addTestNewConvert(TestNode** root)
 #ifdef U_ENABLE_GENERIC_ISO_2022
    addTest(root, &TestISO_2022, "tsconv/nucnvtst/TestISO_2022");
 #endif
-
-   /* BEGIN android-removed
+   /* BEGIN android-changed
       To save space, Android does not build full ISO2022 CJK tables.
       We turn off the tests here.
-   addTest(root, &TestISO_2022_JP, "tsconv/nucnvtst/TestISO_2022_JP");
-      END android-removed */
-
-   addTest(root, &TestJIS, "tsconv/nucnvtst/TestJIS");  /* BEGIN android-removed */
-
-   /* BEGIN android-removed 
-      To save space, Android does not build full ISO2022 CJK tables.
-      We turn off the tests here.
+   addTest(root, &TestISO_2022_JP, "tsconv/nucnvtst/TestISO_2022_JP"); 
+   END android-changed */
+   addTest(root, &TestJIS, "tsconv/nucnvtst/TestJIS");
+   /* BEGIN android-changed
    addTest(root, &TestISO_2022_JP_1, "tsconv/nucnvtst/TestISO_2022_JP_1");
    addTest(root, &TestISO_2022_JP_2, "tsconv/nucnvtst/TestISO_2022_JP_2");
    addTest(root, &TestISO_2022_KR, "tsconv/nucnvtst/TestISO_2022_KR");
    addTest(root, &TestISO_2022_KR_1, "tsconv/nucnvtst/TestISO_2022_KR_1");
    addTest(root, &TestISO_2022_CN, "tsconv/nucnvtst/TestISO_2022_CN");
-     END android-removed */
-
+  END android-changed */
    /*
     * ICU 4.4 (ticket #7314) removes mappings for CNS 11643 planes 3..7
    addTest(root, &TestISO_2022_CN_EXT, "tsconv/nucnvtst/TestISO_2022_CN_EXT");
@@ -342,8 +340,9 @@ void addTestNewConvert(TestNode** root)
       We turn off the tests here.
    addTest(root, &TestJitterbug6175, "tsconv/nucnvtst/TestJitterbug6175");
       END android-removed */
-#endif
 
+   addTest(root, &TestIsFixedWidth, "tsconv/nucnvtst/TestIsFixedWidth");
+#endif
 }
 
 
@@ -483,9 +482,9 @@ static ETestConvertResult testConvertFromU( const UChar *source, int sourceLen, 
     if(expectLen != targ-junkout) {
       log_err("Expected %d chars out, got %d %s\n", expectLen, targ-junkout, gNuConvTestName);
       log_verbose("Expected %d chars out, got %d %s\n", expectLen, targ-junkout, gNuConvTestName);
-      printf("\nGot:");
+      fprintf(stderr, "Got:\n");
       printSeqErr((const unsigned char*)junkout, (int32_t)(targ-junkout));
-      printf("\nExpected:");
+      fprintf(stderr, "Expected:\n");
       printSeqErr((const unsigned char*)expect, expectLen);
       return TC_MISMATCH;
     }
@@ -516,9 +515,9 @@ static ETestConvertResult testConvertFromU( const UChar *source, int sourceLen, 
     } else {
       log_err("String does not match u->%s\n", gNuConvTestName);
       printUSeqErr(source, sourceLen);
-      printf("\nGot:");
+      fprintf(stderr, "Got:\n");
       printSeqErr((const unsigned char *)junkout, expectLen);
-      printf("\nExpected:");
+      fprintf(stderr, "Expected:\n");
       printSeqErr((const unsigned char *)expect, expectLen);
       
       return TC_MISMATCH;
@@ -969,12 +968,12 @@ static void TestNewConvertWithBufferSizes(int32_t outsize, int32_t insize )
                 Hi Mom -+Jjo--!
                 A+ImIDkQ.
                 +-
-                +ZeVnLIqe
+                +ZeVnLIqe-
             */
             0x48, 0x69, 0x20, 0x4d, 0x6f, 0x6d, 0x20, 0x2d, 0x2b, 0x4a, 0x6a, 0x6f, 0x2d, 0x2d, 0x21,
             0x41, 0x2b, 0x49, 0x6d, 0x49, 0x44, 0x6b, 0x51, 0x2e,
             0x2b, 0x2d,
-            0x2b, 0x5a, 0x65, 0x56, 0x6e, 0x4c, 0x49, 0x71, 0x65
+            0x2b, 0x5a, 0x65, 0x56, 0x6e, 0x4c, 0x49, 0x71, 0x65, 0x2d
         };
         static const UChar unicode[] = {
             /*
@@ -998,7 +997,7 @@ static void TestNewConvertWithBufferSizes(int32_t outsize, int32_t insize )
             0, 1, 2, 3, 4, 5, 6, 7, 8, 8, 8, 8, 8, 9, 10,
             11, 12, 12, 12, 13, 13, 13, 13, 14,
             15, 15,
-            16, 16, 16, 17, 17, 17, 18, 18, 18
+            16, 16, 16, 17, 17, 17, 18, 18, 18, 18
         };
 
         /* same but escaping set O (the exclamation mark) */
@@ -1007,12 +1006,12 @@ static void TestNewConvertWithBufferSizes(int32_t outsize, int32_t insize )
                 Hi Mom -+Jjo--+ACE-
                 A+ImIDkQ.
                 +-
-                +ZeVnLIqe
+                +ZeVnLIqe-
             */
             0x48, 0x69, 0x20, 0x4d, 0x6f, 0x6d, 0x20, 0x2d, 0x2b, 0x4a, 0x6a, 0x6f, 0x2d, 0x2d, 0x2b, 0x41, 0x43, 0x45, 0x2d,
             0x41, 0x2b, 0x49, 0x6d, 0x49, 0x44, 0x6b, 0x51, 0x2e,
             0x2b, 0x2d,
-            0x2b, 0x5a, 0x65, 0x56, 0x6e, 0x4c, 0x49, 0x71, 0x65
+            0x2b, 0x5a, 0x65, 0x56, 0x6e, 0x4c, 0x49, 0x71, 0x65, 0x2d
         };
         static const int32_t toUnicodeOffsetsR[] = {
             0, 1, 2, 3, 4, 5, 6, 7, 9, 13, 15,
@@ -1024,7 +1023,7 @@ static void TestNewConvertWithBufferSizes(int32_t outsize, int32_t insize )
             0, 1, 2, 3, 4, 5, 6, 7, 8, 8, 8, 8, 8, 9, 10, 10, 10, 10, 10,
             11, 12, 12, 12, 13, 13, 13, 13, 14,
             15, 15,
-            16, 16, 16, 17, 17, 17, 18, 18, 18
+            16, 16, 16, 17, 17, 17, 18, 18, 18, 18
         };
 
         testConvertFromU(unicode, sizeof(unicode)/U_SIZEOF_UCHAR, utf7, sizeof(utf7), "UTF-7", fromUnicodeOffsets,FALSE);
@@ -1545,7 +1544,6 @@ static void TestAmbiguous()
                 TestAmbiguousConverter(cnv);
             }
             /* END android-changed */
-            ucnv_close(cnv);
         } else {
             log_err("error: unable to open available converter \"%s\"\n", name);
             status=U_ZERO_ERROR;
@@ -3596,8 +3594,19 @@ TestRoundTrippingAllUTF(void){
         TestFullRoundtrip("UTF-7,version=1");
         log_verbose("Running exhaustive round trip test for IMAP-mailbox-name\n");
         TestFullRoundtrip("IMAP-mailbox-name");
-        log_verbose("Running exhaustive round trip test for GB18030\n");
-        TestFullRoundtrip("GB18030");
+        /*
+         *
+         * With the update to GB18030 2005 (Ticket #8274), this test will fail because the 2005 version of
+         * GB18030 contains mappings to actual Unicode codepoints (which were previously mapped to PUA).
+         * The old mappings remain as fallbacks.
+         * This test may be reintroduced at a later time.
+         *
+         * 110118 - mow
+         */
+         /*
+         log_verbose("Running exhaustive round trip test for GB18030\n");
+         TestFullRoundtrip("GB18030");
+         */
     }
 }
 
@@ -5553,4 +5562,50 @@ static void TestJB5275(){
         exp++;
     }
     ucnv_close(conv);
+}
+
+static void
+TestIsFixedWidth() {
+    UErrorCode status = U_ZERO_ERROR;
+    UConverter *cnv = NULL;
+    int32_t i;
+
+    const char *fixedWidth[] = {
+            "US-ASCII",
+            "UTF32",
+            "ibm-5478_P100-1995"
+    };
+
+    const char *notFixedWidth[] = {
+            "GB18030",
+            "UTF8",
+            "windows-949-2000",
+            "UTF16"
+    };
+
+    for (i = 0; i < LENGTHOF(fixedWidth); i++) {
+        cnv = ucnv_open(fixedWidth[i], &status);
+        if (cnv == NULL || U_FAILURE(status)) {
+            log_data_err("Error open converter: %s - %s \n", fixedWidth[i], u_errorName(status));
+            continue;
+        }
+
+        if (!ucnv_isFixedWidth(cnv, &status)) {
+            log_err("%s is a fixedWidth converter but returned FALSE.\n", fixedWidth[i]);
+        }
+        ucnv_close(cnv);
+    }
+
+    for (i = 0; i < LENGTHOF(notFixedWidth); i++) {
+        cnv = ucnv_open(notFixedWidth[i], &status);
+        if (cnv == NULL || U_FAILURE(status)) {
+            log_data_err("Error open converter: %s - %s \n", notFixedWidth[i], u_errorName(status));
+            continue;
+        }
+
+        if (ucnv_isFixedWidth(cnv, &status)) {
+            log_err("%s is NOT a fixedWidth converter but returned TRUE.\n", notFixedWidth[i]);
+        }
+        ucnv_close(cnv);
+    }
 }

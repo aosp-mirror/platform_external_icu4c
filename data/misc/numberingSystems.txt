@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2010 International Business Machines
+// * Copyright (C) 2011 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/numberingSystems.xml
@@ -166,6 +166,11 @@ numberingSystems:table(nofallback){
         taml{
             algorithmic:int{1}
             desc{"%tamil"}
+            radix:int{10}
+        }
+        tamldec{
+            algorithmic:int{0}
+            desc{"௦௧௨௩௪௫௬௭௮௯"}
             radix:int{10}
         }
         telu{

@@ -1,6 +1,6 @@
 /************************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2010, International Business Machines Corporation
+ * Copyright (c) 1997-2011, International Business Machines Corporation
  * and others. All Rights Reserved.
  ************************************************************************/
 
@@ -17,6 +17,7 @@
 #include "dbgutil.h"
 #include "unicode/udat.h"
 #include "unicode/ustring.h"
+#include "cstring.h"
 
 #define mkcstr(U) u_austrcpy(calloc(8, u_strlen(U) + 1), U)
 
@@ -227,6 +228,20 @@ void CalendarTest::runIndexedTest( int32_t index, UBool exec, const char* &name,
           if(exec) {
             logln("Test1624---"); logln("");
             Test1624();
+          }
+          break;
+        case 25:
+          name = "TestTimeStamp";
+          if(exec) {
+            logln("TestTimeStamp---"); logln("");
+            TestTimeStamp();
+          }
+          break;
+        case 26:
+          name = "TestISO8601";
+          if(exec) {
+            logln("TestISO8601---"); logln("");
+            TestISO8601();
           }
           break;
         default: name = ""; break;
@@ -1300,7 +1315,7 @@ CalendarTest::TestEpochStartFields()
         if (U_FAILURE(status)) { errln("Calendar::setTime failed"); return; }
         for (int32_t i = 0; i < UCAL_ZONE_OFFSET;++i) {
             if (c->get((UCalendarDateFields)i, status) != EPOCH_FIELDS[i])
-                errln(UnicodeString("Expected field ") + i + " to have value " + EPOCH_FIELDS[i] +
+                dataerrln(UnicodeString("Expected field ") + i + " to have value " + EPOCH_FIELDS[i] +
                       "; saw " + c->get((UCalendarDateFields)i, status) + " instead");
             if (U_FAILURE(status)) { errln("Calendar::get failed"); return; }
         }
@@ -1323,7 +1338,7 @@ CalendarTest::TestEpochStartFields()
 }
  
 int32_t CalendarTest::EPOCH_FIELDS[] = {
-    1, 1970, 0, 53, 0, 1, 1, 5, 1, 0, 0, 0, 0, 0, 0, - 28800000, 0
+    1, 1970, 0, 1, 1, 1, 1, 5, 1, 0, 0, 0, 0, 0, 0, - 28800000, 0
 };
  
 // -------------------------------------
@@ -1368,7 +1383,7 @@ CalendarTest::TestDOW_LOCALandYEAR_WOY()
     sdf->applyLocalizedPattern(UnicodeString("JJJJ'-W'ww-ee"), status);
     if (U_FAILURE(status)) { errln("Couldn't apply localized pattern"); return; }
 
-	cal->clear();
+    cal->clear();
     cal->set(1997, UCAL_DECEMBER, 25);
     doYEAR_WOYLoop(cal, sdf, times, status);
     //loop_addroll(cal, /*sdf,*/ times, UCAL_YEAR_WOY, UCAL_YEAR,  status);
@@ -1954,20 +1969,20 @@ void CalendarTest::TestJD()
 // make sure the ctestfw utilities are in sync with the Calendar
 void CalendarTest::TestDebug()
 {
-	for(int32_t  t=0;t<=UDBG_ENUM_COUNT;t++) {
-		int32_t count = udbg_enumCount((UDebugEnumType)t);
-		if(count == -1) {
-			logln("enumCount(%d) returned -1", count);
-			continue;
-		}
-	    for(int32_t i=0;i<=count;i++) {
-	  	  if(t<=UDBG_HIGHEST_CONTIGUOUS_ENUM && i<count) {
-	  		  if( i!=udbg_enumArrayValue((UDebugEnumType)t, i)) {
-	  			  errln("FAIL: udbg_enumArrayValue(%d,%d) returned %d, expected %d", t, i, udbg_enumArrayValue((UDebugEnumType)t,i), i);
-	  		  }
-	  	  } else {
-	  		  logln("Testing count+1:");
-	  	  }
+    for(int32_t  t=0;t<=UDBG_ENUM_COUNT;t++) {
+        int32_t count = udbg_enumCount((UDebugEnumType)t);
+        if(count == -1) {
+            logln("enumCount(%d) returned -1", count);
+            continue;
+        }
+        for(int32_t i=0;i<=count;i++) {
+            if(t<=UDBG_HIGHEST_CONTIGUOUS_ENUM && i<count) {
+                if( i!=udbg_enumArrayValue((UDebugEnumType)t, i)) {
+                    errln("FAIL: udbg_enumArrayValue(%d,%d) returned %d, expected %d", t, i, udbg_enumArrayValue((UDebugEnumType)t,i), i);
+                }
+            } else {
+                logln("Testing count+1:");
+            }
                   const char *name = udbg_enumName((UDebugEnumType)t,i);
                   if(name==NULL) {
                           if(i==count || t>UDBG_HIGHEST_CONTIGUOUS_ENUM  ) {
@@ -1977,16 +1992,16 @@ void CalendarTest::TestDebug()
                           }
                           name = "(null)";
                   }
-		  logln("udbg_enumArrayValue(%d,%d) = %s, returned %d", t, i, 
-				  	name, udbg_enumArrayValue((UDebugEnumType)t,i));
-	  	  logln("udbg_enumString = " + udbg_enumString((UDebugEnumType)t,i));
-	    }
-	    if(udbg_enumExpectedCount((UDebugEnumType)t) != count && t<=UDBG_HIGHEST_CONTIGUOUS_ENUM) {
-	  	  errln("FAIL: udbg_enumExpectedCount(%d): %d, != UCAL_FIELD_COUNT=%d ", t, udbg_enumExpectedCount((UDebugEnumType)t), count);
-	    } else {
-	  	  logln("udbg_ucal_fieldCount: %d, UCAL_FIELD_COUNT=udbg_enumCount %d ", udbg_enumExpectedCount((UDebugEnumType)t), count);
-	    }
-	}
+          logln("udbg_enumArrayValue(%d,%d) = %s, returned %d", t, i, 
+                      name, udbg_enumArrayValue((UDebugEnumType)t,i));
+            logln("udbg_enumString = " + udbg_enumString((UDebugEnumType)t,i));
+        }
+        if(udbg_enumExpectedCount((UDebugEnumType)t) != count && t<=UDBG_HIGHEST_CONTIGUOUS_ENUM) {
+            errln("FAIL: udbg_enumExpectedCount(%d): %d, != UCAL_FIELD_COUNT=%d ", t, udbg_enumExpectedCount((UDebugEnumType)t), count);
+        } else {
+            logln("udbg_ucal_fieldCount: %d, UCAL_FIELD_COUNT=udbg_enumCount %d ", udbg_enumExpectedCount((UDebugEnumType)t), count);
+        }
+    }
 }
 
 
@@ -2156,6 +2171,90 @@ void CalendarTest::Test1624() {
         }
     }
     return;
+}
+
+void CalendarTest::TestTimeStamp() {
+    UErrorCode status = U_ZERO_ERROR;
+    UDate start = 0.0, time;
+    Calendar *cal;
+
+    // Create a new Gregorian Calendar.
+    cal = Calendar::createInstance("en_US@calender=gregorian", status);
+    if (U_FAILURE(status)) {
+        dataerrln("Error creating Gregorian calendar.");
+        return;
+    }
+
+    for (int i = 0; i < 20000; i++) {
+        // Set the Gregorian Calendar to a specific date for testing.
+        cal->set(2009, UCAL_JULY, 3, 0, 49, 46);
+
+        time = cal->getTime(status);
+        if (U_FAILURE(status)) {
+            errln("Error calling getTime()");
+            break;
+        }
+
+        if (i == 0) {
+            start = time;
+        } else {
+            if (start != time) {
+                errln("start and time not equal.");
+                break;
+            }
+        }
+    }
+
+    delete cal;
+}
+
+void CalendarTest::TestISO8601() {
+    const char* TEST_LOCALES[] = {
+        "en_US@calendar=iso8601",
+        "en_US@calendar=Iso8601",
+        "th_TH@calendar=iso8601",
+        "ar_EG@calendar=iso8601",
+        NULL
+    };
+
+    int32_t TEST_DATA[][3] = {
+        {2008, 1, 2008},
+        {2009, 1, 2009},
+        {2010, 53, 2009},
+        {2011, 52, 2010},
+        {2012, 52, 2011},
+        {2013, 1, 2013},
+        {2014, 1, 2014},
+        {0, 0, 0},
+    };
+
+    for (int i = 0; TEST_LOCALES[i] != NULL; i++) {
+        UErrorCode status = U_ZERO_ERROR;
+        Calendar *cal = Calendar::createInstance(TEST_LOCALES[i], status);
+        if (U_FAILURE(status)) {
+            errln("Error: Failed to create a calendar for locale: %s", TEST_LOCALES[i]);
+            continue;
+        }
+        if (uprv_strcmp(cal->getType(), "gregorian") != 0) {
+            errln("Error: Gregorian calendar is not used for locale: %s", TEST_LOCALES[i]);
+            continue;
+        }
+        for (int j = 0; TEST_DATA[j][0] != 0; j++) {
+            cal->set(TEST_DATA[j][0], UCAL_JANUARY, 1);
+            int32_t weekNum = cal->get(UCAL_WEEK_OF_YEAR, status);
+            int32_t weekYear = cal->get(UCAL_YEAR_WOY, status);
+            if (U_FAILURE(status)) {
+                errln("Error: Failed to get week of year");
+                break;
+            }
+            if (weekNum != TEST_DATA[j][1] || weekYear != TEST_DATA[j][2]) {
+                errln("Error: Incorrect week of year on January 1st, %d for locale %s: Returned [weekNum=%d, weekYear=%d], Expected [weekNum=%d, weekYear=%d]",
+                    TEST_DATA[j][0], TEST_LOCALES[i], weekNum, weekYear, TEST_DATA[j][1], TEST_DATA[j][2]);
+            }
+        }
+        delete cal;
+    }
+
 }
 
 #endif /* #if !UCONFIG_NO_FORMATTING */

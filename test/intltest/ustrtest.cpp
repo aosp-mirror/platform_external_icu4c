@@ -1,10 +1,11 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2010, International Business Machines Corporation and
+ * Copyright (c) 1997-2011, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
 #include "ustrtest.h"
+#include "unicode/appendable.h"
 #include "unicode/std_string.h"
 #include "unicode/unistr.h"
 #include "unicode/uchar.h"
@@ -62,6 +63,10 @@ void UnicodeStringTest::runIndexedTest( int32_t index, UBool exec, const char* &
         case 17: name = "TestUTF32"; if (exec) TestUTF32(); break;
         case 18: name = "TestUTF8"; if (exec) TestUTF8(); break;
         case 19: name = "TestReadOnlyAlias"; if (exec) TestReadOnlyAlias(); break;
+        case 20: name = "TestAppendable"; if (exec) TestAppendable(); break;
+        case 21: name = "TestUnicodeStringImplementsAppendable"; if (exec) TestUnicodeStringImplementsAppendable(); break;
+        case 22: name = "TestSizeofUnicodeString"; if (exec) TestSizeofUnicodeString(); break;
+        case 23: name = "TestStartsWithAndEndsWithNulTerminated"; if (exec) TestStartsWithAndEndsWithNulTerminated(); break;
 
         default: name = ""; break; //needed to end loop
     }
@@ -964,6 +969,17 @@ UnicodeStringTest::TestPrefixAndSuffix()
     if (test4.startsWith(test3)) {
         errln("startsWith(test3) failed: \"" + test3 + "\" shouldn't be a prefix of \"" + test4 + "\".");
     }
+}
+
+void
+UnicodeStringTest::TestStartsWithAndEndsWithNulTerminated() {
+    UnicodeString test("abcde");
+    const UChar ab[] = { 0x61, 0x62, 0 };
+    const UChar de[] = { 0x64, 0x65, 0 };
+    assertTrue("abcde.startsWith(ab, -1)", test.startsWith(ab, -1));
+    assertTrue("abcde.startsWith(ab, 0, -1)", test.startsWith(ab, 0, -1));
+    assertTrue("abcde.endsWith(de, -1)", test.endsWith(de, -1));
+    assertTrue("abcde.endsWith(de, 0, -1)", test.endsWith(de, 0, -1));
 }
 
 void
@@ -2011,5 +2027,85 @@ UnicodeStringTest::TestReadOnlyAlias() {
     temp.fastCopyFrom(bogusString.tempSubStringBetween(8, 18));
     if(!temp.isBogus()) {
         errln("UnicodeString.setToBogus().tempSubStringBetween(8, 18) failed");
+    }
+}
+
+void
+UnicodeStringTest::doTestAppendable(UnicodeString &dest, Appendable &app) {
+    static const UChar cde[3]={ 0x63, 0x64, 0x65 };
+    static const UChar fg[3]={ 0x66, 0x67, 0 };
+    if(!app.reserveAppendCapacity(12)) {
+        errln("Appendable.reserve(12) failed");
+    }
+    app.appendCodeUnit(0x61);
+    app.appendCodePoint(0x62);
+    app.appendCodePoint(0x50000);
+    app.appendString(cde, 3);
+    app.appendString(fg, -1);
+    UChar scratch[3];
+    int32_t capacity=-1;
+    UChar *buffer=app.getAppendBuffer(3, 3, scratch, 3, &capacity);
+    if(capacity<3) {
+        errln("Appendable.getAppendBuffer(min=3) returned capacity=%d<3", (int)capacity);
+        return;
+    }
+    static const UChar hij[3]={ 0x68, 0x69, 0x6a };
+    u_memcpy(buffer, hij, 3);
+    app.appendString(buffer, 3);
+    if(dest!=UNICODE_STRING_SIMPLE("ab\\U00050000cdefghij").unescape()) {
+        errln("Appendable.append(...) failed");
+    }
+    buffer=app.getAppendBuffer(0, 3, scratch, 3, &capacity);
+    if(buffer!=NULL || capacity!=0) {
+        errln("Appendable.getAppendBuffer(min=0) failed");
+    }
+    capacity=1;
+    buffer=app.getAppendBuffer(3, 3, scratch, 2, &capacity);
+    if(buffer!=NULL || capacity!=0) {
+        errln("Appendable.getAppendBuffer(scratch<min) failed");
+    }
+}
+
+class SimpleAppendable : public Appendable {
+public:
+    explicit SimpleAppendable(UnicodeString &dest) : str(dest) {}
+    virtual UBool appendCodeUnit(UChar c) { str.append(c); return TRUE; }
+    SimpleAppendable &reset() { str.remove(); return *this; }
+private:
+    UnicodeString &str;
+};
+
+void
+UnicodeStringTest::TestAppendable() {
+    UnicodeString dest;
+    SimpleAppendable app(dest);
+    doTestAppendable(dest, app);
+}
+
+void
+UnicodeStringTest::TestUnicodeStringImplementsAppendable() {
+    UnicodeString dest;
+    UnicodeStringAppendable app(dest);
+    doTestAppendable(dest, app);
+}
+
+void
+UnicodeStringTest::TestSizeofUnicodeString() {
+    // See the comments in unistr.h near the declaration of UnicodeString's fields.
+    size_t sizeofUniStr=sizeof(UnicodeString);
+    size_t expected;
+    switch(sizeof(void *)) {
+    case 4:
+        expected=32;
+        break;
+    case 8:
+        expected=40;
+        break;
+    default:
+        logln("This platform has neither 32-bit nor 64-bit pointers.");
+        return;
+    }
+    if(expected!=sizeofUniStr) {
+        errln("sizeof(UnicodeString)=%d, expected %d", (int)sizeofUniStr, (int)expected);
     }
 }

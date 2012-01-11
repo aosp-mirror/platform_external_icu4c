@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2010 International Business Machines
+// * Copyright (C) 2011 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/shi_Tfng.xml
@@ -10,7 +10,7 @@
  *  ICU <specials> source: <path>/xml/main/shi_Tfng.xml
  */
 shi_Tfng{
-    %%ParentIsRoot:int{1}
+    %%Parent{"root"}
     ExemplarCharacters{"[ⴰ ⴱ ⴳ {ⴳⵯ} ⴷ ⴹ ⴻ ⴼ ⴽ {ⴽⵯ} ⵀ ⵃ ⵄ ⵅ ⵇ ⵉ ⵊ ⵍ ⵎ ⵏ ⵓ ⵔ ⵕ ⵖ ⵙ ⵚ ⵛ ⵜ ⵟ ⵡ ⵢ ⵣ ⵥ]"}
     ExemplarCharactersIndex{"[ⴰ ⴱ ⴳ ⴷ ⴹ ⴻ ⴼ ⴽ ⵀ ⵃ ⵄ ⵅ ⵇ ⵉ ⵊ ⵍ ⵎ ⵏ ⵓ ⵔ ⵕ ⵖ ⵙ ⵚ ⵛ ⵜ ⵟ ⵡ ⵢ ⵣ ⵥ]"}
     LocaleScript{
@@ -27,7 +27,7 @@ shi_Tfng{
             }
         }
     }
-    Version{"2.0.46.25"}
+    Version{"2.0.57.98"}
     calendar{
         gregorian{
             AmPmMarkers{
@@ -60,7 +60,6 @@ shi_Tfng{
                 MMd{"d/MM"}
                 MMdd{"dd/MM"}
                 Md{"d/M"}
-                Med{"EEE d/M"}
                 ms{"m:ss"}
                 y{"y"}
                 yM{"M/y"}

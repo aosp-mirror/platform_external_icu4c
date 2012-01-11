@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 2002-2009, International Business Machines Corporation and
+ * Copyright (c) 2002-2011, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -203,6 +203,12 @@ void UPerfTest::init(UOption addOptions[], int32_t addOptionsCount,
 }
 
 ULine* UPerfTest::getLines(UErrorCode& status){
+    if (U_FAILURE(status)) {
+        return NULL;
+    }
+    if (lines != NULL) {
+        return lines;  // don't do it again
+    }
     lines     = new ULine[MAXLINES];
     int maxLines = MAXLINES;
     numLines=0;
@@ -484,8 +490,7 @@ void UPerfTest::usage( void )
         this->runIndexedTest( index, FALSE, name );
         if (!name)
             break;
-        fprintf(stdout,name);
-        fprintf(stdout,"\n");
+        fprintf(stdout, "%s\n", name);
         index++;
     }while (name && (name[0] != 0));
     verbose = save_verbose;

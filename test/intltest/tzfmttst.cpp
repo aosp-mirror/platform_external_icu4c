@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 2007-2010, International Business Machines Corporation and    *
+* Copyright (C) 2007-2011, International Business Machines Corporation and    *
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 */
@@ -102,16 +102,16 @@ TimeZoneFormatTest::TestTimeZoneRoundTrip(void) {
     }
 
     StringEnumeration *tzids = TimeZone::createEnumeration();
-    if (U_FAILURE(status)) {
-        errln("tzids->count failed");
-        return;
-    }
-
     int32_t inRaw, inDst;
     int32_t outRaw, outDst;
 
     // Run the roundtrip test
     for (int32_t locidx = 0; locidx < nLocales; locidx++) {
+        UnicodeString localGMTString;
+        SimpleDateFormat gmtFmt(UnicodeString("ZZZZ"), LOCALES[locidx], status);
+        gmtFmt.setTimeZone(*TimeZone::getGMT());
+        gmtFmt.format(0.0, localGMTString);
+
         for (int32_t patidx = 0; patidx < NUM_PATTERNS; patidx++) {
 
             SimpleDateFormat *sdf = new SimpleDateFormat((UnicodeString)PATTERNS[patidx], LOCALES[locidx], status);
@@ -208,7 +208,7 @@ TimeZoneFormatTest::TestTimeZoneRoundTrip(void) {
                                 numDigits++;
                             }
                         }
-                        if (numDigits >= 3) {
+                        if (tzstr == localGMTString || numDigits >= 3) {
                             // Localized GMT or RFC: total offset (raw + dst) must be preserved.
                             int32_t inOffset = inRaw + inDst;
                             int32_t outOffset = outRaw + outDst;
@@ -274,9 +274,17 @@ public:
         UBool expectedRoundTrip[4];
         int32_t testLen = 0;
 
-        StringEnumeration *tzids = TimeZone::createEnumeration();
+        StringEnumeration *tzids = TimeZone::createTimeZoneIDEnumeration(UCAL_ZONE_TYPE_CANONICAL, NULL, NULL, status);
         if (U_FAILURE(status)) {
-            log.errln("tzids->count failed");
+            if (status == U_MISSING_RESOURCE_ERROR) {
+                /* This error is generally caused by data not being present. However, an infinite loop will occur
+                 * because the thread thinks that the test data is never done so we should treat the data as done.
+                 */
+                log.dataerrln("TimeZone::createTimeZoneIDEnumeration failed - %s", u_errorName(status));
+                data.numDone = data.nLocales;
+            } else {
+                log.errln("TimeZone::createTimeZoneIDEnumeration failed: %s", u_errorName(status));
+            }
             return;
         }
 
@@ -330,17 +338,6 @@ public:
                 timer = Calendar::getNow();
 
                 while ((tzid = tzids->snext(status))) {
-                    UnicodeString canonical;
-                    TimeZone::getCanonicalID(*tzid, canonical, status);
-                    if (U_FAILURE(status)) {
-                        // Unknown ID - we should not get here
-                        status = U_ZERO_ERROR;
-                        continue;
-                    }
-                    if (*tzid != canonical) {
-                        // Skip aliases
-                        continue;
-                    }
                     BasicTimeZone *tz = (BasicTimeZone*) TimeZone::createTimeZone(*tzid);
                     sdf->setTimeZone(*tz);
 
