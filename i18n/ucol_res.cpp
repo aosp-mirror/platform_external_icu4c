@@ -476,6 +476,11 @@ ucol_openRulesForImport( const UChar        *rules,
         result->freeImageOnClose = FALSE;
     }
 
+    // BEGIN android-added
+    // Apply the fixes for ICU ticket#9095
+    ucol_setReorderCodesFromParser(result, &src, status);
+    // END android-added
+
     if(U_SUCCESS(*status)) {
         UChar *newRules;
         result->dataVersion[0] = UCOL_BUILDER_VERSION;

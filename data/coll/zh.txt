@@ -15,6 +15,7 @@ zh{
         default{"pinyin"}
         pinyin{
             Sequence{
+                " [reorder Hani]"
                 "&[before 2]a<<ā<<<Ā<<á<<<Á<<ǎ<<<Ǎ<<à<<<À"
                 "&[before 2]e<<ē<<<Ē<<é<<<É<<ě<<<Ě<<è<<<È"
                 "&e<<ê̄<<<Ê̄<<ế<<<Ế<<ê̌<<<Ê̌<<ề<<<Ề"
@@ -803,6 +804,7 @@ zh{
         }
         stroke{
             Sequence{
+                " [reorder Hani Bopo]"
                 "&[before 2]a<<ā<<<Ā<<á<<<Á<<ǎ<<<Ǎ<<à<<<À"
                 "&[before 2]e<<ē<<<Ē<<é<<<É<<ě<<<Ě<<è<<<È"
                 "&e<<ê̄<<<Ê̄<<ế<<<Ế<<ê̌<<<Ê̌<<ề<<<Ề"

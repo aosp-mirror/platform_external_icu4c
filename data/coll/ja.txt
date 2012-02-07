@@ -14,6 +14,7 @@ ja{
     collations{
         standard{
             Sequence{
+                " [reorder Kana Hani]"
                 " [strength 3 ] [hiraganaQ on ]"
                 "&ヽ=ゝ"
                 "&[before 3]ァ<<<ァ|ー=ｧ|ー=ぁ|ー=ア|ー=ｱ|ー=あ|ー=カ|ー=ｶ|ー=か|ー=ゕ|ー=ガ|ー=が|ー=サ|ー=ｻ"
@@ -421,6 +422,7 @@ ja{
         }
         phonebook{
             Sequence{
+                " [reorder Kana Hani]"
                 " [strength 3 ] [hiraganaQ on ]"
                 "&ヽ=ゝ"
                 "&[before 3]ァ<<<ァ|ー=ｧ|ー=ぁ|ー=ア|ー=ｱ|ー=あ|ー=カ|ー=ｶ|ー=か|ー=ゕ|ー=ガ|ー=が|ー=サ|ー=ｻ"
