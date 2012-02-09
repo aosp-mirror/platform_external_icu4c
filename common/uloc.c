@@ -1797,17 +1797,23 @@ _canonicalize(const char* localeID,
                 int32_t variantLen = _deleteVariant(variant, uprv_min(variantSize, (nameCapacity-len)), variantToCompare, n);
                 len -= variantLen;
                 if (variantLen > 0) {
-                    if (name[len-1] == '_') { /* delete trailing '_' */
+                    /* BEGIN android-changed
+                       Apply fixes for ICU ticket8984. */
+                    if (len > 0 && name[len-1] == '_') { /* delete trailing '_' */
                         --len;
                     }
+                    /* END android-changed */
                     addKeyword = VARIANT_MAP[j].keyword;
                     addValue = VARIANT_MAP[j].value;
                     break;
                 }
             }
-            if (name[len-1] == '_') { /* delete trailing '_' */
+            /* BEGIN android-changed
+               Apply fixes for ICU ticket8984. */
+            if (len > 0 && len <= nameCapacity && name[len-1] == '_') { /* delete trailing '_' */
                 --len;
             }
+            /* END android-changed */
         }
 
         /* Look up the ID in the canonicalization map */
