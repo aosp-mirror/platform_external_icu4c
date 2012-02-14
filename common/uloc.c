@@ -713,9 +713,12 @@ _getKeywords(const char *localeID,
                 pos++;
             } else {
                 i = (int32_t)uprv_strlen(equalSign);
-                while(equalSign[i-1] == ' ') {
+                /* BEGIN android-changed
+                   For http://b/issue?id=6008774 : out-of-boundary memory access */
+                while(i && equalSign[i-1] == ' ') {
                     i--;
                 }
+                /* END android-changed */
                 keywordList[numKeywords].valueLen = i;
             }
             /* If this is a duplicate keyword, then ignore it */
