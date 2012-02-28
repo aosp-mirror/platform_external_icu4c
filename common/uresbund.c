@@ -319,7 +319,10 @@ static UResourceDataEntry *init_entry(const char *localeID, const char *path, UE
     UResourceDataEntry *r = NULL;
     UResourceDataEntry find;
     /*int32_t hashValue;*/
-    char name[96];
+    /* BEGIN android-changed
+       Security bug : http://b/issue?id=6061535 */
+    char name[100];
+    /* END android-changed */
     char aliasName[100] = { 0 };
     int32_t aliasLen = 0;
     /*UBool isAlias = FALSE;*/
@@ -528,8 +531,11 @@ static UResourceDataEntry *entryOpen(const char* path, const char* localeID, UEr
     UBool hasChopped = TRUE;
     UBool usingUSRData = U_USE_USRDATA && ( path == NULL || uprv_strncmp(path,U_ICUDATA_NAME,8) == 0);
 
-    char name[96];
-    char usrDataPath[96];
+    /* BEGIN android-changed
+       Security bug : http://b/issue?id=6061535  */
+    char name[100];
+    char usrDataPath[100];
+    /* END android-changed */
 
     initCache(status);
 
