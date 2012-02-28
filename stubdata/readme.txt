@@ -63,7 +63,7 @@ Locale Resource Files:
   cd $ANDROID_BUILD_TOP/external/icu4c/stubdata
   cp icudt 48l-all.dat icudt 48l.dat
   mkdir tempDir
-  $ANDROID_BUILD_TOP/prebuilt/linux-x86/icu-4.8/icupkg  icudt 48l.dat -x "*" -d tempDir
+  $ANDROID_BUILD_TOP/prebuilt/linux-x86_64/icu-4.8/icupkg  icudt 48l.dat -x "*" -d tempDir
 
 Run ICU tests:
 ICU tests are not part of Android build. If you change the ICU code or data,
