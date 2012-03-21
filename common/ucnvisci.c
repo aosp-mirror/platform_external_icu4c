@@ -27,6 +27,8 @@
 #include "unicode/uset.h"
 #include "cstring.h"
 
+#include <pthread.h>
+
 #define UCNV_OPTIONS_VERSION_MASK 0xf
 #define NUKTA               0x093c
 #define HALANT              0x094d
@@ -65,6 +67,9 @@
 
 static USet* PNJ_BINDI_TIPPI_SET= NULL;
 static USet* PNJ_CONSONANT_SET= NULL;
+
+static int use_counter;
+static pthread_mutex_t use_counter_lock = PTHREAD_MUTEX_INITIALIZER;
 
 typedef enum {
     DEVANAGARI =0,
@@ -177,7 +182,10 @@ static void _ISCIIOpen(UConverter *cnv, UConverterLoadArgs *pArgs, UErrorCode *e
     }
 
     /* Ensure that the sets used in special handling of certain Gurmukhi characters are initialized. */
-    initializeSets();
+    pthread_mutex_lock(&use_counter_lock);
+    if (use_counter++ == 0)
+        initializeSets();
+    pthread_mutex_unlock(&use_counter_lock);
     
     cnv->extraInfo = uprv_malloc(sizeof(UConverterDataISCII));
 
@@ -225,14 +233,19 @@ static void _ISCIIClose(UConverter *cnv) {
         }
         cnv->extraInfo=NULL;
     }
-    if (PNJ_CONSONANT_SET != NULL) {
-        uset_close(PNJ_CONSONANT_SET);
-        PNJ_CONSONANT_SET = NULL;
+
+    pthread_mutex_lock(&use_counter_lock);
+    if (--use_counter == 0) {
+        if (PNJ_CONSONANT_SET != NULL) {
+            uset_close(PNJ_CONSONANT_SET);
+            PNJ_CONSONANT_SET = NULL;
+        }
+        if (PNJ_BINDI_TIPPI_SET != NULL) {
+            uset_close(PNJ_BINDI_TIPPI_SET);
+            PNJ_BINDI_TIPPI_SET = NULL;
+        }
     }
-    if (PNJ_BINDI_TIPPI_SET != NULL) {
-        uset_close(PNJ_BINDI_TIPPI_SET);
-        PNJ_BINDI_TIPPI_SET = NULL;
-    }
+    pthread_mutex_unlock(&use_counter_lock);
 }
 
 static const char* _ISCIIgetName(const UConverter* cnv) {
