@@ -712,7 +712,7 @@ uspoof_getSkeleton(const USpoofChecker *sc,
 
 
 
-U_CAPI UnicodeString &  U_EXPORT2
+UnicodeString &  U_EXPORT2
 uspoof_getSkeletonUnicodeString(const USpoofChecker *sc,
                                 uint32_t type,
                                 const UnicodeString &s,

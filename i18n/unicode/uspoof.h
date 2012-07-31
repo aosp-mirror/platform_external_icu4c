@@ -849,7 +849,7 @@ uspoof_getSkeletonUTF8(const USpoofChecker *sc,
   *                
   * @stable ICU 4.2
   */   
-U_STABLE UnicodeString & U_EXPORT2
+UnicodeString & U_EXPORT2
 uspoof_getSkeletonUnicodeString(const USpoofChecker *sc,
                                 uint32_t type,
                                 const UnicodeString &s,
