@@ -27,6 +27,8 @@ coll/invuca.icu
 coll/ucadata.icu
 coll/root.res
 coll/af.res
+coll/af_NA.res
+coll/af_ZA.res
 coll/ar.res
 coll/ar_AE.res
 coll/ar_BH.res
@@ -46,8 +48,12 @@ coll/ar_SY.res
 coll/ar_TN.res
 coll/ar_YE.res
 coll/be.res
+coll/be_BY.res
 coll/bg.res
 coll/bg_BG.res
+coll/bn.res
+coll/bn_BD.res
+coll/bn_IN.res
 coll/ca.res
 coll/ca_ES.res
 coll/cs.res
@@ -113,6 +119,7 @@ coll/es_UY.res
 coll/es_VE.res
 coll/es__TRADITIONAL.res
 coll/et.res
+coll/et_EE.res
 coll/fa.res
 coll/fa_AF.res
 coll/fa_IR.res
@@ -139,6 +146,8 @@ coll/id.res
 coll/id_ID.res
 coll/in.res
 coll/in_ID.res
+coll/is.res
+coll/is_IS.res
 coll/it.res
 coll/it_CH.res
 coll/it_IT.res
@@ -152,7 +161,11 @@ coll/lt.res
 coll/lt_LT.res
 coll/lv.res
 coll/lv_LV.res
+coll/mr.res
+coll/mr_IN.res
 coll/ms.res
+coll/ms_BN.res
+coll/ms_MY.res
 coll/nb.res
 coll/nb_NO.res
 coll/nl.res
@@ -161,6 +174,7 @@ coll/nl_NL.res
 coll/pl.res
 coll/pl_PL.res
 coll/ps.res
+coll/ps_AF.res
 coll/pt.res
 coll/pt_BR.res
 coll/pt_PT.res
@@ -189,6 +203,11 @@ coll/sv.res
 coll/sv_FI.res
 coll/sv_SE.res
 coll/sw.res
+coll/sw_KE.res
+coll/sw_TZ.res
+coll/ta.res
+coll/ta_IN.res
+coll/ta_LK.res
 coll/th.res
 coll/th_TH.res
 coll/tr.res
@@ -214,16 +233,19 @@ coll/zh_TW.res
 coll/zh_TW_STROKE.res
 coll/zh__PINYIN.res
 coll/zu.res
+coll/zu_ZA.res
 
 curr/res_index.res
 curr/pool.res
 curr/supplementalData.res
 curr/root.res
 curr/af.res
+curr/af_NA.res
 curr/am.res
 curr/ar.res
 curr/be.res
 curr/bg.res
+curr/bn.res
 curr/ca.res
 curr/cs.res
 curr/da.res
@@ -287,13 +309,16 @@ curr/in.res
 curr/in_ID.res
 curr/iw.res
 curr/iw_IL.res
+curr/is.res
 curr/it.res
 curr/ja.res
 curr/ja_JP.res
 curr/ko.res
 curr/lt.res
 curr/lv.res
+curr/mr.res
 curr/ms.res
+curr/ms_BN.res
 curr/nb.res
 curr/nb_NO.res
 curr/nl.res
@@ -325,6 +350,8 @@ curr/sr_RS.res
 curr/sr_YU.res
 curr/sv.res
 curr/sw.res
+curr/ta.res
+curr/ta_LK.res
 curr/th.res
 curr/th_TH.res
 curr/tr.res
@@ -354,6 +381,8 @@ lang/am.res
 lang/ar.res
 lang/be.res
 lang/bg.res
+lang/bn.res
+lang/bn_IN.res
 lang/ca.res
 lang/cs.res
 lang/da.res
@@ -382,6 +411,7 @@ lang/id.res
 lang/id_ID.res
 lang/in.res
 lang/in_ID.res
+lang/is.res
 lang/it.res
 lang/iw.res
 lang/iw_IL.res
@@ -390,6 +420,7 @@ lang/ja_JP.res
 lang/ko.res
 lang/lt.res
 lang/lv.res
+lang/mr.res
 lang/ms.res
 lang/nb.res
 lang/nb_NO.res
@@ -425,6 +456,7 @@ lang/sr_YU.res
 lang/sv.res
 lang/sv_FI.res
 lang/sw.res
+lang/ta.res
 lang/th.res
 lang/th_TH.res
 lang/tr.res
@@ -454,6 +486,7 @@ region/am.res
 region/ar.res
 region/be.res
 region/bg.res
+region/bn.res
 region/ca.res
 region/cs.res
 region/da.res
@@ -481,6 +514,7 @@ region/id.res
 region/id_ID.res
 region/in.res
 region/in_ID.res
+region/is.res
 region/it.res
 region/iw.res
 region/iw_IL.res
@@ -489,6 +523,7 @@ region/ja_JP.res
 region/ko.res
 region/lt.res
 region/lv.res
+region/mr.res
 region/ms.res
 region/nb.res
 region/nb_NO.res
@@ -522,6 +557,7 @@ region/sr_RS.res
 region/sr_YU.res
 region/sv.res
 region/sw.res
+region/ta.res
 region/th.res
 region/th_TH.res
 region/tr.res
@@ -551,6 +587,7 @@ zone/am.res
 zone/ar.res
 zone/be.res
 zone/bg.res
+zone/bn.res
 zone/ca.res
 zone/cs.res
 zone/da.res
@@ -586,6 +623,7 @@ zone/id.res
 zone/id_ID.res
 zone/in.res
 zone/in_ID.res
+zone/is.res
 zone/it.res
 zone/iw.res
 zone/iw_IL.res
@@ -594,6 +632,7 @@ zone/ja_JP.res
 zone/ko.res
 zone/lt.res
 zone/lv.res
+zone/mr.res
 zone/ms.res
 zone/nb.res
 zone/nb_NO.res
@@ -626,6 +665,7 @@ zone/sr_RS.res
 zone/sr_YU.res
 zone/sv.res
 zone/sw.res
+zone/ta.res
 zone/th.res
 zone/th_TH.res
 zone/tr.res
@@ -651,7 +691,10 @@ res_index.res
 root.res
 pool.res
 af.res
+af_NA.res
+af_ZA.res
 am.res
+am_ET.res
 ar.res
 ar_AE.res
 ar_BH.res
@@ -671,8 +714,12 @@ ar_SY.res
 ar_TN.res
 ar_YE.res
 be.res
+be_BY.res
 bg.res
 bg_BG.res
+bn.res
+bn_BD.res
+bn_IN.res
 ca.res
 ca_ES.res
 cs.res
@@ -735,6 +782,7 @@ es_US.res
 es_UY.res
 es_VE.res
 et.res
+et_EE.res
 fa.res
 fa_AF.res
 fa_IR.res
@@ -761,6 +809,8 @@ id.res
 id_ID.res
 in.res
 in_ID.res
+is.res
+is_IS.res
 it.res
 it_CH.res
 it_IT.res
@@ -774,7 +824,11 @@ lt.res
 lt_LT.res
 lv.res
 lv_LV.res
+mr.res
+mr_IN.res
 ms.res
+ms_BN.res
+ms_MY.res
 nb.res
 nb_NO.res
 nl.res
@@ -783,10 +837,12 @@ nl_NL.res
 pl.res
 pl_PL.res
 ps.res
+ps_AF.res
 pt.res
 pt_BR.res
 pt_PT.res
 rm.res
+rm_CH.res
 ro.res
 ro_RO.res
 ru.res
@@ -818,6 +874,11 @@ sv.res
 sv_FI.res
 sv_SE.res
 sw.res
+sw_KE.res
+sw_TZ.res
+ta.res
+ta_IN.res
+ta_LK.res
 th.res
 th_TH.res
 tr.res
@@ -841,6 +902,7 @@ zh_MO.res
 zh_SG.res
 zh_TW.res
 zu.res
+zu_ZA.res
 
 gsm-03.38-2000.cnv
 ibm-1089_P100-1995.cnv
@@ -907,5 +969,3 @@ keyTypeData.res
 uts46.nrm
 likelySubtags.res
 metadata.res
-
-
