@@ -174,7 +174,6 @@ coll/nl_NL.res
 coll/pl.res
 coll/pl_PL.res
 coll/ps.res
-coll/ps_AF.res
 coll/pt.res
 coll/pt_BR.res
 coll/pt_PT.res
@@ -323,7 +322,6 @@ curr/nb.res
 curr/nb_NO.res
 curr/nl.res
 curr/pl.res
-curr/ps.res
 curr/pt.res
 curr/pt_PT.res
 curr/rm.res
@@ -427,7 +425,6 @@ lang/nb_NO.res
 lang/nl.res
 lang/nl_BE.res
 lang/pl.res
-lang/ps.res
 lang/pt.res
 lang/pt_PT.res
 lang/rm.res
@@ -530,7 +527,6 @@ region/nb_NO.res
 region/nl.res
 region/nl_BE.res
 region/pl.res
-region/ps.res
 region/pt.res
 region/pt_PT.res
 region/rm.res
@@ -638,7 +634,6 @@ zone/nb.res
 zone/nb_NO.res
 zone/nl.res
 zone/pl.res
-zone/ps.res
 zone/pt.res
 zone/pt_PT.res
 zone/rm.res
@@ -836,8 +831,6 @@ nl_BE.res
 nl_NL.res
 pl.res
 pl_PL.res
-ps.res
-ps_AF.res
 pt.res
 pt_BR.res
 pt_PT.res
