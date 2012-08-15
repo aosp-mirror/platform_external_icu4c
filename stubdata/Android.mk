@@ -25,7 +25,7 @@ include $(CLEAR_VARS)
 # 'all' includes all ICU's locale data, but is currently missing some Android
 # extensions (mostly extra charset converters).
 #
-# 'default' (icudt48l-default.txt) includes all locales for 40+ languages.
+# 'default' (icudt48l-default.txt) includes all locales for 50+ languages.
 config := default
 
 include $(LOCAL_PATH)/root.mk
