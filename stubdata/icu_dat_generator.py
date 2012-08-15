@@ -260,7 +260,7 @@ def main():
   # appropriate pre-built ICU tools.
   icu_version = re.sub(r"([^0-9])", "", os.path.basename(input_files[0]))
   ICU_PREBUILT_DIR = os.path.join(os.environ.get("ANDROID_BUILD_TOP"),
-      "prebuilt", "linux-x86_64", "icu-%s.%s" % (icu_version[0], icu_version[1]))
+      "prebuilts", "misc", "linux-x86_64", "icu-%s.%s" % (icu_version[0], icu_version[1]))
   if not os.path.exists(ICU_PREBUILT_DIR):
     print "%s does not exist!" % ICU_PREBUILT_DIR
 
