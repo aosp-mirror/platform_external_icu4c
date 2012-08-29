@@ -98,9 +98,11 @@ likelySubtags:table(nofallback){
     ig{"ig_Latn_NG"}
     ii{"ii_Yiii_CN"}
     ilo{"ilo_Latn_PH"}
+    in{"in_Latn_ID"}
     inh{"inh_Cyrl_RU"}
     is{"is_Latn_IS"}
     it{"it_Latn_IT"}
+    iw{"iw_Hebr_IL"}
     ja{"ja_Jpan_JP"}
     jmc{"jmc_Latn_TZ"}
     jv{"jv_Latn_ID"}
@@ -252,6 +254,7 @@ likelySubtags:table(nofallback){
     tig{"tig_Ethi_ER"}
     tk{"tk_Latn_TM"}
     tkl{"tkl_Latn_TK"}
+    tl{"fil_Latn_PH"}
     tn{"tn_Latn_ZA"}
     to{"to_Latn_TO"}
     tpi{"tpi_Latn_PG"}
