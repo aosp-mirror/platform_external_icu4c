@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAI1n///w8\u003d",
+        "filename": "common/ucnvisci.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1015475
+      },
+      "writtenOn": "2012-08-29T22:00:37Z",
+      "side": 1,
+      "message": "There\u0027s no reason to use pthread.h - ICU has its own portable mutex interface, umutex.h",
+      "revId": "bc281225b875bb228496adc7462c4f4ca4071f4c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAI1n///ww\u003d",
+        "filename": "common/ucnvisci.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 1015475
+      },
+      "writtenOn": "2012-08-29T22:00:37Z",
+      "side": 1,
+      "message": "should not be a refcount but instead initialized the 1st time, and registered with u_cleanup to cleanup on unload",
+      "revId": "bc281225b875bb228496adc7462c4f4ca4071f4c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAI1n///ws\u003d",
+        "filename": "common/ucnvisci.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 1015475
+      },
+      "writtenOn": "2012-08-29T22:00:37Z",
+      "side": 1,
+      "message": "If the sets are frozen they can be used concurrently read-only .No reason for open/close.  And it should stay open after the last user.",
+      "revId": "bc281225b875bb228496adc7462c4f4ca4071f4c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
