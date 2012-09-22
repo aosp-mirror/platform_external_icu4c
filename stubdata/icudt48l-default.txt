@@ -352,6 +352,8 @@ curr/ta.res
 curr/ta_LK.res
 curr/th.res
 curr/th_TH.res
+curr/tl.res
+curr/tl_PH.res
 curr/tr.res
 curr/uk.res
 curr/vi.res
@@ -456,6 +458,8 @@ lang/sw.res
 lang/ta.res
 lang/th.res
 lang/th_TH.res
+lang/tl.res
+lang/tl_PH.res
 lang/tr.res
 lang/uk.res
 lang/vi.res
@@ -556,6 +560,8 @@ region/sw.res
 region/ta.res
 region/th.res
 region/th_TH.res
+region/tl.res
+region/tl_PH.res
 region/tr.res
 region/uk.res
 region/vi.res
@@ -663,6 +669,8 @@ zone/sw.res
 zone/ta.res
 zone/th.res
 zone/th_TH.res
+zone/tl.res
+zone/tl_PH.res
 zone/tr.res
 zone/uk.res
 zone/vi.res
@@ -874,6 +882,8 @@ ta_IN.res
 ta_LK.res
 th.res
 th_TH.res
+tl.res
+tl_PH.res
 tr.res
 tr_TR.res
 uk.res
