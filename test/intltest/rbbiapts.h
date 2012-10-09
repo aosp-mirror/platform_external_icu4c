@@ -86,6 +86,8 @@ public:
 
     void TestRegistration();
 
+    void TestRefreshInputText();
+
     /**
      *Internal subroutines
      **/

@@ -1,6 +1,6 @@
 /*
 ********************************************************************************
-*   Copyright (C) 1996-2008, International Business Machines
+*   Copyright (C) 1996-2011, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 ********************************************************************************
 */
@@ -298,6 +298,16 @@ ubrk_getLocaleByType(const UBreakIterator *bi,
     }
     return ((BreakIterator*)bi)->getLocaleID(type, *status);
 }
+
+
+void ubrk_refreshUText(UBreakIterator *bi,
+                       UText          *text,
+                       UErrorCode     *status)
+{
+    BreakIterator *bii = reinterpret_cast<BreakIterator *>(bi);
+    bii->refreshInputText(text, *status);
+}
+
 
 
 #endif /* #if !UCONFIG_NO_BREAK_ITERATION */
