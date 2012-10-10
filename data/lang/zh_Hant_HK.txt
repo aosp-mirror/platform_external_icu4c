@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2011 International Business Machines
+// * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/zh_Hant_HK.xml
@@ -22,6 +22,9 @@ zh_Hant_HK{
     Scripts{
         Cyrl{"西里爾語字母"}
         Hang{"韓文字母"}
+    }
+    Scripts%stand-alone{
+        Hant{"繁體漢字"}
     }
     Types{
         calendar{
@@ -80,5 +83,5 @@ zh_Hant_HK{
         REVISED{"已修訂拼字法"}
         SCOTLAND{"蘇格蘭標準英語"}
     }
-    Version{"2.0.59.66"}
+    Version{"2.0.65.46"}
 }

@@ -31,6 +31,7 @@
 #include "unicode/utypes.h"
 #include "unicode/ustring.h"
 #include "unicode/ucnv.h"
+#include "unicode/utf16.h"
 #include "cmemory.h"
 #include "cintltst.h"
 
@@ -250,7 +251,7 @@ decodeBocu1(Bocu1Rx *pRx, uint8_t b);
  * @param c current code point, 0..0x10ffff
  * @return "previous code point" state value
  */
-static U_INLINE int32_t
+static int32_t
 bocu1Prev(int32_t c) {
     /* compute new prev */
     if(0x3040<=c && c<=0x309f) {
@@ -715,7 +716,7 @@ writeString(const UChar *s, int32_t length, uint8_t *p) {
     p0=p;
     i=0;
     while(i<length) {
-        UTF_NEXT_CHAR(s, i, length, c);
+        U16_NEXT(s, i, length, c);
         p+=writePacked(encodeBocu1(&prev, c), p);
     }
     return (int32_t)(p-p0);
@@ -743,13 +744,13 @@ readString(const uint8_t *p, int32_t length, UChar *s) {
             return -1;
         }
         if(c>=0) {
-            UTF_APPEND_CHAR_UNSAFE(s, sLength, c);
+            U16_APPEND_UNSAFE(s, sLength, c);
         }
     }
     return sLength;
 }
 
-static U_INLINE char
+static char
 hexDigit(uint8_t digit) {
     return digit<=9 ? (char)('0'+digit) : (char)('a'-10+digit);
 }

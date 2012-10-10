@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 1996-2011, International Business Machines
+*   Copyright (C) 1996-2012, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -321,6 +321,7 @@ public:
      */
     Locale *clone() const;
 
+#ifndef U_HIDE_SYSTEM_API
     /**
      * Common methods of getting the current default Locale. Used for the
      * presentation: menus, dialogs, etc. Generally set once when your applet or
@@ -352,6 +353,7 @@ public:
      */
     static void U_EXPORT2 setDefault(const Locale& newLocale,
                                      UErrorCode&   success);
+#endif  /* U_HIDE_SYSTEM_API */
 
     /**
      * Creates a locale which has had minimal canonicalization
@@ -435,7 +437,7 @@ public:
     StringEnumeration * createKeywords(UErrorCode &status) const;
 
     /**
-     * Get the value for a keyword.
+     * Gets the value for a keyword.
      *
      * @param keywordName name of the keyword for which we want the value. Case insensitive.
      * @param buffer The buffer to receive the keyword value.
@@ -447,8 +449,9 @@ public:
      */
     int32_t getKeywordValue(const char* keywordName, char *buffer, int32_t bufferCapacity, UErrorCode &status) const;
 
+#ifndef U_HIDE_DRAFT_API
     /**
-     * Set the value for a keyword.
+     * Sets the value for a keyword.
      *
      * @param keywordName name of the keyword to be set. Case insensitive.
      * @param keywordValue value of the keyword to be set. If 0-length or
@@ -456,9 +459,10 @@ public:
      *  that keyword does not exist.
      * @param status Returns any error information while performing this operation.
      *
-     * @internal 
+     * @draft ICU 49
      */
     void setKeywordValue(const char* keywordName, const char* keywordValue, UErrorCode &status);
+#endif  /* U_HIDE_DRAFT_API */
 
     /**
      * returns the locale's three-letter language code, as specified
@@ -683,11 +687,13 @@ public:
     virtual UClassID getDynamicClassID() const;
 
 protected: /* only protected for testing purposes. DO NOT USE. */
+#ifndef U_HIDE_INTERNAL_API
     /**
      * Set this from a single POSIX style locale string.
      * @internal
      */
     void setFromPOSIXID(const char *posixID);
+#endif  /* U_HIDE_INTERNAL_API */
 
 private:
     /**

@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1998-2011, International Business Machines Corporation and
+ * Copyright (c) 1998-2012, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /*
@@ -34,7 +34,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#ifdef U_WINDOWS
+#if U_PLATFORM_USES_ONLY_WIN32_API
 #include <io.h>
 #else
 #include <unistd.h>
@@ -1109,10 +1109,10 @@ static void TestICUDataName()
         break;
     }
 
-    sprintf(expectDataName, "%s%d%d%c",
+    /* Only major number is needed. */
+    sprintf(expectDataName, "%s%d%c",
                 "icudt",
                 (int)icuVersion[0],
-                (int)icuVersion[1],
                 typeChar);
 
     log_verbose("Expected: %s\n", expectDataName);
@@ -1151,7 +1151,7 @@ static void TestICUDataName()
 
 /* test data swapping ------------------------------------------------------- */
 
-#ifdef OS400
+#if U_PLATFORM == U_PF_OS400
 /* See comments in genccode.c on when this special implementation can be removed. */
 static const struct {
     double bogus;
@@ -1335,7 +1335,7 @@ static const struct {
     {"ucase",                    "icu", ucase_swap},
     {"ubidi",                    "icu", ubidi_swap},
 #endif
-#if !UCONFIG_NO_NORMALIZATION
+#if !UCONFIG_NO_NORMALIZATION && !UCONFIG_ONLY_COLLATION
     {"nfc",                      "nrm", unorm2_swap},
     {"confusables",              "cfu", uspoof_swap},
 #endif

@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 1997-2011, International Business Machines Corporation and others.
+* Copyright (C) 1997-2012, International Business Machines Corporation and others.
 * All Rights Reserved.
 * Modification History:
 *
@@ -185,18 +185,18 @@ typedef enum UNumberFormatStyle {
     UNUM_PATTERN_RULEBASED,
     /**
      * Currency format with an ISO currency code, e.g., "USD1.00".
-     * @draft ICU 4.8
+     * @stable ICU 4.8
      */
     UNUM_CURRENCY_ISO,
     /**
      * Currency format with a pluralized currency name,
      * e.g., "1.00 US dollar" and "3.00 US dollars".
-     * @draft ICU 4.8
+     * @stable ICU 4.8
      */
     UNUM_CURRENCY_PLURAL,
     /**
      * One more than the highest number format style constant.
-     * @draft ICU 4.8
+     * @stable ICU 4.8
      */
     UNUM_FORMAT_STYLE_COUNT,
     /**
@@ -220,22 +220,24 @@ typedef enum UNumberFormatRoundingMode {
     UNUM_ROUND_DOWN,
     UNUM_ROUND_UP,
     /**
+     * Half-even rounding
+     * @stable, ICU 3.8
+     */
+    UNUM_ROUND_HALFEVEN,
+#ifndef U_HIDE_DEPRECATED_API
+    /**
      * Half-even rounding, misspelled name
      * @deprecated, ICU 3.8
      */
-    UNUM_FOUND_HALFEVEN,
+    UNUM_FOUND_HALFEVEN = UNUM_ROUND_HALFEVEN,
+#endif  /* U_HIDE_DEPRECATED_API */
     UNUM_ROUND_HALFDOWN,
     UNUM_ROUND_HALFUP,
     /** 
       * ROUND_UNNECESSARY reports an error if formatted result is not exact.
-      * @draft ICU 4.8
+      * @stable ICU 4.8
       */
-    UNUM_ROUND_UNNECESSARY,
-    /**
-     * Half-even rounding
-     * @stable, ICU 3.8
-     */
-    UNUM_ROUND_HALFEVEN = UNUM_FOUND_HALFEVEN
+    UNUM_ROUND_UNNECESSARY
 } UNumberFormatRoundingMode;
 
 /** The possible number format pad positions. 
@@ -250,15 +252,53 @@ typedef enum UNumberFormatPadPosition {
 
 /**
  * Constants for specifying currency spacing
- * @draft ICU 4.8
+ * @stable ICU 4.8
  */
 enum UCurrencySpacing {
+    /** @stable ICU 4.8 */
     UNUM_CURRENCY_MATCH,
+    /** @stable ICU 4.8 */
     UNUM_CURRENCY_SURROUNDING_MATCH,
+    /** @stable ICU 4.8 */
     UNUM_CURRENCY_INSERT,
+    /** @stable ICU 4.8 */
     UNUM_CURRENCY_SPACING_COUNT
 };
-typedef enum UCurrencySpacing UCurrencySpacing; /**< @draft ICU 4.8 */
+typedef enum UCurrencySpacing UCurrencySpacing; /**< @stable ICU 4.8 */
+
+
+/**
+ * FieldPosition and UFieldPosition selectors for format fields
+ * defined by NumberFormat and UNumberFormat.
+ * @stable ICU 49
+ */
+typedef enum UNumberFormatFields {
+    /** @stable ICU 49 */
+    UNUM_INTEGER_FIELD,
+    /** @stable ICU 49 */
+    UNUM_FRACTION_FIELD,
+    /** @stable ICU 49 */
+    UNUM_DECIMAL_SEPARATOR_FIELD,
+    /** @stable ICU 49 */
+    UNUM_EXPONENT_SYMBOL_FIELD,
+    /** @stable ICU 49 */
+    UNUM_EXPONENT_SIGN_FIELD,
+    /** @stable ICU 49 */
+    UNUM_EXPONENT_FIELD,
+    /** @stable ICU 49 */
+    UNUM_GROUPING_SEPARATOR_FIELD,
+    /** @stable ICU 49 */
+    UNUM_CURRENCY_FIELD,
+    /** @stable ICU 49 */
+    UNUM_PERCENT_FIELD,
+    /** @stable ICU 49 */
+    UNUM_PERMILL_FIELD,
+    /** @stable ICU 49 */
+    UNUM_SIGN_FIELD,
+    /** @stable ICU 49 */
+    UNUM_FIELD_COUNT
+} UNumberFormatFields;
+
 
 /**
  * Create and return a new UNumberFormat for formatting and parsing
@@ -675,6 +715,20 @@ unum_getAvailable(int32_t localeIndex);
 U_STABLE int32_t U_EXPORT2 
 unum_countAvailable(void);
 
+#if UCONFIG_HAVE_PARSEALLINPUT
+/**
+ * @internal
+ */
+typedef enum UNumberFormatAttributeValue {
+  /** @internal */
+  UNUM_NO = 0,
+  /** @internal */
+  UNUM_YES = 1,
+  /** @internal */
+  UNUM_MAYBE = 2
+} UNumberFormatAttributeValue;
+#endif
+
 /** The possible UNumberFormat numeric attributes @stable ICU 2.0 */
 typedef enum UNumberFormatAttribute {
   /** Parse integers only */
@@ -722,6 +776,14 @@ typedef enum UNumberFormatAttribute {
    * @stable ICU 3.0
    */
   UNUM_LENIENT_PARSE
+
+#if UCONFIG_HAVE_PARSEALLINPUT
+  /** Consume all input. (may use fastpath). Set to UNUM_YES (require fastpath), UNUM_NO (skip fastpath), or UNUM_MAYBE (heuristic).
+   * @internal
+   */
+  ,UNUM_PARSE_ALL_INPUT
+#endif
+  
 } UNumberFormatAttribute;
 
 /**
@@ -949,41 +1011,41 @@ typedef enum UNumberFormatSymbol {
   /** The monetary grouping separator 
    * @stable ICU 3.6
    */
-  UNUM_MONETARY_GROUPING_SEPARATOR_SYMBOL = 17,  
+  UNUM_MONETARY_GROUPING_SEPARATOR_SYMBOL = 17,
   /** One
-   * @draft ICU 4.6
+   * @stable ICU 4.6
    */
   UNUM_ONE_DIGIT_SYMBOL = 18,
   /** Two
-   * @draft ICU 4.6
+   * @stable ICU 4.6
    */
   UNUM_TWO_DIGIT_SYMBOL = 19,
   /** Three
-   * @draft ICU 4.6
+   * @stable ICU 4.6
    */
   UNUM_THREE_DIGIT_SYMBOL = 20,
   /** Four
-   * @draft ICU 4.6
+   * @stable ICU 4.6
    */
   UNUM_FOUR_DIGIT_SYMBOL = 21,
   /** Five
-   * @draft ICU 4.6
+   * @stable ICU 4.6
    */
   UNUM_FIVE_DIGIT_SYMBOL = 22,
   /** Six
-   * @draft ICU 4.6
+   * @stable ICU 4.6
    */
   UNUM_SIX_DIGIT_SYMBOL = 23,
   /** Seven
-    * @draft ICU 4.6
+    * @stable ICU 4.6
    */
   UNUM_SEVEN_DIGIT_SYMBOL = 24,
   /** Eight
-   * @draft ICU 4.6
+   * @stable ICU 4.6
    */
   UNUM_EIGHT_DIGIT_SYMBOL = 25,
   /** Nine
-   * @draft ICU 4.6
+   * @stable ICU 4.6
    */
   UNUM_NINE_DIGIT_SYMBOL = 26,
   /** count symbol constants */

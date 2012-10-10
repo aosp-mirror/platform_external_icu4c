@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1997-2011, International Business Machines Corporation and
+ * Copyright (c) 1997-2012, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /********************************************************************************
@@ -59,6 +59,7 @@ void addNumForTest(TestNode** root)
     TESTCASE(TestInt64Parse);
     TESTCASE(TestParseZero);
     TESTCASE(TestParseCurrency);
+    TESTCASE(TestCloneWithRBNF);
 }
 
 /** copy src to dst with unicode-escapes for values < 0x20 and > 0x7e, null terminate if possible */
@@ -256,7 +257,7 @@ static void TestNumberFormat()
 
     log_verbose("\nTesting unum_format() \n");
     resultlength=0;
-    pos1.field = 0; /* Integer Section */
+    pos1.field = UNUM_INTEGER_FIELD;
     resultlengthneeded=unum_format(cur_def, l, NULL, resultlength, &pos1, &status);
     if(status==U_BUFFER_OVERFLOW_ERROR)
     {
@@ -289,7 +290,7 @@ free(result);
     log_verbose("\nTesting unum_formatDouble()\n");
     u_uastrcpy(temp1, "($10,456.37)");
     resultlength=0;
-    pos2.field = 1; /* Fractional Section */
+    pos2.field = UNUM_FRACTION_FIELD;
     resultlengthneeded=unum_formatDouble(cur_def, d, NULL, resultlength, &pos2, &status);
     if(status==U_BUFFER_OVERFLOW_ERROR)
     {
@@ -347,7 +348,7 @@ free(result);
     temp1[0] = 0xA5; /* Yen sign */
     u_uastrcpy(temp, "JPY");
     resultlength=0;
-    pos2.field = 0; /* integer part */
+    pos2.field = UNUM_INTEGER_FIELD;
     resultlengthneeded=unum_formatDoubleCurrency(cur_def, a, temp, NULL, resultlength, &pos2, &status);
     if (status==U_BUFFER_OVERFLOW_ERROR) {
         status=U_ZERO_ERROR;
@@ -866,8 +867,7 @@ free(result);
 
         /* Format with a FieldPosition parameter */
 
-        fieldPos.field = 2;   /* Ticket 8034 - need enum constants for the field values. */
-                              /*  2 =  kDecimalSeparatorField   */
+        fieldPos.field = UNUM_DECIMAL_SEPARATOR_FIELD;
         resultSize = unum_formatDecimal(fmt, numInitial, -1, dest, DESTCAPACITY, &fieldPos, &status);
         if (U_FAILURE(status)) {
             log_err("File %s, Line %d, status = %s\n", __FILE__, __LINE__, u_errorName(status));
@@ -1325,7 +1325,7 @@ free(result);
 /*        u_uastrcpy(temp1, "(xxxxxxx10,456.37)"); */
         u_uastrcpy(temp1, "xxxxx(10,456.37)");
         resultlength=0;
-        pos1.field = 1; /* Fraction field */
+        pos1.field = UNUM_FRACTION_FIELD;
         resultlengthneeded=unum_formatDouble(pattern, d, NULL, resultlength, &pos1, &status);
         if(status==U_BUFFER_OVERFLOW_ERROR)
         {
@@ -1888,32 +1888,32 @@ static void TestTextAttributeCrash(void) {
     unum_close(nf);
 }
 
-static void TestNBSPPatternRtNum(const char *testcase, UNumberFormat *nf, double myNumber) {
+static void TestNBSPPatternRtNum(const char *testcase, int line, UNumberFormat *nf, double myNumber) {
     UErrorCode status = U_ZERO_ERROR;
     UChar myString[20];
     char tmpbuf[200];
     double aNumber = -1.0;
     unum_formatDouble(nf, myNumber, myString, 20, NULL, &status);
-    log_verbose("%s: formatted %.2f into %s\n", testcase, myNumber, u_austrcpy(tmpbuf, myString));
+    log_verbose("%s:%d: formatted %.2f into %s\n", testcase, line, myNumber, u_austrcpy(tmpbuf, myString));
     if(U_FAILURE(status)) {
-        log_err("%s: failed format of %.2g with %s\n", testcase, myNumber, u_errorName(status));
+      log_err("%s:%d: failed format of %.2g with %s\n", testcase, line, myNumber, u_errorName(status));
         return;
     }
     aNumber = unum_parse(nf, myString, -1, NULL, &status);
     if(U_FAILURE(status)) {
-        log_err("%s: failed parse with %s\n", testcase, u_errorName(status));
+      log_err("%s:%d: failed parse with %s\n", testcase, line, u_errorName(status));
         return;
     }
     if(uprv_fabs(aNumber-myNumber)>.001) {
-        log_err("FAIL: %s: formatted %.2f, parsed into %.2f\n", testcase, myNumber, aNumber);
+      log_err("FAIL: %s:%d formatted %.2f, parsed into %.2f\n", testcase, line, myNumber, aNumber);
     } else {
-        log_verbose("PASS: %s: formatted %.2f, parsed into %.2f\n", testcase, myNumber, aNumber);
+      log_verbose("PASS: %s:%d formatted %.2f, parsed into %.2f\n", testcase, line, myNumber, aNumber);
     }
 }
 
 static void TestNBSPPatternRT(const char *testcase, UNumberFormat *nf) {
-    TestNBSPPatternRtNum(testcase, nf, 12345.);
-    TestNBSPPatternRtNum(testcase, nf, -12345.);
+  TestNBSPPatternRtNum(testcase, __LINE__, nf, 12345.);
+  TestNBSPPatternRtNum(testcase, __LINE__, nf, -12345.);
 }
 
 static void TestNBSPInPattern(void) {
@@ -1925,7 +1925,7 @@ static void TestNBSPInPattern(void) {
     testcase="ar_AE UNUM_CURRENCY";
     nf  = unum_open(UNUM_CURRENCY, NULL, -1, "ar_AE", NULL, &status);
     if(U_FAILURE(status) || nf == NULL) {
-        log_data_err("%s: unum_open failed with %s (Are you missing data?)\n", testcase, u_errorName(status));
+      log_data_err("%s:%d: %s: unum_open failed with %s (Are you missing data?)\n", __FILE__, __LINE__, testcase, u_errorName(status));
         return;
     }
     TestNBSPPatternRT(testcase, nf);
@@ -1965,5 +1965,67 @@ static void TestNBSPInPattern(void) {
 
 
 }
+static void TestCloneWithRBNF(void) {   
+    UChar pattern[1024];
+    UChar pat2[512];
+    UErrorCode status = U_ZERO_ERROR;
+    UChar buffer[256];
+    UChar buffer_cloned[256];
+    char temp1[256];
+    char temp2[256];
+    UNumberFormat *pform_cloned;
+    UNumberFormat *pform;
 
+    u_uastrcpy(pattern,
+        "%main:\n"
+        "0.x: >%%millis-only>;\n"
+        "x.0: <%%duration<;\n"
+        "x.x: <%%durationwithmillis<>%%millis-added>;\n"
+        "-x: ->>;%%millis-only:\n"
+        "1000: 00:00.<%%millis<;\n"
+        "%%millis-added:\n"
+        "1000: .<%%millis<;\n"
+        "%%millis:\n"
+        "0: =000=;\n"
+        "%%duration:\n"
+        "0: =%%seconds-only=;\n"
+        "60: =%%min-sec=;\n"
+        "3600: =%%hr-min-sec=;\n"
+        "86400/86400: <%%ddaayyss<[, >>];\n"
+        "%%durationwithmillis:\n"
+        "0: =%%seconds-only=;\n"
+        "60: =%%min-sec=;\n"
+        "3600: =%%hr-min-sec=;\n"
+        "86400/86400: <%%ddaayyss<, >>;\n");
+    u_uastrcpy(pat2,
+        "%%seconds-only:\n"
+        "0: 0:00:=00=;\n"
+        "%%min-sec:\n"
+        "0: :=00=;\n"
+        "0/60: 0:<00<>>;\n"
+        "%%hr-min-sec:\n"
+        "0: :=00=;\n"
+        "60/60: <00<>>;\n"
+        "3600/60: <0<:>>>;\n"
+        "%%ddaayyss:\n"
+        "0 days;\n"
+        "1 day;\n"
+        "=0= days;");
+
+    /* This is to get around some compiler warnings about char * string length. */
+    u_strcat(pattern, pat2);
+
+    pform = unum_open(UNUM_PATTERN_RULEBASED, pattern, -1, "en_US", NULL, &status);
+    unum_formatDouble(pform, 3600, buffer, 256, NULL, &status);
+
+    pform_cloned = unum_clone(pform,&status);
+    unum_formatDouble(pform_cloned, 3600, buffer_cloned, 256, NULL, &status);
+
+    unum_close(pform);
+    unum_close(pform_cloned);
+
+    if (u_strcmp(buffer,buffer_cloned)) {
+        log_data_err("Result from cloned formatter not identical to the original. Original: %s Cloned: %s - (Are you missing data?)",u_austrcpy(temp1, buffer),u_austrcpy(temp2,buffer_cloned));
+    }
+}
 #endif /* #if !UCONFIG_NO_FORMATTING */

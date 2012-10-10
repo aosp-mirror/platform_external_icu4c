@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 2007-2011, International Business Machines Corporation and
+* Copyright (C) 2007-2012, International Business Machines Corporation and
 * others. All Rights Reserved.
 *******************************************************************************
 *
@@ -479,13 +479,21 @@ public:
      */
      virtual UClassID getDynamicClassID() const;
 
-  private:
-
+#if defined(__xlC__) || (U_PLATFORM == U_PF_OS390) || (U_PLATFORM ==U_PF_OS400) 
+// Work around a compiler bug on xlC 11.1 on AIX 7.1 that would
+// prevent PluralSelectorAdapter from implementing private PluralSelector.
+// xlC error message:
+// 1540-0300 (S) The "private" member "class icu_49::PluralFormat::PluralSelector" cannot be accessed.
+public:
+#else
+private:
+#endif
      /**
       * @internal 
       */
     class U_I18N_API PluralSelector : public UMemory {
       public:
+        virtual ~PluralSelector();
         /**
          * Given a number, returns the appropriate PluralFormat keyword.
          *
@@ -494,10 +502,6 @@ public:
          * @return The selected PluralFormat keyword.
          */
         virtual UnicodeString select(double number, UErrorCode& ec) const = 0;
-
-        // BEGIN android-added
-        virtual ~PluralSelector() {};
-        // END android-added
     };
 
     /**
@@ -517,6 +521,10 @@ public:
         PluralRules* pluralRules;
     };
 
+#if defined(__xlC__)
+// End of xlC bug workaround, keep remaining definitions private.
+private:
+#endif
     Locale  locale;
     MessagePattern msgPattern;
     NumberFormat*  numberFormat;

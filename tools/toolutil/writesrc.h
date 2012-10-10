@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2005-2010, International Business Machines
+*   Copyright (C) 2005-2012, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -24,18 +24,18 @@
 #include "utrie2.h"
 
 /**
- * Creates a source text file and write a header comment with the ICU copyright.
- * Writes a C/Java-style comment.
+ * Creates a source text file and writes a header comment with the ICU copyright.
+ * Writes a C/Java-style comment with the generator name.
  */
 U_CAPI FILE * U_EXPORT2
-usrc_create(const char *path, const char *filename);
+usrc_create(const char *path, const char *filename, const char *generator);
 
 /**
- * Creates a source text file and write a header comment with the ICU copyright.
+ * Creates a source text file and writes a header comment with the ICU copyright.
  * Writes the comment with # lines, as used in scripts and text data.
  */
 U_CAPI FILE * U_EXPORT2
-usrc_createTextData(const char *path, const char *filename);
+usrc_createTextData(const char *path, const char *filename, const char *generator);
 
 /**
  * Writes the contents of an array of 8/16/32-bit words.

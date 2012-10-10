@@ -668,7 +668,7 @@ ibm-954_P101-2007 { UTR22* }
                         # eucJP # This is closest to Solaris EUC-JP.
                         
 aix-IBM_udcJP-4.3.6 { UTR22* }
-                        x-IBM-udcJP { JAVA }
+                        x-IBM-udcJP { JAVA* }
 
 java-euc_jp_linux-1.6_P { UTR22* }
                         euc-jp-linux
@@ -709,7 +709,7 @@ ibm-5471_P100-2006 { UTR22* }   # Big5-HKSCS-2001 with Unicode 3.0 mappings. Thi
                         # windows-950 # Windows-950 can be w/ or w/o HKSCS extensions. By default it's not.
                         # windows-950_hkscs
 solaris-zh_TW_big5-2.7 { UTR22* }
-                        Big5_Solaris { JAVA }
+                        Big5_Solaris { JAVA* }
                         x-Big5-Solaris { JAVA }
 # GBK
 ibm-1386_P100-2001  { UTR22* }
@@ -924,7 +924,7 @@ ibm-1162_P100-1999 { UTR22* }   # Thai (w/ euro update)
 windows-864-2000 { UTR22* }
                         ibm-864s
                         cp864s
-                        x-IBM864S { JAVA }
+                        x-IBM864S { JAVA* }
 
 # Platform codepages
 # If Java supports the IBM prefix, it should also support the ibm- prefix too.
@@ -942,7 +942,8 @@ ibm-858_P100-1997 { UTR22* }    ibm-858 { IBM* } IBM00858 { IANA* MIME* JAVA } C
 ibm-860_P100-1995 { UTR22* }    ibm-860 { IBM* } IBM860 { IANA* MIME* JAVA } cp860 { IANA MIME JAVA* } 860 { IANA JAVA } csIBM860 { IANA JAVA }    # PC Portugal
 ibm-861_P100-1995 { UTR22* }    ibm-861 { IBM* } IBM861 { IANA* MIME* WINDOWS JAVA } cp861 { IANA MIME JAVA* } 861 { IANA JAVA } cp-is { IANA JAVA } csIBM861 { IANA JAVA } windows-861 { WINDOWS* } # PC Iceland
 ibm-862_P100-1995 { UTR22* }    ibm-862 { IBM* } IBM862 { IANA* MIME* JAVA } cp862 { IANA MIME JAVA* } 862 { IANA JAVA } csPC862LatinHebrew { IANA JAVA } DOS-862 { WINDOWS } windows-862 { WINDOWS* }    # PC Hebrew visual order (w/o euro update)
-ibm-863_P100-1995 { UTR22* }    ibm-863 { IBM* } IBM863 { IANA* MIME* JAVA } cp863 { IANA MIME JAVA* } 863 { IANA JAVA } csIBM863 { IANA JAVA }    # PC Canadian French# BEGIN Android-changed
+ibm-863_P100-1995 { UTR22* }    ibm-863 { IBM* } IBM863 { IANA* MIME* JAVA } cp863 { IANA MIME JAVA* } 863 { IANA JAVA } csIBM863 { IANA JAVA }    # PC Canadian French
+# BEGIN Android-changed
 ibm-864_X110-1999 { UTR22* }    ibm-864 { IBM* } IBM864 { IANA* JAVA } cp864 { IANA MIME* JAVA* } csIBM864 { IANA JAVA } # PC Arabic (w/o euro update)
 # END Android-changed
 ibm-865_P100-1995 { UTR22* }    ibm-865 { IBM* } IBM865 { IANA* MIME* JAVA } cp865 { IANA MIME JAVA* } 865 { IANA JAVA } csIBM865 { IANA JAVA }    # PC Nordic
@@ -999,7 +1000,7 @@ macos-38_2-10.2 { UTR22* }      x-mac-romania { MIME* } x-MacRomania { JAVA* } M
 macos-518-10.2 { UTR22* }       x-mac-arabic { MIME* } x-MacArabic { JAVA* } MacArabic { JAVA }
 macos-1285-10.2 { UTR22* }      x-mac-hebrew { MIME* } x-MacHebrew { JAVA* } MacHebrew { JAVA }
 
-ibm-1051_P100-1995 { UTR22* }   ibm-1051 { IBM* } hp-roman8 { IANA* } roman8 { IANA } r8 { IANA } csHPRoman8 { IANA }   # HP Latin1
+ibm-1051_P100-1995 { UTR22* }   ibm-1051 { IBM* } hp-roman8 { IANA* } roman8 { IANA } r8 { IANA } csHPRoman8 { IANA } x-roman8 { JAVA}   # HP Latin1
 ibm-1276_P100-1995 { UTR22* }   ibm-1276 { IBM* } Adobe-Standard-Encoding { IANA* } csAdobeStandardEncoding { IANA } # Different from ISO-Unicode-IBM-1276 (GCSGID: 1276)
 
 ibm-1006_P100-1995 { UTR22* }   ibm-1006 { IBM* } IBM1006 { JAVA } cp1006 { JAVA* } 1006 { JAVA } x-IBM1006 { JAVA }  # Urdu

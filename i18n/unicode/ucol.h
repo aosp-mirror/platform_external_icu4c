@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (c) 1996-2011, International Business Machines Corporation and others.
+* Copyright (c) 1996-2012, International Business Machines Corporation and others.
 * All Rights Reserved.
 *******************************************************************************
 */
@@ -133,66 +133,74 @@ typedef enum {
 
 } UColAttributeValue;
 
-/** 
+/**
  * Enum containing the codes for reordering segments of the collation table that are not script
  * codes. These reordering codes are to be used in conjunction with the script codes.
  * @see ucol_getReorderCodes
  * @see ucol_setReorderCodes
  * @see ucol_getEquivalentReorderCodes
- * @draft ICU 4.8
+ * @see UScriptCode
+ * @stable ICU 4.8
  */
  typedef enum {
    /**
     * A special reordering code that is used to specify the default
     * reordering codes for a locale.
-    * @draft ICU 4.8
+    * @stable ICU 4.8
     */   
     UCOL_REORDER_CODE_DEFAULT       = -1,
    /**
     * A special reordering code that is used to specify no reordering codes.
-    * @draft ICU 4.8
+    * @stable ICU 4.8
     */   
     UCOL_REORDER_CODE_NONE          = USCRIPT_UNKNOWN,
    /**
     * A special reordering code that is used to specify all other codes used for
     * reordering except for the codes lised as UColReorderCode values and those
     * listed explicitly in a reordering.
-    * @draft ICU 4.8
+    * @stable ICU 4.8
     */   
     UCOL_REORDER_CODE_OTHERS        = USCRIPT_UNKNOWN,
    /**
     * Characters with the space property.
-    * @draft ICU 4.8
+    * This is equivalent to the rule value "space".
+    * @stable ICU 4.8
     */    
     UCOL_REORDER_CODE_SPACE         = 0x1000,
    /**
-    * The first entry in the enumeration of reordering groups.
-    * @draft ICU 4.8
+    * The first entry in the enumeration of reordering groups. This is intended for use in
+    * range checking and enumeration of the reorder codes.
+    * @stable ICU 4.8
     */    
     UCOL_REORDER_CODE_FIRST         = UCOL_REORDER_CODE_SPACE,
    /**
     * Characters with the punctuation property.
-    * @draft ICU 4.8
+    * This is equivalent to the rule value "punct".
+    * @stable ICU 4.8
     */    
     UCOL_REORDER_CODE_PUNCTUATION   = 0x1001,
    /**
     * Characters with the symbol property.
-    * @draft ICU 4.8
+    * This is equivalent to the rule value "symbol".
+    * @stable ICU 4.8
     */    
     UCOL_REORDER_CODE_SYMBOL        = 0x1002,
    /**
     * Characters with the currency property.
-    * @draft ICU 4.8
+    * This is equivalent to the rule value "currency".
+    * @stable ICU 4.8
     */    
     UCOL_REORDER_CODE_CURRENCY      = 0x1003,
    /**
     * Characters with the digit property.
-    * @draft ICU 4.8
+    * This is equivalent to the rule value "digit".
+    * @stable ICU 4.8
     */    
     UCOL_REORDER_CODE_DIGIT         = 0x1004,
    /**
-    * The limit of the reorder codes.
-    * @draft ICU 4.8
+    * The limit of the reorder codes. This is intended for use in range checking 
+    * and enumeration of the reorder codes.
+    * @stable ICU 4.8
     */    
     UCOL_REORDER_CODE_LIMIT         = 0x1005
 } UColReorderCode;
@@ -398,6 +406,7 @@ ucol_openFromShortString( const char *definition,
                           UParseError *parseError,
                           UErrorCode *status);
 
+#ifndef U_HIDE_DEPRECATED_API
 /**
  * Get a set containing the contractions defined by the collator. The set includes
  * both the UCA contractions and the contractions defined by the collator. This set
@@ -415,6 +424,7 @@ U_DEPRECATED int32_t U_EXPORT2
 ucol_getContractions( const UCollator *coll,
                   USet *conts,
                   UErrorCode *status);
+#endif  /* U_HIDE_DEPRECATED_API */
 
 /**
  * Get a set containing the expansions defined by the collator. The set includes
@@ -598,7 +608,9 @@ ucol_setStrength(UCollator *coll,
  * @return The number of reordering codes written to the dest array.
  * @see ucol_setReorderCodes
  * @see ucol_getEquivalentReorderCodes
- * @draft ICU 4.8
+ * @see UScriptCode
+ * @see UColReorderCode
+ * @stable ICU 4.8
  */
 U_DRAFT int32_t U_EXPORT2 
 ucol_getReorderCodes(const UCollator* coll,
@@ -626,7 +638,7 @@ ucol_getReorderCodes(const UCollator* coll,
  * DEFAULT code <b>must</b> be the sole code supplied when it used. If not
  * that will result in an U_ILLEGAL_ARGUMENT_ERROR being set.
  * <p>The special reorder code NONE will remove any reordering for this collator.
- * The result of setting no reordering will be to have the DUCET/CLDR reordering used. The 
+ * The result of setting no reordering will be to have the DUCET/CLDR ordering used. The 
  * NONE code <b>must</b> be the sole code supplied when it used.
  * @param coll The UCollator to set.
  * @param reorderCodes An array of script codes in the new order. This can be NULL if the 
@@ -636,7 +648,9 @@ ucol_getReorderCodes(const UCollator* coll,
  * failure before the function call.
  * @see ucol_getReorderCodes
  * @see ucol_getEquivalentReorderCodes
- * @draft ICU 4.8
+ * @see UScriptCode
+ * @see UColReorderCode
+ * @stable ICU 4.8
  */ 
 U_DRAFT void U_EXPORT2 
 ucol_setReorderCodes(UCollator* coll,
@@ -656,7 +670,9 @@ ucol_setReorderCodes(UCollator* coll,
  * @return The number of reordering codes written to the dest array.
  * @see ucol_setReorderCodes
  * @see ucol_getReorderCodes
- * @draft ICU 4.8
+ * @see UScriptCode
+ * @see UColReorderCode
+ * @stable ICU 4.8
  */
 U_DRAFT int32_t U_EXPORT2 
 ucol_getEquivalentReorderCodes(int32_t reorderCode,
@@ -1144,7 +1160,7 @@ ucol_safeClone(const UCollator *coll,
 /** default memory size for the new clone. It needs to be this large for os/400 large pointers 
  * @stable ICU 2.0
  */
-#define U_COL_SAFECLONE_BUFFERSIZE 512
+#define U_COL_SAFECLONE_BUFFERSIZE 528
 
 /**
  * Returns current rules. Delta defines whether full rules are returned or just the tailoring. 
@@ -1160,6 +1176,7 @@ ucol_safeClone(const UCollator *coll,
 U_STABLE int32_t U_EXPORT2 
 ucol_getRulesEx(const UCollator *coll, UColRuleOption delta, UChar *buffer, int32_t bufferLen);
 
+#ifndef U_HIDE_DEPRECATED_API
 /**
  * gets the locale name of the collator. If the collator
  * is instantiated from the rules, then this function returns
@@ -1176,7 +1193,7 @@ ucol_getRulesEx(const UCollator *coll, UColRuleOption delta, UChar *buffer, int3
  */
 U_DEPRECATED const char * U_EXPORT2
 ucol_getLocale(const UCollator *coll, ULocDataLocaleType type, UErrorCode *status);
-
+#endif  /* U_HIDE_DEPRECATED_API */
 
 /**
  * gets the locale name of the collator. If the collator
@@ -1208,6 +1225,7 @@ ucol_getLocaleByType(const UCollator *coll, ULocDataLocaleType type, UErrorCode 
 U_STABLE USet * U_EXPORT2
 ucol_getTailoredSet(const UCollator *coll, UErrorCode *status);
 
+#ifndef U_HIDE_INTERNAL_API
 /**
  * Universal attribute getter that returns UCOL_DEFAULT if the value is default
  * @param coll collator which attributes are to be changed
@@ -1280,6 +1298,7 @@ ucol_prepareShortStringOpen( const char *definition,
                           UBool forceDefaults,
                           UParseError *parseError,
                           UErrorCode *status);
+#endif  /* U_HIDE_INTERNAL_API */
 
 /** Creates a binary image of a collator. This binary image can be stored and 
  *  later used to instantiate a collator using ucol_openBinary.

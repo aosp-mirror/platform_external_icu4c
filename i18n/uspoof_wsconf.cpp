@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 2008-2011, International Business Machines
+*   Copyright (C) 2008-2012, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -86,6 +86,8 @@ static void extractGroup(
 }
 
 
+
+U_NAMESPACE_BEGIN
 
 //  Build the Whole Script Confusable data
 //
@@ -397,17 +399,19 @@ cleanup:
     uprv_free(input);
 
     int32_t i;
-    for (i=0; i<scriptSets->size(); i++) {
-        BuilderScriptSet *bsset = static_cast<BuilderScriptSet *>(scriptSets->elementAt(i));
-        delete bsset;
+    if (scriptSets != NULL) {
+        for (i=0; i<scriptSets->size(); i++) {
+            BuilderScriptSet *bsset = static_cast<BuilderScriptSet *>(scriptSets->elementAt(i));
+            delete bsset;
+        }
+        delete scriptSets;
     }
-    delete scriptSets;
     utrie2_close(anyCaseTrie);
     utrie2_close(lowerCaseTrie);
     return;
 }
 
-
+U_NAMESPACE_END
 
 
 

@@ -23,6 +23,7 @@
 #include "unicode/ustring.h"
 #include "unicode/usetiter.h"
 #include "unicode/uscript.h"
+#include "unicode/utf16.h"
 #include "cpdtrans.h"
 #include "nultrans.h"
 #include "rbt.h"
@@ -1276,8 +1277,8 @@ void TransliteratorTest::TestNameMap(void) {
 
     // Careful:  CharsToUS will convert "\\N" => "N"; use "\\\\N" for \N
     expect(*uni2name, CharsToUnicodeString("\\u00A0abc\\u4E01\\u00B5\\u0A81\\uFFFD\\u0004\\u0009\\u0081\\uFFFF"),
-           CharsToUnicodeString("\\\\N{NO-BREAK SPACE}abc\\\\N{CJK UNIFIED IDEOGRAPH-4E01}\\\\N{MICRO SIGN}\\\\N{GUJARATI SIGN CANDRABINDU}\\\\N{REPLACEMENT CHARACTER}\\\\N{END OF TRANSMISSION}\\\\N{CHARACTER TABULATION}\\\\N{<control-0081>}\\\\N{<noncharacter-FFFF>}"));
-    expect(*name2uni, UNICODE_STRING_SIMPLE("{\\N { NO-BREAK SPACE}abc\\N{  CJK UNIFIED  IDEOGRAPH-4E01  }\\N{x\\N{MICRO SIGN}\\N{GUJARATI SIGN CANDRABINDU}\\N{REPLACEMENT CHARACTER}\\N{END OF TRANSMISSION}\\N{CHARACTER TABULATION}\\N{<control-0081>}\\N{<noncharacter-FFFF>}\\N{<control-0004>}\\N{"),
+           CharsToUnicodeString("\\\\N{NO-BREAK SPACE}abc\\\\N{CJK UNIFIED IDEOGRAPH-4E01}\\\\N{MICRO SIGN}\\\\N{GUJARATI SIGN CANDRABINDU}\\\\N{REPLACEMENT CHARACTER}\\\\N{<control-0004>}\\\\N{<control-0009>}\\\\N{<control-0081>}\\\\N{<noncharacter-FFFF>}"));
+    expect(*name2uni, UNICODE_STRING_SIMPLE("{\\N { NO-BREAK SPACE}abc\\N{  CJK UNIFIED  IDEOGRAPH-4E01  }\\N{x\\N{MICRO SIGN}\\N{GUJARATI SIGN CANDRABINDU}\\N{REPLACEMENT CHARACTER}\\N{<control-0004>}\\N{<control-0009>}\\N{<control-0081>}\\N{<noncharacter-FFFF>}\\N{<control-0004>}\\N{"),
            CharsToUnicodeString("{\\u00A0abc\\u4E01\\\\N{x\\u00B5\\u0A81\\uFFFD\\u0004\\u0009\\u0081\\uFFFF\\u0004\\\\N{"));
 
     delete uni2name;
@@ -3460,7 +3461,7 @@ void TransliteratorTest::TestSurrogateCasing (void) {
     char buffer[20];
     UChar buffer2[20];
     UChar32 dee;
-    UTF_GET_CHAR(DESERET_dee,0, 0, DESERET_dee.length(), dee);
+    U16_GET(DESERET_dee,0, 0, DESERET_dee.length(), dee);
     UnicodeString DEE(u_totitle(dee));
     if (DEE != DESERET_DEE) {
         err("Fails titlecase of surrogates");

@@ -191,7 +191,7 @@ static void TestSurrogateBehaviour(){
 
 
         int32_t offsets[] = {0,0,0,0,0,1,1,2,2,2,2,3,5 };
-     
+
         // iso-2022-jp
         if(!convertFromU(sampleText, sizeof(sampleText)/sizeof(sampleText[0]),
                 expected, sizeof(expected), "iso-2022-jp", 0 , TRUE, U_ZERO_ERROR))
@@ -396,7 +396,6 @@ static void TestErrorBehaviour(){
         /* static const uint8_t expected4MBCS[] = { 0x61, 0x8f, 0xa2, 0xc3, 0xf4, 0xfe}; */
         /* END android-changed */
         static const int32_t offsets4MBCS[]        = { 0x00, 0x01, 0x01, 0x01, 0x02, 0x02 };
-
 
         /*DBCS*/
         if(!convertFromU(sampleText, sizeof(sampleText)/sizeof(sampleText[0]),

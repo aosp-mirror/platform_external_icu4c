@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 2007-2011, International Business Machines Corporation and    *
+* Copyright (C) 2007-2012, International Business Machines Corporation and    *
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 */
@@ -14,6 +14,7 @@
 #include "unicode/timezone.h"
 #include "unicode/ustring.h"
 #include "unicode/putil.h"
+#include "unicode/simpletz.h"
 
 #include "umutex.h"
 #include "uvector.h"
@@ -37,13 +38,13 @@ static UHashtable *gOlsonToMeta = NULL;
 static UBool gOlsonToMetaInitialized = FALSE;
 
 // Available metazone IDs vector and table
-static U_NAMESPACE_QUALIFIER UVector *gMetaZoneIDs = NULL;
+static icu::UVector *gMetaZoneIDs = NULL;
 static UHashtable *gMetaZoneIDTable = NULL;
 static UBool gMetaZoneIDsInitialized = FALSE;
 
 // Country info vectors
-static U_NAMESPACE_QUALIFIER UVector *gSingleZoneCountries = NULL;
-static U_NAMESPACE_QUALIFIER UVector *gMultiZonesCountries = NULL;
+static icu::UVector *gSingleZoneCountries = NULL;
+static icu::UVector *gMultiZonesCountries = NULL;
 static UBool gCountryInfoVectorsInitialized = FALSE;
 
 U_CDECL_BEGIN
@@ -96,7 +97,7 @@ deleteUCharString(void *obj) {
  */
 static void U_CALLCONV
 deleteUVector(void *obj) {
-   delete (U_NAMESPACE_QUALIFIER UVector*) obj;
+   delete (icu::UVector*) obj;
 }
 
 /**
@@ -104,7 +105,7 @@ deleteUVector(void *obj) {
  */
 static void U_CALLCONV
 deleteOlsonToMetaMappingEntry(void *obj) {
-    U_NAMESPACE_QUALIFIER OlsonToMetaMappingEntry *entry = (U_NAMESPACE_QUALIFIER OlsonToMetaMappingEntry*)obj;
+    icu::OlsonToMetaMappingEntry *entry = (icu::OlsonToMetaMappingEntry*)obj;
     uprv_free(entry);
 }
 
@@ -131,6 +132,8 @@ static const UChar gDefaultFrom[] = {0x31, 0x39, 0x37, 0x30, 0x2D, 0x30, 0x31, 0
                                      0x20, 0x30, 0x30, 0x3A, 0x30, 0x30, 0x00}; // "1970-01-01 00:00"
 static const UChar gDefaultTo[]   = {0x39, 0x39, 0x39, 0x39, 0x2D, 0x31, 0x32, 0x2D, 0x33, 0x31,
                                      0x20, 0x32, 0x33, 0x3A, 0x35, 0x39, 0x00}; // "9999-12-31 23:59"
+
+static const UChar gCustomTzPrefix[]    = {0x47, 0x4D, 0x54, 0};    // "GMT"
 
 #define ASCII_DIGIT(c) (((c)>=0x30 && (c)<=0x39) ? (c)-0x30 : -1)
 
@@ -446,6 +449,8 @@ ZoneMeta::getSingleCountry(const UnicodeString &tzid, UnicodeString &country) {
             country.setToBogus();
             return country;
         }
+        U_ASSERT(gSingleZoneCountries != NULL);
+        U_ASSERT(gMultiZonesCountries != NULL);
     }
 
     // Check if it was already cached
@@ -763,7 +768,7 @@ ZoneMeta::initAvailableMetaZoneIDs () {
             if (!gMetaZoneIDsInitialized) {
                 UErrorCode status = U_ZERO_ERROR;
                 UHashtable *metaZoneIDTable = uhash_open(uhash_hashUnicodeString, uhash_compareUnicodeString, NULL, &status);
-                uhash_setKeyDeleter(metaZoneIDTable, uhash_deleteUnicodeString);
+                uhash_setKeyDeleter(metaZoneIDTable, uprv_deleteUObject);
                 // No valueDeleter, because the vector maintain the value objects
                 UVector *metaZoneIDs = NULL;
                 if (U_SUCCESS(status)) {
@@ -775,7 +780,8 @@ ZoneMeta::initAvailableMetaZoneIDs () {
                     uhash_close(metaZoneIDTable);
                 }
                 if (U_SUCCESS(status)) {
-                    metaZoneIDs->setDeleter(uhash_freeBlock);
+                    U_ASSERT(metaZoneIDs != NULL);
+                    metaZoneIDs->setDeleter(uprv_free);
 
                     UResourceBundle *rb = ures_openDirect(NULL, gMetaZones, &status);
                     UResourceBundle *bundle = ures_getByKey(rb, gMapTimezonesTag, NULL, &status);
@@ -838,6 +844,54 @@ const UChar*
 ZoneMeta::findTimeZoneID(const UnicodeString& tzid) {
     return TimeZone::findID(tzid);
 }
+
+
+TimeZone*
+ZoneMeta::createCustomTimeZone(int32_t offset) {
+    UBool negative = FALSE;
+    int32_t tmp = offset;
+    if (offset < 0) {
+        negative = TRUE;
+        tmp = -offset;
+    }
+    int32_t hour, min, sec;
+
+    tmp /= 1000;
+    sec = tmp % 60;
+    tmp /= 60;
+    min = tmp % 60;
+    hour = tmp / 60;
+
+    UnicodeString zid;
+    formatCustomID(hour, min, sec, negative, zid);
+    return new SimpleTimeZone(offset, zid);
+}
+
+UnicodeString&
+ZoneMeta::formatCustomID(uint8_t hour, uint8_t min, uint8_t sec, UBool negative, UnicodeString& id) {
+    // Create normalized time zone ID - GMT[+|-]HH:mm[:ss]
+    id.setTo(gCustomTzPrefix, -1);
+    if (hour != 0 || min != 0) {
+        if (negative) {
+            id.append(0x2D);    // '-'
+        } else {
+            id.append(0x2B);    // '+'
+        }
+        // Always use US-ASCII digits
+        id.append(0x30 + (hour%100)/10);
+        id.append(0x30 + (hour%10));
+        id.append(0x3A);    // ':'
+        id.append(0x30 + (min%100)/10);
+        id.append(0x30 + (min%10));
+        if (sec != 0) {
+            id.append(0x3A);    // ':'
+            id.append(0x30 + (sec%100)/10);
+            id.append(0x30 + (sec%10));
+        }
+    }
+    return id;
+}
+
 
 U_NAMESPACE_END
 

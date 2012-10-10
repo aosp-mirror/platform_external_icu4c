@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2011 International Business Machines
+// * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/brx.xml
@@ -24,7 +24,7 @@ brx{
         "Deva",
     }
     NumberElements{
-        default{"deva"}
+        default{"latn"}
         latn{
             patterns{
                 currencyFormat{"¤ #,##,##0.00"}
@@ -45,8 +45,9 @@ brx{
                 plusSign{"+"}
             }
         }
+        native{"deva"}
     }
-    Version{"2.0.59.56"}
+    Version{"2.0.65.46"}
     calendar{
         gregorian{
             AmPmMarkers{
@@ -85,9 +86,9 @@ brx{
                 ms{"mm:ss"}
                 y{"yyyy"}
                 yM{"M/yyyy"}
-                yMEd{"EEE, M/d/yyyy"}
+                yMEd{"E, M/d/yyyy"}
                 yMMM{"MMM yyyy"}
-                yMMMEd{"EEE, MMM d, yyyy"}
+                yMMMEd{"E, MMM d, yyyy"}
                 yMMMM{"MMMM yyyy"}
                 yQ{"Q yyyy"}
                 yQQQ{"QQQ yyyy"}
@@ -238,10 +239,10 @@ brx{
         }
     }
     delimiters{
-        alternateQuotationEnd{"\""}
-        alternateQuotationStart{"\""}
-        quotationEnd{"'"}
-        quotationStart{"'"}
+        alternateQuotationEnd{"’"}
+        alternateQuotationStart{"‘"}
+        quotationEnd{"”"}
+        quotationStart{"“"}
     }
     measurementSystemNames{
         US{"यु.एस"}

@@ -13,18 +13,15 @@
 #include "unicode/locid.h"
 #include "unicode/ucnv.h"
 #include "unicode/uenum.h"
+#include "unicode/utf16.h"
 #include "cmemory.h"
 #include "charstr.h"
 
 #if 0
 #include "unicode/ustream.h"
 
-#if U_IOSTREAM_SOURCE >= 199711
 #include <iostream>
 using namespace std;
-#elif U_IOSTREAM_SOURCE >= 198506
-#include <iostream.h>
-#endif
 
 #endif
 
@@ -1279,7 +1276,7 @@ UnicodeStringTest::TestStackAllocation()
 
     // test the UChar32 constructor
     UnicodeString c32Test((UChar32)0x10ff2a);
-    if( c32Test.length() != UTF_CHAR_LENGTH(0x10ff2a) ||
+    if( c32Test.length() != U16_LENGTH(0x10ff2a) ||
         c32Test.char32At(c32Test.length() - 1) != 0x10ff2a
     ) {
         errln("The UnicodeString(UChar32) constructor does not work with a 0x10ff2a filler");
@@ -1287,7 +1284,7 @@ UnicodeStringTest::TestStackAllocation()
 
     // test the (new) capacity constructor
     UnicodeString capTest(5, (UChar32)0x2a, 5);
-    if( capTest.length() != 5 * UTF_CHAR_LENGTH(0x2a) ||
+    if( capTest.length() != 5 * U16_LENGTH(0x2a) ||
         capTest.char32At(0) != 0x2a ||
         capTest.char32At(4) != 0x2a
     ) {
@@ -1295,7 +1292,7 @@ UnicodeStringTest::TestStackAllocation()
     }
 
     capTest = UnicodeString(5, (UChar32)0x10ff2a, 5);
-    if( capTest.length() != 5 * UTF_CHAR_LENGTH(0x10ff2a) ||
+    if( capTest.length() != 5 * U16_LENGTH(0x10ff2a) ||
         capTest.char32At(0) != 0x10ff2a ||
         capTest.char32At(4) != 0x10ff2a
     ) {
@@ -1774,7 +1771,6 @@ UnicodeStringTest::TestStringEnumeration() {
  *
  * Define a (bogus) UnicodeString class in another namespace and check for ambiguity.
  */
-#if U_HAVE_NAMESPACE
 namespace bogus {
     class UnicodeString {
     public:
@@ -1787,11 +1783,9 @@ namespace bogus {
         int32_t i;
     };
 }
-#endif
 
 void
 UnicodeStringTest::TestNameSpace() {
-#if U_HAVE_NAMESPACE
     // Provoke name collision unless the UnicodeString macros properly
     // qualify the icu::UnicodeString class.
     using namespace bogus;
@@ -1806,7 +1800,6 @@ UnicodeStringTest::TestNameSpace() {
     if(s4.length()!=9) {
         errln("Something wrong with UnicodeString::operator+().");
     }
-#endif
 }
 
 void
@@ -1886,7 +1879,7 @@ UnicodeStringTest::TestUTF8() {
         errln("UnicodeString::fromUTF8(StringPiece) did not create the expected string.");
     }
 #if U_HAVE_STD_STRING
-    U_STD_NSQ string utf8_string((const char *)utf8, sizeof(utf8));
+    std::string utf8_string((const char *)utf8, sizeof(utf8));
     UnicodeString from8b = UnicodeString::fromUTF8(utf8_string);
     if(from8b != expected) {
         errln("UnicodeString::fromUTF8(std::string) did not create the expected string.");
@@ -1915,10 +1908,10 @@ UnicodeStringTest::TestUTF8() {
     }
 #if U_HAVE_STD_STRING
     // Initial contents for testing that toUTF8String() appends.
-    U_STD_NSQ string result8 = "-->";
-    U_STD_NSQ string expected8 = "-->" + U_STD_NSQ string((const char *)expected_utf8, sizeof(expected_utf8));
+    std::string result8 = "-->";
+    std::string expected8 = "-->" + std::string((const char *)expected_utf8, sizeof(expected_utf8));
     // Use the return value just for testing.
-    U_STD_NSQ string &result8r = us.toUTF8String(result8);
+    std::string &result8r = us.toUTF8String(result8);
     if(result8r != expected8 || &result8r != &result8) {
         errln("UnicodeString::toUTF8String() did not create the expected string.");
     }

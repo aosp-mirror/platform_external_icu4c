@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2011 International Business Machines
+// * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/pt_PT.xml
@@ -102,6 +102,10 @@ pt_PT{
         Zxxx{"não escrito"}
         Zzzz{"inválido ou desconhecido"}
     }
+    Scripts%stand-alone{
+        Hans{"Han Simplificado"}
+        Hant{"Han Tradicional"}
+    }
     Types{
         calendar{
             coptic{"Calendário Copta"}
@@ -112,7 +116,6 @@ pt_PT{
         }
         collation{
             dictionary{"Ordenação do Dicionário"}
-            direct{"Ordem Directa"}
             ducet{"Ordenação Unicode Predefinida"}
             phonebook{"Ordem da Lista Telefónica"}
             pinyin{"Ordem do Chinês Simplificado Pinyin"}
@@ -174,5 +177,5 @@ pt_PT{
         SOLBA{"dialecto stolvizza/solbica"}
         WADEGILE{"Romanização Wade-Giles"}
     }
-    Version{"2.0.59.5"}
+    Version{"2.0.65.46"}
 }

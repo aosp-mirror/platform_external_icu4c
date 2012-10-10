@@ -1,6 +1,6 @@
 /*
  *******************************************************************************
- * Copyright (C) 2008-2011, Google, International Business Machines Corporation
+ * Copyright (C) 2008-2012, Google, International Business Machines Corporation
  * and others. All Rights Reserved.
  *******************************************************************************
  */
@@ -30,17 +30,17 @@
  * There are 2 styles: full name and abbreviated name.
  * For example, for English, the full name for hour duration is "3 hours",
  * and the abbreviated name is "3 hrs".
- * @draft ICU 4.8
+ * @stable ICU 4.8
  */
 enum UTimeUnitFormatStyle {
-    /** @draft ICU 4.8 */
+    /** @stable ICU 4.8 */
     UTMUTFMT_FULL_STYLE,
-    /** @draft ICU 4.8 */
+    /** @stable ICU 4.8 */
     UTMUTFMT_ABBREVIATED_STYLE,
-    /** @draft ICU 4.8 */
+    /** @stable ICU 4.8 */
     UTMUTFMT_FORMAT_STYLE_COUNT
 };
-typedef enum UTimeUnitFormatStyle UTimeUnitFormatStyle; /**< @draft ICU 4.8 */
+typedef enum UTimeUnitFormatStyle UTimeUnitFormatStyle; /**< @stable ICU 4.8 */
 
 U_NAMESPACE_BEGIN
 
@@ -75,7 +75,7 @@ class Hashtable;
  * <P>
  * @see TimeUnitAmount
  * @see TimeUnitFormat
- * @draft ICU 4.2
+ * @stable ICU 4.2
  */
 class U_I18N_API TimeUnitFormat: public MeasureFormat {
 public:
@@ -95,7 +95,7 @@ public:
 
     /**
      * Create TimeUnitFormat given locale and style.
-     * @draft ICU 4.8
+     * @stable ICU 4.8
      */
     TimeUnitFormat(const Locale& locale, UTimeUnitFormatStyle style, UErrorCode& status);
 

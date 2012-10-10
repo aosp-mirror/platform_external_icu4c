@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2011 International Business Machines
+// * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/nl.xml
@@ -663,6 +663,10 @@ nl{
         Zyyy{"Algemeen"}
         Zzzz{"Code voor ongecodeerde schriftsystemen"}
     }
+    Scripts%stand-alone{
+        Hans{"Vereenvoudigd Chinees"}
+        Hant{"Traditioneel Chinees"}
+    }
     Types{
         calendar{
             buddhist{"Boeddhistische kalender"}
@@ -682,7 +686,6 @@ nl{
         collation{
             big5han{"Traditioneel-Chinese sorteervolgorde - Big5"}
             dictionary{"Woordenboeksorteervolgorde"}
-            direct{"Directe sorteervolgorde"}
             ducet{"Standaard Unicode-sorteervolgorde"}
             gb2312han{"Vereenvoudigd-Chinese sorteervolgorde - GB2312"}
             phonebook{"Telefoonboeksorteervolgorde"}
@@ -786,7 +789,7 @@ nl{
         VALLADER{"Vallader"}
         WADEGILE{"Wade-Giles"}
     }
-    Version{"2.0.59.68"}
+    Version{"2.0.65.46"}
     codePatterns{
         language{"Taal: {0}"}
         script{"Schrift: {0}"}

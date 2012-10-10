@@ -49,6 +49,7 @@ src_files += \
 	quant.cpp       rbnf.cpp     rbt.cpp      \
 	rbt_data.cpp    rbt_pars.cpp rbt_rule.cpp \
 	rbt_set.cpp     regexcmp.cpp regexst.cpp  \
+	regeximp.cpp \
 	rematch.cpp     remtrans.cpp repattrn.cpp \
 	search.cpp      simpletz.cpp smpdtfmt.cpp \
 	sortkey.cpp     strmatch.cpp strrepl.cpp  \

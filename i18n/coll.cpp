@@ -1,6 +1,6 @@
 /*
  ******************************************************************************
- * Copyright (C) 1996-2011, International Business Machines Corporation and
+ * Copyright (C) 1996-2012, International Business Machines Corporation and
  * others. All Rights Reserved.
  ******************************************************************************
  */
@@ -52,9 +52,9 @@
 #include "uresimp.h"
 #include "ucln_in.h"
 
-static U_NAMESPACE_QUALIFIER Locale* availableLocaleList = NULL;
+static icu::Locale* availableLocaleList = NULL;
 static int32_t  availableLocaleListCount;
-static U_NAMESPACE_QUALIFIER ICULocaleService* gService = NULL;
+static icu::ICULocaleService* gService = NULL;
 
 /**
  * Release all static memory held by collator.
@@ -112,10 +112,13 @@ CollatorFactory::getDisplayName(const Locale& objectLocale,
 
 class ICUCollatorFactory : public ICUResourceBundleFactory {
  public:
-    ICUCollatorFactory():  ICUResourceBundleFactory(UnicodeString(U_ICUDATA_COLL, -1, US_INV)) { } 
+    ICUCollatorFactory() : ICUResourceBundleFactory(UnicodeString(U_ICUDATA_COLL, -1, US_INV)) { }
+    virtual ~ICUCollatorFactory();
  protected:
     virtual UObject* create(const ICUServiceKey& key, const ICUService* service, UErrorCode& status) const;
 };
+
+ICUCollatorFactory::~ICUCollatorFactory() {}
 
 UObject*
 ICUCollatorFactory::create(const ICUServiceKey& key, const ICUService* /* service */, UErrorCode& status) const {
@@ -142,7 +145,9 @@ public:
         UErrorCode status = U_ZERO_ERROR;
         registerFactory(new ICUCollatorFactory(), status);
     }
-    
+
+    virtual ~ICUCollatorService();
+
     virtual UObject* cloneInstance(UObject* instance) const {
         return ((Collator*)instance)->clone();
     }
@@ -187,6 +192,8 @@ public:
         return countFactories() == 1;
     }
 };
+
+ICUCollatorService::~ICUCollatorService() {}
 
 // -------------------------------------
 
@@ -243,6 +250,17 @@ Collator::createUCollator(const char *loc,
                 result = rbc->ucollator;
                 rbc->ucollator = NULL; // to prevent free on delete
             }
+        } else {
+          // should go in a function- ucol_initDelegate(delegate)
+          result = (UCollator *)uprv_malloc(sizeof(UCollator));
+          if(result == NULL) {
+            *status = U_MEMORY_ALLOCATION_ERROR;
+          } else {
+            uprv_memset(result, 0, sizeof(UCollator));
+            result->delegate = col;
+            result->freeOnClose = TRUE; // do free on close.
+            col = NULL; // to prevent free on delete.
+          }
         }
         delete col;
     }
@@ -319,6 +337,7 @@ Collator* U_EXPORT2 Collator::createInstance(const Locale& desiredLocale,
         Locale actualLoc;
         Collator *result =
             (Collator*)gService->get(desiredLocale, &actualLoc, status);
+
         // Ugly Hack Alert! If the returned locale is empty (not root,
         // but empty -- getName() == "") then that means the service
         // returned a default object, not a "real" service object.  In
@@ -630,13 +649,9 @@ public:
             }
         }
     }
-    
-    virtual ~CFactory()
-    {
-        delete _delegate;
-        delete _ids;
-    }
-    
+
+    virtual ~CFactory();
+
     virtual UObject* create(const ICUServiceKey& key, const ICUService* service, UErrorCode& status) const;
     
 protected:
@@ -651,6 +666,12 @@ protected:
     virtual UnicodeString&
         getDisplayName(const UnicodeString& id, const Locale& locale, UnicodeString& result) const;
 };
+
+CFactory::~CFactory()
+{
+    delete _delegate;
+    delete _ids;
+}
 
 UObject* 
 CFactory::create(const ICUServiceKey& key, const ICUService* /* service */, UErrorCode& status) const
@@ -722,8 +743,7 @@ public:
         //isAvailableLocaleListInitialized(status);
     }
 
-    virtual ~CollationLocaleListEnumeration() {
-    }
+    virtual ~CollationLocaleListEnumeration();
 
     virtual StringEnumeration * clone() const
     {
@@ -764,6 +784,8 @@ public:
         index = 0;
     }
 };
+
+CollationLocaleListEnumeration::~CollationLocaleListEnumeration() {}
 
 UOBJECT_DEFINE_RTTI_IMPLEMENTATION(CollationLocaleListEnumeration)
 
@@ -864,6 +886,17 @@ Collator::getEquivalentReorderCodes(int32_t /* reorderCode */,
         status = U_UNSUPPORTED_ERROR;
     }
     return 0;
+}
+
+int32_t
+Collator::internalGetShortDefinitionString(const char * /*locale*/,
+                                                             char * /*buffer*/,
+                                                             int32_t /*capacity*/,
+                                                             UErrorCode &status) const {
+  if(U_SUCCESS(status)) {
+    status = U_UNSUPPORTED_ERROR; /* Shouldn't happen, internal function */
+  }
+  return 0;
 }
 
 // UCollator private data members ----------------------------------------

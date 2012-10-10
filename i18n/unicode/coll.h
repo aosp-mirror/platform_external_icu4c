@@ -1,6 +1,6 @@
 /*
 ******************************************************************************
-*   Copyright (C) 1996-2011, International Business Machines                 *
+*   Copyright (C) 1996-2012, International Business Machines                 *
 *   Corporation and others.  All Rights Reserved.                            *
 ******************************************************************************
 */
@@ -608,7 +608,9 @@ public:
      * @see ucol_setReorderCodes
      * @see Collator#getEquivalentReorderCodes
      * @see Collator#setReorderCodes
-     * @draft ICU 4.8 
+     * @see UScriptCode
+     * @see UColReorderCode
+     * @stable ICU 4.8 
      */
      virtual int32_t U_EXPORT2 getReorderCodes(int32_t *dest,
                                     int32_t destCapacity,
@@ -616,13 +618,17 @@ public:
 
     /**
      * Sets the ordering of scripts for this collator.
+     *
+     * <p>The reordering codes are a combination of script codes and reorder codes.
      * @param reorderCodes An array of script codes in the new order. This can be NULL if the 
      * length is also set to 0. An empty array will clear any reordering codes on the collator.
      * @param reorderCodesLength The length of reorderCodes.
+     * @param status error code
      * @see Collator#getReorderCodes
      * @see Collator#getEquivalentReorderCodes
-     * @param status error code
-     * @draft ICU 4.8 
+     * @see UScriptCode
+     * @see UColReorderCode
+     * @stable ICU 4.8 
      */
      virtual void U_EXPORT2 setReorderCodes(const int32_t* reorderCodes,
                                 int32_t reorderCodesLength,
@@ -642,7 +648,9 @@ public:
      * @see ucol_setReorderCodes
      * @see Collator#getReorderCodes
      * @see Collator#setReorderCodes
-     * @draft ICU 4.8 
+     * @see UScriptCode
+     * @see UColReorderCode
+     * @stable ICU 4.8 
      */
     static int32_t U_EXPORT2 getEquivalentReorderCodes(int32_t reorderCode,
                                 int32_t* dest,
@@ -995,6 +1003,7 @@ protected:
     */
     Collator();
 
+#ifndef U_HIDE_DEPRECATED_API
     /**
     * Constructor.
     * Empty constructor, does not handle the arguments.
@@ -1008,6 +1017,7 @@ protected:
     */
     Collator(UCollationStrength collationStrength,
              UNormalizationMode decompositionMode);
+#endif  /* U_HIDE_DEPRECATED_API */
 
     /**
     * Copy constructor.
@@ -1030,12 +1040,42 @@ protected:
 
 public:
 #if !UCONFIG_NO_SERVICE
+#ifndef U_HIDE_INTERNAL_API
     /**
      * used only by ucol_open, not for public use
      * @internal
      */
     static UCollator* createUCollator(const char* loc, UErrorCode* status);
+#endif  /* U_HIDE_INTERNAL_API */
 #endif
+
+    /** Get the short definition string for a collator. This internal API harvests the collator's
+     *  locale and the attribute set and produces a string that can be used for opening 
+     *  a collator with the same properties using the ucol_openFromShortString API.
+     *  This string will be normalized.
+     *  The structure and the syntax of the string is defined in the "Naming collators"
+     *  section of the users guide: 
+     *  http://icu-project.org/userguide/Collate_Concepts.html#Naming_Collators
+     *  This function supports preflighting.
+     * 
+     *  This is internal, and intended to be used with delegate converters.
+     *
+     *  @param locale a locale that will appear as a collators locale in the resulting
+     *                short string definition. If NULL, the locale will be harvested 
+     *                from the collator.
+     *  @param buffer space to hold the resulting string
+     *  @param capacity capacity of the buffer
+     *  @param status for returning errors. All the preflighting errors are featured
+     *  @return length of the resulting string
+     *  @see ucol_openFromShortString
+     *  @see ucol_normalizeShortDefinitionString
+     *  @see ucol_getShortDefinitionString
+     *  @internal
+     */
+    virtual int32_t internalGetShortDefinitionString(const char *locale,
+                                                     char *buffer,
+                                                     int32_t capacity,
+                                                     UErrorCode &status) const;
 private:
     /**
      * Assignment operator. Private for now.

@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2011 International Business Machines
+// * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/hr.xml
@@ -661,6 +661,10 @@ hr{
         Zyyy{"zajedničko pismo"}
         Zzzz{"nepoznato ili nevažeće pismo"}
     }
+    Scripts%stand-alone{
+        Hans{"Pojednostavljeno pismo han"}
+        Hant{"Tradicionalno pismo han"}
+    }
     Types{
         calendar{
             buddhist{"budistički kalendar"}
@@ -680,7 +684,6 @@ hr{
         collation{
             big5han{"razvrstavanje prema tradicionalnom kineskom - Big5"}
             dictionary{"rječničko razvrstavanje"}
-            direct{"izravno razvrstavanje"}
             ducet{"zadano Unicode razvrstavanje"}
             gb2312han{"razvrstavanje prema pojednostavljenom kineskom - GB2312"}
             phonebook{"razvrstavanje po abecedi"}
@@ -760,7 +763,7 @@ hr{
         VALENCIA{"valencijski"}
         WADEGILE{"Wade-Giles romanizacija"}
     }
-    Version{"2.0.59.68"}
+    Version{"2.0.65.46"}
     codePatterns{
         language{"Jezik: {0}"}
         script{"Pismo: {0}"}
