@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2011 International Business Machines
+// * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/ur.xml
@@ -19,6 +19,7 @@ ur{
         "Arab",
     }
     NumberElements{
+        default{"latn"}
         latn{
             patterns{
                 currencyFormat{"¤#,##0.00"}
@@ -38,8 +39,9 @@ ur{
                 plusSign{"+"}
             }
         }
+        native{"arabext"}
     }
-    Version{"2.0.59.69"}
+    Version{"2.0.65.46"}
     calendar{
         gregorian{
             AmPmMarkers{
@@ -146,7 +148,7 @@ ur{
                     wide{
                         "جنوری",
                         "فروری",
-                        "مار چ",
+                        "مارچ",
                         "اپريل",
                         "مئ",
                         "جون",
@@ -192,10 +194,10 @@ ur{
         }
     }
     delimiters{
-        alternateQuotationEnd{"'"}
-        alternateQuotationStart{"'"}
-        quotationEnd{"\""}
-        quotationStart{"\""}
+        alternateQuotationEnd{"‘"}
+        alternateQuotationStart{"’"}
+        quotationEnd{"“"}
+        quotationStart{"”"}
     }
     layout{
         characters{"right-to-left"}

@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2011 International Business Machines
+// * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/nmg.xml
@@ -38,7 +38,6 @@ nmg{
         my{"Kiɛl birmania"}
         ne{"Kiɛl nepal"}
         nl{"Kiɛl bóllandais"}
-        nmg{""}
         pa{"Kiɛl pɛndjabi"}
         pl{"Kiɛl pɔlɔŋe"}
         pt{"Kiɛl bó pɔ̄rtugɛ̂"}
@@ -57,5 +56,5 @@ nmg{
         zh{"Kiɛl bó chinois"}
         zu{"Zulu"}
     }
-    Version{"2.0.57.99"}
+    Version{"2.0.66.10"}
 }

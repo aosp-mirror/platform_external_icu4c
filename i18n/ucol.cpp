@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-*   Copyright (C) 1996-2011, International Business Machines
+*   Copyright (C) 1996-2012, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *******************************************************************************
 *   file name:  ucol.cpp
@@ -38,6 +38,7 @@
 #include "utracimp.h"
 #include "putilimp.h"
 #include "uassert.h"
+#include "unicode/coll.h"
 
 #ifdef UCOL_DEBUG
 #include <stdio.h>
@@ -52,13 +53,11 @@ U_NAMESPACE_USE
 
 #define ZERO_CC_LIMIT_            0xC0
 
-// this is static pointer to the normalizer fcdTrieIndex
+// This is static pointer to the NFC implementation instance.
 // it is always the same between calls to u_cleanup
 // and therefore writing to it is not synchronized.
 // It is cleaned in ucol_cleanup
-static const uint16_t *fcdTrieIndex=NULL;
-// Code points at fcdHighStart and above have a zero FCD value.
-static UChar32 fcdHighStart = 0;
+static const Normalizer2Impl *g_nfcImpl = NULL;
 
 // These are values from UCA required for
 // implicit generation and supressing sort key compression
@@ -72,7 +71,7 @@ U_CDECL_BEGIN
 static UBool U_CALLCONV
 ucol_cleanup(void)
 {
-    fcdTrieIndex = NULL;
+    g_nfcImpl = NULL;
     return TRUE;
 }
 
@@ -86,11 +85,13 @@ U_CDECL_END
 // init FCD data
 static inline
 UBool initializeFCD(UErrorCode *status) {
-    if (fcdTrieIndex != NULL) {
+    if (g_nfcImpl != NULL) {
         return TRUE;
     } else {
         // The result is constant, until the library is reloaded.
-        fcdTrieIndex = unorm_getFCDTrieIndex(fcdHighStart, status);
+        g_nfcImpl = Normalizer2Factory::getNFCImpl(*status);
+        // Note: Alternatively, we could also store this pointer in each collIterate struct,
+        // same as Normalizer2Factory::getImpl(collIterate->nfd).
         ucln_i18n_registerCleanup(UCLN_I18N_UCOL, ucol_cleanup);
         return U_SUCCESS(*status);
     }
@@ -301,6 +302,7 @@ void collIterate::appendOffset(int32_t offset, UErrorCode &errorCode) {
         return;
     }
     int32_t length = offsetStore == NULL ? 0 : (int32_t)(offsetStore - offsetBuffer);
+    U_ASSERT(length >= offsetBufferSize || offsetStore != NULL);
     if(length >= offsetBufferSize) {
         int32_t newCapacity = 2 * offsetBufferSize + UCOL_EXPAND_CE_BUFFER_SIZE;
         int32_t *newBuffer = reinterpret_cast<int32_t *>(uprv_malloc(newCapacity * 4));
@@ -726,6 +728,10 @@ ucol_close(UCollator *coll)
             uprv_free(coll->reorderCodes);
         }
 
+        if(coll->delegate != NULL) {
+          delete (Collator*)coll->delegate;
+        }
+
         /* Here, it would be advisable to close: */
         /* - UData for UCA (unless we stuff it in the root resb */
         /* Again, do we need additional housekeeping... HMMM! */
@@ -893,6 +899,8 @@ UCollator* ucol_initCollator(const UCATableHeader *image, UCollator *fillIn, con
         result->freeOnClose = FALSE;
     }
 
+    result->delegate = NULL;
+
     result->image = image;
     result->mapping.getFoldingOffset = _getFoldingOffset;
     const uint8_t *mapping = (uint8_t*)result->image+result->image->mappingPosition;
@@ -1047,9 +1055,9 @@ static int32_t
 
 static const UChar32
     // 4E00;<CJK Ideograph, First>;Lo;0;L;;;;;N;;;;;
-    // 9FCB;<CJK Ideograph, Last>;Lo;0;L;;;;;N;;;;;
+    // 9FCC;<CJK Ideograph, Last>;Lo;0;L;;;;;N;;;;;  (Unicode 6.1)
     CJK_BASE = 0x4E00,
-    CJK_LIMIT = 0x9FCB+1,
+    CJK_LIMIT = 0x9FCC+1,
     // Unified CJK ideographs in the compatibility ideographs block.
     CJK_COMPAT_USED_BASE = 0xFA0E,
     CJK_COMPAT_USED_LIMIT = 0xFA2F+1,
@@ -1432,10 +1440,8 @@ inline UBool collIterFCD(collIterate *collationSource) {
         endP = NULL;
     }
 
-    // Get the trailing combining class of the current character.  If it's zero,
-    //   we are OK.
-    /* trie access */
-    fcd = unorm_nextFCD16(fcdTrieIndex, fcdHighStart, srcP, endP);
+    // Get the trailing combining class of the current character. If it's zero, we are OK.
+    fcd = g_nfcImpl->nextFCD16(srcP, endP);
     if (fcd != 0) {
         prevTrailingCC = (uint8_t)(fcd & LAST_BYTE_MASK_);
 
@@ -1446,8 +1452,7 @@ inline UBool collIterFCD(collIterate *collationSource) {
             {
                 const UChar *savedSrcP = srcP;
 
-                /* trie access */
-                fcd = unorm_nextFCD16(fcdTrieIndex, fcdHighStart, srcP, endP);
+                fcd = g_nfcImpl->nextFCD16(srcP, endP);
                 leadingCC = (uint8_t)(fcd >> SECOND_LAST_BYTE_SHIFT_);
                 if (leadingCC == 0) {
                     srcP = savedSrcP;      // Hit char that is not part of combining sequence.
@@ -1808,7 +1813,7 @@ inline UBool collPrevIterFCD(collIterate *data)
     src = data->pos + 1;
 
     /* Get the trailing combining class of the current character. */
-    fcd = unorm_prevFCD16(fcdTrieIndex, fcdHighStart, start, src);
+    fcd = g_nfcImpl->previousFCD16(start, src);
 
     leadingCC = (uint8_t)(fcd >> SECOND_LAST_BYTE_SHIFT_);
 
@@ -1824,7 +1829,7 @@ inline UBool collPrevIterFCD(collIterate *data)
                 return result;
             }
 
-            fcd = unorm_prevFCD16(fcdTrieIndex, fcdHighStart, start, src);
+            fcd = g_nfcImpl->previousFCD16(start, src);
 
             trailingCC = (uint8_t)(fcd & LAST_BYTE_MASK_);
 
@@ -1946,7 +1951,7 @@ inline UBool isAtStartPrevIterate(collIterate *data) {
     }
     //return (collIter_bos(data)) ||
     return (data->pos == data->string) ||
-              ((data->flags & UCOL_ITER_INNORMBUF) &&
+              ((data->flags & UCOL_ITER_INNORMBUF) && (data->pos != NULL) &&
               *(data->pos - 1) == 0 && data->fcdPosition == NULL);
 }
 
@@ -4281,7 +4286,7 @@ public:
             capacity_ = 0;
         }
     }
-    virtual ~SortKeyByteSink() { uprv_free(ownedBuffer_); }
+    virtual ~SortKeyByteSink();
 
     virtual void Append(const char *bytes, int32_t n);
     void Append(const uint8_t *bytes, int32_t n) { Append(reinterpret_cast<const char *>(bytes), n); }
@@ -4349,6 +4354,10 @@ private:
 };
 
 uint8_t SortKeyByteSink::lastResortByte_ = 0;
+
+SortKeyByteSink::~SortKeyByteSink() {
+    uprv_free(ownedBuffer_);
+}
 
 void
 SortKeyByteSink::Append(const char *bytes, int32_t n) {
@@ -4479,6 +4488,10 @@ ucol_getSortKey(const    UCollator    *coll,
     if (UTRACE_LEVEL(UTRACE_VERBOSE)) {
         UTRACE_DATA3(UTRACE_VERBOSE, "coll=%p, source string = %vh ", coll, source,
             ((sourceLength==-1 && source!=NULL) ? u_strlen(source) : sourceLength));
+    }
+
+    if(coll->delegate != NULL) {
+      return ((const Collator*)coll->delegate)->getSortKey(source, sourceLength, result, resultLength);
     }
 
     UErrorCode status = U_ZERO_ERROR;
@@ -6463,6 +6476,11 @@ ucol_setVariableTop(UCollator *coll, const UChar *varTop, int32_t len, UErrorCod
         return 0;
     }
 
+    if(coll->delegate!=NULL) {
+      return ((Collator*)coll->delegate)->setVariableTop(varTop, len, *status);
+    }
+
+
     collIterate s;
     IInit_collIterate(coll, varTop, len, &s, status);
     if(U_FAILURE(*status)) {
@@ -6500,6 +6518,9 @@ U_CAPI uint32_t U_EXPORT2 ucol_getVariableTop(const UCollator *coll, UErrorCode 
     if(U_FAILURE(*status) || coll == NULL) {
         return 0;
     }
+    if(coll->delegate!=NULL) {
+      return ((const Collator*)coll->delegate)->getVariableTop(*status);
+    }
     return coll->variableTopValue<<16;
 }
 
@@ -6518,6 +6539,11 @@ ucol_restoreVariableTop(UCollator *coll, const uint32_t varTop, UErrorCode *stat
 U_CAPI void  U_EXPORT2
 ucol_setAttribute(UCollator *coll, UColAttribute attr, UColAttributeValue value, UErrorCode *status) {
     if(U_FAILURE(*status) || coll == NULL) {
+      return;
+    }
+
+    if(coll->delegate != NULL) {
+      ((Collator*)coll->delegate)->setAttribute(attr,value,*status);
       return;
     }
 
@@ -6658,6 +6684,11 @@ ucol_getAttribute(const UCollator *coll, UColAttribute attr, UErrorCode *status)
     if(U_FAILURE(*status) || coll == NULL) {
       return UCOL_DEFAULT;
     }
+
+    if(coll->delegate != NULL) {
+      return ((Collator*)coll->delegate)->getAttribute(attr,*status);
+    }
+
     switch(attr) {
     case UCOL_NUMERIC_COLLATION:
       return coll->numericCollation;
@@ -6707,6 +6738,10 @@ ucol_getReorderCodes(const UCollator *coll,
         return 0;
     }
 
+    if(coll->delegate!=NULL) {
+      return ((const Collator*)coll->delegate)->getReorderCodes(dest, destCapacity, *status);
+    }
+
     if (destCapacity < 0 || (destCapacity > 0 && dest == NULL)) {
         *status = U_ILLEGAL_ARGUMENT_ERROR;
         return 0;
@@ -6739,6 +6774,11 @@ ucol_setReorderCodes(UCollator* coll,
     if (reorderCodesLength < 0 || (reorderCodesLength > 0 && reorderCodes == NULL)) {
         *status = U_ILLEGAL_ARGUMENT_ERROR;
         return;
+    }
+
+    if(coll->delegate!=NULL) {
+      ((Collator*)coll->delegate)->setReorderCodes(reorderCodes, reorderCodesLength, *status);
+      return;
     }
     
     if (coll->reorderCodes != NULL && coll->freeReorderCodesOnClose == TRUE) {
@@ -6838,6 +6878,10 @@ U_CAPI void U_EXPORT2
 ucol_getVersion(const UCollator* coll,
                 UVersionInfo versionInfo)
 {
+    if(coll->delegate!=NULL) {
+      ((const Collator*)coll->delegate)->getVersion(versionInfo);
+      return;
+    }
     /* RunTime version  */
     uint8_t rtVersion = UCOL_RUNTIME_VERSION;
     /* Builder version*/
@@ -8096,6 +8140,11 @@ ucol_strcoll( const UCollator    *coll,
     if (source==target && sourceLength==targetLength) {
         UTRACE_EXIT_VALUE(UCOL_EQUAL);
         return UCOL_EQUAL;
+    }
+
+    if(coll->delegate != NULL) {
+      UErrorCode status = U_ZERO_ERROR;
+      return ((const Collator*)coll->delegate)->compare(source,sourceLength,target,targetLength, status);
     }
 
     /* Scan the strings.  Find:                                                             */

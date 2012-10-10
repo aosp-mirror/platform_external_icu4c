@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2011 International Business Machines
+// * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/hi.xml
@@ -660,6 +660,10 @@ hi{
         Zyyy{"आम"}
         Zzzz{"अज्ञात या अवैध लिपि"}
     }
+    Scripts%stand-alone{
+        Hans{"सरलीकृत हान"}
+        Hant{"पारंपरिक हान"}
+    }
     Types{
         calendar{
             buddhist{"बौद्ध पंचांग"}
@@ -679,7 +683,6 @@ hi{
         collation{
             big5han{"पारम्पारिक चीनी वर्गीकरण"}
             dictionary{"शब्दकोश क्रम विन्यास"}
-            direct{"प्रत्यक्ष वर्गीकरण"}
             ducet{"डिफ़ॉल्ट यूनिकोड क्रम विन्यास"}
             gb2312han{"सरलीकृत चीनी वर्गीकरण"}
             phonebook{"दूरभाष निर्देशिका वर्गीकरण"}
@@ -738,7 +741,7 @@ hi{
         POSIX{"कम्प्यूटर"}
         REVISED{"संशोधित वर्तनी"}
     }
-    Version{"2.0.59.63"}
+    Version{"2.0.65.46"}
     localeDisplayPattern{
         pattern{"{0} ({1})"}
         separator{", "}

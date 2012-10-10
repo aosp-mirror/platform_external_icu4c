@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2011 International Business Machines
+// * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/gu.xml
@@ -661,6 +661,10 @@ gu{
         Zyyy{"સામાન્ય"}
         Zzzz{"અજ્ઞાત અથવા અમાન્ય લિપિ"}
     }
+    Scripts%stand-alone{
+        Hans{"સરળીકૃત હેન"}
+        Hant{"પરંપરાગત હાન"}
+    }
     Types{
         calendar{
             buddhist{"બુદ્ધિસ્ટ કેલેન્ડર"}
@@ -680,7 +684,6 @@ gu{
         collation{
             big5han{"પરંપરાગત ચાઇનિઝ સોર્ટ ક્રમબદ્ધ"}
             dictionary{"શબ્દકોશ અનુક્મ"}
-            direct{"ડાઇરેક્ટ અનુક્મ"}
             ducet{"ડિફોલ્ટ યુનિકોડ અનુક્મ"}
             gb2312han{"સરળિકૃત ચાઇનીઝ સોર્ટ ક્રમબદ્ધ-GB2312"}
             phonebook{"ફોનબુક અનુક્મ"}
@@ -705,7 +708,7 @@ gu{
             greklow{"ગ્રિક નાના અક્ષરની સંખ્યા"}
             gujr{"ગુજરાતી અંકો"}
             guru{"ગુરમુખી અંકો"}
-            hanidec{"ચાઇનીઝ 	દશાંશ સંખ્યા"}
+            hanidec{"ચાઇનીઝ દશાંશ સંખ્યા"}
             hans{"સરળિકૃત ચાઇનીઝ સંખ્યાઓ"}
             hansfin{"સરળિકૃત ચાઇનીઝ નાણાકિય સંખ્યાઓ"}
             hant{"પરંપરાગત ચાઇનિઝ સંખ્યાઓ"}
@@ -733,7 +736,7 @@ gu{
         PINYIN{"પિનયિન રોમનાઇઝેશન"}
         WADEGILE{"વેડ-ગિલ્સ રોમનાઇઝેશન"}
     }
-    Version{"2.0.59.63"}
+    Version{"2.0.65.46"}
     localeDisplayPattern{
         separator{","}
     }

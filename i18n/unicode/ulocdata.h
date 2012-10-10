@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *                                                                            *
-* Copyright (C) 2003-2011, International Business Machines                   *
+* Copyright (C) 2003-2012, International Business Machines                   *
 *                Corporation and others. All Rights Reserved.                *
 *                                                                            *
 ******************************************************************************
@@ -43,7 +43,7 @@ typedef enum ULocaleDataExemplarSetType  {
     ULOCDATA_ES_STANDARD=0,
     /** Auxiliary set @stable ICU 3.4 */
     ULOCDATA_ES_AUXILIARY=1,
-    /** Index Character set @draft ICU 4.8 */
+    /** Index Character set @stable ICU 4.8 */
     ULOCDATA_ES_INDEX=2,
     /** One higher than the last valid type @stable ICU 3.4 */
     ULOCDATA_ES_COUNT=3

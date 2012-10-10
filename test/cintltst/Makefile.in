@@ -32,9 +32,6 @@ BUILDDIR := $(BUILDDIR:test\\cintltst/../../=)
 # Simplify the path for Windows 98
 BUILDDIR := $(BUILDDIR:TEST\\CINTLTST/../../=)
 
-ifneq ($(top_builddir),$(top_srcdir))
-CPPFLAGS += -I$(top_builddir)/common
-endif
 # we define ICU_UNICODE_VERSION so we can test it
 CPPFLAGS += -I$(top_srcdir)/common -I$(top_srcdir)/i18n -I$(top_srcdir)/tools/ctestfw -I$(top_srcdir)/tools/toolutil
 DEFS += -D'ICU_UNICODE_VERSION="$(UNICODE_VERSION)"' -D'ICU_VERSION="@VERSION@"' -D'ICUDATA_NAME="$(ICUDATA_PLATFORM_NAME)"' -D'U_TOPSRCDIR="$(top_srcdir)/"' -D'U_TOPBUILDDIR="$(BUILDDIR)"'
@@ -60,7 +57,8 @@ DEPS = $(OBJECTS:.o=.d)
 
 ## List of phony targets
 .PHONY : all all-local install install-local clean clean-local	\
-distclean distclean-local dist dist-local check check-local xcheck
+distclean distclean-local dist dist-local check check-local xcheck	\
+check-exhaustive check-exhaustive-local
 
 ## Clear suffix list
 .SUFFIXES :
@@ -73,6 +71,7 @@ distclean : distclean-local
 dist: dist-local
 check: all check-local
 xcheck: all xcheck-local
+check-exhaustive: all check-exhaustive-local
 
 all-local: $(TARGET)
 
@@ -89,6 +88,9 @@ distclean-local: clean-local
 
 check-local: all-local
 	$(INVOKE) ./$(TARGET) $(CINTLTST_OPTS)
+
+check-exhaustive-local: all-local
+	$(INVOKE) ./$(TARGET) -e
 
 TESTXML=$(top_builddir)/test-$(TARGET).xml
 xcheck-local: all-local

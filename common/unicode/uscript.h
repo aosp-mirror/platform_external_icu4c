@@ -1,6 +1,6 @@
 /*
  **********************************************************************
- *   Copyright (C) 1997-2011, International Business Machines
+ *   Copyright (C) 1997-2012, International Business Machines
  *   Corporation and others.  All Rights Reserved.
  **********************************************************************
  *
@@ -44,6 +44,13 @@
  * @stable ICU 2.2
  */
 typedef enum UScriptCode {
+    /*
+     * Note: UScriptCode constants and their ISO script code comments
+     * are parsed by preparseucd.py.
+     * It matches lines like
+     *     USCRIPT_<Unicode Script value name> = <integer>,  / * <ISO script code> * /
+     */
+
       /** @stable ICU 2.2 */
       USCRIPT_INVALID_CODE = -1,
       /** @stable ICU 2.2 */
@@ -382,10 +389,17 @@ typedef enum UScriptCode {
       /** @stable ICU 4.8 */
       USCRIPT_WOLEAI                        = 155,/* Wole */
 
+      /** @stable ICU 49 */
+      USCRIPT_ANATOLIAN_HIEROGLYPHS         = 156,/* Hluw */
+      /** @stable ICU 49 */
+      USCRIPT_KHOJKI                        = 157,/* Khoj */
+      /** @stable ICU 49 */
+      USCRIPT_TIRHUTA                       = 158,/* Tirh */
+
       /* Private use codes from Qaaa - Qabx are not supported */
 
       /** @stable ICU 2.2 */
-      USCRIPT_CODE_LIMIT    = 156
+      USCRIPT_CODE_LIMIT    = 159
 } UScriptCode;
 
 /**
@@ -442,10 +456,11 @@ uscript_getShortName(UScriptCode scriptCode);
 U_STABLE UScriptCode  U_EXPORT2 
 uscript_getScript(UChar32 codepoint, UErrorCode *err);
 
+#ifndef U_HIDE_DRAFT_API
 /**
- * Is code point c used in script sc?
- * That is, does code point c have the Script property value sc,
- * or do code point c's Script_Extensions include script code sc?
+ * Do the Script_Extensions of code point c contain script sc?
+ * If c does not have explicit Script_Extensions, then this tests whether
+ * c has the Script property value sc.
  *
  * Some characters are commonly used in multiple scripts.
  * For more information, see UAX #24: http://www.unicode.org/reports/tr24/.
@@ -454,15 +469,22 @@ uscript_getScript(UChar32 codepoint, UErrorCode *err);
  * in future versions of the Unicode Standard, and thus in ICU.
  * @param c code point
  * @param sc script code
- * @return TRUE if Script(c)==sc or sc is in Script_Extensions(c)
- * @draft ICU 4.6
+ * @return TRUE if sc is in Script_Extensions(c)
+ * @draft ICU 49
  */
 U_DRAFT UBool U_EXPORT2
 uscript_hasScript(UChar32 c, UScriptCode sc);
 
 /**
  * Writes code point c's Script_Extensions as a list of UScriptCode values
- * to the output scripts array.
+ * to the output scripts array and returns the number of script codes.
+ * - If c does have Script_Extensions, then the Script property value
+ *   (normally Common or Inherited) is not included.
+ * - If c does not have Script_Extensions, then the one Script code is written to the output array.
+ * - If c is not a valid code point, then the one USCRIPT_UNKNOWN code is written.
+ * In other words, if the return value is 1,
+ * then the output array contains exactly c's single Script code.
+ * If the return value is n>=2, then the output array contains c's n Script_Extensions script codes.
  *
  * Some characters are commonly used in multiple scripts.
  * For more information, see UAX #24: http://www.unicode.org/reports/tr24/.
@@ -480,13 +502,14 @@ uscript_hasScript(UChar32 c, UScriptCode sc);
  *                  pass the U_SUCCESS() test, or else the function returns
  *                  immediately. Check for U_FAILURE() on output or use with
  *                  function chaining. (See User Guide for details.)
- * @return number of script codes in c's Script_Extensions,
+ * @return number of script codes in c's Script_Extensions, or 1 for the single Script value,
  *         written to scripts unless U_BUFFER_OVERFLOW_ERROR indicates insufficient capacity
- * @draft ICU 4.6
+ * @draft ICU 49
  */
 U_DRAFT int32_t U_EXPORT2
 uscript_getScriptExtensions(UChar32 c,
                             UScriptCode *scripts, int32_t capacity,
                             UErrorCode *errorCode);
+#endif  /* U_HIDE_DRAFT_API */
 
 #endif

@@ -22,19 +22,19 @@ LOCAL_PATH:= $(call my-dir)
 src_files := \
 	cmemory.c          cstring.c          \
 	cwchar.c           locmap.c           \
-	punycode.c         putil.c            \
+	punycode.cpp       putil.cpp          \
 	uarrsort.c         ubidi.c            \
 	ubidiln.c          ubidi_props.c      \
-	ubidiwrt.c         ucase.c            \
-	ucasemap.c         ucat.c             \
+	ubidiwrt.c         ucase.cpp          \
+	ucasemap.cpp       ucat.c             \
 	uchar.c            ucln_cmn.c         \
 	ucmndata.c                            \
-	ucnv2022.c         ucnv_bld.c         \
-	ucnvbocu.c         ucnv.c             \
+	ucnv2022.cpp       ucnv_bld.cpp       \
+	ucnvbocu.cpp       ucnv.c             \
 	ucnv_cb.c          ucnv_cnv.c         \
 	ucnvdisp.c         ucnv_err.c         \
-	ucnv_ext.c         ucnvhz.c           \
-	ucnv_io.c          ucnvisci.c         \
+	ucnv_ext.cpp       ucnvhz.c           \
+	ucnv_io.cpp        ucnvisci.c         \
 	ucnvlat1.c         ucnv_lmb.c         \
 	ucnvmbcs.c         ucnvscsu.c         \
 	ucnv_set.c         ucnv_u16.c         \
@@ -43,19 +43,19 @@ src_files := \
 	udatamem.c         \
 	udataswp.c         uenum.c            \
 	uhash.c            uinit.c            \
-	uinvchar.c         uloc.c             \
+	uinvchar.c         uloc.cpp           \
 	umapfile.c         umath.c            \
-	umutex.c           unames.c           \
-	unorm_it.c         uresbund.c         \
+	umutex.c           unames.cpp         \
+	unorm_it.c         uresbund.cpp       \
 	ures_cnv.c         uresdata.c         \
 	usc_impl.c         uscript.c          \
-	ushape.c           ustrcase.c         \
+	ushape.cpp         ustrcase.cpp       \
 	ustr_cnv.c         ustrfmt.c          \
-	ustring.c          ustrtrns.c         \
-	ustr_wcs.c         utf_impl.c         \
-	utrace.c           utrie.c            \
+	ustring.cpp        ustrtrns.cpp       \
+	ustr_wcs.cpp       utf_impl.c         \
+	utrace.c           utrie.cpp          \
 	utypes.c           wintz.c            \
-	utrie2_builder.c   icuplug.c          \
+	utrie2_builder.cpp icuplug.c          \
 	propsvec.c         ulist.c            \
 	uloc_tag.c         ucnv_ct.c
 
@@ -103,7 +103,11 @@ src_files += \
         udata.cpp   appendable.cpp  bytestrie.cpp \
         bytestriebuilder.cpp  bytestrieiterator.cpp \
         messagepattern.cpp patternprops.cpp stringtriebuilder.cpp \
-        ucharstrie.cpp ucharstriebuilder.cpp ucharstrieiterator.cpp
+        ucharstrie.cpp ucharstriebuilder.cpp ucharstrieiterator.cpp \
+	ustrcase_locale.cpp unistr_titlecase_brkiter.cpp \
+	uniset_closure.cpp ucasemap_titlecase_brkiter.cpp \
+	ustr_titlecase_brkiter.cpp unistr_case_locale.cpp
+
 
 # This is the empty compiled-in icu data structure
 # that we need to satisfy the linker.

@@ -1,6 +1,6 @@
 /*
 ***************************************************************************
-*   Copyright (C) 1999-2011 International Business Machines Corporation
+*   Copyright (C) 1999-2012 International Business Machines Corporation
 *   and others. All rights reserved.
 ***************************************************************************
 */
@@ -988,7 +988,7 @@ enum RBBIRunMode {
 //-----------------------------------------------------------------------------------
 int32_t RuleBasedBreakIterator::handleNext(const RBBIStateTable *statetable) {
     int32_t             state;
-    int16_t             category        = 0;
+    uint16_t            category        = 0;
     RBBIRunMode         mode;
     
     RBBIStateTableRow  *row;
@@ -1083,7 +1083,7 @@ int32_t RuleBasedBreakIterator::handleNext(const RBBIStateTable *statetable) {
             }
         }
 
-        #ifdef RBBI_DEBUG
+       #ifdef RBBI_DEBUG
             if (fTrace) {
                 RBBIDebugPrintf("             %4ld   ", utext_getNativeIndex(fText));
                 if (0x20<=c && c<0x7f) {
@@ -1097,7 +1097,12 @@ int32_t RuleBasedBreakIterator::handleNext(const RBBIStateTable *statetable) {
 
         // State Transition - move machine to its next state
         //
-        state = row->fNextState[category];
+
+        // Note: fNextState is defined as uint16_t[2], but we are casting
+        // a generated RBBI table to RBBIStateTableRow and some tables
+        // actually have more than 2 categories.
+        U_ASSERT(category<fData->fHeader->fCatCount);
+        state = row->fNextState[category];  /*Not accessing beyond memory*/
         row = (RBBIStateTableRow *)
             // (statetable->fTableData + (statetable->fRowLen * state));
             (tableData + tableRowLen * state);
@@ -1200,7 +1205,7 @@ continueOn:
 //-----------------------------------------------------------------------------------
 int32_t RuleBasedBreakIterator::handlePrevious(const RBBIStateTable *statetable) {
     int32_t             state;
-    int16_t             category        = 0;
+    uint16_t            category        = 0;
     RBBIRunMode         mode;
     RBBIStateTableRow  *row;
     UChar32             c;
@@ -1312,7 +1317,12 @@ int32_t RuleBasedBreakIterator::handlePrevious(const RBBIStateTable *statetable)
 
         // State Transition - move machine to its next state
         //
-        state = row->fNextState[category];
+
+        // Note: fNextState is defined as uint16_t[2], but we are casting
+        // a generated RBBI table to RBBIStateTableRow and some tables
+        // actually have more than 2 categories.
+        U_ASSERT(category<fData->fHeader->fCatCount);
+        state = row->fNextState[category];  /*Not accessing beyond memory*/
         row = (RBBIStateTableRow *)
             (statetable->fTableData + (statetable->fRowLen * state));
 
@@ -1780,7 +1790,7 @@ U_NAMESPACE_END
 
 // defined in ucln_cmn.h
 
-static U_NAMESPACE_QUALIFIER UStack *gLanguageBreakFactories = NULL;
+static icu::UStack *gLanguageBreakFactories = NULL;
 
 /**
  * Release all static memory held by breakiterator.  
@@ -1797,7 +1807,7 @@ U_CDECL_END
 
 U_CDECL_BEGIN
 static void U_CALLCONV _deleteFactory(void *obj) {
-    delete (U_NAMESPACE_QUALIFIER LanguageBreakFactory *) obj;
+    delete (icu::LanguageBreakFactory *) obj;
 }
 U_CDECL_END
 U_NAMESPACE_BEGIN

@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2011 International Business Machines
+// * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/en.xml
@@ -52,6 +52,7 @@ en{
         anp{"Angika"}
         apa{"Apache Language"}
         ar{"Arabic"}
+        ar_001{"Modern Standard Arabic"}
         arc{"Aramaic"}
         arn{"Araucanian"}
         arp{"Arapaho"}
@@ -118,6 +119,7 @@ en{
         chp{"Chipewyan"}
         chr{"Cherokee"}
         chy{"Cheyenne"}
+        ckb{"Sorani Kurdish"}
         cmc{"Chamic Language"}
         co{"Corsican"}
         cop{"Coptic"}
@@ -634,7 +636,7 @@ en{
         Hebr{"Hebrew"}
         Hira{"Hiragana"}
         Hmng{"Pahawh Hmong"}
-        Hrkt{"Katakana or Hiragana"}
+        Hrkt{"Japanese syllabaries"}
         Hung{"Old Hungarian"}
         Inds{"Indus"}
         Ital{"Old Italic"}
@@ -644,6 +646,7 @@ en{
         Kana{"Katakana"}
         Khar{"Kharoshthi"}
         Khmr{"Khmer"}
+        Khoj{"Khojki"}
         Knda{"Kannada"}
         Kore{"Korean"}
         Kthi{"Kaithi"}
@@ -712,6 +715,7 @@ en{
         Thaa{"Thaana"}
         Thai{"Thai"}
         Tibt{"Tibetan"}
+        Tirh{"Tirhuta"}
         Ugar{"Ugaritic"}
         Vaii{"Vai"}
         Visp{"Visible Speech"}
@@ -725,6 +729,10 @@ en{
         Zxxx{"Unwritten"}
         Zyyy{"Common"}
         Zzzz{"Unknown Script"}
+    }
+    Scripts%stand-alone{
+        Hans{"Simplified Han"}
+        Hant{"Traditional Han"}
     }
     Types{
         calendar{
@@ -745,10 +753,10 @@ en{
         collation{
             big5han{"Traditional Chinese Sort Order - Big5"}
             dictionary{"Dictionary Sort Order"}
-            direct{"Direct Sort Order"}
             ducet{"Default Unicode Sort Order"}
             gb2312han{"Simplified Chinese Sort Order - GB2312"}
             phonebook{"Phonebook Sort Order"}
+            phonetic{"Phonetic Sort Order"}
             pinyin{"Pinyin Sort Order"}
             reformed{"Reformed Sort Order"}
             search{"General-Purpose Search"}
@@ -762,9 +770,12 @@ en{
             arabext{"Extended Arabic-Indic Digits"}
             armn{"Armenian Numerals"}
             armnlow{"Armenian Lowercase Numerals"}
+            bali{"Balinese Digits"}
             beng{"Bengali Digits"}
+            cham{"Cham Digits"}
             deva{"Devanagari Digits"}
             ethi{"Ethiopic Numerals"}
+            finance{"Financial Numerals"}
             fullwide{"Full Width Digits"}
             geor{"Georgian Numerals"}
             grek{"Greek Numerals"}
@@ -777,23 +788,39 @@ en{
             hant{"Traditional Chinese Numerals"}
             hantfin{"Traditional Chinese Financial Numerals"}
             hebr{"Hebrew Numerals"}
+            java{"Javanese Digits"}
             jpan{"Japanese Numerals"}
             jpanfin{"Japanese Financial Numerals"}
+            kali{"Kayah Li Digits"}
             khmr{"Khmer Digits"}
             knda{"Kannada Digits"}
+            lana{"Tai Tham Hora Digits"}
+            lanatham{"Tai Tham Tham Digits"}
             laoo{"Lao Digits"}
             latn{"Western Digits"}
+            lepc{"Lepcha Digits"}
+            limb{"Limbu Digits"}
             mlym{"Malayalam Digits"}
             mong{"Mongolian Digits"}
+            mtei{"Meetei Mayek Digits"}
             mymr{"Myanmar Digits"}
+            mymrshan{"Myanmar Shan Digits"}
+            native{"Native Digits"}
+            nkoo{"N'Ko Digits"}
+            olck{"Ol Chiki Digits"}
             orya{"Oriya Digits"}
             roman{"Roman Numerals"}
             romanlow{"Roman Lowercase Numerals"}
+            saur{"Saurashtra Digits"}
+            sund{"Sundanese Digits"}
+            talu{"New Tai Lue Digits"}
             taml{"Traditional Tamil Numerals"}
             tamldec{"Tamil Digits"}
             telu{"Telugu Digits"}
             thai{"Thai Digits"}
             tibt{"Tibetan Digits"}
+            traditional{"Traditional Numerals"}
+            vaii{"Vai Digits"}
         }
     }
     Variants{
@@ -837,7 +864,7 @@ en{
         VALENCIA{"Valencian"}
         WADEGILE{"Wade-Giles Romanization"}
     }
-    Version{"2.0.59.91"}
+    Version{"2.0.67.6"}
     codePatterns{
         language{"Language: {0}"}
         script{"Script: {0}"}

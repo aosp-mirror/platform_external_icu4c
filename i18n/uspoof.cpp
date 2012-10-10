@@ -17,6 +17,7 @@
 #include "unicode/uspoof.h"
 #include "unicode/unorm.h"
 #include "unicode/ustring.h"
+#include "unicode/utf16.h"
 #include "cmemory.h"
 #include "uspoof_impl.h"
 #include "uassert.h"
@@ -565,8 +566,8 @@ uspoof_areConfusableUTF8(const USpoofChecker *sc,
 
 U_CAPI int32_t U_EXPORT2
 uspoof_areConfusableUnicodeString(const USpoofChecker *sc,
-                                  const U_NAMESPACE_QUALIFIER UnicodeString &s1,
-                                  const U_NAMESPACE_QUALIFIER UnicodeString &s2,
+                                  const icu::UnicodeString &s1,
+                                  const icu::UnicodeString &s2,
                                   UErrorCode *status) {
 
     const UChar *u1  = s1.getBuffer();
@@ -583,7 +584,7 @@ uspoof_areConfusableUnicodeString(const USpoofChecker *sc,
 
 U_CAPI int32_t U_EXPORT2
 uspoof_checkUnicodeString(const USpoofChecker *sc,
-                          const U_NAMESPACE_QUALIFIER UnicodeString &text, 
+                          const icu::UnicodeString &text, 
                           int32_t *position,
                           UErrorCode *status) {
     int32_t result = uspoof_check(sc, text.getBuffer(), text.length(), position, status);

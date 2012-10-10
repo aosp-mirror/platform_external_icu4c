@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 1998-2011, International Business Machines
+*   Copyright (C) 1998-2012, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -27,6 +27,9 @@
 #define UCOL_IMP_H
 
 #include "unicode/utypes.h"
+#ifdef __cplusplus
+#   include "unicode/utf16.h"
+#endif
 
 #define UCA_DATA_TYPE "icu"
 #define UCA_DATA_NAME "ucadata"
@@ -41,11 +44,12 @@
 
 #if !UCONFIG_NO_COLLATION
 
-#ifdef XP_CPLUSPLUS
+#ifdef __cplusplus
 #include "unicode/normalizer2.h"
 #include "unicode/unistr.h"
 #endif
 #include "unicode/ucol.h"
+#include "ucol_data.h"
 #include "utrie.h"
 #include "cmemory.h"
 
@@ -171,8 +175,7 @@
  * Header is followed by the table and continuation table.
 */
 
-/* let us know whether reserved fields are reset to zero or junked */
-#define UCOL_HEADER_MAGIC 0x20030618
+/* definition of UCOL_HEADER_MAGIC moved to common/ucol_data.h */
 
 /* UDataInfo for UCA mapping table */
 /* dataFormat="UCol"            */
@@ -281,7 +284,7 @@ minimum number for special Jamo
 
 #define NFC_ZERO_CC_BLOCK_LIMIT_  0x300
 
-#ifdef XP_CPLUSPLUS
+#ifdef __cplusplus
 
 U_NAMESPACE_BEGIN
 
@@ -364,7 +367,7 @@ uprv_delete_collIterate(U_NAMESPACE_QUALIFIER collIterate *s);
 U_CAPI UBool U_EXPORT2
 uprv_collIterateAtEnd(U_NAMESPACE_QUALIFIER collIterate *s);
 
-#ifdef XP_CPLUSPLUS
+#ifdef __cplusplus
 
 U_NAMESPACE_BEGIN
 
@@ -373,12 +376,12 @@ typedef struct UCollationPCE UCollationPCE;
 
 U_NAMESPACE_END
 
-struct UCollationElements : public U_NAMESPACE_QUALIFIER UMemory
+struct UCollationElements : public icu::UMemory
 {
   /**
   * Struct wrapper for source data
   */
-        U_NAMESPACE_QUALIFIER collIterate iteratordata_;
+        icu::collIterate iteratordata_;
   /**
   * Indicates if this data has been reset.
   */
@@ -391,7 +394,7 @@ struct UCollationElements : public U_NAMESPACE_QUALIFIER UMemory
 /**
  * Data for getNextProcessed, getPreviousProcessed.
  */
-        U_NAMESPACE_QUALIFIER UCollationPCE     *pce;
+        icu::UCollationPCE     *pce;
 };
 
 #else
@@ -548,7 +551,7 @@ U_CFUNC uint32_t U_EXPORT2 ucol_getPrevCE(const UCollator *coll,
 /* get some memory */
 void *ucol_getABuffer(const UCollator *coll, uint32_t size);
 
-#ifdef XP_CPLUSPLUS
+#ifdef __cplusplus
 
 U_NAMESPACE_BEGIN
 
@@ -567,7 +570,7 @@ typedef void U_CALLCONV
 SortKeyGenerator(const    UCollator    *coll,
         const    UChar        *source,
         int32_t        sourceLength,
-        U_NAMESPACE_QUALIFIER SortKeyByteSink &result,
+        icu::SortKeyByteSink &result,
         UErrorCode *status);
 
 /* worker function for generating sortkeys */
@@ -576,7 +579,7 @@ void U_CALLCONV
 ucol_calcSortKey(const    UCollator    *coll,
         const    UChar        *source,
         int32_t        sourceLength,
-        U_NAMESPACE_QUALIFIER SortKeyByteSink &result,
+        icu::SortKeyByteSink &result,
         UErrorCode *status);
 
 U_CFUNC
@@ -584,7 +587,7 @@ void U_CALLCONV
 ucol_calcSortKeySimpleTertiary(const    UCollator    *coll,
         const    UChar        *source,
         int32_t        sourceLength,
-        U_NAMESPACE_QUALIFIER SortKeyByteSink &result,
+        icu::SortKeyByteSink &result,
         UErrorCode *status);
 
 #else
@@ -855,46 +858,7 @@ typedef struct {
   uint32_t UCA_PRIMARY_SPECIAL_MAX; /*0xF0000000*/
 } UCAConstants;
 
-typedef struct {
-      int32_t size;
-      /* all the offsets are in bytes */
-      /* to get the address add to the header address and cast properly */
-      uint32_t options; /* these are the default options for the collator */
-      uint32_t UCAConsts; /* structure which holds values for indirect positioning and implicit ranges */
-      uint32_t contractionUCACombos;        /* this one is needed only for UCA, to copy the appropriate contractions */
-      uint32_t magic;            /* magic number - lets us know whether reserved data is reset or junked */
-      uint32_t mappingPosition;  /* const uint8_t *mappingPosition; */
-      uint32_t expansion;        /* uint32_t *expansion;            */
-      uint32_t contractionIndex; /* UChar *contractionIndex;        */
-      uint32_t contractionCEs;   /* uint32_t *contractionCEs;       */
-      uint32_t contractionSize;  /* needed for various closures */
-      /*int32_t latinOneMapping;*/ /* this is now handled in the trie itself *//* fast track to latin1 chars      */
-
-      uint32_t endExpansionCE;      /* array of last collation element in
-                                       expansion */
-      uint32_t expansionCESize;     /* array of maximum expansion size
-                                       corresponding to the expansion
-                                       collation elements with last element
-                                       in endExpansionCE*/
-      int32_t  endExpansionCECount; /* size of endExpansionCE */
-      uint32_t unsafeCP;            /* hash table of unsafe code points */
-      uint32_t contrEndCP;          /* hash table of final code points  */
-                                    /*   in contractions.               */
-
-      int32_t contractionUCACombosSize;     /* number of UCA contraction items. */
-                                            /*Length is contractionUCACombosSize*contractionUCACombosWidth*sizeof(UChar) */
-      UBool jamoSpecial;                    /* is jamoSpecial */
-      UBool isBigEndian;                    /* is this data big endian? from the UDataInfo header*/
-      uint8_t charSetFamily;                /* what is the charset family of this data from the UDataInfo header*/
-      uint8_t contractionUCACombosWidth;    /* width of UCA combos field */
-      UVersionInfo version;
-      UVersionInfo UCAVersion;              /* version of the UCA, read from file */
-      UVersionInfo UCDVersion;              /* UCD version, obtained by u_getUnicodeVersion */
-      UVersionInfo formatVersion;           /* format version from the UDataInfo header */
-      uint32_t scriptToLeadByte;            /* offset to script to lead collation byte mapping data */
-      uint32_t leadByteToScript;            /* offset to lead collation byte to script mapping data */
-      uint8_t reserved[76];                 /* for future use */
-} UCATableHeader;
+/* definition of UCATableHeader moved to common/ucol_data.h */
 
 #define U_UNKNOWN_STATE 0
 #define U_COLLATOR_STATE 0x01
@@ -965,15 +929,7 @@ typedef struct {
 
 U_CDECL_BEGIN
 
-typedef struct {
-  uint32_t byteSize;
-  uint32_t tableSize;
-  uint32_t contsSize;
-  uint32_t table;
-  uint32_t conts;
-  UVersionInfo UCAVersion;              /* version of the UCA, read from file */
-  uint8_t padding[8];
-} InverseUCATableHeader;
+/* definition of InverseUCATableHeader moved to common/ucol_data.h */
 
 typedef void U_CALLCONV
 ResourceCleaner(UCollator *coll);
@@ -1060,6 +1016,7 @@ struct UCollator {
     int32_t* reorderCodes;
     int32_t reorderCodesLength;
     uint8_t* leadBytePermutationTable;
+    void  *delegate;  /* if non-null: C++ object to delegate all API calls to. */
 };
 
 U_CDECL_END
@@ -1132,7 +1089,7 @@ ucol_getLeadBytesForReorderCode(const UCollator *uca, int reorderCode, uint16_t*
 U_CFUNC int U_EXPORT2 
 ucol_getReorderCodesForLeadByte(const UCollator *uca, int leadByte, int16_t* returnReorderCodes, int returnCapacity);
 
-#ifdef XP_CPLUSPLUS
+#ifdef __cplusplus
 /*
  *  Test whether a character is potentially "unsafe" for use as a collation
  *  starting point.  Unsafe chars are those with combining class != 0 plus
@@ -1151,7 +1108,7 @@ static inline UBool ucol_unsafeCP(UChar c, const UCollator *coll) {
 
     hash = c;
     if (hash >= UCOL_UNSAFECP_TABLE_SIZE*8) {
-        if(UTF_IS_SURROGATE(c)) {
+        if(U16_IS_SURROGATE(c)) {
             /*  Lead or trail surrogate             */
             /*  These are always considered unsafe. */
             return TRUE;
@@ -1161,7 +1118,7 @@ static inline UBool ucol_unsafeCP(UChar c, const UCollator *coll) {
     htbyte = coll->unsafeCP[hash>>3];
     return ((htbyte >> (hash & 7)) & 1);
 }
-#endif /* XP_CPLUSPLUS */
+#endif /* __cplusplus */
 
 /* The offsetBuffer in collIterate might need to be freed to avoid memory leaks. */
 void ucol_freeOffsetBuffer(U_NAMESPACE_QUALIFIER collIterate *s); 

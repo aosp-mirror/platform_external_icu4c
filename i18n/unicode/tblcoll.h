@@ -1,6 +1,6 @@
 /*
 ******************************************************************************
-* Copyright (C) 1996-2011, International Business Machines Corporation and
+* Copyright (C) 1996-2012, International Business Machines Corporation and
 * others. All Rights Reserved.
 ******************************************************************************
 */
@@ -677,7 +677,7 @@ public:
      * @see ucol_setReorderCodes
      * @see Collator#getEquivalentReorderCodes
      * @see Collator#setReorderCodes
-     * @draft ICU 4.8 
+     * @stable ICU 4.8 
      */
      virtual int32_t U_EXPORT2 getReorderCodes(int32_t *dest,
                                     int32_t destCapacity,
@@ -691,7 +691,7 @@ public:
      * @param status error code
      * @see Collator#getReorderCodes
      * @see Collator#getEquivalentReorderCodes
-     * @draft ICU 4.8 
+     * @stable ICU 4.8 
      */
      virtual void U_EXPORT2 setReorderCodes(const int32_t* reorderCodes,
                                 int32_t reorderCodesLength,
@@ -711,13 +711,12 @@ public:
      * @see ucol_setReorderCodes
      * @see Collator#getReorderCodes
      * @see Collator#setReorderCodes
-     * @draft ICU 4.8 
+     * @stable ICU 4.8 
      */
     static int32_t U_EXPORT2 getEquivalentReorderCodes(int32_t reorderCode,
                                 int32_t* dest,
                                 int32_t destCapacity,
                                 UErrorCode& status);
-
 
 private:
 
@@ -859,12 +858,14 @@ private:
     void setUCollator(UCollator *collator);
 
 public:
+#ifndef U_HIDE_INTERNAL_API
     /**
     * Get UCollator data struct. Used only by StringSearch & intltest.
     * @return UCollator data struct
     * @internal
     */
     const UCollator * getUCollator();
+#endif  /* U_HIDE_INTERNAL_API */
 
 protected:
    /**
@@ -908,6 +909,34 @@ private:
     */
     UCollationStrength getUCollationStrength(
       const Collator::ECollationStrength &strength) const;
+ public:
+    /** Get the short definition string for a collator. This internal API harvests the collator's
+     *  locale and the attribute set and produces a string that can be used for opening 
+     *  a collator with the same properties using the ucol_openFromShortString API.
+     *  This string will be normalized.
+     *  The structure and the syntax of the string is defined in the "Naming collators"
+     *  section of the users guide: 
+     *  http://icu-project.org/userguide/Collate_Concepts.html#Naming_Collators
+     *  This function supports preflighting.
+     * 
+     *  This is internal, and intended to be used with delegate converters.
+     *
+     *  @param locale a locale that will appear as a collators locale in the resulting
+     *                short string definition. If NULL, the locale will be harvested 
+     *                from the collator.
+     *  @param buffer space to hold the resulting string
+     *  @param capacity capacity of the buffer
+     *  @param status for returning errors. All the preflighting errors are featured
+     *  @return length of the resulting string
+     *  @see ucol_openFromShortString
+     *  @see ucol_normalizeShortDefinitionString
+     *  @see ucol_getShortDefinitionString
+     *  @internal
+     */
+    virtual int32_t internalGetShortDefinitionString(const char *locale,
+                                                     char *buffer,
+                                                     int32_t capacity,
+                                                     UErrorCode &status) const;
 };
 
 // inline method implementation ---------------------------------------------
@@ -931,10 +960,12 @@ inline void RuleBasedCollator::setUCollator(UCollator     *collator)
     setRuleStringFromCollator();
 }
 
+#ifndef U_HIDE_INTERNAL_API
 inline const UCollator * RuleBasedCollator::getUCollator()
 {
     return ucollator;
 }
+#endif
 
 inline Collator::EComparisonResult RuleBasedCollator::getEComparisonResult(
                                            const UCollationResult &result) const

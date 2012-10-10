@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2011 International Business Machines
+// * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/te.xml
@@ -88,7 +88,7 @@ te{
             "బొలీవియన్ బొలీవియానో",
         }
         BRL{
-            "BR$",
+            "R$",
             "బ్రజిలియన్ రియల్",
         }
         BSD{
@@ -413,8 +413,7 @@ te{
         }
         NIO{
             "NIO",
-            "నికరగ్యుయన్
-కొర్‌డుబు",
+            "నికరగ్యుయన్ కొర్‌డుబు",
         }
         NOK{
             "NOK",
@@ -633,5 +632,5 @@ te{
             "జాంబియన్ క్వాచా",
         }
     }
-    Version{"2.0.59.63"}
+    Version{"2.0.65.46"}
 }

@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1997-2011, International Business Machines Corporation and
+ * Copyright (c) 1997-2012, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /*****************************************************************************
@@ -75,7 +75,7 @@ static const char* const rawData2[LOCALE_INFO_SIZE][LOCALE_SIZE] = {
     /* display language (English) */
     {   "English",  "French",   "Catalan", "Greek",    "Norwegian", "Chinese", "German", "Spanish", "Japanese"    },
     /* display script code (English) */
-    {   "",     "",     "",     "",     "",     "Simplified", "", "", ""       },
+    {   "",     "",     "",     "",     "",     "Simplified Han", "", "", ""       },
     /* display country (English) */
     {   "United States",    "France",   "Spain",  "Greece",   "Norway", "China", "Germany", "", "Japan"       },
     /* display variant (English) */
@@ -88,7 +88,7 @@ static const char* const rawData2[LOCALE_INFO_SIZE][LOCALE_SIZE] = {
     /* display language (French) */
     {   "anglais",  "fran\\u00E7ais",   "catalan", "grec",    "norv\\u00E9gien",    "chinois", "allemand", "espagnol", "japonais"     },
     /* display script code (French) */
-    {   "",     "",     "",     "",     "",     "id\\u00e9ogrammes han simplifi\\u00e9s", "", "", ""         },
+    {   "",     "",     "",     "",     "",     "chinois simplifi\\u00e9", "", "", ""         },
     /* display country (French) */
     {   "\\u00C9tats-Unis",    "France",   "Espagne",  "Gr\\u00E8ce",   "Norv\\u00E8ge",    "Chine", "Allemagne", "", "Japon"       },
     /* display variant (French) */
@@ -101,7 +101,7 @@ static const char* const rawData2[LOCALE_INFO_SIZE][LOCALE_SIZE] = {
     /* display language (Catalan) */
     {   "angl\\u00E8s", "franc\\u00E8s", "catal\\u00E0", "grec",  "noruec", "xin\\u00E8s", "alemany", "espanyol", "japon\\u00E8s"    },
     /* display script code (Catalan) */
-    {   "",     "",     "",     "",     "",     "simplificat", "", "", ""         },
+    {   "",     "",     "",     "",     "",     "xin\\u00E8s simplificat", "", "", ""         },
     /* display country (Catalan) */
     {   "Estats Units", "Fran\\u00E7a", "Espanya",  "Gr\\u00E8cia", "Noruega",  "Xina", "Alemanya", "", "Jap\\u00F3"    },
     /* display variant (Catalan) */
@@ -125,7 +125,7 @@ static const char* const rawData2[LOCALE_INFO_SIZE][LOCALE_SIZE] = {
     },
     /* display script code (Greek) */
 
-    {   "",     "",     "",     "",     "", "\\u0391\\u03c0\\u03bb\\u03bf\\u03c0\\u03bf\\u03b9\\u03b7\\u03bc\\u03ad\\u03bd\\u03bf \\u039a\\u03b9\\u03bd\\u03b5\\u03b6\\u03b9\\u03ba\\u03cc", "", "", "" },
+    {   "",     "",     "",     "",     "", "\\u0391\\u03c0\\u03bb\\u03bf\\u03c0\\u03bf\\u03b9\\u03b7\\u03bc\\u03ad\\u03bd\\u03b1 \\u03a7\\u03b1\\u03bd", "", "", "" },
     /* display country (Greek) */
     {
         "\\u0397\\u03BD\\u03C9\\u03BC\\u03AD\\u03BD\\u03B5\\u03C2 \\u03A0\\u03BF\\u03BB\\u03B9\\u03C4\\u03B5\\u03AF\\u03B5\\u03C2 \\u03C4\\u03B7\\u03C2 \\u0391\\u03BC\\u03B5\\u03C1\\u03B9\\u03BA\\u03AE\\u03C2",
@@ -401,6 +401,7 @@ static void TestPrefixes() {
         {"zh", "Hans", "", "PINYIN", "zh-Hans-pinyin", "zh_Hans_PINYIN", "zh_Hans@collation=pinyin"},
         {"hy", "", "", "AREVMDA", "hy_AREVMDA", "hy_AREVMDA", NULL},
         
+        {"de", "", "", "1901", "de-1901", "de_1901", NULL},
         {"mr", "", "", "", "mr.utf8", "mr.utf8", "mr"},
         {"de", "", "TV", "", "de-tv.koi8r", "de_TV.koi8r", "de_TV"},
         {"x-piglatin", "", "ML", "", "x-piglatin_ML.MBE", "x-piglatin_ML.MBE", "x-piglatin_ML"},  /* Multibyte English */
@@ -415,7 +416,7 @@ static void TestPrefixes() {
         {"zh", "Hant", "TW", "STROKE", "zh-hant_TW_STROKE", "zh_Hant_TW_STROKE", "zh_Hant_TW@collation=stroke"},
         {"qq", "Qqqq", "QQ", "QQ", "qq_Qqqq_QQ_QQ", "qq_Qqqq_QQ_QQ", NULL},
         {"qq", "Qqqq", "", "QQ", "qq_Qqqq__QQ", "qq_Qqqq__QQ", NULL},
-        {"12", "3456", "78", "90", "12_3456_78_90", "12_3456_78_90", NULL}, /* total garbage */
+        {"ab", "Cdef", "GH", "IJ", "ab_cdef_gh_ij", "ab_Cdef_GH_IJ", NULL}, /* total garbage */
         
         {NULL,NULL,NULL,NULL,NULL,NULL,NULL}
     };
@@ -1938,9 +1939,9 @@ static void TestCanonicalization(void)
         { "no@ny", "no@ny", "no__NY" /* not: "nn" [alan ICU3.0] */ }, /* POSIX ID */
         { "no-no.utf32@B", "no_NO.utf32@B", "no_NO_B" /* not: "nb_NO_B" [alan ICU3.0] */ }, /* POSIX ID */
         { "qz-qz@Euro", "qz_QZ@Euro", "qz_QZ@currency=EUR" }, /* qz-qz uses private use iso codes */
-        { "en-BOONT", "en_BOONT", "en__BOONT" }, /* registered name */
-        { "de-1901", "de_1901", "de__1901" }, /* registered name */
-        { "de-1906", "de_1906", "de__1906" }, /* registered name */
+        { "en-BOONT", "en_BOONT", "en_BOONT" }, /* registered name */
+        { "de-1901", "de_1901", "de_1901" }, /* registered name */
+        { "de-1906", "de_1906", "de_1906" }, /* registered name */
         { "sr-SP-Cyrl", "sr_SP_CYRL", "sr_Cyrl_RS" }, /* .NET name */
         { "sr-SP-Latn", "sr_SP_LATN", "sr_Latn_RS" }, /* .NET name */
         { "sr_YU_CYRILLIC", "sr_YU_CYRILLIC", "sr_Cyrl_RS" }, /* Linux name */
@@ -3449,7 +3450,7 @@ const char* const full_data[][3] = {
     "kpe"
   }, {
     "ku",
-    "ku_Arab_IQ",
+    "ku_Latn_TR",
     "ku"
   }, {
     "ky",

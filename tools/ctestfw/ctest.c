@@ -1,7 +1,7 @@
 /*
 ********************************************************************************
 *
-*   Copyright (C) 1996-2011, International Business Machines
+*   Copyright (C) 1996-2012, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ********************************************************************************
@@ -902,8 +902,7 @@ int T_CTEST_EXPORT2
 initArgs( int argc, const char* const argv[], ArgHandlerPtr argHandler, void *context)
 {
     int                i;
-    int                doList = FALSE;
-	int                argSkip = 0;
+    int                argSkip = 0;
 
     VERBOSITY = FALSE;
     ERR_MSG = TRUE;
@@ -928,7 +927,7 @@ initArgs( int argc, const char* const argv[], ArgHandlerPtr argHandler, void *co
         }
         else if (strcmp( argv[i], "-l" )==0 )
         {
-            doList = TRUE;
+            /* doList = TRUE; */
         }
         else if (strcmp( argv[i], "-e1") == 0)
         {
@@ -1213,13 +1212,13 @@ ctest_xml_init(const char *rootName) {
     fprintf(stderr," Error: couldn't open XML output file %s\n", XML_FILE_NAME);
     return 1;
   }
-  while(*rootName&&!isalnum(*rootName)) {
+  while(*rootName&&!isalnum((int)*rootName)) {
     rootName++;
   }
   strcpy(XML_PREFIX,rootName);
   {
     char *p = XML_PREFIX+strlen(XML_PREFIX);
-    for(p--;*p&&p>XML_PREFIX&&!isalnum(*p);p--) {
+    for(p--;*p&&p>XML_PREFIX&&!isalnum((int)*p);p--) {
       *p=0;
     }
   }

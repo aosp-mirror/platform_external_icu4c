@@ -26,54 +26,7 @@
 #include "cmemory.h"  /* for UAlignedMemory */
 #include "cintltst.h"
 #include "ccapitst.h"
-
-/* for not including "cstring.h" -begin*/    
-#ifdef U_WINDOWS
-#   define ctest_stricmp(str1, str2) U_STANDARD_CPP_NAMESPACE _stricmp(str1, str2)
-#elif defined(POSIX) 
-#   define ctest_stricmp(str1, str2) U_STANDARD_CPP_NAMESPACE strcasecmp(str1, str2) 
-#else
-#   define ctest_stricmp(str1, str2) T_CString_stricmp(str1, str2)
-#endif
-
-static int U_EXPORT2
-T_CString_stricmp(const char *str1, const char *str2) {
-    if(str1==NULL) {
-        if(str2==NULL) {
-            return 0;
-        } else {
-            return -1;
-        }
-    } else if(str2==NULL) {
-        return 1;
-    } else {
-        /* compare non-NULL strings lexically with lowercase */
-        int rc;
-        unsigned char c1, c2;
-        for(;;) {
-            c1=(unsigned char)*str1;
-            c2=(unsigned char)*str2;
-            if(c1==0) {
-                if(c2==0) {
-                    return 0;
-                } else {
-                    return -1;
-                }
-            } else if(c2==0) {
-                return 1;
-            } else {
-                /* compare non-zero characters with lowercase */
-                rc=(int)(unsigned char)tolower(c1)-(int)(unsigned char)tolower(c2);
-                if(rc!=0) {
-                    return rc;
-                }
-            }
-            ++str1;
-            ++str2;
-        }
-    }
-}
-/* for not including "cstring.h"  -end*/    
+#include "cstring.h"
 
 #define LENGTHOF(array) (int32_t)(sizeof(array)/sizeof((array)[0]))
 
@@ -583,7 +536,7 @@ static void TestConvert()
         if (!ucs_file_in) 
         {
             log_data_err("Couldn't open the Unicode file [%s]... Exiting...\n", ucs_file_name);
-            break;
+            return;
         }
 
         /*Creates a converter and testing ucnv_openCCSID(u_int code_page, platform, errstatus*/
@@ -607,7 +560,7 @@ static void TestConvert()
         {
             log_verbose("getName o.k. %s\n", ucnv_getName(myConverter, &err));
         }
-        if (ctest_stricmp(ucnv_getName(myConverter, &err), CodePagesToTest[codepage_index]))
+        if (uprv_stricmp(ucnv_getName(myConverter, &err), CodePagesToTest[codepage_index]))
             log_err("getName failed\n");
         else 
             log_verbose("getName ok\n");
@@ -1697,19 +1650,17 @@ static void TestConvertSafeClone()
 {
     /* one 'regular' & all the 'private stateful' converters */
     static const char *const names[] = {
-/* BEGIN android-changed */
-/* To save data space, Android does not support ISO2022 CJK */
 #if !UCONFIG_NO_LEGACY_CONVERSION
         "ibm-1047",
-        /* "ISO_2022,locale=zh,version=1", */
+        "ISO_2022,locale=zh,version=1",
 #endif
         "SCSU",
 #if !UCONFIG_NO_LEGACY_CONVERSION
         "HZ",
         "lmbcs",
         "ISCII,version=0",
-        /* "ISO_2022,locale=kr,version=1", */
-        /* "ISO_2022,locale=jp,version=2", */
+        "ISO_2022,locale=kr,version=1",
+        "ISO_2022,locale=jp,version=2",
 #endif
         "BOCU-1",
         "UTF-7",
@@ -1719,7 +1670,6 @@ static void TestConvertSafeClone()
 #else
         "IMAP=mailbox-name"
 #endif
-/* END  android-changed */
     };
 
     /* store the actual sizes of each converter */
@@ -3349,14 +3299,14 @@ TestToUCountPending(){
     }
     ucnv_setToUCallBack(cnv, UCNV_TO_U_CALLBACK_STOP, NULL, oldToUAction, NULL, &status);
     for(i=0; i<LENGTHOF(toUnicodeTests); ++i) {
-        UChar tgt[10];
+        UChar tgt[20];
         UChar* target = tgt;
         UChar* targetLimit = target + 20;
         const char* source = toUnicodeTests[i].input;
         const char* sourceLimit = source + toUnicodeTests[i].len; 
         int32_t len = 0;
         ucnv_reset(cnv);
-        ucnv_toUnicode(cnv,&target, targetLimit, &source, sourceLimit, NULL, FALSE, &status);
+        ucnv_toUnicode(cnv, &target, targetLimit, &source, sourceLimit, NULL, FALSE, &status);
         len = ucnv_toUCountPending(cnv,&status);
         if(U_FAILURE(status)){
             log_err("ucnv_toUnicode call did not succeed. Error: %s\n", u_errorName(status));
@@ -3485,7 +3435,7 @@ static void TestDefaultName(void) {
 
 /* Test that ucnv_compareNames() matches names according to spec. ----------- */
 
-static U_INLINE int
+static int
 sign(int n) {
     if(n==0) {
         return 0;
