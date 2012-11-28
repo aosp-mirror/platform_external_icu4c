@@ -129,12 +129,15 @@
  */
 
 /* BEGIN android-changed */
-/* TODO(ccornelius): move to right place.  Use __ANDROID__ */
-#define HAVE_DLOPEN 0
+/* TODO: move to header file. */
+#if defined(__BIONIC__)
+// bionic doesn't have <langinfo.h>.
+#undef U_HAVE_NL_LANGINFO_CODESET
 #define U_HAVE_NL_LANGINFO_CODESET 0
-#undef U_TZSET
+
+// bionic has timezone, not __timezone.
 #undef U_TIMEZONE
-#undef U_TZNAME
+#endif
 /* END android-changed */
 
 #if U_HAVE_NL_LANGINFO_CODESET
