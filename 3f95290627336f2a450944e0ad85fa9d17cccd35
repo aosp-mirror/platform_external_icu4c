@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAL/X///hQ\u003d",
+        "filename": "common/putil.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 1006607
+      },
+      "writtenOn": "2012-11-28T16:39:59Z",
+      "side": 1,
+      "message": "A minor thing - it is better to use C comment instead of C++ comment here.  ICU4C tries to get rid of the C models but there are still some.  Sometimes we need to run the ICU tests against Android patch.",
+      "revId": "3f95290627336f2a450944e0ad85fa9d17cccd35",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
