@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 2000-2011, International Business Machines
+*   Copyright (C) 2000-2012, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -48,6 +48,8 @@
 #include "unicode/ucnv_cb.h"
 #include "unicode/udata.h"
 #include "unicode/uset.h"
+#include "unicode/utf8.h"
+#include "unicode/utf16.h"
 #include "ucnv_bld.h"
 #include "ucnvmbcs.h"
 #include "ucnv_ext.h"
@@ -824,9 +826,9 @@ ucnv_MBCSGetFilteredUnicodeSetForUnicode(const UConverterSharedData *sharedData,
                                     switch(st3Multiplier) {
                                     case 4:
                                         b|=*stage3++;
-                                    case 3:
+                                    case 3: /*fall through*/
                                         b|=*stage3++;
-                                    case 2:
+                                    case 2: /*fall through*/
                                         b|=stage3[0]|stage3[1];
                                         stage3+=2;
                                     default:
@@ -3352,16 +3354,16 @@ ucnv_MBCSDoubleFromUnicodeWithOffsets(UConverterFromUnicodeArgs *pArgs,
                  * If it does, then surrogates are not paired but mapped separately.
                  * Note that in this case unmatched surrogates are not detected.
                  */
-                if(UTF_IS_SURROGATE(c) && !(unicodeMask&UCNV_HAS_SURROGATES)) {
-                    if(UTF_IS_SURROGATE_FIRST(c)) {
+                if(U16_IS_SURROGATE(c) && !(unicodeMask&UCNV_HAS_SURROGATES)) {
+                    if(U16_IS_SURROGATE_LEAD(c)) {
 getTrail:
                         if(source<sourceLimit) {
                             /* test the following code unit */
                             UChar trail=*source;
-                            if(UTF_IS_SECOND_SURROGATE(trail)) {
+                            if(U16_IS_TRAIL(trail)) {
                                 ++source;
                                 ++nextSourceIndex;
-                                c=UTF16_GET_PAIR_VALUE(c, trail);
+                                c=U16_GET_SUPPLEMENTARY(c, trail);
                                 if(!(unicodeMask&UCNV_HAS_SUPPLEMENTARY)) {
                                     /* BMP-only codepages are stored without stage 1 entries for supplementary code points */
                                     /* callback(unassigned) */
@@ -3557,16 +3559,16 @@ ucnv_MBCSSingleFromUnicodeWithOffsets(UConverterFromUnicodeArgs *pArgs,
              */
             c=*source++;
             ++nextSourceIndex;
-            if(UTF_IS_SURROGATE(c)) {
-                if(UTF_IS_SURROGATE_FIRST(c)) {
+            if(U16_IS_SURROGATE(c)) {
+                if(U16_IS_SURROGATE_LEAD(c)) {
 getTrail:
                     if(source<sourceLimit) {
                         /* test the following code unit */
                         UChar trail=*source;
-                        if(UTF_IS_SECOND_SURROGATE(trail)) {
+                        if(U16_IS_TRAIL(trail)) {
                             ++source;
                             ++nextSourceIndex;
-                            c=UTF16_GET_PAIR_VALUE(c, trail);
+                            c=U16_GET_SUPPLEMENTARY(c, trail);
                             if(!hasSupplementary) {
                                 /* BMP-only codepages are stored without stage 1 entries for supplementary code points */
                                 /* callback(unassigned) */
@@ -3805,16 +3807,16 @@ unrolled:
             /* normal end of conversion: prepare for a new character */
             c=0;
             continue;
-        } else if(!UTF_IS_SURROGATE(c)) {
+        } else if(!U16_IS_SURROGATE(c)) {
             /* normal, unassigned BMP character */
-        } else if(UTF_IS_SURROGATE_FIRST(c)) {
+        } else if(U16_IS_SURROGATE_LEAD(c)) {
 getTrail:
             if(source<sourceLimit) {
                 /* test the following code unit */
                 UChar trail=*source;
-                if(UTF_IS_SECOND_SURROGATE(trail)) {
+                if(U16_IS_TRAIL(trail)) {
                     ++source;
-                    c=UTF16_GET_PAIR_VALUE(c, trail);
+                    c=U16_GET_SUPPLEMENTARY(c, trail);
                     /* this codepage does not map supplementary code points */
                     /* callback(unassigned) */
                 } else {
@@ -4235,16 +4237,16 @@ ucnv_MBCSFromUnicodeWithOffsets(UConverterFromUnicodeArgs *pArgs,
                  * If it does, then surrogates are not paired but mapped separately.
                  * Note that in this case unmatched surrogates are not detected.
                  */
-                if(UTF_IS_SURROGATE(c) && !(unicodeMask&UCNV_HAS_SURROGATES)) {
-                    if(UTF_IS_SURROGATE_FIRST(c)) {
+                if(U16_IS_SURROGATE(c) && !(unicodeMask&UCNV_HAS_SURROGATES)) {
+                    if(U16_IS_SURROGATE_LEAD(c)) {
 getTrail:
                         if(source<sourceLimit) {
                             /* test the following code unit */
                             UChar trail=*source;
-                            if(UTF_IS_SECOND_SURROGATE(trail)) {
+                            if(U16_IS_TRAIL(trail)) {
                                 ++source;
                                 ++nextSourceIndex;
-                                c=UTF16_GET_PAIR_VALUE(c, trail);
+                                c=U16_GET_SUPPLEMENTARY(c, trail);
                                 if(!(unicodeMask&UCNV_HAS_SUPPLEMENTARY)) {
                                     /* BMP-only codepages are stored without stage 1 entries for supplementary code points */
                                     cnv->fromUnicodeStatus=prevLength; /* save the old state */
@@ -4495,11 +4497,11 @@ unassigned:
                         /* each branch falls through to the next one */
                     case 4:
                         *target++=(uint8_t)(value>>24);
-                    case 3:
+                    case 3: /*fall through*/
                         *target++=(uint8_t)(value>>16);
-                    case 2:
+                    case 2: /*fall through*/
                         *target++=(uint8_t)(value>>8);
-                    case 1:
+                    case 1: /*fall through*/
                         *target++=(uint8_t)value;
                     default:
                         /* will never occur */
@@ -4511,13 +4513,13 @@ unassigned:
                     case 4:
                         *target++=(uint8_t)(value>>24);
                         *offsets++=sourceIndex;
-                    case 3:
+                    case 3: /*fall through*/
                         *target++=(uint8_t)(value>>16);
                         *offsets++=sourceIndex;
-                    case 2:
+                    case 2: /*fall through*/
                         *target++=(uint8_t)(value>>8);
                         *offsets++=sourceIndex;
-                    case 1:
+                    case 1: /*fall through*/
                         *target++=(uint8_t)value;
                         *offsets++=sourceIndex;
                     default:
@@ -4542,9 +4544,9 @@ unassigned:
                     /* each branch falls through to the next one */
                 case 3:
                     *charErrorBuffer++=(uint8_t)(value>>16);
-                case 2:
+                case 2: /*fall through*/
                     *charErrorBuffer++=(uint8_t)(value>>8);
-                case 1:
+                case 1: /*fall through*/
                     *charErrorBuffer=(uint8_t)value;
                 default:
                     /* will never occur */
@@ -4561,12 +4563,12 @@ unassigned:
                     if(offsets!=NULL) {
                         *offsets++=sourceIndex;
                     }
-                case 2:
+                case 2: /*fall through*/
                     *target++=(uint8_t)(value>>8);
                     if(offsets!=NULL) {
                         *offsets++=sourceIndex;
                     }
-                case 1:
+                case 1: /*fall through*/
                     *target++=(uint8_t)value;
                     if(offsets!=NULL) {
                         *offsets++=sourceIndex;
@@ -5178,7 +5180,7 @@ ucnv_DBCSFromUTF8(UConverterFromUnicodeArgs *pFromUArgs,
 
     uint32_t stage2Entry;
     uint32_t asciiRoundtrips;
-    uint16_t value, minValue;
+    uint16_t value;
     UBool hasSupplementary;
 
     /* set up the local pointers */
@@ -5198,13 +5200,6 @@ ucnv_DBCSFromUTF8(UConverterFromUnicodeArgs *pFromUArgs,
     }
     asciiRoundtrips=cnv->sharedData->mbcs.asciiRoundtrips;
 
-    if(cnv->useFallback) {
-        /* use all roundtrip and fallback results */
-        minValue=0x800;
-    } else {
-        /* use only roundtrips and fallbacks from private-use characters */
-        minValue=0xc00;
-    }
     hasSupplementary=(UBool)(cnv->sharedData->mbcs.unicodeMask&UCNV_HAS_SUPPLEMENTARY);
 
     /* get the converter state from the UTF-8 UConverter */

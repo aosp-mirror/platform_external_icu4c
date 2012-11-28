@@ -1,6 +1,6 @@
 /*
 ********************************************************************************
-* Copyright (C) 1997-2011, International Business Machines Corporation and others.
+* Copyright (C) 1997-2012, International Business Machines Corporation and others.
 * All Rights Reserved.
 ********************************************************************************
 *
@@ -36,6 +36,7 @@
 #include "unicode/unum.h" // UNumberFormatStyle
 #include "unicode/locid.h"
 #include "unicode/stringpiece.h"
+#include "unicode/curramt.h"
 
 class NumberFormatTest;
 
@@ -173,29 +174,44 @@ public:
      * support identification of all number format fields, not just those
      * pertaining to alignment.
      *
+     * These constants are provided for backwards compatibility only.
+     * Please use the C style constants defined in the header file unum.h.
+     *
      * @see FieldPosition
      * @stable ICU 2.0
      */
     enum EAlignmentFields {
-        kIntegerField,
-        kFractionField,
-        kDecimalSeparatorField,
-        kExponentSymbolField,
-        kExponentSignField,
-        kExponentField,
-        kGroupingSeparatorField,
-        kCurrencyField,
-        kPercentField,
-        kPermillField,
-        kSignField,
+        /** @stable ICU 2.0 */
+        kIntegerField = UNUM_INTEGER_FIELD,
+        /** @stable ICU 2.0 */
+        kFractionField = UNUM_FRACTION_FIELD,
+        /** @stable ICU 2.0 */
+        kDecimalSeparatorField = UNUM_DECIMAL_SEPARATOR_FIELD,
+        /** @stable ICU 2.0 */
+        kExponentSymbolField = UNUM_EXPONENT_SYMBOL_FIELD,
+        /** @stable ICU 2.0 */
+        kExponentSignField = UNUM_EXPONENT_SIGN_FIELD,
+        /** @stable ICU 2.0 */
+        kExponentField = UNUM_EXPONENT_FIELD,
+        /** @stable ICU 2.0 */
+        kGroupingSeparatorField = UNUM_GROUPING_SEPARATOR_FIELD,
+        /** @stable ICU 2.0 */
+        kCurrencyField = UNUM_CURRENCY_FIELD,
+        /** @stable ICU 2.0 */
+        kPercentField = UNUM_PERCENT_FIELD,
+        /** @stable ICU 2.0 */
+        kPermillField = UNUM_PERMILL_FIELD,
+        /** @stable ICU 2.0 */
+        kSignField = UNUM_SIGN_FIELD,
 
     /**
      * These constants are provided for backwards compatibility only.
-     * Please use the C++ style constants defined above.
-     * @stable ICU 2.0
+     * Please use the constants defined in the header file unum.h.
      */
-        INTEGER_FIELD        = kIntegerField,
-        FRACTION_FIELD        = kFractionField
+        /** @stable ICU 2.0 */
+        INTEGER_FIELD        = UNUM_INTEGER_FIELD,
+        /** @stable ICU 2.0 */
+        FRACTION_FIELD       = UNUM_FRACTION_FIELD
     };
 
     /**
@@ -554,6 +570,7 @@ public:
                         Formattable& result,
                         UErrorCode& status) const;
 
+/* Cannot use #ifndef U_HIDE_DRAFT_API for the following draft method since it is virtual */
     /**
      * Parses text from the given string as a currency amount.  Unlike
      * the parse() method, this method will attempt to parse a generic
@@ -564,18 +581,17 @@ public:
      * (U+00A4) in its prefix or suffix.
      *
      * @param text the string to parse
-     * @param result output parameter to receive result. This will have
-     * its currency set to the parsed ISO currency code.
-     * @param pos input-output position; on input, the position within
-     * text to match; must have 0 <= pos.getIndex() < text.length();
-     * on output, the position after the last matched character. If
-     * the parse fails, the position in unchanged upon output.
-     * @return a reference to result
-     * @internal
+     * @param pos  input-output position; on input, the position within text
+     *             to match; must have 0 <= pos.getIndex() < text.length();
+     *             on output, the position after the last matched character.
+     *             If the parse fails, the position in unchanged upon output.
+     * @return     if parse succeeds, a pointer to a newly-created CurrencyAmount
+     *             object (owned by the caller) containing information about
+     *             the parsed currency; if parse fails, this is NULL.
+     * @draft ICU 49
      */
-    virtual Formattable& parseCurrency(const UnicodeString& text,
-                                       Formattable& result,
-                                       ParsePosition& pos) const;
+    virtual CurrencyAmount* parseCurrency(const UnicodeString& text,
+                                          ParsePosition& pos) const;
 
     /**
      * Return true if this format will parse numbers as integers
@@ -604,7 +620,7 @@ public:
      *
      * @param enable <code>TRUE</code> if lenient parsing should be used,
      *               <code>FALSE</code> otherwise.
-     * @draft ICU 4.8
+     * @stable ICU 4.8
      */
     virtual void setLenient(UBool enable);
 
@@ -614,7 +630,7 @@ public:
      * @return <code>TRUE</code> if lenient parsing is enabled,
      *         <code>FALSE</code> otherwise.
      * @see #setLenient
-     * @draft ICU 4.8
+     * @stable ICU 4.8
      */
     virtual UBool isLenient(void) const;
 
@@ -645,12 +661,11 @@ public:
      * @param style            the given style.
      * @param errorCode        Output param filled with success/failure status.
      * @return                 A new NumberFormat instance.
-     * @draft ICU 4.8
+     * @stable ICU 4.8
      */
     static NumberFormat* U_EXPORT2 createInstance(const Locale& desiredLocale,
                                                   UNumberFormatStyle style,
                                                   UErrorCode& errorCode);
-
 
     /**
      * Returns a currency format for the current default locale.
@@ -1044,7 +1059,7 @@ NumberFormat::isParseIntegerOnly() const
 inline UBool
 NumberFormat::isLenient() const
 {
-	return fLenient;
+    return fLenient;
 }
 
 inline UnicodeString&

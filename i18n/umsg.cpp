@@ -442,7 +442,7 @@ umsg_vformat(   const UMessageFormat *fmt,
             // For some reason, a temporary is needed
             stringVal = va_arg(ap, UChar*);
             if(stringVal){
-                args[i].setString(stringVal);
+                args[i].setString(UnicodeString(stringVal));
             }else{
                 *status=U_ILLEGAL_ARGUMENT_ERROR;
             }
@@ -526,7 +526,7 @@ umsg_vparse(const UMessageFormat *fmt,
     }
 
     UnicodeString srcString(source,sourceLength);
-    Formattable *args = ((const MessageFormat*)fmt)->parse(source,*count,*status);
+    Formattable *args = ((const MessageFormat*)fmt)->parse(srcString,*count,*status);
     UDate *aDate;
     double *aDouble;
     UChar *aString;
@@ -634,6 +634,7 @@ int32_t umsg_autoQuoteApostrophe(const UChar* pattern,
         *ec = U_ILLEGAL_ARGUMENT_ERROR;
         return -1;
     }
+    U_ASSERT(destCapacity >= 0);
 
     if (patternLength == -1) {
         patternLength = u_strlen(pattern);
@@ -695,6 +696,7 @@ int32_t umsg_autoQuoteApostrophe(const UChar* pattern,
             break;
         }
 
+        U_ASSERT(len >= 0);
         MAppend(c);
     }
 

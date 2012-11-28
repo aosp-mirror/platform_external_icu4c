@@ -21,6 +21,7 @@
 #include "uarrsort.h"
 #include "uassert.h"
 #include "uhash.h"
+#include "ustr_imp.h"
 
 U_NAMESPACE_BEGIN
 
@@ -111,6 +112,7 @@ UCharsTrieBuilder::add(const UnicodeString &s, int32_t value, UErrorCode &errorC
         UCharsTrieElement *newElements=new UCharsTrieElement[newCapacity];
         if(newElements==NULL) {
             errorCode=U_MEMORY_ALLOCATION_ERROR;
+            return *this;
         }
         if(elementsLength>0) {
             uprv_memcpy(newElements, elements, elementsLength*sizeof(UCharsTrieElement));
@@ -283,7 +285,7 @@ UCharsTrieBuilder::indexOfElementWithNextUnit(int32_t i, int32_t unitIndex, UCha
 
 UCharsTrieBuilder::UCTLinearMatchNode::UCTLinearMatchNode(const UChar *units, int32_t len, Node *nextNode)
         : LinearMatchNode(len, nextNode), s(units) {
-    hash=hash*37+uhash_hashUCharsN(units, len);
+    hash=hash*37+ustr_hashUCharsN(units, len);
 }
 
 UBool

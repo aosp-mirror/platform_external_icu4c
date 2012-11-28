@@ -30,9 +30,6 @@
     <ClCompile Include="bmsearch.cpp">
       <Filter>collation</Filter>
     </ClCompile>
-    <ClCompile Include="bocsu.c">
-      <Filter>collation</Filter>
-    </ClCompile>
     <ClCompile Include="coleitr.cpp">
       <Filter>collation</Filter>
     </ClCompile>
@@ -333,6 +330,9 @@
     <ClCompile Include="regexcmp.cpp">
       <Filter>regex</Filter>
     </ClCompile>
+    <ClCompile Include="regeximp.cpp">
+      <Filter>regex</Filter>
+    </ClCompile>
     <ClCompile Include="regexst.cpp">
       <Filter>regex</Filter>
     </ClCompile>
@@ -492,6 +492,7 @@
     <ClCompile Include="tznames_impl.cpp">
       <Filter>formatting</Filter>
     </ClCompile>
+    <ClCompile Include="bocsu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bocsu.h">
@@ -767,16 +768,13 @@
     <ClInclude Include="uspoof_wsconf.h">
       <Filter>spoof</Filter>
     </ClInclude>
-    <ClInclude Include="tzfmt.h">
-      <Filter>formatting</Filter>
-    </ClInclude>
     <ClInclude Include="tzgnames.h">
       <Filter>formatting</Filter>
     </ClInclude>
-    <ClInclude Include="tznames.h">
+    <ClInclude Include="tznames_impl.h">
       <Filter>formatting</Filter>
     </ClInclude>
-    <ClInclude Include="tznames_impl.h">
+    <ClInclude Include="numsys_impl.h">
       <Filter>formatting</Filter>
     </ClInclude>
   </ItemGroup>
@@ -996,6 +994,12 @@
     <CustomBuild Include="unicode\currpinf.h" />
     <CustomBuild Include="unicode\alphaindex.h">
       <Filter>collation</Filter>
+    </CustomBuild>
+    <CustomBuild Include="unicode\tzfmt.h">
+      <Filter>formatting</Filter>
+    </CustomBuild>
+    <CustomBuild Include="unicode\tznames.h">
+      <Filter>formatting</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>

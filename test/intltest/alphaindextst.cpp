@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 2011, International Business Machines Corporation and
+ * Copyright (c) 2012, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 //
@@ -14,6 +14,8 @@
 #include "unicode/coll.h"
 #include "unicode/tblcoll.h"
 #include "unicode/uniset.h"
+
+#if !UCONFIG_NO_COLLATION && !UCONFIG_NO_NORMALIZATION
 
 // #include <string>
 // #include <iostream>
@@ -41,6 +43,10 @@ void AlphabeticIndexTest::runIndexedTest( int32_t index, UBool exec, const char*
             if (exec) HackPinyinTest();
             break;
 
+        case 3: name = "TestBug9009";
+            if (exec) TestBug9009();
+            break;
+
         default: name = "";
             break; //needed to end loop
     }
@@ -56,7 +62,6 @@ void AlphabeticIndexTest::runIndexedTest( int32_t index, UBool exec, const char*
 //             Does not attempt to check complete functionality.
 //
 void AlphabeticIndexTest::APITest() {
-
     //
     //  Simple constructor and destructor,  getBucketCount()
     //
@@ -415,3 +420,16 @@ void AlphabeticIndexTest::HackPinyinTest() {
     TEST_ASSERT(bucketCount > 25);
     TEST_ASSERT(filledBucketCount > 15);
 }
+
+
+void AlphabeticIndexTest::TestBug9009() {
+    UErrorCode status = U_ZERO_ERROR;
+    Locale loc("root");
+    AlphabeticIndex aindex(loc, status);
+    TEST_CHECK_STATUS; 
+    aindex.nextBucket(status);  // Crash here before bug was fixed.
+    TEST_CHECK_STATUS; 
+}
+    
+
+#endif

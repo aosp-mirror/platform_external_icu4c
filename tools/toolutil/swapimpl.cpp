@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2005-2011, International Business Machines
+*   Copyright (C) 2005-2012, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -63,6 +63,7 @@
 #include "uspoof_impl.h"
 #endif
 
+U_NAMESPACE_USE
 
 /* definitions */
 
@@ -334,7 +335,7 @@ ucase_swap(const UDataSwapper *ds,
         ((pInfo->formatVersion[0]==1 &&
           pInfo->formatVersion[2]==UTRIE_SHIFT &&
           pInfo->formatVersion[3]==UTRIE_INDEX_SHIFT) ||
-         pInfo->formatVersion[0]==2)
+         pInfo->formatVersion[0]==2 || pInfo->formatVersion[0]==3)
     )) {
         udata_printError(ds, "ucase_swap(): data format %02x.%02x.%02x.%02x (format version %02x) is not recognized as case mapping data\n",
                          pInfo->dataFormat[0], pInfo->dataFormat[1],
@@ -749,7 +750,7 @@ udata_swap(const UDataSwapper *ds,
            UErrorCode *pErrorCode) {
     char dataFormatChars[4];
     const UDataInfo *pInfo;
-    int32_t headerSize, i, swappedLength;
+    int32_t i, swappedLength;
 
     if(pErrorCode==NULL || U_FAILURE(*pErrorCode)) {
         return 0;
@@ -762,7 +763,7 @@ udata_swap(const UDataSwapper *ds,
      * information. Otherwise we would have to pass some of the information
      * and not be able to use the UDataSwapFn signature.
      */
-    headerSize=udata_swapDataHeader(ds, inData, -1, NULL, pErrorCode);
+    udata_swapDataHeader(ds, inData, -1, NULL, pErrorCode);
 
     /*
      * If we wanted udata_swap() to also handle non-loadable data like a UTrie,

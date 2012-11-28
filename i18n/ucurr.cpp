@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-* Copyright (c) 2002-2011, International Business Machines
+* Copyright (c) 2002-2012, International Business Machines
 * Corporation and others.  All Rights Reserved.
 **********************************************************************
 */
@@ -53,7 +53,7 @@ static const int32_t POW10[] = { 1, 10, 100, 1000, 10000, 100000,
 
 static const int32_t MAX_POW10 = (sizeof(POW10)/sizeof(POW10[0])) - 1;
 
-#define ISO_COUNTRY_CODE_LENGTH 3
+#define ISO_CURRENCY_CODE_LENGTH 3
 
 //------------------------------------------------------------
 // Resource tags
@@ -141,8 +141,8 @@ deleteIsoCodeEntry(void *obj) {
  */
 static inline char*
 myUCharsToChars(char* resultOfLen4, const UChar* currency) {
-    u_UCharsToChars(currency, resultOfLen4, ISO_COUNTRY_CODE_LENGTH);
-    resultOfLen4[ISO_COUNTRY_CODE_LENGTH] = 0;
+    u_UCharsToChars(currency, resultOfLen4, ISO_CURRENCY_CODE_LENGTH);
+    resultOfLen4[ISO_CURRENCY_CODE_LENGTH] = 0;
     return resultOfLen4;
 }
 
@@ -175,7 +175,7 @@ _findMetaData(const UChar* currency, UErrorCode& ec) {
     }
 
     // Look up our currency, or if that's not available, then DEFAULT
-    char buf[ISO_COUNTRY_CODE_LENGTH+1];
+    char buf[ISO_CURRENCY_CODE_LENGTH+1];
     UErrorCode ec2 = U_ZERO_ERROR; // local error code: soft failure
     UResourceBundle* rb = ures_getByKey(currencyMeta, myUCharsToChars(buf, currency), NULL, &ec2);
       if (U_FAILURE(ec2)) {
@@ -252,9 +252,9 @@ struct CReg;
 static UMTX gCRegLock = 0;
 static CReg* gCRegHead = 0;
 
-struct CReg : public U_NAMESPACE_QUALIFIER UMemory {
+struct CReg : public icu::UMemory {
     CReg *next;
-    UChar iso[ISO_COUNTRY_CODE_LENGTH+1];
+    UChar iso[ISO_CURRENCY_CODE_LENGTH+1];
     char  id[ULOC_FULLNAME_CAPACITY];
 
     CReg(const UChar* _iso, const char* _id)
@@ -266,8 +266,8 @@ struct CReg : public U_NAMESPACE_QUALIFIER UMemory {
         }
         uprv_strncpy(id, _id, len);
         id[len] = 0;
-        uprv_memcpy(iso, _iso, ISO_COUNTRY_CODE_LENGTH * sizeof(const UChar));
-        iso[ISO_COUNTRY_CODE_LENGTH] = 0;
+        uprv_memcpy(iso, _iso, ISO_CURRENCY_CODE_LENGTH * sizeof(const UChar));
+        iso[ISO_CURRENCY_CODE_LENGTH] = 0;
     }
 
     static UCurrRegistryKey reg(const UChar* _iso, const char* _id, UErrorCode* status)
@@ -559,7 +559,7 @@ ucurr_getName(const UChar* currency,
         return 0;
     }
 
-    char buf[ISO_COUNTRY_CODE_LENGTH+1];
+    char buf[ISO_CURRENCY_CODE_LENGTH+1];
     myUCharsToChars(buf, currency);
     
     /* Normalize the keyword value to uppercase */
@@ -604,7 +604,7 @@ ucurr_getName(const UChar* currency,
     }
 
     // If we fail to find a match, use the ISO 4217 code
-    *len = u_strlen(currency); // Should == ISO_COUNTRY_CODE_LENGTH, but maybe not...?
+    *len = u_strlen(currency); // Should == ISO_CURRENCY_CODE_LENGTH, but maybe not...?
     *ec = U_USING_DEFAULT_WARNING;
     return currency;
 }
@@ -642,7 +642,7 @@ ucurr_getPluralName(const UChar* currency,
         return 0;
     }
 
-    char buf[ISO_COUNTRY_CODE_LENGTH+1];
+    char buf[ISO_CURRENCY_CODE_LENGTH+1];
     myUCharsToChars(buf, currency);
 
     const UChar* s = NULL;
@@ -680,7 +680,7 @@ ucurr_getPluralName(const UChar* currency,
     }
 
     // If we fail to find a match, use the ISO 4217 code
-    *len = u_strlen(currency); // Should == ISO_COUNTRY_CODE_LENGTH, but maybe not...?
+    *len = u_strlen(currency); // Should == ISO_CURRENCY_CODE_LENGTH, but maybe not...?
     *ec = U_USING_DEFAULT_WARNING;
     return currency;
 }
@@ -769,7 +769,7 @@ getCurrencyNameCount(const char* loc, int32_t* total_currency_name_count, int32_
                 }
             }
             if (isChoice) {
-                ChoiceFormat fmt(s, ec2);
+                ChoiceFormat fmt(UnicodeString(TRUE, s, len), ec2);
                 int32_t fmt_count;
                 fmt.getFormats(fmt_count);
                 *total_currency_symbol_count += fmt_count;
@@ -801,16 +801,15 @@ getCurrencyNameCount(const char* loc, int32_t* total_currency_name_count, int32_
     }
 }
 
-// TODO: locale dependent
 static UChar* 
-toUpperCase(const UChar* source, int32_t len) {
+toUpperCase(const UChar* source, int32_t len, const char* locale) {
     UChar* dest = NULL;
     UErrorCode ec = U_ZERO_ERROR;
-    int32_t destLen = u_strToUpper(dest, 0, source, len, NULL, &ec);
+    int32_t destLen = u_strToUpper(dest, 0, source, len, locale, &ec);
 
     ec = U_ZERO_ERROR;
     dest = (UChar*)uprv_malloc(sizeof(UChar) * MAX(destLen, len));
-    u_strToUpper(dest, destLen, source, len, NULL, &ec);
+    u_strToUpper(dest, destLen, source, len, locale, &ec);
     if (U_FAILURE(ec)) {
         uprv_memcpy(dest, source, sizeof(UChar) * len);
     } 
@@ -818,7 +817,7 @@ toUpperCase(const UChar* source, int32_t len) {
 }
 
 
-// Collect all available currency names associated with the give locale
+// Collect all available currency names associated with the given locale
 // (enable fallback chain).
 // Read currenc names defined in resource bundle "Currencies" and
 // "CurrencyPlural", enable fallback chain.
@@ -892,7 +891,7 @@ collectCurrencyNames(const char* locale,
                 }
             }
             if (isChoice) {
-                ChoiceFormat fmt(s, ec2);
+                ChoiceFormat fmt(UnicodeString(TRUE, s, len), ec2);
                 int32_t fmt_count;
                 const UnicodeString* formats = fmt.getFormats(fmt_count);
                 for (int i = 0; i < fmt_count; ++i) {
@@ -916,7 +915,7 @@ collectCurrencyNames(const char* locale,
             // Add currency long name.
             s = ures_getStringByIndex(names, UCURR_LONG_NAME, &len, &ec2);
             (*currencyNames)[*total_currency_name_count].IsoCode = iso;
-            UChar* upperName = toUpperCase(s, len);
+            UChar* upperName = toUpperCase(s, len, locale);
             (*currencyNames)[*total_currency_name_count].currencyName = upperName;
             (*currencyNames)[*total_currency_name_count].flag = NEED_TO_BE_DELETED;
             (*currencyNames)[(*total_currency_name_count)++].currencyNameLen = len;
@@ -958,7 +957,7 @@ collectCurrencyNames(const char* locale,
                 // currency long name?
                 s = ures_getStringByIndex(names, j, &len, &ec3);
                 (*currencyNames)[*total_currency_name_count].IsoCode = iso;
-                UChar* upperName = toUpperCase(s, len);
+                UChar* upperName = toUpperCase(s, len, locale);
                 (*currencyNames)[*total_currency_name_count].currencyName = upperName;
                 (*currencyNames)[*total_currency_name_count].flag = NEED_TO_BE_DELETED;
                 (*currencyNames)[(*total_currency_name_count)++].currencyNameLen = len;
@@ -1268,8 +1267,8 @@ currency_cache_cleanup(void) {
 
 U_CFUNC void
 uprv_parseCurrency(const char* locale,
-                   const U_NAMESPACE_QUALIFIER UnicodeString& text,
-                   U_NAMESPACE_QUALIFIER ParsePosition& pos,
+                   const icu::UnicodeString& text,
+                   icu::ParsePosition& pos,
                    int8_t type,
                    UChar* result,
                    UErrorCode& ec)
@@ -1366,7 +1365,7 @@ uprv_parseCurrency(const char* locale,
     int32_t textLen = MIN(MAX_CURRENCY_NAME_LEN, text.length() - start);
     text.extract(start, textLen, inputText);
     UErrorCode ec1 = U_ZERO_ERROR;
-    textLen = u_strToUpper(upperText, MAX_CURRENCY_NAME_LEN, inputText, textLen, NULL, &ec1);
+    textLen = u_strToUpper(upperText, MAX_CURRENCY_NAME_LEN, inputText, textLen, locale, &ec1);
 
     int32_t max = 0;
     int32_t matchIndex = -1;
@@ -1421,7 +1420,7 @@ uprv_parseCurrency(const char* locale,
  */
 U_CFUNC void
 uprv_getStaticCurrencyName(const UChar* iso, const char* loc,
-                           U_NAMESPACE_QUALIFIER UnicodeString& result, UErrorCode& ec)
+                           icu::UnicodeString& result, UErrorCode& ec)
 {
     U_NAMESPACE_USE
 
@@ -1434,14 +1433,14 @@ uprv_getStaticCurrencyName(const UChar* iso, const char* loc,
         // arbitrary value; pick something != 1; more common.
         result.truncate(0);
         if (isChoiceFormat) {
-            ChoiceFormat f(currname, ec);
+            ChoiceFormat f(UnicodeString(TRUE, currname, len), ec);
             if (U_SUCCESS(ec)) {
                 f.format(2.0, result);
             } else {
-                result = iso;
+                result.setTo(iso, -1);
             }
         } else {
-            result = currname;
+            result.setTo(currname, -1);
         }
     }
 }
@@ -2001,14 +2000,13 @@ ucurr_countCurrencies(const char* locale,
                  UErrorCode* ec)
 {
     int32_t currCount = 0;
-    int32_t resLen = 0;
 
     if (ec != NULL && U_SUCCESS(*ec)) 
     {
         // local variables
         UErrorCode localStatus = U_ZERO_ERROR;
         char id[ULOC_FULLNAME_CAPACITY];
-        resLen = uloc_getKeywordValue(locale, "currency", id, ULOC_FULLNAME_CAPACITY, &localStatus);
+        uloc_getKeywordValue(locale, "currency", id, ULOC_FULLNAME_CAPACITY, &localStatus);
         // get country or country_variant in `id'
         /*uint32_t variantType =*/ idForLocale(locale, id, sizeof(id), ec);
 
@@ -2275,8 +2273,7 @@ U_CAPI UEnumeration *U_EXPORT2 ucurr_getKeywordValuesForLocale(const char *key, 
     prefRegionLength = uloc_getCountry(locale, prefRegion, sizeof(prefRegion), status);
     if (prefRegionLength == 0) {
         char loc[ULOC_FULLNAME_CAPACITY] = "";
-        int32_t locLength = 0;
-        locLength = uloc_addLikelySubtags(locale, loc, sizeof(loc), status);
+        uloc_addLikelySubtags(locale, loc, sizeof(loc), status);
         
         prefRegionLength = uloc_getCountry(loc, prefRegion, sizeof(prefRegion), status);
     }
@@ -2416,6 +2413,29 @@ U_CAPI UEnumeration *U_EXPORT2 ucurr_getKeywordValuesForLocale(const char *key, 
     return en;
 }
 
+
+U_CAPI int32_t U_EXPORT2
+ucurr_getNumericCode(const UChar* currency) {
+    int32_t code = 0;
+    if (currency && u_strlen(currency) == ISO_CURRENCY_CODE_LENGTH) {
+        UErrorCode status = U_ZERO_ERROR;
+
+        UResourceBundle *bundle = ures_openDirect(0, "currencyNumericCodes", &status);
+        ures_getByKey(bundle, "codeMap", bundle, &status);
+        if (U_SUCCESS(status)) {
+            char alphaCode[ISO_CURRENCY_CODE_LENGTH+1];
+            myUCharsToChars(alphaCode, currency);
+            T_CString_toUpperCase(alphaCode);
+            ures_getByKey(bundle, alphaCode, bundle, &status);
+            int tmpCode = ures_getInt(bundle, &status);
+            if (U_SUCCESS(status)) {
+                code = tmpCode;
+            }
+        }
+        ures_close(bundle);
+    }
+    return code;
+}
 #endif /* #if !UCONFIG_NO_FORMATTING */
 
 //eof

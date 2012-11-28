@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 2009-2011, International Business Machines Corporation and    *
+* Copyright (C) 2009-2012, International Business Machines Corporation and    *
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 */
@@ -11,6 +11,8 @@
  */
 
 #include "unicode/utypes.h"
+
+#if !UCONFIG_NO_COLLATION && !UCONFIG_NO_NORMALIZATION
 
 #include "unicode/alphaindex.h"
 #include "unicode/coll.h"
@@ -23,6 +25,7 @@
 #include "unicode/uscript.h"
 #include "unicode/usetiter.h"
 #include "unicode/ustring.h"
+#include "unicode/utf16.h"
 
 #include "cstring.h"
 #include "mutex.h"
@@ -32,10 +35,7 @@
 #include "uvector.h"
 
 //#include <string>
-// BEGIN android-removed
-// Apply the change from ICU trunk.
-// #include <iostream>
-// END android-removed
+//#include <iostream>
 U_NAMESPACE_BEGIN
 
 UOBJECT_DEFINE_NO_RTTI_IMPLEMENTATION(AlphabeticIndex)
@@ -49,15 +49,6 @@ sortCollateComparator(const void *context, const void *left, const void *right);
 
 static int32_t U_CALLCONV
 recordCompareFn(const void *context, const void *left, const void *right);
-
-//
-//  UHash support function, delete a UnicodeSet
-//     TODO:  move this function into uhash.
-//
-static void U_CALLCONV
-uhash_deleteUnicodeSet(void *obj) {
-    delete static_cast<UnicodeSet *>(obj);
-}
 
 //  UVector<Bucket *> support function, delete a Bucket.
 static void U_CALLCONV
@@ -186,7 +177,7 @@ void AlphabeticIndex::buildIndex(UErrorCode &status) {
     // that are the same according to the collator
 
     UVector preferenceSorting(status);   // Vector of UnicodeStrings; owned by the vector.
-    preferenceSorting.setDeleter(uhash_deleteUnicodeString);
+    preferenceSorting.setDeleter(uprv_deleteUObject);
     appendUnicodeSetToUVector(preferenceSorting, *initialLabels_, status);
     preferenceSorting.sortWithUComparator(PreferenceComparator, &status, status);
 
@@ -227,6 +218,13 @@ void AlphabeticIndex::buildIndex(UErrorCode &status) {
         }
     }
 
+    // If we have no labels, hard-code a fallback default set of [A-Z]
+    // This case can occur with locales that don't have exemplar character data, including root.
+    // A no-labels situation will cause other problems; it needs to be avoided.
+    if (labelSet.isEmpty()) {
+        labelSet.add((UChar32)0x41, (UChar32)0x5A);
+    }
+
     // Move the set of Labels from the set into a vector, and sort
     // according to the collator.
 
@@ -239,7 +237,7 @@ void AlphabeticIndex::buildIndex(UErrorCode &status) {
     const int32_t size = labelSet.size() - 1;
     if (size > maxLabelCount_) {
         UVector *newLabels = new UVector(status);
-        newLabels->setDeleter(uhash_deleteUnicodeString);
+        newLabels->setDeleter(uprv_deleteUObject);
         int32_t count = 0;
         int32_t old = -1;
         for (int32_t srcIndex=0; srcIndex<labels_->size(); srcIndex++) {
@@ -583,13 +581,13 @@ void AlphabeticIndex::init(UErrorCode &status) {
                                         uhash_compareUnicodeString, // key Comparator,
                                         NULL,                       // value Comparator
                                         &status);
-    uhash_setKeyDeleter(alreadyIn_, uhash_deleteUnicodeString);
-    uhash_setValueDeleter(alreadyIn_, uhash_deleteUnicodeSet);
+    uhash_setKeyDeleter(alreadyIn_, uprv_deleteUObject);
+    uhash_setValueDeleter(alreadyIn_, uprv_deleteUObject);
 
     bucketList_            = new UVector(status);
     bucketList_->setDeleter(alphaIndex_deleteBucket);
     labels_                = new UVector(status);
-    labels_->setDeleter(uhash_deleteUnicodeString);
+    labels_->setDeleter(uprv_deleteUObject);
     labels_->setComparer(uhash_compareUnicodeString);
     inputRecords_          = new UVector(status);
     inputRecords_->setDeleter(alphaIndex_deleteRecord);
@@ -711,7 +709,7 @@ void AlphabeticIndex::staticInit(UErrorCode &status) {
 
         EMPTY_STRING = new UnicodeString();
 
-        nfkdNormalizer = Normalizer2::getInstance(NULL, "nfkc", UNORM2_DECOMPOSE, status);
+        nfkdNormalizer = Normalizer2::getNFKDInstance(status);
         if (nfkdNormalizer == NULL) {
             goto err;
         }
@@ -736,10 +734,10 @@ void AlphabeticIndex::staticInit(UErrorCode &status) {
 //
 static int32_t U_CALLCONV
 sortCollateComparator(const void *context, const void *left, const void *right) {
-    const UHashTok *leftTok = static_cast<const UHashTok *>(left);
-    const UHashTok *rightTok = static_cast<const UHashTok *>(right);
-    const UnicodeString *leftString  = static_cast<const UnicodeString *>(leftTok->pointer);
-    const UnicodeString *rightString = static_cast<const UnicodeString *>(rightTok->pointer);
+    const UElement *leftElement = static_cast<const UElement *>(left);
+    const UElement *rightElement = static_cast<const UElement *>(right);
+    const UnicodeString *leftString  = static_cast<const UnicodeString *>(leftElement->pointer);
+    const UnicodeString *rightString = static_cast<const UnicodeString *>(rightElement->pointer);
     const Collator *col = static_cast<const Collator *>(context);
 
     if (leftString == rightString) {
@@ -761,10 +759,10 @@ sortCollateComparator(const void *context, const void *left, const void *right) 
 //
 static int32_t U_CALLCONV
 recordCompareFn(const void *context, const void *left, const void *right) {
-    const UHashTok *leftTok = static_cast<const UHashTok *>(left);
-    const UHashTok *rightTok = static_cast<const UHashTok *>(right);
-    const AlphabeticIndex::Record *leftRec  = static_cast<const AlphabeticIndex::Record *>(leftTok->pointer);
-    const AlphabeticIndex::Record *rightRec = static_cast<const AlphabeticIndex::Record *>(rightTok->pointer);
+    const UElement *leftElement = static_cast<const UElement *>(left);
+    const UElement *rightElement = static_cast<const UElement *>(right);
+    const AlphabeticIndex::Record *leftRec  = static_cast<const AlphabeticIndex::Record *>(leftElement->pointer);
+    const AlphabeticIndex::Record *rightRec = static_cast<const AlphabeticIndex::Record *>(rightElement->pointer);
     const Collator *col = static_cast<const Collator *>(context);
 
     Collator::EComparisonResult r = col->compare(leftRec->sortingName_, rightRec->sortingName_);
@@ -822,7 +820,7 @@ UVector *AlphabeticIndex::firstStringsInScript(Collator *ruleBasedCollator, UErr
     ucol_getContractionsAndExpansions(uRuleBasedCollator, extras.toUSet(), expansions.toUSet(), true, &status);
     extras.addAll(expansions).removeAll(*TO_TRY);
     if (extras.size() != 0) {
-        const Normalizer2 *normalizer = Normalizer2::getInstance(NULL, "nfkc", UNORM2_COMPOSE, status);
+        const Normalizer2 *normalizer = Normalizer2::getNFKCInstance(status);
         UnicodeSetIterator extrasIter(extras);
         while (extrasIter.next()) {
             const UnicodeString &current = extrasIter.next();
@@ -842,7 +840,7 @@ UVector *AlphabeticIndex::firstStringsInScript(Collator *ruleBasedCollator, UErr
     }
 
     UVector *dest = new UVector(status);
-    dest->setDeleter(uhash_deleteUnicodeString);
+    dest->setDeleter(uprv_deleteUObject);
     for (uint32_t i = 0; i < sizeof(results) / sizeof(results[0]); ++i) {
         if (results[i].length() > 0) {
             dest->addElement(results[i].clone(), status);
@@ -861,29 +859,48 @@ UVector *AlphabeticIndex::firstStringsInScript(Collator *ruleBasedCollator, UErr
 //
 //  It takes too much time to compute this from character properties, so hard code it for now.
 //  Character constants copied from corresponding declaration in ICU4J.
+//  See main/classes/collate/src/com/ibm/icu/text/AlphabeticIndex.java
 
 static UChar HACK_FIRST_CHARS_IN_SCRIPTS[] =  { 0x61, 0, 0x03B1, 0,
             0x2C81, 0, 0x0430, 0, 0x2C30, 0, 0x10D0, 0, 0x0561, 0, 0x05D0, 0, 0xD802, 0xDD00, 0, 0x0800, 0, 0x0621, 0, 0x0710, 0,
             0x0780, 0, 0x07CA, 0, 0x2D30, 0, 0x1200, 0, 0x0950, 0, 0x0985, 0, 0x0A74, 0, 0x0AD0, 0, 0x0B05, 0, 0x0BD0, 0,
-            0x0C05, 0, 0x0C85, 0, 0x0D05, 0, 0x0D85, 0, 0xABC0, 0, 0xA800, 0, 0xA882, 0, 0xD804, 0xDC83, 0, 0x1B83, 0,
-            0xD802, 0xDE00, 0, 0x0E01, 0, 0x0E81, 0, 0xAA80, 0, 0x0F40, 0, 0x1C00, 0, 0xA840, 0, 0x1900, 0, 0x1700, 0, 0x1720, 0,
-            0x1740, 0, 0x1760, 0, 0x1A00, 0, 0xA930, 0, 0xA90A, 0, 0x1000, 0, 0x1780, 0, 0x1950, 0, 0x1980, 0, 0x1A20, 0,
+            0x0C05, 0, 0x0C85, 0, 0x0D05, 0, 0x0D85, 0,
+            0xAAF2, 0,  // Meetei Mayek
+            0xA800, 0, 0xA882, 0, 0xD804, 0xDC83, 0,
+            U16_LEAD(0x111C4), U16_TRAIL(0x111C4), 0,  // Sharada
+            U16_LEAD(0x11680), U16_TRAIL(0x11680), 0,  // Takri
+            0x1B83, 0,
+            0xD802, 0xDE00, 0, 0x0E01, 0,
+            0x0EDE, 0,  // Lao
+            0xAA80, 0, 0x0F40, 0, 0x1C00, 0, 0xA840, 0, 0x1900, 0, 0x1700, 0, 0x1720, 0,
+            0x1740, 0, 0x1760, 0, 0x1A00, 0, 0xA930, 0, 0xA90A, 0, 0x1000, 0,
+            U16_LEAD(0x11103), U16_TRAIL(0x11103), 0,  // Chakma
+            0x1780, 0, 0x1950, 0, 0x1980, 0, 0x1A20, 0,
             0xAA00, 0, 0x1B05, 0, 0xA984, 0, 0x1880, 0, 0x1C5A, 0, 0x13A0, 0, 0x1401, 0, 0x1681, 0, 0x16A0, 0, 0xD803, 0xDC00, 0,
-            0xA500, 0, 0xA6A0, 0, 0x1100, 0, 0x3041, 0, 0x30A1, 0, 0x3105, 0, 0xA000, 0, 0xA4F8, 0, 0xD800, 0xDE80, 0,
+            0xA500, 0, 0xA6A0, 0, 0x1100, 0, 0x3041, 0, 0x30A1, 0, 0x3105, 0, 0xA000, 0, 0xA4F8, 0,
+            U16_LEAD(0x16F00), U16_TRAIL(0x16F00), 0,  // Miao
+            0xD800, 0xDE80, 0,
             0xD800, 0xDEA0, 0, 0xD802, 0xDD20, 0, 0xD800, 0xDF00, 0, 0xD800, 0xDF30, 0, 0xD801, 0xDC28, 0, 0xD801, 0xDC50, 0,
-            0xD801, 0xDC80, 0, 0xD800, 0xDC00, 0, 0xD802, 0xDC00, 0, 0xD802, 0xDE60, 0, 0xD802, 0xDF00, 0, 0xD802, 0xDC40, 0,
-            0xD802, 0xDF40, 0, 0xD802, 0xDF60, 0, 0xD800, 0xDF80, 0, 0xD800, 0xDFA0, 0, 0xD808, 0xDC00, 0, 0xD80C, 0xDC00, 0, 0x4E00, 0 };
+            0xD801, 0xDC80, 0,
+            U16_LEAD(0x110D0), U16_TRAIL(0x110D0), 0,  // Sora Sompeng
+            0xD800, 0xDC00, 0, 0xD802, 0xDC00, 0, 0xD802, 0xDE60, 0, 0xD802, 0xDF00, 0, 0xD802, 0xDC40, 0,
+            0xD802, 0xDF40, 0, 0xD802, 0xDF60, 0, 0xD800, 0xDF80, 0, 0xD800, 0xDFA0, 0, 0xD808, 0xDC00, 0, 0xD80C, 0xDC00, 0,
+            U16_LEAD(0x109A0), U16_TRAIL(0x109A0), 0,  // Meroitic Cursive
+            U16_LEAD(0x10980), U16_TRAIL(0x10980), 0,  // Meroitic Hieroglyphs
+            0x4E00, 0 };
 
 UVector *AlphabeticIndex::firstStringsInScript(UErrorCode &status) {
     if (U_FAILURE(status)) {
         return NULL;
     }
     UVector *dest = new UVector(status);
-    if (dest == NULL && U_SUCCESS(status)) {
-        status = U_MEMORY_ALLOCATION_ERROR;
+    if (dest == NULL) {
+        if (U_SUCCESS(status)) {
+            status = U_MEMORY_ALLOCATION_ERROR;
+        }
         return NULL;
     }
-    dest->setDeleter(uhash_deleteUnicodeString);
+    dest->setDeleter(uprv_deleteUObject);
     const UChar *src  = HACK_FIRST_CHARS_IN_SCRIPTS;
     const UChar *limit = src + sizeof(HACK_FIRST_CHARS_IN_SCRIPTS) / sizeof(HACK_FIRST_CHARS_IN_SCRIPTS[0]);
     do {
@@ -893,9 +910,10 @@ UVector *AlphabeticIndex::firstStringsInScript(UErrorCode &status) {
         UnicodeString *str = new UnicodeString(src, -1);
         if (str == NULL) {
             status = U_MEMORY_ALLOCATION_ERROR;
+        } else {
+            dest->addElement(str, status);
+            src += str->length() + 1;
         }
-        dest->addElement(str, status);
-        src += str->length() + 1;
     } while (src < limit);
     dest->sortWithUComparator(sortCollateComparator, collator_, status);
     return dest;
@@ -1060,7 +1078,7 @@ void AlphabeticIndex::hackName(UnicodeString &dest, const UnicodeString &name, c
             index--;
             break;
         }
-        int32_t compareResult = col->compare(name, (*HACK_PINYIN_LOOKUP)[index]); 
+        int32_t compareResult = col->compare(name, UnicodeString(TRUE, (*HACK_PINYIN_LOOKUP)[index], -1));
         if (compareResult < 0) {
             index--;
         }
@@ -1082,16 +1100,16 @@ void AlphabeticIndex::hackName(UnicodeString &dest, const UnicodeString &name, c
  *
  * For use with array sort or UVector.
  * @param context  A UErrorCode pointer.
- * @param left     A UHashTok pointer, which must refer to a UnicodeString *
- * @param right    A UHashTok pointer, which must refer to a UnicodeString *
+ * @param left     A UElement pointer, which must refer to a UnicodeString *
+ * @param right    A UElement pointer, which must refer to a UnicodeString *
  */
 
 static int32_t U_CALLCONV
 PreferenceComparator(const void *context, const void *left, const void *right) {
-    const UHashTok *leftTok  = static_cast<const UHashTok *>(left);
-    const UHashTok *rightTok = static_cast<const UHashTok *>(right);
-    const UnicodeString *s1  = static_cast<const UnicodeString *>(leftTok->pointer);
-    const UnicodeString *s2  = static_cast<const UnicodeString *>(rightTok->pointer);
+    const UElement *leftElement  = static_cast<const UElement *>(left);
+    const UElement *rightElement = static_cast<const UElement *>(right);
+    const UnicodeString *s1  = static_cast<const UnicodeString *>(leftElement->pointer);
+    const UnicodeString *s2  = static_cast<const UnicodeString *>(rightElement->pointer);
     UErrorCode &status       = *(UErrorCode *)(context);   // Cast off both static and const.
     if (s1 == s2) {
         return 0;
@@ -1321,3 +1339,5 @@ AlphabeticIndex::Bucket::~Bucket() {
 }
 
 U_NAMESPACE_END
+
+#endif

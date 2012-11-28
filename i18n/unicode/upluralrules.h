@@ -1,6 +1,6 @@
 /*
 *****************************************************************************************
-* Copyright (C) 2010-2011, International Business Machines
+* Copyright (C) 2010-2012, International Business Machines
 * Corporation and others. All Rights Reserved.
 *****************************************************************************************
 */
@@ -15,6 +15,9 @@
 #include "unicode/localpointer.h"
 
 /**
+ * \file
+ * \brief C API: Plural rules, select plural keywords for numeric values.
+ *
  * A UPluralRules object defines rules for mapping non-negative numeric
  * values onto a small set of keywords. Rules are constructed from a text
  * description, consisting of a series of keywords and conditions.
@@ -36,10 +39,10 @@
 
 /**
  * Opaque UPluralRules object for use in C programs.
- * @draft ICU 4.8
+ * @stable ICU 4.8
  */
 struct UPluralRules;
-typedef struct UPluralRules UPluralRules;  /**< C typedef for struct UPluralRules. @draft ICU 4.8 */
+typedef struct UPluralRules UPluralRules;  /**< C typedef for struct UPluralRules. @stable ICU 4.8 */
 
 /**
  * Open a new UPluralRules object using the predefined plural rules for a
@@ -47,7 +50,7 @@ typedef struct UPluralRules UPluralRules;  /**< C typedef for struct UPluralRule
  * @param locale The locale for which the rules are desired.
  * @param status A pointer to a UErrorCode to receive any errors.
  * @return A UPluralRules for the specified locale, or 0 if an error occurred.
- * @draft ICU 4.8
+ * @stable ICU 4.8
  */
 U_DRAFT UPluralRules* U_EXPORT2
 uplrules_open(const char *locale,
@@ -56,7 +59,7 @@ uplrules_open(const char *locale,
 /**
  * Close a UPluralRules object. Once closed it may no longer be used.
  * @param uplrules The UPluralRules object to close.
- * @draft ICU 4.8
+ * @stable ICU 4.8
  */
 U_DRAFT void U_EXPORT2
 uplrules_close(UPluralRules *uplrules);
@@ -73,7 +76,7 @@ U_NAMESPACE_BEGIN
  *
  * @see LocalPointerBase
  * @see LocalPointer
- * @draft ICU 4.8
+ * @stable ICU 4.8
  */
 U_DEFINE_LOCAL_OPEN_POINTER(LocalUPluralRulesPointer, UPluralRules, uplrules_close);
 
@@ -91,7 +94,7 @@ U_NAMESPACE_END
  * @param capacity The capacity of keyword.
  * @param status A pointer to a UErrorCode to receive any errors.
  * @return The length of keyword.
- * @draft ICU 4.8
+ * @stable ICU 4.8
  */
 U_DRAFT int32_t U_EXPORT2
 uplrules_select(const UPluralRules *uplrules,

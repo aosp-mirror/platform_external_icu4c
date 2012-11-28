@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2011 International Business Machines
+// * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/bo.xml
@@ -27,7 +27,7 @@ bo{
         "Tibt",
     }
     NumberElements{
-        default{"tibt"}
+        default{"latn"}
         latn{
             patterns{
                 percentFormat{"#,##0%"}
@@ -37,13 +37,14 @@ bo{
                 nan{"NaN"}
             }
         }
+        native{"tibt"}
         tibt{
             symbols{
                 nan{"ཨང་མེན་"}
             }
         }
     }
-    Version{"2.0.58.6"}
+    Version{"2.0.65.46"}
     calendar{
         gregorian{
             AmPmMarkers{

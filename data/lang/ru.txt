@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2011 International Business Machines
+// * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/ru.xml
@@ -657,6 +657,10 @@ ru{
         Zyyy{"Общепринятая"}
         Zzzz{"Неизвестная или недействительная письменность"}
     }
+    Scripts%stand-alone{
+        Hans{"Упрощенный китайский"}
+        Hant{"Традиционный китайский"}
+    }
     Types{
         calendar{
             buddhist{"Буддийский календарь"}
@@ -676,7 +680,6 @@ ru{
         collation{
             big5han{"традиционный китайский - Big5"}
             dictionary{"словарный порядок сортировки"}
-            direct{"прямой порядок"}
             ducet{"cтандартная сортировка Unicode"}
             gb2312han{"упрощенный китайский - GB2312"}
             phonebook{"порядок телефонной книги"}
@@ -745,7 +748,7 @@ ru{
         VALENCIA{"Валенсийский"}
         WADEGILE{"Система Уэйда – Джайлза"}
     }
-    Version{"2.0.59.68"}
+    Version{"2.0.65.46"}
     codePatterns{
         language{"Язык: {0}"}
         script{"Написание: {0}"}

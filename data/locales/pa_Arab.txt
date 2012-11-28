@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2011 International Business Machines
+// * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/pa_Arab.xml
@@ -21,8 +21,9 @@ pa_Arab{
     }
     NumberElements{
         default{"arabext"}
+        native{"arabext"}
     }
-    Version{"2.0.57.98"}
+    Version{"2.0.67.8"}
     calendar{
         gregorian{
             DateTimePatterns{

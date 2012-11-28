@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2011 International Business Machines
+// * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/ar.xml
@@ -635,6 +635,10 @@ ar{
         Zyyy{"عام"}
         Zzzz{"نص مكتوب غير معروف"}
     }
+    Scripts%stand-alone{
+        Hans{"الهان المبسطة"}
+        Hant{"الهان التقليدية"}
+    }
     Types{
         calendar{
             buddhist{"التقويم البوذي"}
@@ -654,7 +658,6 @@ ar{
         collation{
             big5han{"ترتيب فرز الصينية التقليدية [Big5]"}
             dictionary{"ترتيب فرز القاموس"}
-            direct{"ترتيب فرز مباشر"}
             ducet{"ترتيب تصنيف Unicode الافتراضي"}
             gb2312han{"ترتيب فرز الصينية المبسطة [GB2312]"}
             phonebook{"ترتيب فرز دليل الهاتف"}
@@ -718,7 +721,7 @@ ar{
         VALENCIA{"بلنسية"}
         WADEGILE{"المندرين باللاتينية - ويد–جيلز"}
     }
-    Version{"2.0.59.64"}
+    Version{"2.0.64.72"}
     codePatterns{
         language{"اللغة: {0}"}
         script{"نظام الكتابة: {0}"}

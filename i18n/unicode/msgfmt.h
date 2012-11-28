@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2007-2011, International Business Machines Corporation and
+* Copyright (C) 2007-2012, International Business Machines Corporation and
 * others. All Rights Reserved.
 ********************************************************************************
 *
@@ -143,6 +143,10 @@ class NumberFormat;
  * human-readable text, and use the ASCII apostrophe ' (U+0027)
  * only in program syntax, like quoting in MessageFormat.
  * See the annotations for U+0027 Apostrophe in The Unicode Standard.
+ *
+ * <p>The <code>choice</code> argument type is deprecated.
+ * Use <code>plural</code> arguments for proper plural selection,
+ * and <code>select</code> arguments for simple selection among a fixed set of choices.
  *
  * <p>The <code>argType</code> and <code>argStyle</code> values are used to create
  * a <code>Format</code> instance for the format element. The following
@@ -317,6 +321,7 @@ class NumberFormat;
  */
 class U_I18N_API MessageFormat : public Format {
 public:
+#ifndef U_HIDE_OBSOLETE_API
     /**
      * Enum type for kMaxFormat.
      * @obsolete ICU 3.0.  The 10-argument limit was removed as of ICU 2.6,
@@ -330,6 +335,7 @@ public:
          */
         kMaxFormat = 10
     };
+#endif  /* U_HIDE_OBSOLETE_API */
 
     /**
      * Constructs a new MessageFormat using the given pattern and the
@@ -457,7 +463,7 @@ public:
      *                   Can be NULL.
      * @param status    Input/output error code.  If the
      *                  pattern cannot be parsed, set to failure code.
-     * @draft ICU 4.8
+     * @stable ICU 4.8
      */
     virtual void applyPattern(const UnicodeString& pattern,
                               UMessagePatternApostropheMode aposMode,
@@ -466,7 +472,7 @@ public:
 
     /**
      * @return this instance's UMessagePatternApostropheMode.
-     * @draft ICU 4.8
+     * @stable ICU 4.8
      */
     UMessagePatternApostropheMode getApostropheMode() const {
         return msgPattern.getApostropheMode();
@@ -815,6 +821,7 @@ public:
     UBool usesNamedArguments() const;
 
 
+#ifndef U_HIDE_INTERNAL_API
     /**
      * This API is for ICU internal use only.
      * Please do not use it.
@@ -826,6 +833,7 @@ public:
      * @internal
      */
     int32_t getArgTypeCount() const;
+#endif  /* U_HIDE_INTERNAL_API */
 
     /**
      * Returns a unique class ID POLYMORPHICALLY.  Pure virtual override.
@@ -853,6 +861,7 @@ public:
      */
     static UClassID U_EXPORT2 getStaticClassID(void);
 
+#ifndef U_HIDE_INTERNAL_API
     /**
      * Compares two Format objects. This is used for constructing the hash
      * tables.
@@ -864,6 +873,7 @@ public:
      * @internal
      */
     static UBool equalFormats(const void* left, const void* right);
+#endif  /* U_HIDE_INTERNAL_API */
 
 private:
 

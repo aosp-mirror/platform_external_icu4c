@@ -39,7 +39,7 @@ static const char* const rawData[33][8] = {
         // display langage (English)
         {   "English",  "French",   "Catalan", "Greek",    "Norwegian",    "Italian",  "xx",   "Chinese" },
         // display script (English)
-        {   "",     "",     "",     "",     "",   "",     "",   "Simplified" },
+        {   "",     "",     "",     "",     "",   "",     "",   "Simplified Han" },
         // display country (English)
         {   "United States",    "France",   "Spain",  "Greece",   "Norway",   "",     "YY",   "China" },
         // display variant (English)
@@ -52,7 +52,7 @@ static const char* const rawData[33][8] = {
         // display langage (French)
         {   "anglais",  "fran\\u00E7ais",   "catalan", "grec",    "norv\\u00E9gien",    "italien", "xx", "chinois" },
         // display script (French)
-        {   "",     "",     "",     "",     "",     "",     "",   "id\\u00E9ogrammes han simplifi\\u00E9s" },
+        {   "",     "",     "",     "",     "",     "",     "",   "chinois simplifi\\u00E9" },
         // display country (French)
         {   "\\u00C9tats-Unis",    "France",   "Espagne",  "Gr\\u00E8ce",   "Norv\\u00E8ge", "", "YY", "Chine" },
         // display variant (French)
@@ -65,7 +65,7 @@ static const char* const rawData[33][8] = {
         /* display language (Catalan) */
         {   "angl\\u00E8s", "franc\\u00E8s", "catal\\u00E0", "grec",  "noruec", "itali\\u00E0", "", "xin\\u00E8s" },
         /* display script (Catalan) */
-        {   "", "", "",                    "", "", "", "", "simplificat" },
+        {   "", "", "",                    "", "", "", "", "xin\\u00E8s simplificat" },
         /* display country (Catalan) */
         {   "Estats Units", "Fran\\u00E7a", "Espanya",  "Gr\\u00E8cia", "Noruega", "", "", "Xina" },
         /* display variant (Catalan) */
@@ -84,7 +84,7 @@ static const char* const rawData[33][8] = {
             "\\u039A\\u03B9\\u03BD\\u03B5\\u03B6\\u03B9\\u03BA\\u03AC"
         },
         // display script (Greek)
-        {   "", "", "", "", "", "", "", "\\u0391\\u03c0\\u03bb\\u03bf\\u03c0\\u03bf\\u03b9\\u03b7\\u03bc\\u03ad\\u03bd\\u03bf \\u039a\\u03b9\\u03bd\\u03b5\\u03b6\\u03b9\\u03ba\\u03cc" },
+        {   "", "", "", "", "", "", "", "\\u0391\\u03c0\\u03bb\\u03bf\\u03c0\\u03bf\\u03b9\\u03b7\\u03bc\\u03ad\\u03bd\\u03b1 \\u03a7\\u03b1\\u03bd" },
         // display country (Greek)[actual values listed below]
         {   "\\u0397\\u03BD\\u03C9\\u03BC\\u03AD\\u03BD\\u03B5\\u03C2 \\u03A0\\u03BF\\u03BB\\u03B9\\u03C4\\u03B5\\u03AF\\u03B5\\u03C2 \\u03C4\\u03B7\\u03C2 \\u0391\\u03BC\\u03B5\\u03C1\\u03B9\\u03BA\\u03AE\\u03C2",
             "\\u0393\\u03b1\\u03bb\\u03bb\\u03af\\u03b1",
@@ -868,8 +868,8 @@ LocaleTest::TestGetLangsAndCountries()
       ;
 
     /* TODO: Change this test to be more like the cloctst version? */
-    if (testCount != 530)
-        errln("Expected getISOLanguages() to return 530 languages; it returned %d", testCount);
+    if (testCount != 536)
+        errln("Expected getISOLanguages() to return 536 languages; it returned %d", testCount);
     else {
         for (i = 0; i < 15; i++) {
             int32_t j;
@@ -2064,23 +2064,27 @@ void LocaleTest::TestGetLocale(void) {
 void LocaleTest::TestVariantWithOutCountry(void) {
     Locale loc("en","","POSIX");
     if (0 != strcmp(loc.getVariant(), "POSIX")) {
-        errln("FAIL: en__POSIX didn't get parsed correctly");
+        errln("FAIL: en__POSIX didn't get parsed correctly - name is %s - expected %s got %s", loc.getName(), "POSIX", loc.getVariant());
     }
     Locale loc2("en","","FOUR");
     if (0 != strcmp(loc2.getVariant(), "FOUR")) {
-        errln("FAIL: en__FOUR didn't get parsed correctly");
+        errln("FAIL: en__FOUR didn't get parsed correctly - name is %s - expected %s got %s", loc2.getName(), "FOUR", loc2.getVariant());
     }
     Locale loc3("en","Latn","","FOUR");
     if (0 != strcmp(loc3.getVariant(), "FOUR")) {
-        errln("FAIL: en_Latn__FOUR didn't get parsed correctly");
+        errln("FAIL: en_Latn__FOUR didn't get parsed correctly - name is %s - expected %s got %s", loc3.getName(), "FOUR", loc3.getVariant());
     }
     Locale loc4("","Latn","","FOUR");
     if (0 != strcmp(loc4.getVariant(), "FOUR")) {
-        errln("FAIL: _Latn__FOUR didn't get parsed correctly");
+        errln("FAIL: _Latn__FOUR didn't get parsed correctly - name is %s - expected %s got %s", loc4.getName(), "FOUR", loc4.getVariant());
     }
     Locale loc5("","Latn","US","FOUR");
     if (0 != strcmp(loc5.getVariant(), "FOUR")) {
-        errln("FAIL: _Latn_US_FOUR didn't get parsed correctly");
+        errln("FAIL: _Latn_US_FOUR didn't get parsed correctly - name is %s - expected %s got %s", loc5.getName(), "FOUR", loc5.getVariant());
+    }
+    Locale loc6("de-1901");
+    if (0 != strcmp(loc6.getVariant(), "1901")) {
+        errln("FAIL: de-1901 didn't get parsed correctly - name is %s - expected %s got %s", loc6.getName(), "1901", loc6.getVariant());
     }
 }
 
@@ -2150,9 +2154,9 @@ void LocaleTest::TestCanonicalization(void)
         { "qz-qz@Euro", "qz_QZ@Euro", "qz_QZ@currency=EUR" }, /* qz-qz uses private use iso codes */
         // NOTE: uloc_getName() works on en-BOONT, but Locale() parser considers it BOGUS
         // TODO: unify this behavior
-        { "en-BOONT", "BOGUS", "en__BOONT" }, /* registered name */
-        { "de-1901", "de_1901", "de__1901" }, /* registered name */
-        { "de-1906", "de_1906", "de__1906" }, /* registered name */
+        { "en-BOONT", "en_BOONT", "en_BOONT" }, /* registered name */
+        { "de-1901", "de_1901", "de_1901" }, /* registered name */
+        { "de-1906", "de_1906", "de_1906" }, /* registered name */
         { "sr-SP-Cyrl", "sr_SP_CYRL", "sr_Cyrl_RS" }, /* .NET name */
         { "sr-SP-Latn", "sr_SP_LATN", "sr_Latn_RS" }, /* .NET name */
         { "sr_YU_CYRILLIC", "sr_YU_CYRILLIC", "sr_Cyrl_RS" }, /* Linux name */

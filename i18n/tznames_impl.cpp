@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 2011, International Business Machines Corporation and
+* Copyright (C) 2011-2012, International Business Machines Corporation and
 * others. All Rights Reserved.
 *******************************************************************************
 *
@@ -39,7 +39,6 @@ static const char gMZPrefix[]           = "meta:";
 static const char* KEYS[]               = {"lg", "ls", "ld", "sg", "ss", "sd"};
 static const int32_t KEYS_SIZE = (sizeof KEYS / sizeof KEYS[0]);
 
-static const char gCuTag[]              = "cu";
 static const char gEcTag[]              = "ec";
 
 static const char EMPTY[]               = "<empty>";   // place holder for empty ZNames/TZNames
@@ -47,14 +46,13 @@ static const char EMPTY[]               = "<empty>";   // place holder for empty
 static const UTimeZoneNameType ALL_NAME_TYPES[] = {
     UTZNM_LONG_GENERIC, UTZNM_LONG_STANDARD, UTZNM_LONG_DAYLIGHT,
     UTZNM_SHORT_GENERIC, UTZNM_SHORT_STANDARD, UTZNM_SHORT_DAYLIGHT,
-    UTZNM_SHORT_STANDARD_COMMONLY_USED, UTZNM_SHORT_DAYLIGHT_COMMONLY_USED,
     UTZNM_UNKNOWN // unknown as the last one
 };
 
 #define DEFAULT_CHARACTERNODE_CAPACITY 1
 
 // ---------------------------------------------------
-// CaracterNode class implementation
+// CharacterNode class implementation
 // ---------------------------------------------------
 void CharacterNode::clear() {
     uprv_memset(this, 0, sizeof(*this));
@@ -166,6 +164,7 @@ TextTrieMap::put(const UChar *key, void *value, UErrorCode &status) {
     if (U_FAILURE(status)) {
         return;
     }
+    U_ASSERT(fLazyContents != NULL);
     UChar *s = const_cast<UChar *>(key);
     fLazyContents->addElement(s, status);
     fLazyContents->addElement(value, status);
@@ -493,16 +492,15 @@ public:
     const UChar* getName(UTimeZoneNameType type);
 
 protected:
-    ZNames(const UChar** names, UBool shortCommonlyUsed);
-    static const UChar** loadData(UResourceBundle* rb, const char* key, UBool& shortCommonlyUsed);
+    ZNames(const UChar** names);
+    static const UChar** loadData(UResourceBundle* rb, const char* key);
 
 private:
     const UChar** fNames;
-    UBool fShortCommonlyUsed;
 };
 
-ZNames::ZNames(const UChar** names, UBool shortCommonlyUsed)
-: fNames(names), fShortCommonlyUsed(shortCommonlyUsed) {
+ZNames::ZNames(const UChar** names)
+: fNames(names) {
 }
 
 ZNames::~ZNames() {
@@ -513,13 +511,12 @@ ZNames::~ZNames() {
 
 ZNames*
 ZNames::createInstance(UResourceBundle* rb, const char* key) {
-    UBool shortCommonlyUsed = FALSE;
-    const UChar** names = loadData(rb, key, shortCommonlyUsed);
+    const UChar** names = loadData(rb, key);
     if (names == NULL) {
         // No names data available
         return NULL; 
     }
-    return new ZNames(names, shortCommonlyUsed);
+    return new ZNames(names);
 }
 
 const UChar*
@@ -539,25 +536,13 @@ ZNames::getName(UTimeZoneNameType type) {
         name = fNames[2];
         break;
     case UTZNM_SHORT_GENERIC:
-        if (fShortCommonlyUsed) {
-            name = fNames[3];
-        }
+        name = fNames[3];
         break;
     case UTZNM_SHORT_STANDARD:
         name = fNames[4];
         break;
     case UTZNM_SHORT_DAYLIGHT:
         name = fNames[5];
-        break;
-    case UTZNM_SHORT_STANDARD_COMMONLY_USED:
-        if (fShortCommonlyUsed) {
-            name = fNames[4];
-        }
-        break;
-    case UTZNM_SHORT_DAYLIGHT_COMMONLY_USED:
-        if (fShortCommonlyUsed) {
-            name = fNames[5];
-        }
         break;
     default:
         name = NULL;
@@ -566,7 +551,7 @@ ZNames::getName(UTimeZoneNameType type) {
 }
 
 const UChar**
-ZNames::loadData(UResourceBundle* rb, const char* key, UBool& shortCommonlyUsed) {
+ZNames::loadData(UResourceBundle* rb, const char* key) {
     if (rb == NULL || key == NULL || *key == 0) {
         return NULL;
     }
@@ -597,16 +582,6 @@ ZNames::loadData(UResourceBundle* rb, const char* key, UBool& shortCommonlyUsed)
                 names = NULL;
             }
         }
-
-        if (names != NULL) {
-            status = U_ZERO_ERROR;
-            UResourceBundle* cuRes = ures_getByKeyWithFallback(rbTable, gCuTag, NULL, &status);
-            int32_t cu = ures_getInt(cuRes, &status);
-            if (U_SUCCESS(status)) {
-                shortCommonlyUsed = (cu != 0);
-            }
-            ures_close(cuRes);
-        }
     }
     ures_close(rbTable);
     return names;
@@ -623,12 +598,12 @@ public:
     const UChar* getLocationName(void);
 
 private:
-    TZNames(const UChar** names, UBool shortCommonlyUsed, const UChar* locationName);
+    TZNames(const UChar** names, const UChar* locationName);
     const UChar* fLocationName;
 };
 
-TZNames::TZNames(const UChar** names, UBool shortCommonlyUsed, const UChar* locationName)
-: ZNames(names, shortCommonlyUsed), fLocationName(locationName) {
+TZNames::TZNames(const UChar** names, const UChar* locationName)
+: ZNames(names), fLocationName(locationName) {
 }
 
 TZNames::~TZNames() {
@@ -654,11 +629,10 @@ TZNames::createInstance(UResourceBundle* rb, const char* key) {
             locationName = NULL;
         }
 
-        UBool shortCommonlyUsed = FALSE;
-        const UChar** names = loadData(rb, key, shortCommonlyUsed);
+        const UChar** names = loadData(rb, key);
 
         if (locationName != NULL || names != NULL) {
-            tznames = new TZNames(names, shortCommonlyUsed, locationName);
+            tznames = new TZNames(names, locationName);
         }
     }
     ures_close(rbTable);
@@ -748,81 +722,6 @@ typedef struct ZMatchInfo {
 } ZMatchInfo;
 U_CDECL_END
 
-// ---------------------------------------------------
-// The class stores time zone name match information
-// ---------------------------------------------------
-class TimeZoneNameMatchInfoImpl : public TimeZoneNameMatchInfo {
-public:
-    TimeZoneNameMatchInfoImpl(UVector* matches);
-    ~TimeZoneNameMatchInfoImpl();
-
-    int32_t size() const;
-    UTimeZoneNameType getNameType(int32_t index) const;
-    int32_t getMatchLength(int32_t index) const;
-    UnicodeString& getTimeZoneID(int32_t index, UnicodeString& tzID) const;
-    UnicodeString& getMetaZoneID(int32_t index, UnicodeString& mzID) const;
-
-private:
-    UVector* fMatches;  // vector of MatchEntry
-};
-
-TimeZoneNameMatchInfoImpl::TimeZoneNameMatchInfoImpl(UVector* matches)
-: fMatches(matches) {
-}
-
-TimeZoneNameMatchInfoImpl::~TimeZoneNameMatchInfoImpl() {
-    if (fMatches != NULL) {
-        delete fMatches;
-    }
-}
-
-int32_t
-TimeZoneNameMatchInfoImpl::size() const {
-    if (fMatches == NULL) {
-        return 0;
-    }
-    return fMatches->size();
-}
-
-UTimeZoneNameType
-TimeZoneNameMatchInfoImpl::getNameType(int32_t index) const {
-    ZMatchInfo *minfo = (ZMatchInfo *)fMatches->elementAt(index);
-    if (minfo != NULL) {
-        return minfo->znameInfo->type;
-    }
-    return UTZNM_UNKNOWN;
-}
-
-int32_t
-TimeZoneNameMatchInfoImpl::getMatchLength(int32_t index) const {
-    ZMatchInfo *minfo = (ZMatchInfo *)fMatches->elementAt(index);
-    if (minfo != NULL) {
-        return minfo->matchLength;
-    }
-    return -1;
-}
-
-UnicodeString&
-TimeZoneNameMatchInfoImpl::getTimeZoneID(int32_t index, UnicodeString& tzID) const {
-    ZMatchInfo *minfo = (ZMatchInfo *)fMatches->elementAt(index);
-    if (minfo != NULL && minfo->znameInfo->tzID != NULL) {
-        tzID.setTo(TRUE, minfo->znameInfo->tzID, -1);
-    } else {
-        tzID.setToBogus();
-    }
-    return tzID;
-}
-
-UnicodeString&
-TimeZoneNameMatchInfoImpl::getMetaZoneID(int32_t index, UnicodeString& mzID) const {
-    ZMatchInfo *minfo = (ZMatchInfo *)fMatches->elementAt(index);
-    if (minfo != NULL && minfo->znameInfo->mzID != NULL) {
-        mzID.setTo(TRUE, minfo->znameInfo->mzID, -1);
-    } else {
-        mzID.setToBogus();
-    }
-    return mzID;
-}
 
 // ---------------------------------------------------
 // ZNameSearchHandler
@@ -833,16 +732,16 @@ public:
     virtual ~ZNameSearchHandler();
 
     UBool handleMatch(int32_t matchLength, const CharacterNode *node, UErrorCode &status);
-    UVector* getMatches(int32_t& maxMatchLen);
+    TimeZoneNames::MatchInfoCollection* getMatches(int32_t& maxMatchLen);
 
 private:
     uint32_t fTypes;
-    UVector* fResults;
     int32_t fMaxMatchLen;
+    TimeZoneNames::MatchInfoCollection* fResults;
 };
 
 ZNameSearchHandler::ZNameSearchHandler(uint32_t types) 
-: fTypes(types), fResults(NULL), fMaxMatchLen(0) {
+: fTypes(types), fMaxMatchLen(0), fResults(NULL) {
 }
 
 ZNameSearchHandler::~ZNameSearchHandler() {
@@ -866,27 +765,21 @@ ZNameSearchHandler::handleMatch(int32_t matchLength, const CharacterNode *node, 
             if ((nameinfo->type & fTypes) != 0) {
                 // matches a requested type
                 if (fResults == NULL) {
-                    fResults = new UVector(uprv_free, NULL, status);
+                    fResults = new TimeZoneNames::MatchInfoCollection();
                     if (fResults == NULL) {
                         status = U_MEMORY_ALLOCATION_ERROR;
                     }
                 }
                 if (U_SUCCESS(status)) {
-                    ZMatchInfo *zmatch = (ZMatchInfo *)uprv_malloc(sizeof(ZMatchInfo));
-                    if (zmatch == NULL) {
-                        status = U_MEMORY_ALLOCATION_ERROR;
+                    U_ASSERT(fResults != NULL);
+                    if (nameinfo->tzID) {
+                        fResults->addZone(nameinfo->type, matchLength, UnicodeString(nameinfo->tzID, -1), status);
                     } else {
-                        // add the match to the vector
-                        zmatch->znameInfo = nameinfo;
-                        zmatch->matchLength = matchLength;
-                        fResults->addElement(zmatch, status);
-                        if (U_FAILURE(status)) {
-                            uprv_free(zmatch);
-                        } else {
-                            if (matchLength > fMaxMatchLen) {
-                                fMaxMatchLen = matchLength;
-                            }
-                        }
+                        U_ASSERT(nameinfo->mzID);
+                        fResults->addMetaZone(nameinfo->type, matchLength, UnicodeString(nameinfo->mzID, -1), status);
+                    }
+                    if (U_SUCCESS(status) && matchLength > fMaxMatchLen) {
+                        fMaxMatchLen = matchLength;
                     }
                 }
             }
@@ -895,10 +788,10 @@ ZNameSearchHandler::handleMatch(int32_t matchLength, const CharacterNode *node, 
     return TRUE;
 }
 
-UVector*
+TimeZoneNames::MatchInfoCollection*
 ZNameSearchHandler::getMatches(int32_t& maxMatchLen) {
     // give the ownership to the caller
-    UVector *results = fResults;
+    TimeZoneNames::MatchInfoCollection* results = fResults;
     maxMatchLen = fMaxMatchLen;
 
     // reset
@@ -1037,6 +930,21 @@ TimeZoneNamesImpl::cleanup() {
     }
 }
 
+UBool
+TimeZoneNamesImpl::operator==(const TimeZoneNames& other) const {
+    if (this == &other) {
+        return TRUE;
+    }
+    // No implementation for now
+    return FALSE;
+}
+
+TimeZoneNames*
+TimeZoneNamesImpl::clone() const {
+    UErrorCode status = U_ZERO_ERROR;
+    return new TimeZoneNamesImpl(fLocale, status);
+}
+
 StringEnumeration*
 TimeZoneNamesImpl::getAvailableMetaZoneIDs(UErrorCode& status) const {
     if (U_FAILURE(status)) {
@@ -1065,6 +973,7 @@ TimeZoneNamesImpl::getAvailableMetaZoneIDs(const UnicodeString& tzID, UErrorCode
         status = U_MEMORY_ALLOCATION_ERROR;
     }
     if (U_SUCCESS(status)) {
+        U_ASSERT(mzIDs != NULL);
         for (int32_t i = 0; U_SUCCESS(status) && i < mappings->size(); i++) {
 
             OlsonToMetaMappingEntry *map = (OlsonToMetaMappingEntry *)mappings->elementAt(i);
@@ -1331,7 +1240,7 @@ TimeZoneNamesImpl::loadTimeZoneNames(const UnicodeString& tzID) {
     return tznames;
 }
 
-TimeZoneNameMatchInfo*
+TimeZoneNames::MatchInfoCollection*
 TimeZoneNamesImpl::find(const UnicodeString& text, int32_t start, uint32_t types, UErrorCode& status) const {
     ZNameSearchHandler handler(types);
 
@@ -1347,24 +1256,14 @@ TimeZoneNamesImpl::find(const UnicodeString& text, int32_t start, uint32_t types
         return NULL;
     }
 
-    TimeZoneNameMatchInfoImpl *matchInfo = NULL;
-
     int32_t maxLen = 0;
-    UVector *results = handler.getMatches(maxLen);
-    if (results != NULL && ((maxLen == (text.length() - start)) || fNamesTrieFullyLoaded)) {
+    TimeZoneNames::MatchInfoCollection* matches = handler.getMatches(maxLen);
+    if (matches != NULL && ((maxLen == (text.length() - start)) || fNamesTrieFullyLoaded)) {
         // perfect match
-        matchInfo = new TimeZoneNameMatchInfoImpl(results);
-        if (matchInfo == NULL) {
-            status = U_MEMORY_ALLOCATION_ERROR;
-            delete results;
-            return NULL;
-        }
-        return matchInfo;
+        return matches;
     }
 
-    if (results != NULL) {
-        delete results;
-    }
+    delete matches;
 
     // All names are not yet loaded into the trie
     umtx_lock(&nonConstThis->fLock);
@@ -1404,19 +1303,8 @@ TimeZoneNamesImpl::find(const UnicodeString& text, int32_t start, uint32_t types
     }
     umtx_unlock(&nonConstThis->fLock);
 
-    results = handler.getMatches(maxLen);
-    if (results != NULL && maxLen > 0) {
-        matchInfo = new TimeZoneNameMatchInfoImpl(results);
-        if (matchInfo == NULL) {
-            status = U_MEMORY_ALLOCATION_ERROR;
-            delete results;
-            return NULL;
-        }
-    }
-
-    return matchInfo;
+    return handler.getMatches(maxLen);
 }
-
 
 U_NAMESPACE_END
 

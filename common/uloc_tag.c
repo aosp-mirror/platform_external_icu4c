@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 2009-2011, International Business Machines
+*   Copyright (C) 2009-2012, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 */
@@ -59,7 +59,7 @@ typedef struct ULanguageTag {
 #define LOCALE_KEYWORD_SEP ';'
 #define LOCALE_KEY_TYPE_SEP '='
 
-#define ISALPHA(c) (((c)>='A' && (c)<='Z') || ((c)>='a' && (c)<='z'))
+#define ISALPHA(c) uprv_isASCIILetter(c)
 #define ISNUMERIC(c) ((c)>='0' && (c)<='9')
 
 static const char* EMPTY = "";
@@ -1279,7 +1279,7 @@ _appendVariantsToLanguageTag(const char* localeID, char* appendAt, int32_t capac
 static int32_t
 _appendKeywordsToLanguageTag(const char* localeID, char* appendAt, int32_t capacity, UBool strict, UBool hadPosix, UErrorCode* status) {
     char buf[ULOC_KEYWORD_AND_VALUES_CAPACITY];
-    char attrBuf[ULOC_KEYWORD_AND_VALUES_CAPACITY];
+    char attrBuf[ULOC_KEYWORD_AND_VALUES_CAPACITY] = { 0 };
     int32_t attrBufLength = 0;
     UBool isAttribute = FALSE;
     UEnumeration *keywordEnum = NULL;
@@ -2022,7 +2022,6 @@ ultag_parse(const char* tag, int32_t tagLen, int32_t* parsedLen, UErrorCode* sta
     ExtensionListEntry *pExtension;
     AttributeListEntry *pAttribute;
     char *pExtValueSubtag, *pExtValueSubtagEnd;
-    char *pAttrValue;
     int32_t i;
     UBool isLDMLExtension, reqLDMLType, privateuseVar = FALSE;
 
@@ -2064,7 +2063,7 @@ ultag_parse(const char* tag, int32_t tagLen, int32_t* parsedLen, UErrorCode* sta
 
     /* check if the tag is grandfathered */
     for (i = 0; GRANDFATHERED[i] != NULL; i += 2) {
-        if (T_CString_stricmp(GRANDFATHERED[i], tagBuf) == 0) {
+        if (uprv_stricmp(GRANDFATHERED[i], tagBuf) == 0) {
             /* a grandfathered tag is always longer than its preferred mapping */
             int32_t newTagLength = uprv_strlen(GRANDFATHERED[i+1]);
             if (tagLen < newTagLength) {
@@ -2099,7 +2098,6 @@ ultag_parse(const char* tag, int32_t tagLen, int32_t* parsedLen, UErrorCode* sta
     pExtValueSubtag = NULL;
     pExtValueSubtagEnd = NULL;
     pAttribute = NULL;
-    pAttrValue = NULL;
     isLDMLExtension = FALSE;
     reqLDMLType = FALSE;
 

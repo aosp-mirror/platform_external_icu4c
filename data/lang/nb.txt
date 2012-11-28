@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2011 International Business Machines
+// * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/nb.xml
@@ -678,6 +678,10 @@ nb{
         Zyyy{"felles"}
         Zzzz{"ukjent skrift"}
     }
+    Scripts%stand-alone{
+        Hans{"forenklet han"}
+        Hant{"tradisjonell han"}
+    }
     Types{
         calendar{
             buddhist{"buddhistisk kalender"}
@@ -697,7 +701,6 @@ nb{
         collation{
             big5han{"tradisjonell kinesisk sortering - Big 5"}
             dictionary{"ordlistesortering"}
-            direct{"direkte sortering"}
             ducet{"standard Unicode-sorteringsrekkefølge"}
             gb2312han{"forenklet kinesisk sortering - GB2312"}
             phonebook{"telefonkatalogsortering"}
@@ -778,7 +781,7 @@ nb{
         VALENCIA{"valensisk dialekt"}
         WADEGILE{"Wade-Giles"}
     }
-    Version{"2.0.59.68"}
+    Version{"2.0.65.46"}
     codePatterns{
         language{"Språk: {0}"}
         script{"Skrift: {0}"}

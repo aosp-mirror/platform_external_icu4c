@@ -120,6 +120,8 @@ UOBJECT_DEFINE_RTTI_IMPLEMENTATION(ICUServiceKey)
 ******************************************************************
 */
 
+ICUServiceFactory::~ICUServiceFactory() {}
+
 SimpleFactory::SimpleFactory(UObject* instanceToAdopt, const UnicodeString& id, UBool visible) 
 : _instance(instanceToAdopt), _id(id), _visible(visible)
 {
@@ -187,6 +189,8 @@ UOBJECT_DEFINE_RTTI_IMPLEMENTATION(SimpleFactory)
 /*
 ******************************************************************
 */
+
+ServiceListener::~ServiceListener() {}
 
 UOBJECT_DEFINE_RTTI_IMPLEMENTATION(ServiceListener)
 
@@ -278,7 +282,7 @@ public:
     DNCache(const Locale& _locale) 
         : cache(), locale(_locale) 
     {
-        // cache.setKeyDeleter(uhash_deleteUnicodeString);
+        // cache.setKeyDeleter(uprv_deleteUObject);
     }
 };
 
@@ -519,7 +523,7 @@ ICUService::getKey(ICUServiceKey& key, UnicodeString* actualReturn, const ICUSer
             // fallback to the one that succeeded, we want to hit the
             // cache the first time next goaround.
             if (cacheDescriptorList._obj == NULL) {
-                cacheDescriptorList._obj = new UVector(uhash_deleteUnicodeString, NULL, 5, status);
+                cacheDescriptorList._obj = new UVector(uprv_deleteUObject, NULL, 5, status);
                 if (U_FAILURE(status)) {
                     return NULL;
                 }
@@ -748,32 +752,33 @@ ICUService::getDisplayNames(UVector& result,
 
         if (dnCache == NULL) {
             const Hashtable* m = getVisibleIDMap(status);
-            if (m != NULL) {
-                ncthis->dnCache = new DNCache(locale); 
-                if (dnCache == NULL) {
-                    status = U_MEMORY_ALLOCATION_ERROR;
-                    return result;
-                }
+            if (U_FAILURE(status)) {
+                return result;
+            }
+            ncthis->dnCache = new DNCache(locale); 
+            if (dnCache == NULL) {
+                status = U_MEMORY_ALLOCATION_ERROR;
+                return result;
+            }
 
-                int32_t pos = -1;
-                const UHashElement* entry = NULL;
-                while ((entry = m->nextElement(pos)) != NULL) {
-                    const UnicodeString* id = (const UnicodeString*)entry->key.pointer;
-                    ICUServiceFactory* f = (ICUServiceFactory*)entry->value.pointer;
-                    UnicodeString dname;
-                    f->getDisplayName(*id, locale, dname);
-                    if (dname.isBogus()) {
-                        status = U_MEMORY_ALLOCATION_ERROR;
-                    } else {
-                        dnCache->cache.put(dname, (void*)id, status); // share pointer with visibleIDMap
-                        if (U_SUCCESS(status)) {
-                            continue;
-                        }
+            int32_t pos = -1;
+            const UHashElement* entry = NULL;
+            while ((entry = m->nextElement(pos)) != NULL) {
+                const UnicodeString* id = (const UnicodeString*)entry->key.pointer;
+                ICUServiceFactory* f = (ICUServiceFactory*)entry->value.pointer;
+                UnicodeString dname;
+                f->getDisplayName(*id, locale, dname);
+                if (dname.isBogus()) {
+                    status = U_MEMORY_ALLOCATION_ERROR;
+                } else {
+                    dnCache->cache.put(dname, (void*)id, status); // share pointer with visibleIDMap
+                    if (U_SUCCESS(status)) {
+                        continue;
                     }
-                    delete dnCache;
-                    ncthis->dnCache = NULL;
-                    return result;
                 }
+                delete dnCache;
+                ncthis->dnCache = NULL;
+                return result;
             }
         }
     }

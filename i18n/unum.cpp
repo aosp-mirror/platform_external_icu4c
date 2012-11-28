@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-*   Copyright (C) 1996-2011, International Business Machines
+*   Copyright (C) 1996-2012, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *******************************************************************************
 * Modification History:
@@ -24,6 +24,7 @@
 #include "unicode/fmtable.h"
 #include "unicode/dcfmtsym.h"
 #include "unicode/curramt.h"
+#include "unicode/localpointer.h"
 #include "uassert.h"
 #include "cpputils.h"
 #include "cstring.h"
@@ -318,24 +319,18 @@ parseRes(Formattable& res,
          const   UChar*          text,
          int32_t         textLength,
          int32_t         *parsePos /* 0 = start */,
-         UBool parseCurrency,
          UErrorCode      *status)
 {
     if(U_FAILURE(*status))
         return;
     
-    int32_t len = (textLength == -1 ? u_strlen(text) : textLength);
-    const UnicodeString src((UChar*)text, len, len);
+    const UnicodeString src((UBool)(textLength == -1), text, textLength);
     ParsePosition pp;
     
     if(parsePos != 0)
         pp.setIndex(*parsePos);
     
-    if (parseCurrency) {
-        ((const NumberFormat*)fmt)->parseCurrency(src, res, pp);
-    } else {
-        ((const NumberFormat*)fmt)->parse(src, res, pp);
-    }
+    ((const NumberFormat*)fmt)->parse(src, res, pp);
     
     if(pp.getErrorIndex() != -1) {
         *status = U_PARSE_ERROR;
@@ -355,7 +350,7 @@ unum_parse(    const   UNumberFormat*  fmt,
         UErrorCode      *status)
 {
     Formattable res;
-    parseRes(res, fmt, text, textLength, parsePos, FALSE, status);
+    parseRes(res, fmt, text, textLength, parsePos, status);
     return res.getLong(*status);
 }
 
@@ -367,7 +362,7 @@ unum_parseInt64(    const   UNumberFormat*  fmt,
         UErrorCode      *status)
 {
     Formattable res;
-    parseRes(res, fmt, text, textLength, parsePos, FALSE, status);
+    parseRes(res, fmt, text, textLength, parsePos, status);
     return res.getInt64(*status);
 }
 
@@ -379,7 +374,7 @@ unum_parseDouble(    const   UNumberFormat*  fmt,
             UErrorCode      *status)
 {
     Formattable res;
-    parseRes(res, fmt, text, textLength, parsePos, FALSE, status);
+    parseRes(res, fmt, text, textLength, parsePos, status);
     return res.getDouble(*status);
 }
 
@@ -400,7 +395,7 @@ unum_parseDecimal(const UNumberFormat*  fmt,
         return -1;
     }
     Formattable res;
-    parseRes(res, fmt, text, textLength, parsePos, FALSE, status);
+    parseRes(res, fmt, text, textLength, parsePos, status);
     StringPiece sp = res.getDecimalNumber(*status);
     if (U_FAILURE(*status)) {
        return -1;
@@ -410,6 +405,7 @@ unum_parseDecimal(const UNumberFormat*  fmt,
         uprv_strncpy(outBuf, sp.data(), sp.size());
         *status = U_STRING_NOT_TERMINATED_WARNING;
     } else {
+        U_ASSERT(outBufLength > 0);
         uprv_strcpy(outBuf, sp.data());
     }
     return sp.size();
@@ -422,15 +418,33 @@ unum_parseDoubleCurrency(const UNumberFormat* fmt,
                          int32_t* parsePos, /* 0 = start */
                          UChar* currency,
                          UErrorCode* status) {
-    Formattable res;
-    parseRes(res, fmt, text, textLength, parsePos, TRUE, status);
+    double doubleVal = 0.0;
     currency[0] = 0;
-    const CurrencyAmount* c;
-    if (res.getType() == Formattable::kObject &&
-        (c = dynamic_cast<const CurrencyAmount*>(res.getObject())) != NULL) {
-        u_strcpy(currency, c->getISOCurrency());
+    if (U_FAILURE(*status)) {
+        return doubleVal;
     }
-    return res.getDouble(*status);
+    const UnicodeString src((UBool)(textLength == -1), text, textLength);
+    ParsePosition pp;
+    if (parsePos != NULL) {
+        pp.setIndex(*parsePos);
+    }
+    *status = U_PARSE_ERROR; // assume failure, reset if succeed
+    LocalPointer<CurrencyAmount> currAmt(((const NumberFormat*)fmt)->parseCurrency(src, pp));
+    if (pp.getErrorIndex() != -1) {
+        if (parsePos != NULL) {
+            *parsePos = pp.getErrorIndex();
+        }
+    } else {
+        if (parsePos != NULL) {
+            *parsePos = pp.getIndex();
+        }
+        if (pp.getIndex() > 0) {
+            *status = U_ZERO_ERROR;
+            u_strcpy(currency, currAmt->getISOCurrency());
+            doubleVal = currAmt->getNumber().getDouble(*status);
+        }
+    }
+    return doubleVal;
 }
 
 U_CAPI const char* U_EXPORT2
@@ -612,6 +626,12 @@ unum_setAttribute(    UNumberFormat*          fmt,
         df->setSecondaryGroupingSize(newValue);
         break;
 
+#if UCONFIG_HAVE_PARSEALLINPUT
+    case UNUM_PARSE_ALL_INPUT:
+        df->setParseAllInput((UNumberFormatAttributeValue)newValue);
+        break;
+#endif
+
     default:
         /* Shouldn't get here anyway */
         break;
@@ -723,8 +743,7 @@ unum_setTextAttribute(    UNumberFormat*                    fmt,
     if(U_FAILURE(*status))
         return;
 
-    int32_t len = (newValueLength == -1 ? u_strlen(newValue) : newValueLength);
-    const UnicodeString val((UChar*)newValue, len, len);
+    UnicodeString val(newValue, newValueLength);
     NumberFormat* nf = reinterpret_cast<NumberFormat*>(fmt);
     DecimalFormat* df = dynamic_cast<DecimalFormat*>(nf);
     if (df != NULL) {
@@ -746,11 +765,11 @@ unum_setTextAttribute(    UNumberFormat*                    fmt,
         break;
         
       case UNUM_PADDING_CHARACTER:
-        df->setPadCharacter(*newValue);
+        df->setPadCharacter(val);
         break;
         
       case UNUM_CURRENCY_CODE:
-        df->setCurrency(newValue, *status);
+        df->setCurrency(val.getTerminatedBuffer(), *status);
         break;
         
       default:
@@ -761,7 +780,7 @@ unum_setTextAttribute(    UNumberFormat*                    fmt,
       RuleBasedNumberFormat* rbnf = dynamic_cast<RuleBasedNumberFormat*>(nf);
       U_ASSERT(rbnf != NULL);
       if (tag == UNUM_DEFAULT_RULESET) {
-        rbnf->setDefaultRuleSet(newValue, *status);
+        rbnf->setDefaultRuleSet(val, *status);
       } else {
         *status = U_UNSUPPORTED_ERROR;
       }

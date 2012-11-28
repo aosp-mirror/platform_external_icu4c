@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2011 International Business Machines
+// * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/main/kn.xml
@@ -660,6 +660,10 @@ kn{
         Zyyy{"ಸಾಮಾನ್ಯ"}
         Zzzz{"ಅಜ್ಞಾತ ಅಥವ ಅಮಾನ್ಯವಾದ ಲಿಪಿ"}
     }
+    Scripts%stand-alone{
+        Hans{"ಸರಳೀಕೃತ ಹ್ಯಾನ್‌"}
+        Hant{"ಸಾಂಪ್ರದಾಯಿಕ ಹ್ಯಾನ್‌‌"}
+    }
     Types{
         calendar{
             buddhist{"ಬೌದ್ಧ ಕ್ಯಾಲೆಂಡರ್‌"}
@@ -679,7 +683,6 @@ kn{
         collation{
             big5han{"ಸಾಂಪ್ರದಾಯಿಕ ಚೀನಾದ ಅನುಕ್ರಮ ವಿನ್ಯಾಸ - ದೊಡ್ಡ ಐದು"}
             dictionary{"ಡಿಕ್ಷನರಿ ಅನುಕ್ರಮ ವಿನ್ಯಾಸ"}
-            direct{"ನೇರ ಅನುಕ್ರಮ ವಿನ್ಯಾಸ"}
             ducet{"ಡಿಫಾಲ್ಟ್‌‌ ಯುನಿಕೋಡ್‌ ಅನುಕ್ರಮ ವಿನ್ಯಾಸ"}
             gb2312han{"ಚೀನಾದ ಸರಳೀಕೃತ ಕ್ರಮವರ್ಗ ಸಾಲು - GB2312"}
             phonebook{"ಫೋನ್‌ಪುಸ್ತಕ ಅನುಕ್ರಮ ವಿನ್ಯಾಸ"}
@@ -728,7 +731,7 @@ kn{
             tibt{"ಟಿಬೇಟ್‌ನ ಅಂಕೆಗಳು"}
         }
     }
-    Version{"2.0.59.63"}
+    Version{"2.0.65.46"}
     localeDisplayPattern{
         separator{","}
     }

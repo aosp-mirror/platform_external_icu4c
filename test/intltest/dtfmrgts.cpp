@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2011, International Business Machines Corporation and
+ * Copyright (c) 1997-2012, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -55,6 +55,8 @@ DateFormatRegressionTest::runIndexedTest( int32_t index, UBool exec, const char*
         CASE(24,Test714)
         CASE(25,Test1684)
         CASE(26,Test5554)
+        CASE(27,Test9237)
+        CASE(28,TestParsing)
         default: name = ""; break;
     }
 }
@@ -1459,6 +1461,68 @@ void DateFormatRegressionTest::Test5554(void)
     errln("\nError: Newfoundland Z of Jan 14, 2007 gave '" + result + "', expected '" + correct + "'");
   }
   delete sdf;
+}
+
+void DateFormatRegressionTest::Test9237(void)
+{
+    UErrorCode status = U_ZERO_ERROR;
+    UnicodeString pattern("VVVV");
+
+    SimpleDateFormat fmt(pattern, status);  // default locale
+    SimpleDateFormat fmtDE(pattern, Locale("de_DE"), status);
+    if (U_FAILURE(status)) {
+        dataerrln("Error constructing SimpleDateFormat");
+        return;
+    }
+
+    // copy constructor
+    SimpleDateFormat fmtCopyDE(fmtDE);
+    UnicodeString resDE, resCopyDE;
+
+    fmtDE.format(0.0, resDE);
+    fmtCopyDE.format(0.0, resCopyDE);
+
+    if (resDE != resCopyDE) {
+        errln(UnicodeString("Error: different result by the copied instance - org:") + resDE + " copy:" + resCopyDE);
+    }
+
+    // test for assignment operator
+    fmt = fmtDE;
+
+    UnicodeString resAssigned;
+    fmt.format(0.0, resAssigned);
+
+    if (resDE != resAssigned) {
+        errln(UnicodeString("Error: different results by the assigned instance - org:") + resDE + " assigned:" + resAssigned);
+    }
+}
+
+void DateFormatRegressionTest::TestParsing(void) {
+    UErrorCode status = U_ZERO_ERROR;
+    UnicodeString pattern("EEE-WW-MMMM-yyyy");
+    UnicodeString text("mon-02-march-2011");
+    int32_t expectedDay = 7;
+
+    SimpleDateFormat format(pattern, status);
+    if (U_FAILURE(status)) {
+        dataerrln("Unable to create SimpleDateFormat - %s", u_errorName(status));
+        return;
+    }
+
+    Calendar *cal = new GregorianCalendar(status);
+    if (cal == NULL || U_FAILURE(status)) {
+        errln("Unable to create calendar - %s", u_errorName(status));
+        return;
+    }
+
+    ParsePosition pos(0);
+    format.parse(text, *cal, pos);
+
+    if (cal->get(UCAL_DAY_OF_MONTH, status) != expectedDay) {
+        errln("Parsing failed: day of month should be '7' with pattern: \"" + pattern + "\" for text: \"" + text + "\"");
+    }
+
+    delete cal;
 }
 
 #endif /* #if !UCONFIG_NO_FORMATTING */

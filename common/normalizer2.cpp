@@ -33,8 +33,29 @@ U_NAMESPACE_BEGIN
 
 // Public API dispatch via Normalizer2 subclasses -------------------------- ***
 
+Normalizer2::~Normalizer2() {}
+
+UBool
+Normalizer2::getRawDecomposition(UChar32, UnicodeString &) const {
+    return FALSE;
+}
+
+UChar32
+Normalizer2::composePair(UChar32, UChar32) const {
+    return U_SENTINEL;
+}
+
+uint8_t
+Normalizer2::getCombiningClass(UChar32 /*c*/) const {
+    return 0;
+}
+
+UOBJECT_DEFINE_NO_RTTI_IMPLEMENTATION(Normalizer2)
+
 // Normalizer2 implementation for the old UNORM_NONE.
 class NoopNormalizer2 : public Normalizer2 {
+    virtual ~NoopNormalizer2();
+
     virtual UnicodeString &
     normalize(const UnicodeString &src,
               UnicodeString &dest,
@@ -78,6 +99,7 @@ class NoopNormalizer2 : public Normalizer2 {
     getDecomposition(UChar32, UnicodeString &) const {
         return FALSE;
     }
+    // No need to override the default getRawDecomposition().
     virtual UBool
     isNormalized(const UnicodeString &, UErrorCode &) const {
         return TRUE;
@@ -95,11 +117,14 @@ class NoopNormalizer2 : public Normalizer2 {
     virtual UBool isInert(UChar32) const { return TRUE; }
 };
 
+NoopNormalizer2::~NoopNormalizer2() {}
+
 // Intermediate class:
 // Has Normalizer2Impl and does boilerplate argument checking and setup.
 class Normalizer2WithImpl : public Normalizer2 {
 public:
     Normalizer2WithImpl(const Normalizer2Impl &ni) : impl(ni) {}
+    virtual ~Normalizer2WithImpl();
 
     // normalize
     virtual UnicodeString &
@@ -188,6 +213,30 @@ public:
         }
         return TRUE;
     }
+    virtual UBool
+    getRawDecomposition(UChar32 c, UnicodeString &decomposition) const {
+        UChar buffer[30];
+        int32_t length;
+        const UChar *d=impl.getRawDecomposition(c, buffer, length);
+        if(d==NULL) {
+            return FALSE;
+        }
+        if(d==buffer) {
+            decomposition.setTo(buffer, length);  // copy the string (algorithmic decomposition)
+        } else {
+            decomposition.setTo(FALSE, d, length);  // read-only alias
+        }
+        return TRUE;
+    }
+    virtual UChar32
+    composePair(UChar32 a, UChar32 b) const {
+        return impl.composePair(a, b);
+    }
+
+    virtual uint8_t
+    getCombiningClass(UChar32 c) const {
+        return impl.getCC(impl.getNorm16(c));
+    }
 
     // quick checks
     virtual UBool
@@ -229,9 +278,12 @@ public:
     const Normalizer2Impl &impl;
 };
 
+Normalizer2WithImpl::~Normalizer2WithImpl() {}
+
 class DecomposeNormalizer2 : public Normalizer2WithImpl {
 public:
     DecomposeNormalizer2(const Normalizer2Impl &ni) : Normalizer2WithImpl(ni) {}
+    virtual ~DecomposeNormalizer2();
 
 private:
     virtual void
@@ -259,10 +311,13 @@ private:
     virtual UBool isInert(UChar32 c) const { return impl.isDecompInert(c); }
 };
 
+DecomposeNormalizer2::~DecomposeNormalizer2() {}
+
 class ComposeNormalizer2 : public Normalizer2WithImpl {
 public:
     ComposeNormalizer2(const Normalizer2Impl &ni, UBool fcc) :
         Normalizer2WithImpl(ni), onlyContiguous(fcc) {}
+    virtual ~ComposeNormalizer2();
 
 private:
     virtual void
@@ -330,9 +385,12 @@ private:
     const UBool onlyContiguous;
 };
 
+ComposeNormalizer2::~ComposeNormalizer2() {}
+
 class FCDNormalizer2 : public Normalizer2WithImpl {
 public:
     FCDNormalizer2(const Normalizer2Impl &ni) : Normalizer2WithImpl(ni) {}
+    virtual ~FCDNormalizer2();
 
 private:
     virtual void
@@ -356,6 +414,8 @@ private:
     virtual UBool hasBoundaryAfter(UChar32 c) const { return impl.hasFCDBoundaryAfter(c); }
     virtual UBool isInert(UChar32 c) const { return impl.isFCDInert(c); }
 };
+
+FCDNormalizer2::~FCDNormalizer2() {}
 
 // instance cache ---------------------------------------------------------- ***
 
@@ -463,12 +523,7 @@ const Normalizer2 *Normalizer2Factory::getNFDInstance(UErrorCode &errorCode) {
 
 const Normalizer2 *Normalizer2Factory::getFCDInstance(UErrorCode &errorCode) {
     Norm2AllModes *allModes=Norm2AllModesSingleton(nfcSingleton, "nfc").getInstance(errorCode);
-    if(allModes!=NULL) {
-        allModes->impl.getFCDTrie(errorCode);
-        return &allModes->fcd;
-    } else {
-        return NULL;
-    }
+    return allModes!=NULL ? &allModes->fcd : NULL;
 }
 
 const Normalizer2 *Normalizer2Factory::getFCCInstance(UErrorCode &errorCode) {
@@ -545,15 +600,29 @@ Normalizer2Factory::getImpl(const Normalizer2 *norm2) {
     return &((Normalizer2WithImpl *)norm2)->impl;
 }
 
-const UTrie2 *
-Normalizer2Factory::getFCDTrie(UErrorCode &errorCode) {
-    Norm2AllModes *allModes=
-        Norm2AllModesSingleton(nfcSingleton, "nfc").getInstance(errorCode);
-    if(allModes!=NULL) {
-        return allModes->impl.getFCDTrie(errorCode);
-    } else {
-        return NULL;
-    }
+const Normalizer2 *
+Normalizer2::getNFCInstance(UErrorCode &errorCode) {
+    return Normalizer2Factory::getNFCInstance(errorCode);
+}
+
+const Normalizer2 *
+Normalizer2::getNFDInstance(UErrorCode &errorCode) {
+    return Normalizer2Factory::getNFDInstance(errorCode);
+}
+
+const Normalizer2 *
+Normalizer2::getNFKCInstance(UErrorCode &errorCode) {
+    return Normalizer2Factory::getNFKCInstance(errorCode);
+}
+
+const Normalizer2 *
+Normalizer2::getNFKDInstance(UErrorCode &errorCode) {
+    return Normalizer2Factory::getNFKDInstance(errorCode);
+}
+
+const Normalizer2 *
+Normalizer2::getNFKCCasefoldInstance(UErrorCode &errorCode) {
+    return Normalizer2Factory::getNFKC_CFInstance(errorCode);
 }
 
 const Normalizer2 *
@@ -566,6 +635,7 @@ Normalizer2::getInstance(const char *packageName,
     }
     if(name==NULL || *name==0) {
         errorCode=U_ILLEGAL_ARGUMENT_ERROR;
+        return NULL;
     }
     Norm2AllModes *allModes=NULL;
     if(packageName==NULL) {
@@ -621,7 +691,6 @@ Normalizer2::getInstance(const char *packageName,
         case UNORM2_DECOMPOSE:
             return &allModes->decomp;
         case UNORM2_FCD:
-            allModes->impl.getFCDTrie(errorCode);
             return &allModes->fcd;
         case UNORM2_COMPOSE_CONTIGUOUS:
             return &allModes->fcc;
@@ -632,13 +701,36 @@ Normalizer2::getInstance(const char *packageName,
     return NULL;
 }
 
-UOBJECT_DEFINE_NO_RTTI_IMPLEMENTATION(Normalizer2)
-
 U_NAMESPACE_END
 
 // C API ------------------------------------------------------------------- ***
 
 U_NAMESPACE_USE
+
+U_DRAFT const UNormalizer2 * U_EXPORT2
+unorm2_getNFCInstance(UErrorCode *pErrorCode) {
+    return (const UNormalizer2 *)Normalizer2::getNFCInstance(*pErrorCode);
+}
+
+U_DRAFT const UNormalizer2 * U_EXPORT2
+unorm2_getNFDInstance(UErrorCode *pErrorCode) {
+    return (const UNormalizer2 *)Normalizer2::getNFDInstance(*pErrorCode);
+}
+
+U_DRAFT const UNormalizer2 * U_EXPORT2
+unorm2_getNFKCInstance(UErrorCode *pErrorCode) {
+    return (const UNormalizer2 *)Normalizer2::getNFKCInstance(*pErrorCode);
+}
+
+U_DRAFT const UNormalizer2 * U_EXPORT2
+unorm2_getNFKDInstance(UErrorCode *pErrorCode) {
+    return (const UNormalizer2 *)Normalizer2::getNFKDInstance(*pErrorCode);
+}
+
+U_DRAFT const UNormalizer2 * U_EXPORT2
+unorm2_getNFKCCasefoldInstance(UErrorCode *pErrorCode) {
+    return (const UNormalizer2 *)Normalizer2::getNFKCCasefoldInstance(*pErrorCode);
+}
 
 U_DRAFT const UNormalizer2 * U_EXPORT2
 unorm2_getInstance(const char *packageName,
@@ -724,9 +816,11 @@ normalizeSecondAndAppend(const UNormalizer2 *norm2,
                 // Restore the modified suffix of the first string.
                 // This does not restore first[] array contents between firstLength and firstCapacity.
                 // (That might be uninitialized memory, as far as we know.)
-                safeMiddle.extract(0, 0x7fffffff, first+firstLength-safeMiddle.length());
-                if(firstLength<firstCapacity) {
+                if(first!=NULL) { /* don't dereference NULL */
+                  safeMiddle.extract(0, 0x7fffffff, first+firstLength-safeMiddle.length());
+                  if(firstLength<firstCapacity) {
                     first[firstLength]=0;  // NUL-terminate in case it was originally.
+                  }
                 }
             }
         } else {
@@ -780,6 +874,35 @@ unorm2_getDecomposition(const UNormalizer2 *norm2,
     } else {
         return -1;
     }
+}
+
+U_DRAFT int32_t U_EXPORT2
+unorm2_getRawDecomposition(const UNormalizer2 *norm2,
+                           UChar32 c, UChar *decomposition, int32_t capacity,
+                           UErrorCode *pErrorCode) {
+    if(U_FAILURE(*pErrorCode)) {
+        return 0;
+    }
+    if(decomposition==NULL ? capacity!=0 : capacity<0) {
+        *pErrorCode=U_ILLEGAL_ARGUMENT_ERROR;
+        return 0;
+    }
+    UnicodeString destString(decomposition, 0, capacity);
+    if(reinterpret_cast<const Normalizer2 *>(norm2)->getRawDecomposition(c, destString)) {
+        return destString.extract(decomposition, capacity, *pErrorCode);
+    } else {
+        return -1;
+    }
+}
+
+U_DRAFT UChar32 U_EXPORT2
+unorm2_composePair(const UNormalizer2 *norm2, UChar32 a, UChar32 b) {
+    return reinterpret_cast<const Normalizer2 *>(norm2)->composePair(a, b);
+}
+
+U_DRAFT uint8_t U_EXPORT2
+unorm2_getCombiningClass(const UNormalizer2 *norm2, UChar32 c) {
+    return reinterpret_cast<const Normalizer2 *>(norm2)->getCombiningClass(c);
 }
 
 U_DRAFT UBool U_EXPORT2
@@ -844,7 +967,18 @@ unorm2_isInert(const UNormalizer2 *norm2, UChar32 c) {
 
 // Some properties APIs ---------------------------------------------------- ***
 
-U_CFUNC UNormalizationCheckResult U_EXPORT2
+U_CAPI uint8_t U_EXPORT2
+u_getCombiningClass(UChar32 c) {
+    UErrorCode errorCode=U_ZERO_ERROR;
+    const Normalizer2 *nfd=Normalizer2Factory::getNFDInstance(errorCode);
+    if(U_SUCCESS(errorCode)) {
+        return nfd->getCombiningClass(c);
+    } else {
+        return 0;
+    }
+}
+
+U_CFUNC UNormalizationCheckResult
 unorm_getQuickCheck(UChar32 c, UNormalizationMode mode) {
     if(mode<=UNORM_NONE || UNORM_FCD<=mode) {
         return UNORM_YES;
@@ -858,14 +992,14 @@ unorm_getQuickCheck(UChar32 c, UNormalizationMode mode) {
     }
 }
 
-U_CAPI const uint16_t * U_EXPORT2
-unorm_getFCDTrieIndex(UChar32 &fcdHighStart, UErrorCode *pErrorCode) {
-    const UTrie2 *trie=Normalizer2Factory::getFCDTrie(*pErrorCode);
-    if(U_SUCCESS(*pErrorCode)) {
-        fcdHighStart=trie->highStart;
-        return trie->index;
+U_CFUNC uint16_t
+unorm_getFCD16(UChar32 c) {
+    UErrorCode errorCode=U_ZERO_ERROR;
+    const Normalizer2Impl *impl=Normalizer2Factory::getNFCImpl(errorCode);
+    if(U_SUCCESS(errorCode)) {
+        return impl->getFCD16(c);
     } else {
-        return NULL;
+        return 0;
     }
 }
 

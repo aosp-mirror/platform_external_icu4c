@@ -24,7 +24,9 @@
 #include "errmsg.h"
 
 #include "uarrsort.h"
+#include "uelement.h"
 #include "uinvchar.h"
+#include "ustr_imp.h"
 
 /*
  * Align binary data at a 16-byte offset from the start of the resource bundle,
@@ -884,13 +886,13 @@ struct SResource* array_open(struct SRBRoot *bundle, const char *tag, const stru
 }
 
 static int32_t U_CALLCONV
-string_hash(const UHashTok key) {
+string_hash(const UElement key) {
     const struct SResource *res = (struct SResource *)key.pointer;
-    return uhash_hashUCharsN(res->u.fString.fChars, res->u.fString.fLength);
+    return ustr_hashUCharsN(res->u.fString.fChars, res->u.fString.fLength);
 }
 
 static UBool U_CALLCONV
-string_comp(const UHashTok key1, const UHashTok key2) {
+string_comp(const UElement key1, const UElement key2) {
     const struct SResource *res1 = (struct SResource *)key1.pointer;
     const struct SResource *res2 = (struct SResource *)key2.pointer;
     return 0 == u_strCompare(res1->u.fString.fChars, res1->u.fString.fLength,

@@ -1,6 +1,6 @@
 /*
  ******************************************************************************
- * Copyright (C) 1996-2011, International Business Machines Corporation and
+ * Copyright (C) 1996-2012, International Business Machines Corporation and
  * others. All Rights Reserved.
  ******************************************************************************
  */
@@ -70,6 +70,7 @@
 #include "cmemory.h"
 #include "cstring.h"
 #include "putilimp.h"
+#include "ustr_imp.h"
 
 /* public RuleBasedCollator constructor ---------------------------------- */
 
@@ -644,7 +645,7 @@ int32_t RuleBasedCollator::hashCode() const
 {
     int32_t length;
     const UChar *rules = ucol_getRules(ucollator, &length);
-    return uhash_hashUCharsN(rules, length);
+    return ustr_hashUCharsN(rules, length);
 }
 
 /**
@@ -759,6 +760,16 @@ RuleBasedCollator::checkOwned() {
         isWriteThroughAlias = FALSE;
     }
 }
+
+
+int32_t RuleBasedCollator::internalGetShortDefinitionString(const char *locale,
+                                                                      char *buffer,
+                                                                      int32_t capacity,
+                                                                      UErrorCode &status) const {
+  /* simply delegate */
+  return ucol_getShortDefinitionString(ucollator, locale, buffer, capacity, &status);
+}
+
 
 UOBJECT_DEFINE_RTTI_IMPLEMENTATION(RuleBasedCollator)
 
