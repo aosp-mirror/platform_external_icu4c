@@ -25,13 +25,6 @@
 #include "ustr_imp.h"
 #include "ustr_cnv.h"
 
-/* BEGIN android-changed */
-#ifdef HAVE_ANDROID_OS
-/* Android has stubbed out wchar support, where sizeof(wchar_t) == 1. */
-#define MB_CUR_MAX (1)
-#endif
-/* END android-changed */
-
 #if defined(U_WCHAR_IS_UTF16) || defined(U_WCHAR_IS_UTF32) || !UCONFIG_NO_CONVERSION
 
 #define _STACK_BUFFER_CAPACITY 1000

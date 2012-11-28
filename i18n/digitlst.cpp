@@ -38,11 +38,7 @@
 #include <limits.h>
 #include <string.h>
 #include <stdio.h>
-#ifdef ANDROID
-#include <math.h>
-#else
 #include <limits>
-#endif
 
 // ***************************************************************************
 // class DigitList
@@ -445,20 +441,11 @@ DigitList::getDouble() const
             tDouble /= -1;
         }
     } else if (isInfinite()) {
-        // BEGIN android-changed
-        // There is no numeric_limits template member in Android std nor
-        // INFINITY defined in math.h of ICU Linux build.
-#ifdef INFINITY
-        tDouble = INFINITY;
-#else
         if (std::numeric_limits<double>::has_infinity) {
             tDouble = std::numeric_limits<double>::infinity();
         } else {
             tDouble = std::numeric_limits<double>::max();
         }
-#endif
-        // END android-changed
-
         if (!isPositive()) {
             tDouble = -tDouble; //this was incorrectly "-fDouble" originally.
         } 

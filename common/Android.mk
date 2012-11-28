@@ -123,8 +123,15 @@ c_includes := \
 local_cflags := '-DICU_DATA_DIR_PREFIX_ENV_VAR="ANDROID_ROOT"'
 local_cflags += '-DICU_DATA_DIR="/usr/icu"'
 
-local_cflags += -D_REENTRANT -DU_COMMON_IMPLEMENTATION -O3 -fvisibility=hidden
-local_ldlibs := -lpthread -lm
+# bionic doesn't have <langinfo.h>.
+local_cflags += -DU_HAVE_NL_LANGINFO_CODESET=0
+# bionic has timezone instead of __timezone.
+local_cflags += -DU_TIMEZONE=timezone
+
+local_cflags += -D_REENTRANT -DU_COMMON_IMPLEMENTATION
+
+local_cflags += -O3 -fvisibility=hidden
+local_ldlibs := -ldl -lm -lpthread
 
 
 #
@@ -137,7 +144,7 @@ LOCAL_C_INCLUDES := $(c_includes) \
                     abi/cpp/include
 LOCAL_CFLAGS := $(local_cflags) -DPIC -fPIC
 LOCAL_RTTI_FLAG := -frtti
-LOCAL_SHARED_LIBRARIES += libgabi++
+LOCAL_SHARED_LIBRARIES += libgabi++ libdl
 LOCAL_LDLIBS += $(local_ldlibs)
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := libicuuc

@@ -128,15 +128,6 @@
  *
  */
 
-/* BEGIN android-changed */
-/* TODO(ccornelius): move to right place.  Use __ANDROID__ */
-#define HAVE_DLOPEN 0
-#define U_HAVE_NL_LANGINFO_CODESET 0
-#undef U_TZSET
-#undef U_TIMEZONE
-#undef U_TZNAME
-/* END android-changed */
-
 #if U_HAVE_NL_LANGINFO_CODESET
 #include <langinfo.h>
 #endif
