@@ -96,11 +96,14 @@ local_ldlibs := -lpthread -lm
 
 include $(CLEAR_VARS)
 LOCAL_SRC_FILES := $(src_files)
-LOCAL_C_INCLUDES := $(c_includes) \
-                    abi/cpp/include
+LOCAL_C_INCLUDES += $(c_includes) \
+                    abi/cpp/include \
+                    bionic \
+                    bionic/libstdc++/include \
+                    external/stlport/stlport
 LOCAL_CFLAGS += $(local_cflags) -DPIC -fPIC
 LOCAL_RTTI_FLAG := -frtti
-LOCAL_SHARED_LIBRARIES += libicuuc libgabi++
+LOCAL_SHARED_LIBRARIES += libicuuc libgabi++ libstlport
 LOCAL_LDLIBS += $(local_ldlibs)
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := libicui18n
