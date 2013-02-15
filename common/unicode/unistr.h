@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 1998-2011, International Business Machines
+*   Copyright (C) 1998-2012, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *
@@ -53,6 +53,11 @@ class  StringThreadTest;
 U_STABLE int32_t U_EXPORT2
 u_strlen(const UChar *s);
 #endif
+
+/**
+ * \def U_STRING_CASE_MAPPER_DEFINED
+ * @internal
+ */
 
 #ifndef U_STRING_CASE_MAPPER_DEFINED
 #define U_STRING_CASE_MAPPER_DEFINED
@@ -1816,16 +1821,18 @@ public:
    * Replace the characters in this UnicodeString
    * with the characters from <code>srcText</code>.
    *
-   * This function works the same for all strings except for ones that
-   * are readonly aliases.
+   * This function works the same as the assignment operator
+   * for all strings except for ones that are readonly aliases.
+   *
    * Starting with ICU 2.4, the assignment operator and the copy constructor
    * allocate a new buffer and copy the buffer contents even for readonly aliases.
    * This function implements the old, more efficient but less safe behavior
    * of making this string also a readonly alias to the same buffer.
+   *
    * The fastCopyFrom function must be used only if it is known that the lifetime of
-   * this UnicodeString is at least as long as the lifetime of the aliased buffer
+   * this UnicodeString does not exceed the lifetime of the aliased buffer
    * including its contents, for example for strings from resource bundles
-   * or aliases to string contents.
+   * or aliases to string constants.
    *
    * @param src The text containing the characters to replace.
    * @return a reference to this
@@ -1931,7 +1938,10 @@ public:
    * When the string is modified, then the buffer is first copied into
    * newly allocated memory.
    * The aliased buffer is never modified.
-   * In an assignment to another UnicodeString, the text will be aliased again,
+   *
+   * In an assignment to another UnicodeString, when using the copy constructor
+   * or the assignment operator, the text will be copied.
+   * When using fastCopyFrom(), the text will be aliased again,
    * so that both strings then alias the same readonly-text.
    *
    * @param isTerminated specifies if <code>text</code> is <code>NUL</code>-terminated.
@@ -2683,10 +2693,12 @@ public:
 #endif
 
   /**
-   * Case-fold the characters in this string.
+   * Case-folds the characters in this string.
+   *
    * Case-folding is locale-independent and not context-sensitive,
    * but there is an option for whether to include or exclude mappings for dotted I
-   * and dotless i that are marked with 'I' in CaseFolding.txt.
+   * and dotless i that are marked with 'T' in CaseFolding.txt.
+   *
    * The result may be longer or shorter than the original.
    *
    * @param options Either U_FOLD_CASE_DEFAULT or U_FOLD_CASE_EXCLUDE_SPECIAL_I
@@ -2907,7 +2919,10 @@ public:
    * When the string is modified, then the buffer is first copied into
    * newly allocated memory.
    * The aliased buffer is never modified.
-   * In an assignment to another UnicodeString, the text will be aliased again,
+   *
+   * In an assignment to another UnicodeString, when using the copy constructor
+   * or the assignment operator, the text will be copied.
+   * When using fastCopyFrom(), the text will be aliased again,
    * so that both strings then alias the same readonly-text.
    *
    * @param isTerminated specifies if <code>text</code> is <code>NUL</code>-terminated.
@@ -3257,6 +3272,11 @@ private:
   toUTF8(int32_t start, int32_t len,
          char *target, int32_t capacity) const;
 
+  /**
+   * Internal string contents comparison, called by operator==.
+   * Requires: this & text not bogus and have same lengths.
+   */
+  UBool doEquals(const UnicodeString &text, int32_t len) const;
 
   inline int8_t
   doCompare(int32_t start,
@@ -3650,10 +3670,7 @@ UnicodeString::operator== (const UnicodeString& text) const
     return text.isBogus();
   } else {
     int32_t len = length(), textLength = text.length();
-    return
-      !text.isBogus() &&
-      len == textLength &&
-      doCompare(0, len, text, 0, textLength) == 0;
+    return !text.isBogus() && len == textLength && doEquals(text, len);
   }
 }
 

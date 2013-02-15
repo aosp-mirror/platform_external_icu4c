@@ -2,16 +2,17 @@
 // *
 // * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
-// * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File:<path>/common/main/root.xml
+// * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
+// * Source File: <path>/common/main/root.xml
 // *
 // ***************************************************************************
 /**
  *  ICU <specials> source: <path>/xml/main/root.xml
  */
 root{
-    Version{"2.0.67.6"}
+    Version{"2.0.78.30"}
     zoneStrings{
+        // Begin android-added
         ""{
             ec{""}
             ld{""}
@@ -19,7 +20,8 @@ root{
             sd{""}
             ss{""}
         }
-        "Africa:Asmera"{
+        // End android-added
+                "Africa:Asmera"{
             ec{"Asmara"}
         }
         "America:Coral_Harbour"{
@@ -164,7 +166,7 @@ root{
         gmtFormat{"GMT{0}"}
         gmtZeroFormat{"GMT"}
         hourFormat{"+HH:mm;-HH:mm"}
-        regionFormat{"({0})"}
+        regionFormat{"{0}"}
         singleCountries{
             "Europe/Kiev",
             "Pacific/Majuro",

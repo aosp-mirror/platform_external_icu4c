@@ -2,23 +2,16 @@
 // *
 // * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
-// * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File:<path>/common/main/fr_CA.xml
+// * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
+// * Source File: <path>/common/main/fr_CA.xml
 // *
 // ***************************************************************************
 fr_CA{
-    NumberElements{
-        latn{
-            patterns{
-                currencyFormat{"#,##0.00 ¤;(#,##0.00 ¤)"}
-            }
-        }
-    }
     PaperSize:intvector{
         279,
         216,
     }
-    Version{"2.0.65.46"}
+    Version{"2.0.78.47"}
     calendar{
         gregorian{
             DateTimePatterns{
@@ -147,8 +140,6 @@ fr_CA{
     delimiters{
         alternateQuotationEnd{"›"}
         alternateQuotationStart{"‹"}
-        quotationEnd{"»"}
-        quotationStart{"«"}
     }
     measurementSystemNames{
         UK{"R-U"}
@@ -187,8 +178,6 @@ fr_CA{
             other{"Il y a {0} mois"}
         }
         second-future{
-            0{"Dans 0 seconde"}
-            1{"Dans 1 seconde"}
             one{"Dans {0} seconde"}
             other{"Dans {0} secondes"}
         }

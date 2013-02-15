@@ -2,8 +2,8 @@
 // *
 // * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
-// * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File:<path>/common/main/sr_Latn.xml
+// * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
+// * Source File: <path>/common/main/sr_Latn.xml
 // *
 // ***************************************************************************
 /**
@@ -32,7 +32,7 @@ sr_Latn{
             }
         }
     }
-    Version{"2.0.66.10"}
+    Version{"2.0.78.38"}
     calendar{
         gregorian{
             AmPmMarkers{
@@ -81,12 +81,12 @@ sr_Latn{
                 yMMMM{"MMMM y."}
                 yMMMd{"d. MMM y."}
                 yMd{"d. M. y."}
-                yQ{"y Q"}
                 yQQQ{"y QQQ"}
+                yQQQQ{"y QQQQ"}
                 yyMM{"MM.yy"}
                 yyMMMd{"d. MMM yy."}
                 yyMMdd{"dd.MM.yy"}
-                yyQ{"Q yy"}
+                yyQQQ{"QQQ yy"}
                 yyQQQQ{"QQQQ yy"}
                 yyyy{"y."}
                 yyyyMM{"yyyy-MM"}
@@ -180,21 +180,17 @@ sr_Latn{
             intervalFormats{
                 H{
                     H{"HH-HH"}
-                    a{"HH-HH"}
                 }
                 Hm{
                     H{"HH.mm-HH.mm"}
-                    a{"HH.mm-HH.mm"}
                     m{"HH.mm-HH.mm"}
                 }
                 Hmv{
                     H{"HH.mm-HH.mm v"}
-                    a{"HH.mm-HH.mm v"}
                     m{"HH.mm-HH.mm v"}
                 }
                 Hv{
                     H{"HH-HH v"}
-                    a{"HH-HH v"}
                 }
                 M{
                     M{"M-M"}
@@ -408,50 +404,6 @@ sr_Latn{
             many{"{0} godina"}
             one{"{0} godina"}
             other{"{0} godina"}
-        }
-    }
-    unitsShort{
-        day{
-            few{"{0} dana"}
-            many{"{0} dana"}
-            one{"{0} dan"}
-            other{"{0} dan"}
-        }
-        hour{
-            few{"{0} sata"}
-            many{"{0} sati"}
-            one{"{0} sat"}
-            other{"{0} sat"}
-        }
-        minute{
-            few{"{0} min"}
-            many{"{0} min"}
-            one{"{0} min"}
-            other{"{0} min"}
-        }
-        month{
-            few{"{0} mes"}
-            many{"{0} mes"}
-            one{"{0} mes"}
-            other{"{0} mes"}
-        }
-        second{
-            few{"{0} sek"}
-            many{"{0} sek"}
-            one{"{0} sek"}
-            other{"{0} sek"}
-        }
-        week{
-            few{"{0} ned"}
-            many{"{0} ned"}
-            one{"{0} ned"}
-            other{"{0} ned"}
-        }
-        year{
-            few{"{0} god"}
-            many{"{0} god"}
-            one{"{0} god"}
-            other{"{0} god"}
         }
     }
 }

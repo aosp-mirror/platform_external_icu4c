@@ -171,13 +171,13 @@ static const char gNamesNumericTag[]="numeric";
 static const char gAmPmMarkersTag[]="AmPmMarkers";
 static const char gQuartersTag[]="quarters";
 
-static const char gZoneStringsTag[]="zoneStrings";
+// static const char gZoneStringsTag[]="zoneStrings";
 
-static const char gLocalPatternCharsTag[]="localPatternChars";
+// static const char gLocalPatternCharsTag[]="localPatternChars";
 
 static const char gContextTransformsTag[]="contextTransforms";
 
-static UMTX LOCK;
+static UMutex LOCK = U_MUTEX_INITIALIZER;
 
 /**
  * Jitterbug 2974: MSVC has a bug whereby new X[0] behaves badly.
@@ -1150,6 +1150,48 @@ const UChar * U_EXPORT2
 DateFormatSymbols::getPatternUChars(void)
 {
     return gPatternChars;
+}
+
+UDateFormatField U_EXPORT2
+DateFormatSymbols::getPatternCharIndex(UChar c) {
+    const UChar *p = u_strchr(gPatternChars, c);
+    if (p == NULL) {
+        return UDAT_FIELD_COUNT;
+    } else {
+        return static_cast<UDateFormatField>(p - gPatternChars);
+    }
+}
+
+static const uint32_t kNumericFields =
+    ((uint32_t)1 << UDAT_YEAR_FIELD) |                      // y
+    ((uint32_t)1 << UDAT_MONTH_FIELD) |                     // M or MM
+    ((uint32_t)1 << UDAT_DATE_FIELD) |                      // d
+    ((uint32_t)1 << UDAT_HOUR_OF_DAY1_FIELD) |              // k
+    ((uint32_t)1 << UDAT_HOUR_OF_DAY0_FIELD) |              // H
+    ((uint32_t)1 << UDAT_MINUTE_FIELD) |                    // m
+    ((uint32_t)1 << UDAT_SECOND_FIELD) |                    // s
+    ((uint32_t)1 << UDAT_FRACTIONAL_SECOND_FIELD) |         // S
+    ((uint32_t)1 << UDAT_DAY_OF_YEAR_FIELD) |               // D
+    ((uint32_t)1 << UDAT_DAY_OF_WEEK_IN_MONTH_FIELD) |      // F
+    ((uint32_t)1 << UDAT_WEEK_OF_YEAR_FIELD) |              // w
+    ((uint32_t)1 << UDAT_WEEK_OF_MONTH_FIELD) |             // W
+    ((uint32_t)1 << UDAT_HOUR1_FIELD) |                     // h
+    ((uint32_t)1 << UDAT_HOUR0_FIELD) |                     // K
+    ((uint32_t)1 << UDAT_YEAR_WOY_FIELD) |                  // Y
+    ((uint32_t)1 << UDAT_DOW_LOCAL_FIELD) |                 // e
+    ((uint32_t)1 << UDAT_EXTENDED_YEAR_FIELD);              // u
+
+UBool U_EXPORT2
+DateFormatSymbols::isNumericField(UDateFormatField f, int32_t count) {
+    return
+        f != UDAT_FIELD_COUNT &&
+        (kNumericFields & ((uint32_t)1 << f)) != 0 &&
+        (f != UDAT_MONTH_FIELD || count < 3);
+}
+
+UBool U_EXPORT2
+DateFormatSymbols::isNumericPatternChar(UChar c, int32_t count) {
+    return isNumericField(getPatternCharIndex(c), count);
 }
 
 //------------------------------------------------------
