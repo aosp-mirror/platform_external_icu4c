@@ -40,7 +40,8 @@ src_files += \
 	datefmt.cpp     dcfmtsym.cpp decimfmt.cpp \
 	digitlst.cpp    dtfmtsym.cpp esctrn.cpp   \
 	fmtable_cnv.cpp fmtable.cpp  format.cpp   \
-	funcrepl.cpp    gregocal.cpp gregoimp.cpp \
+	funcrepl.cpp    gender.cpp \
+	gregocal.cpp gregoimp.cpp \
 	hebrwcal.cpp    inputext.cpp islamcal.cpp \
 	japancal.cpp    measfmt.cpp  measure.cpp  \
 	msgfmt.cpp      name2uni.cpp nfrs.cpp     \

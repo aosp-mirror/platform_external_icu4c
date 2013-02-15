@@ -9,7 +9,7 @@
 *   tab size:   8 (not used)
 *   indentation:4
 *
-*   Created by: Perl script written by Vladimir Weinstein
+*   Created by: Perl script tools/genren.pl written by Vladimir Weinstein
 *
 *  Contains data for renaming ICU exports.
 *  Gets included by umachine.h
@@ -21,9 +21,13 @@
 #ifndef URENAME_H
 #define URENAME_H
 
-/* Uncomment the following line to disable renaming on platforms
-   that do not use Autoconf. */
-/* #define U_DISABLE_RENAMING 1 */
+/* U_DISABLE_RENAMING can be defined in the following ways:
+ *   - when running configure, e.g.
+ *        runConfigureICU Linux --disable-renaming
+ *   - by changing the default setting of U_DISABLE_RENAMING in uconfig.h
+ */
+
+#include "unicode/uconfig.h"
 
 #if !U_DISABLE_RENAMING
 
@@ -31,9 +35,6 @@
    the platform a chance to define it first.
    Normally (if utypes.h or umachine.h was included first) this will not be necessary as it will already be defined.
  */
-#ifndef U_ICU_ENTRY_POINT_RENAME
-#include "unicode/uconfig.h"
-#endif
 
 #ifndef U_ICU_ENTRY_POINT_RENAME
 #include "unicode/umachine.h"
@@ -52,8 +53,6 @@
 
 /* C exports renaming data */
 
-#define DECPOWERS U_ICU_ENTRY_POINT_RENAME(DECPOWERS)
-#define DECSTICKYTAB U_ICU_ENTRY_POINT_RENAME(DECSTICKYTAB)
 #define T_CString_int64ToString U_ICU_ENTRY_POINT_RENAME(T_CString_int64ToString)
 #define T_CString_integerToString U_ICU_ENTRY_POINT_RENAME(T_CString_integerToString)
 #define T_CString_stringToInteger U_ICU_ENTRY_POINT_RENAME(T_CString_stringToInteger)
@@ -112,14 +111,6 @@
 #define bms_setTargetString U_ICU_ENTRY_POINT_RENAME(bms_setTargetString)
 #define cmemory_cleanup U_ICU_ENTRY_POINT_RENAME(cmemory_cleanup)
 #define cmemory_inUse U_ICU_ENTRY_POINT_RENAME(cmemory_inUse)
-#define d2utable U_ICU_ENTRY_POINT_RENAME(d2utable)
-#define deleteCEList U_ICU_ENTRY_POINT_RENAME(deleteCEList)
-#define deleteChars U_ICU_ENTRY_POINT_RENAME(deleteChars)
-#define deleteCollDataCacheEntry U_ICU_ENTRY_POINT_RENAME(deleteCollDataCacheEntry)
-#define deleteStringList U_ICU_ENTRY_POINT_RENAME(deleteStringList)
-#define deleteUnicodeStringKey U_ICU_ENTRY_POINT_RENAME(deleteUnicodeStringKey)
-#define gICUInitMutex U_ICU_ENTRY_POINT_RENAME(gICUInitMutex)
-#define gICUInitialized U_ICU_ENTRY_POINT_RENAME(gICUInitialized)
 #define izrule_clone U_ICU_ENTRY_POINT_RENAME(izrule_clone)
 #define izrule_close U_ICU_ENTRY_POINT_RENAME(izrule_close)
 #define izrule_equals U_ICU_ENTRY_POINT_RENAME(izrule_equals)
@@ -215,7 +206,6 @@
 #define res_load U_ICU_ENTRY_POINT_RENAME(res_load)
 #define res_read U_ICU_ENTRY_POINT_RENAME(res_read)
 #define res_unload U_ICU_ENTRY_POINT_RENAME(res_unload)
-#define triedict_swap U_ICU_ENTRY_POINT_RENAME(triedict_swap)
 #define u_UCharsToChars U_ICU_ENTRY_POINT_RENAME(u_UCharsToChars)
 #define u_austrcpy U_ICU_ENTRY_POINT_RENAME(u_austrcpy)
 #define u_austrncpy U_ICU_ENTRY_POINT_RENAME(u_austrncpy)
@@ -528,6 +518,7 @@
 #define ucal_getNow U_ICU_ENTRY_POINT_RENAME(ucal_getNow)
 #define ucal_getTZDataVersion U_ICU_ENTRY_POINT_RENAME(ucal_getTZDataVersion)
 #define ucal_getTimeZoneDisplayName U_ICU_ENTRY_POINT_RENAME(ucal_getTimeZoneDisplayName)
+#define ucal_getTimeZoneTransitionDate U_ICU_ENTRY_POINT_RENAME(ucal_getTimeZoneTransitionDate)
 #define ucal_getType U_ICU_ENTRY_POINT_RENAME(ucal_getType)
 #define ucal_getWeekendTransition U_ICU_ENTRY_POINT_RENAME(ucal_getWeekendTransition)
 #define ucal_inDaylightTime U_ICU_ENTRY_POINT_RENAME(ucal_inDaylightTime)
@@ -591,6 +582,7 @@
 #define ucln_i18n_registerCleanup U_ICU_ENTRY_POINT_RENAME(ucln_i18n_registerCleanup)
 #define ucln_io_registerCleanup U_ICU_ENTRY_POINT_RENAME(ucln_io_registerCleanup)
 #define ucln_lib_cleanup U_ICU_ENTRY_POINT_RENAME(ucln_lib_cleanup)
+#define ucln_mutexedInit U_ICU_ENTRY_POINT_RENAME(ucln_mutexedInit)
 #define ucln_registerCleanup U_ICU_ENTRY_POINT_RENAME(ucln_registerCleanup)
 #define ucnv_MBCSFromUChar32 U_ICU_ENTRY_POINT_RENAME(ucnv_MBCSFromUChar32)
 #define ucnv_MBCSFromUnicodeWithOffsets U_ICU_ENTRY_POINT_RENAME(ucnv_MBCSFromUnicodeWithOffsets)
@@ -725,6 +717,7 @@
 #define ucol_getAvailable U_ICU_ENTRY_POINT_RENAME(ucol_getAvailable)
 #define ucol_getBound U_ICU_ENTRY_POINT_RENAME(ucol_getBound)
 #define ucol_getCEStrengthDifference U_ICU_ENTRY_POINT_RENAME(ucol_getCEStrengthDifference)
+#define ucol_getCollationKey U_ICU_ENTRY_POINT_RENAME(ucol_getCollationKey)
 #define ucol_getContractions U_ICU_ENTRY_POINT_RENAME(ucol_getContractions)
 #define ucol_getContractionsAndExpansions U_ICU_ENTRY_POINT_RENAME(ucol_getContractionsAndExpansions)
 #define ucol_getDisplayName U_ICU_ENTRY_POINT_RENAME(ucol_getDisplayName)
@@ -747,7 +740,6 @@
 #define ucol_getRulesEx U_ICU_ENTRY_POINT_RENAME(ucol_getRulesEx)
 #define ucol_getShortDefinitionString U_ICU_ENTRY_POINT_RENAME(ucol_getShortDefinitionString)
 #define ucol_getSortKey U_ICU_ENTRY_POINT_RENAME(ucol_getSortKey)
-#define ucol_getSortKeyWithAllocation U_ICU_ENTRY_POINT_RENAME(ucol_getSortKeyWithAllocation)
 #define ucol_getStrength U_ICU_ENTRY_POINT_RENAME(ucol_getStrength)
 #define ucol_getTailoredSet U_ICU_ENTRY_POINT_RENAME(ucol_getTailoredSet)
 #define ucol_getUCAVersion U_ICU_ENTRY_POINT_RENAME(ucol_getUCAVersion)
@@ -799,6 +791,7 @@
 #define ucol_setVariableTop U_ICU_ENTRY_POINT_RENAME(ucol_setVariableTop)
 #define ucol_strcoll U_ICU_ENTRY_POINT_RENAME(ucol_strcoll)
 #define ucol_strcollIter U_ICU_ENTRY_POINT_RENAME(ucol_strcollIter)
+#define ucol_strcollUTF8 U_ICU_ENTRY_POINT_RENAME(ucol_strcollUTF8)
 #define ucol_swap U_ICU_ENTRY_POINT_RENAME(ucol_swap)
 #define ucol_swapBinary U_ICU_ENTRY_POINT_RENAME(ucol_swapBinary)
 #define ucol_swapInverseUCA U_ICU_ENTRY_POINT_RENAME(ucol_swapInverseUCA)
@@ -846,7 +839,7 @@
 #define udat_get2DigitYearStart U_ICU_ENTRY_POINT_RENAME(udat_get2DigitYearStart)
 #define udat_getAvailable U_ICU_ENTRY_POINT_RENAME(udat_getAvailable)
 #define udat_getCalendar U_ICU_ENTRY_POINT_RENAME(udat_getCalendar)
-#define udat_getDefaultContext U_ICU_ENTRY_POINT_RENAME(udat_getDefaultContext)
+#define udat_getContext U_ICU_ENTRY_POINT_RENAME(udat_getContext)
 #define udat_getLocaleByType U_ICU_ENTRY_POINT_RENAME(udat_getLocaleByType)
 #define udat_getNumberFormat U_ICU_ENTRY_POINT_RENAME(udat_getNumberFormat)
 #define udat_getSymbols U_ICU_ENTRY_POINT_RENAME(udat_getSymbols)
@@ -857,7 +850,7 @@
 #define udat_registerOpener U_ICU_ENTRY_POINT_RENAME(udat_registerOpener)
 #define udat_set2DigitYearStart U_ICU_ENTRY_POINT_RENAME(udat_set2DigitYearStart)
 #define udat_setCalendar U_ICU_ENTRY_POINT_RENAME(udat_setCalendar)
-#define udat_setDefaultContext U_ICU_ENTRY_POINT_RENAME(udat_setDefaultContext)
+#define udat_setContext U_ICU_ENTRY_POINT_RENAME(udat_setContext)
 #define udat_setLenient U_ICU_ENTRY_POINT_RENAME(udat_setLenient)
 #define udat_setNumberFormat U_ICU_ENTRY_POINT_RENAME(udat_setNumberFormat)
 #define udat_setSymbols U_ICU_ENTRY_POINT_RENAME(udat_setSymbols)
@@ -909,6 +902,7 @@
 #define udatpg_setAppendItemName U_ICU_ENTRY_POINT_RENAME(udatpg_setAppendItemName)
 #define udatpg_setDateTimeFormat U_ICU_ENTRY_POINT_RENAME(udatpg_setDateTimeFormat)
 #define udatpg_setDecimal U_ICU_ENTRY_POINT_RENAME(udatpg_setDecimal)
+#define udict_swap U_ICU_ENTRY_POINT_RENAME(udict_swap)
 #define udtitvfmt_close U_ICU_ENTRY_POINT_RENAME(udtitvfmt_close)
 #define udtitvfmt_format U_ICU_ENTRY_POINT_RENAME(udtitvfmt_format)
 #define udtitvfmt_open U_ICU_ENTRY_POINT_RENAME(udtitvfmt_open)
@@ -918,6 +912,7 @@
 #define uenum_nextDefault U_ICU_ENTRY_POINT_RENAME(uenum_nextDefault)
 #define uenum_openCharStringsEnumeration U_ICU_ENTRY_POINT_RENAME(uenum_openCharStringsEnumeration)
 #define uenum_openFromStringEnumeration U_ICU_ENTRY_POINT_RENAME(uenum_openFromStringEnumeration)
+#define uenum_openUCharStringsEnumeration U_ICU_ENTRY_POINT_RENAME(uenum_openUCharStringsEnumeration)
 #define uenum_reset U_ICU_ENTRY_POINT_RENAME(uenum_reset)
 #define uenum_unext U_ICU_ENTRY_POINT_RENAME(uenum_unext)
 #define uenum_unextDefault U_ICU_ENTRY_POINT_RENAME(uenum_unextDefault)
@@ -934,6 +929,8 @@
 #define ufmt_ptou U_ICU_ENTRY_POINT_RENAME(ufmt_ptou)
 #define ufmt_uto64 U_ICU_ENTRY_POINT_RENAME(ufmt_uto64)
 #define ufmt_utop U_ICU_ENTRY_POINT_RENAME(ufmt_utop)
+#define ugender_getInstance U_ICU_ENTRY_POINT_RENAME(ugender_getInstance)
+#define ugender_getListGender U_ICU_ENTRY_POINT_RENAME(ugender_getListGender)
 #define uhash_close U_ICU_ENTRY_POINT_RENAME(uhash_close)
 #define uhash_compareCaselessUnicodeString U_ICU_ENTRY_POINT_RENAME(uhash_compareCaselessUnicodeString)
 #define uhash_compareChars U_ICU_ENTRY_POINT_RENAME(uhash_compareChars)
@@ -1001,6 +998,7 @@
 #define uiter_setUTF16BE U_ICU_ENTRY_POINT_RENAME(uiter_setUTF16BE)
 #define uiter_setUTF8 U_ICU_ENTRY_POINT_RENAME(uiter_setUTF8)
 #define uldn_close U_ICU_ENTRY_POINT_RENAME(uldn_close)
+#define uldn_getContext U_ICU_ENTRY_POINT_RENAME(uldn_getContext)
 #define uldn_getDialectHandling U_ICU_ENTRY_POINT_RENAME(uldn_getDialectHandling)
 #define uldn_getLocale U_ICU_ENTRY_POINT_RENAME(uldn_getLocale)
 #define uldn_keyDisplayName U_ICU_ENTRY_POINT_RENAME(uldn_keyDisplayName)
@@ -1008,6 +1006,7 @@
 #define uldn_languageDisplayName U_ICU_ENTRY_POINT_RENAME(uldn_languageDisplayName)
 #define uldn_localeDisplayName U_ICU_ENTRY_POINT_RENAME(uldn_localeDisplayName)
 #define uldn_open U_ICU_ENTRY_POINT_RENAME(uldn_open)
+#define uldn_openForContext U_ICU_ENTRY_POINT_RENAME(uldn_openForContext)
 #define uldn_regionDisplayName U_ICU_ENTRY_POINT_RENAME(uldn_regionDisplayName)
 #define uldn_scriptCodeDisplayName U_ICU_ENTRY_POINT_RENAME(uldn_scriptCodeDisplayName)
 #define uldn_scriptDisplayName U_ICU_ENTRY_POINT_RENAME(uldn_scriptDisplayName)
@@ -1095,8 +1094,6 @@
 #define umtx_atomic_dec U_ICU_ENTRY_POINT_RENAME(umtx_atomic_dec)
 #define umtx_atomic_inc U_ICU_ENTRY_POINT_RENAME(umtx_atomic_inc)
 #define umtx_cleanup U_ICU_ENTRY_POINT_RENAME(umtx_cleanup)
-#define umtx_destroy U_ICU_ENTRY_POINT_RENAME(umtx_destroy)
-#define umtx_init U_ICU_ENTRY_POINT_RENAME(umtx_init)
 #define umtx_lock U_ICU_ENTRY_POINT_RENAME(umtx_lock)
 #define umtx_unlock U_ICU_ENTRY_POINT_RENAME(umtx_unlock)
 #define uniset_getUnicode32Instance U_ICU_ENTRY_POINT_RENAME(uniset_getUnicode32Instance)
@@ -1164,6 +1161,7 @@
 #define unum_toPattern U_ICU_ENTRY_POINT_RENAME(unum_toPattern)
 #define uplrules_close U_ICU_ENTRY_POINT_RENAME(uplrules_close)
 #define uplrules_open U_ICU_ENTRY_POINT_RENAME(uplrules_open)
+#define uplrules_openForType U_ICU_ENTRY_POINT_RENAME(uplrules_openForType)
 #define uplrules_select U_ICU_ENTRY_POINT_RENAME(uplrules_select)
 #define uplug_closeLibrary U_ICU_ENTRY_POINT_RENAME(uplug_closeLibrary)
 #define uplug_findLibrary U_ICU_ENTRY_POINT_RENAME(uplug_findLibrary)
