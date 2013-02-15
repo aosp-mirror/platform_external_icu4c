@@ -2,8 +2,8 @@
 // *
 // * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
-// * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File:<path>/common/main/vai_Latn.xml
+// * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
+// * Source File: <path>/common/main/vai_Latn.xml
 // *
 // ***************************************************************************
 /**
@@ -33,7 +33,7 @@ vai_Latn{
         }
         native{"vaii"}
     }
-    Version{"2.0.67.8"}
+    Version{"2.0.77.46"}
     calendar{
         gregorian{
             DateTimePatterns{
@@ -72,8 +72,8 @@ vai_Latn{
                 yMMMEd{"E, MMM d, y"}
                 yMMMd{"MMM d y"}
                 yMd{"M/d/y"}
-                yQ{"Q y"}
                 yQQQ{"QQQ y"}
+                yQQQQ{"QQQQ y"}
             }
             dayNames{
                 format{

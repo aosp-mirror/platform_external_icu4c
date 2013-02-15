@@ -45,7 +45,7 @@ src_files := \
 	uhash.c            uinit.c            \
 	uinvchar.c         uloc.cpp           \
 	umapfile.c         umath.c            \
-	umutex.c           unames.cpp         \
+	umutex.cpp         unames.cpp         \
 	unorm_it.c         uresbund.cpp       \
 	ures_cnv.c         uresdata.c         \
 	usc_impl.c         uscript.c          \
@@ -63,7 +63,7 @@ src_files += \
         bmpset.cpp      unisetspan.cpp   \
 	brkeng.cpp      brkiter.cpp      \
 	caniter.cpp     chariter.cpp     \
-	dictbe.cpp      locbased.cpp     \
+	dictbe.cpp	locbased.cpp     \
 	locid.cpp       locutil.cpp      \
 	normlzr.cpp     parsepos.cpp     \
 	propname.cpp    rbbi.cpp         \
@@ -76,7 +76,7 @@ src_files += \
 	servlk.cpp      servlkf.cpp      \
 	servls.cpp      servnotf.cpp     \
 	servrbf.cpp     servslkf.cpp     \
-	triedict.cpp    ubrk.cpp         \
+	ubrk.cpp         \
 	uchriter.cpp    uhash_us.cpp     \
 	uidna.cpp       uiter.cpp        \
 	unifilt.cpp     unifunct.cpp     \
@@ -104,6 +104,7 @@ src_files += \
         bytestriebuilder.cpp  bytestrieiterator.cpp \
         messagepattern.cpp patternprops.cpp stringtriebuilder.cpp \
         ucharstrie.cpp ucharstriebuilder.cpp ucharstrieiterator.cpp \
+	dictionarydata.cpp \
 	ustrcase_locale.cpp unistr_titlecase_brkiter.cpp \
 	uniset_closure.cpp ucasemap_titlecase_brkiter.cpp \
 	ustr_titlecase_brkiter.cpp unistr_case_locale.cpp

@@ -32,6 +32,16 @@ class CharString;
 class DigitList;
 
 /**
+ * \def UNUM_INTERNAL_STACKARRAY_SIZE
+ * @internal
+ */
+#if U_PLATFORM == U_PF_OS400
+#define UNUM_INTERNAL_STACKARRAY_SIZE 144
+#else
+#define UNUM_INTERNAL_STACKARRAY_SIZE 128
+#endif
+
+/**
  * Formattable objects can be passed to the Format class or
  * its subclasses for formatting.  Formattable is a thin wrapper
  * class which interconverts between the primitive numeric types
@@ -605,13 +615,10 @@ public:
      */
     DigitList *getDigitList() const { return fDecimalNum;}
 
-#if UCONFIG_INTERNAL_DIGITLIST
     /**
      *  @internal
      */
     DigitList *getInternalDigitList();
-#endif
-
 
     /**
      *  Adopt, and set value from, a DigitList
@@ -652,9 +659,7 @@ private:
 
     DigitList            *fDecimalNum;
 
-#if UCONFIG_INTERNAL_DIGITLIST
-    char                fStackData[128]; // must be big enough for DigitList
-#endif
+    char                fStackData[UNUM_INTERNAL_STACKARRAY_SIZE]; // must be big enough for DigitList
 
     Type                fType;
     UnicodeString       fBogus; // Bogus string when it's needed.

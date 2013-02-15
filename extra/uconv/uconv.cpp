@@ -1,6 +1,6 @@
 /*****************************************************************************
 *
-*   Copyright (C) 1999-2011, International Business Machines
+*   Copyright (C) 1999-2012, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************/
@@ -26,6 +26,7 @@
 #include <unicode/translit.h>
 #include <unicode/uset.h>
 #include <unicode/uclean.h>
+#include <unicode/utf16.h>
 
 #include <stdio.h>
 #include <errno.h>
@@ -593,6 +594,7 @@ ConvertFile::convertFile(const char *pname,
     UConverter *convto = 0;
     UErrorCode err = U_ZERO_ERROR;
     UBool flush;
+    UBool closeFile = FALSE;
     const char *cbufp, *prevbufp;
     char *bufp;
 
@@ -628,6 +630,7 @@ ConvertFile::convertFile(const char *pname,
             u_wmsg(stderr, "cantOpenInputF", str1.getBuffer(), str2.getBuffer());
             return FALSE;
         }
+        closeFile = TRUE;
     } else {
         infilestr = "-";
         infile = stdin;
@@ -1051,7 +1054,7 @@ normal_exit:
     delete t;
 #endif
 
-    if (infile != stdin) {
+    if (closeFile) {
         fclose(infile);
     }
 
@@ -1377,6 +1380,8 @@ normal_exit:
     if (outfile != stdout) {
         fclose(outfile);
     }
+
+    u_cleanup();
 
     return ret;
 }

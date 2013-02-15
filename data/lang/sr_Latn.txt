@@ -2,8 +2,8 @@
 // *
 // * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
-// * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File:<path>/common/main/sr_Latn.xml
+// * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
+// * Source File: <path>/common/main/sr_Latn.xml
 // *
 // ***************************************************************************
 /**
@@ -705,7 +705,7 @@ sr_Latn{
         TARASK{"Taraskijevica ortografija"}
         VALENCIA{"Valencijski"}
     }
-    Version{"2.0.66.10"}
+    Version{"2.0.78.38"}
     codePatterns{
         language{"Jezik: {0}"}
         script{"Skript: {0}"}

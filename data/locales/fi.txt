@@ -2,17 +2,16 @@
 // *
 // * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
-// * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File:<path>/common/main/fi.xml
+// * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
+// * Source File: <path>/common/main/fi.xml
 // *
 // ***************************************************************************
 /**
  *  ICU <specials> source: <path>/xml/main/fi.xml
  */
 fi{
-    AuxExemplarCharacters{"[á à â ã č ç đ é è ë ǧ ǥ ȟ í ï ǩ ń ñ ŋ ô õ œ ř ŧ ú ü ʒ ǯ æ ø]"}
+    AuxExemplarCharacters{"[á à â ã č ç đ é è ê ë ǧ ǥ ȟ í î ï ǩ ń ñ ŋ ô õ œ ř ß ŧ ú ù û ÿ ü ʒ ǯ æ ø]"}
     ExemplarCharacters{"[a b c d e f g h i j k l m n o p q r s š t u v w x y z ž å ä ö]"}
-    ExemplarCharactersCurrency{"[a b c d e f g h i j k l m n o p q r s t u v w x y z]"}
     ExemplarCharactersIndex{"[A B C D E F G H I J K L M N O P Q R S T U V W X Y Z Å Ä Ö]"}
     LocaleScript{
         "Latn",
@@ -24,6 +23,110 @@ fi{
                 decimalFormat{"#,##0.###"}
                 percentFormat{"#,##0 %"}
                 scientificFormat{"#E0"}
+            }
+            patternsLong{
+                decimalFormat{
+                    1000{
+                        one{"0 tuhat"}
+                        other{"0 tuhatta"}
+                    }
+                    10000{
+                        one{"00 tuhatta"}
+                        other{"00 tuhatta"}
+                    }
+                    100000{
+                        one{"000 tuhatta"}
+                        other{"000 tuhatta"}
+                    }
+                    1000000{
+                        one{"0 miljoona"}
+                        other{"0 miljoonaa"}
+                    }
+                    10000000{
+                        one{"00 miljoonaa"}
+                        other{"00 miljoonaa"}
+                    }
+                    100000000{
+                        one{"000 miljoonaa"}
+                        other{"000 miljoonaa"}
+                    }
+                    1000000000{
+                        one{"0 miljardi"}
+                        other{"0 miljardia"}
+                    }
+                    10000000000{
+                        one{"00 miljardia"}
+                        other{"00 miljardia"}
+                    }
+                    100000000000{
+                        one{"000 miljardia"}
+                        other{"000 miljardia"}
+                    }
+                    1000000000000{
+                        one{"0 biljoona"}
+                        other{"0 biljoonaa"}
+                    }
+                    10000000000000{
+                        one{"00 biljoonaa"}
+                        other{"00 biljoonaa"}
+                    }
+                    100000000000000{
+                        one{"000 biljoonaa"}
+                        other{"000 biljoonaa"}
+                    }
+                }
+            }
+            patternsShort{
+                decimalFormat{
+                    1000{
+                        one{"0 t'.'"}
+                        other{"0 t'.'"}
+                    }
+                    10000{
+                        one{"00 t'.'"}
+                        other{"00 t'.'"}
+                    }
+                    100000{
+                        one{"000 t'.'"}
+                        other{"000 t'.'"}
+                    }
+                    1000000{
+                        one{"0 milj'.'"}
+                        other{"0 milj'.'"}
+                    }
+                    10000000{
+                        one{"00 milj'.'"}
+                        other{"00 milj'.'"}
+                    }
+                    100000000{
+                        one{"000 milj'.'"}
+                        other{"000 milj'.'"}
+                    }
+                    1000000000{
+                        one{"0 mrd'.'"}
+                        other{"0 mrd'.'"}
+                    }
+                    10000000000{
+                        one{"00 mrd'.'"}
+                        other{"00 mrd'.'"}
+                    }
+                    100000000000{
+                        one{"000 mrd'.'"}
+                        other{"000 mrd'.'"}
+                    }
+                    1000000000000{
+                        one{"0 bilj'.'"}
+                        other{"0 bilj'.'"}
+                    }
+                    10000000000000{
+                        one{"00 bilj'.'"}
+                        other{"00 bilj'.'"}
+                    }
+                    100000000000000{
+                        one{"000 bilj'.'"}
+                        other{"000 bilj'.'"}
+                    }
+                }
             }
             symbols{
                 decimal{","}
@@ -39,7 +142,7 @@ fi{
             }
         }
     }
-    Version{"2.0.65.46"}
+    Version{"2.0.78.39"}
     calendar{
         buddhist{
             DateTimePatterns{
@@ -81,11 +184,11 @@ fi{
                 yMMMMccccd{"cccc, d. MMMM y G"}
                 yMMMd{"d. MMM y G"}
                 yMd{"d.M.y G"}
-                yQ{"Q/y G"}
                 yQQQ{"QQQ y G"}
+                yQQQQ{"QQQQ y G"}
                 yyMM{"M.y G"}
                 yyMMM{"LLLL y G"}
-                yyQ{"Q/y G"}
+                yyQQQ{"QQQ y G"}
                 yyyyM{"M.y G"}
                 yyyyMEd{"E d.M.y G"}
                 yyyyMMMM{"LLLL y G"}
@@ -133,7 +236,7 @@ fi{
                 "H.mm.ss z",
                 "H.mm.ss",
                 "H.mm",
-                "cccc, d. MMMM y",
+                "cccc d. MMMM y",
                 "d. MMMM y",
                 "d.M.yyyy",
                 "d.M.yyyy",
@@ -144,17 +247,18 @@ fi{
                 "{1} {0}",
             }
             availableFormats{
-                Ed{"ccc d."}
+                Ed{"E d."}
                 H{"H"}
                 Hm{"H.mm"}
                 Hms{"H.mm.ss"}
                 M{"L"}
                 MEd{"E d.M."}
                 MMM{"LLL"}
-                MMMEd{"E d. MMM"}
+                MMMEd{"ccc d. MMM"}
                 MMMd{"d. MMM"}
                 Md{"d.M."}
                 d{"d"}
+                h{"h a"}
                 hm{"h.mm a"}
                 hms{"h.mm.ss a"}
                 ms{"mm.ss"}
@@ -163,15 +267,14 @@ fi{
                 yMEd{"E d.M.yyyy"}
                 yMMM{"LLL y"}
                 yMMMEd{"E d. MMM y"}
-                yMMMMccccd{"cccc, d. MMMM y"}
+                yMMMMccccd{"cccc d. MMMM y"}
                 yMMMd{"d. MMM y"}
                 yMd{"d.M.yyyy"}
-                yQ{"Q/yyyy"}
                 yQQQ{"QQQ y"}
-                yyMM{"M/yy"}
+                yQQQQ{"QQQQ y"}
+                yyMM{"M.yy"}
                 yyMMM{"LLLL yy"}
-                yyQ{"Q/yy"}
-                yyyyM{"M/yyyy"}
+                yyyyM{"M.yyyy"}
                 yyyyMEd{"E d.M.yyyy"}
                 yyyyMMMM{"LLLL y"}
                 yyyyQQQQ{"QQQQ y"}
@@ -195,6 +298,15 @@ fi{
                         "T",
                         "P",
                         "L",
+                    }
+                    short{
+                        "su",
+                        "ma",
+                        "ti",
+                        "ke",
+                        "to",
+                        "pe",
+                        "la",
                     }
                     wide{
                         "sunnuntaina",
@@ -224,6 +336,15 @@ fi{
                         "T",
                         "P",
                         "L",
+                    }
+                    short{
+                        "su",
+                        "ma",
+                        "ti",
+                        "ke",
+                        "to",
+                        "pe",
+                        "la",
                     }
                     wide{
                         "sunnuntai",
@@ -310,21 +431,17 @@ fi{
             intervalFormats{
                 H{
                     H{"H–H"}
-                    a{"H–H"}
                 }
                 Hm{
                     H{"H.mm–H.mm"}
-                    a{"H.mm–H.mm"}
                     m{"H.mm–H.mm"}
                 }
                 Hmv{
                     H{"H.mm–H.mm v"}
-                    a{"H.mm–H.mm v"}
                     m{"H.mm–H.mm v"}
                 }
                 Hv{
                     H{"H–H v"}
-                    a{"H–H v"}
                 }
                 M{
                     M{"L.–L."}
@@ -527,6 +644,12 @@ fi{
                         "3. nelj.",
                         "4. nelj.",
                     }
+                    narrow{
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                    }
                     wide{
                         "1. neljännes",
                         "2. neljännes",
@@ -651,7 +774,6 @@ fi{
                 yyyyMMMMccccd{"cccc, d. MMMM y G"}
                 yyyyMMMd{"d. MMM y G"}
                 yyyyMd{"d.M.y G"}
-                yyyyQ{"Q/y G"}
                 yyyyQQQ{"QQQ y G"}
                 yyyyQQQQ{"QQQQ y G"}
             }
@@ -762,6 +884,8 @@ fi{
         standard{
             2{"{0} ja {1}"}
             end{"{0} ja {1}"}
+            middle{"{0}, {1}"}
+            start{"{0}, {1}"}
         }
     }
     measurementSystemNames{
@@ -775,14 +899,10 @@ fi{
             other{"{0} päivää"}
         }
         day-future{
-            0{"alle päivän päästä"}
-            1{"päivän päästä"}
             one{"{0} päivän päästä"}
             other{"{0} päivän päästä"}
         }
         day-past{
-            0{"alle päivä sitten"}
-            1{"päivä sitten"}
             one{"{0} päivä sitten"}
             other{"{0} päivää sitten"}
         }
@@ -791,14 +911,10 @@ fi{
             other{"{0} tuntia"}
         }
         hour-future{
-            0{"alle tunnin päästä"}
-            1{"tunnin päästä"}
             one{"{0} tunnin päästä"}
             other{"{0} tunnin päästä"}
         }
         hour-past{
-            0{"alle tunti sitten"}
-            1{"tunti sitten"}
             one{"{0} tunti sitten"}
             other{"{0} tuntia sitten"}
         }
@@ -807,14 +923,10 @@ fi{
             other{"{0} minuuttia"}
         }
         minute-future{
-            0{"alle minuutin päästä"}
-            1{"minuutin päästä"}
             one{"{0} minuutin päästä"}
             other{"{0} minuutin päästä"}
         }
         minute-past{
-            0{"alle minuutti sitten"}
-            1{"minuutti sitten"}
             one{"{0} minuutti sitten"}
             other{"{0} minuuttia sitten"}
         }
@@ -823,14 +935,10 @@ fi{
             other{"{0} kuukautta"}
         }
         month-future{
-            0{"alle kuukauden päästä"}
-            1{"kuukauden päästä"}
             one{"{0} kuukauden päästä"}
             other{"{0} kuukauden päästä"}
         }
         month-past{
-            0{"alle kuukausi sitten"}
-            1{"kuukausi sitten"}
             one{"{0} kuukausi sitten"}
             other{"{0} kuukautta sitten"}
         }
@@ -839,14 +947,10 @@ fi{
             other{"{0} sekuntia"}
         }
         second-future{
-            0{"alle sekunnin päästä"}
-            1{"sekunnin päästä"}
             one{"{0} sekunnin päästä"}
             other{"{0} sekunnin päästä"}
         }
         second-past{
-            0{"alle sekunti sitten"}
-            1{"sekunti sitten"}
             one{"{0} sekunti sitten"}
             other{"{0} sekuntia sitten"}
         }
@@ -855,14 +959,10 @@ fi{
             other{"{0} viikkoa"}
         }
         week-future{
-            0{"alle viikon päästä"}
-            1{"viikon päästä"}
             one{"{0} viikon päästä"}
             other{"{0} viikon päästä"}
         }
         week-past{
-            0{"alle viikko sitten"}
-            1{"viikko sitten"}
             one{"{0} viikko sitten"}
             other{"{0} viikkoa sitten"}
         }
@@ -871,14 +971,10 @@ fi{
             other{"{0} vuotta"}
         }
         year-future{
-            0{"alle vuoden päästä"}
-            1{"vuoden päästä"}
             one{"{0} vuoden päästä"}
             other{"{0} vuoden päästä"}
         }
         year-past{
-            0{"alle vuosi sitten"}
-            1{"vuosi sitten"}
             one{"{0} vuosi sitten"}
             other{"{0} vuotta sitten"}
         }

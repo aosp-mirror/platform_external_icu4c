@@ -1,5 +1,5 @@
 /******************************************************************************
- *   Copyright (C) 2009-2011, International Business Machines
+ *   Copyright (C) 2009-2012, International Business Machines
  *   Corporation and others.  All Rights Reserved.
  *******************************************************************************
  */
@@ -51,6 +51,14 @@
 #define HEX_0X 0 /*  0x1234 */
 #define HEX_0H 1 /*  01234h */
 
+/*
+ * The following is needed by MinGW64
+ */
+#ifndef __USER_LABEL_PREFIX__
+#define __USER_LABEL_PREFIX__ _
+#endif
+#define GCC_LABEL_PREFIX_INTERNAL(a) #a
+#define GCC_LABEL_PREFIX(a) GCC_LABEL_PREFIX_INTERNAL(a)
 
 /* prototypes --------------------------------------------------------------- */
 static void
@@ -135,10 +143,10 @@ static const struct AssemblyType {
         ".long ","",HEX_0X
     },
     {"gcc-cygwin",
-        ".globl _%s\n"
+        ".globl "GCC_LABEL_PREFIX(__USER_LABEL_PREFIX__) "%s\n"
         "\t.section .rodata\n"
         "\t.align 8\n" /* Either align 8 bytes or 2^8 (256) bytes. 8 bytes is needed. */
-        "_%s:\n\n",
+        GCC_LABEL_PREFIX(__USER_LABEL_PREFIX__) "%s:\n\n",
 
         ".long ","",HEX_0X
     },
@@ -1004,7 +1012,7 @@ writeObjectCode(const char *filename, const char *destdir, const char *optEntryP
 
     /* deal with options, files and the entry point name */
     getArchitecture(&cpu, &bits, &makeBigEndian, optMatchArch);
-    printf("genccode: --match-arch cpu=%hu bits=%hu big-endian=%hu\n", cpu, bits, makeBigEndian);
+    printf("genccode: --match-arch cpu=%hu bits=%hu big-endian=%d\n", cpu, bits, makeBigEndian);
 #if U_PLATFORM_HAS_WIN32_API
     if(cpu==IMAGE_FILE_MACHINE_I386) {
         entryOffset=1;
