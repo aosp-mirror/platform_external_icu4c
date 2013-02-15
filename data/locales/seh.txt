@@ -2,8 +2,8 @@
 // *
 // * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
-// * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File:<path>/common/main/seh.xml
+// * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
+// * Source File: <path>/common/main/seh.xml
 // *
 // ***************************************************************************
 /**
@@ -29,7 +29,7 @@ seh{
             }
         }
     }
-    Version{"2.0.65.46"}
+    Version{"2.0.77.46"}
     calendar{
         gregorian{
             DateTimePatterns{
@@ -69,13 +69,13 @@ seh{
                 yMMM{"MMM 'de' y"}
                 yMMMEd{"E, d 'de' MMM 'de' y"}
                 yMMMM{"MMMM 'de' y"}
-                yQ{"y Q"}
                 yQQQ{"y QQQ"}
+                yQQQQ{"y QQQQ"}
                 yyMM{"MM/yy"}
                 yyMMM{"MMM yy"}
                 yyMMMEd{"E, d 'de' MMM 'de' yy"}
                 yyMMMd{"d 'de' MMM 'de' yy"}
-                yyQ{"Q yy"}
+                yyQQQ{"QQQ yy"}
             }
             dayNames{
                 format{
@@ -140,9 +140,6 @@ seh{
                 }
                 second{
                     dn{"Segundo"}
-                }
-                weekday{
-                    dn{"Ntsiku"}
                 }
                 year{
                     dn{"Chaka"}

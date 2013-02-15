@@ -292,6 +292,7 @@
     <ClCompile Include="dtifmtts.cpp" />
     <ClCompile Include="dtptngts.cpp" />
     <ClCompile Include="fldset.cpp" />
+    <ClCompile Include="genderinfotest.cpp" />
     <ClCompile Include="incaltst.cpp" />
     <ClCompile Include="itformat.cpp" />
     <ClCompile Include="itrbnf.cpp" />
@@ -387,6 +388,7 @@
     <ClCompile Include="convtest.cpp" />
     <ClCompile Include="csdetest.cpp" />
     <ClCompile Include="bidiconf.cpp" />
+    <ClCompile Include="listformattertest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="itrbbi.h" />
@@ -511,6 +513,7 @@
     <ClInclude Include="trnserr.h" />
     <ClInclude Include="convtest.h" />
     <ClInclude Include="csdetest.h" />
+    <ClInclude Include="listformattertest.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\common\common.vcxproj">

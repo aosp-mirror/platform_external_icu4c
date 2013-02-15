@@ -2,8 +2,8 @@
 // *
 // * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
-// * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File:<path>/common/main/sg.xml
+// * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
+// * Source File: <path>/common/main/sg.xml
 // *
 // ***************************************************************************
 /**
@@ -20,7 +20,7 @@ sg{
             "kwânza tî Angoläa",
         }
         AUD{
-            "AU$",
+            "A$",
             "dolära tî Ostralïi",
         }
         BHD{
@@ -228,5 +228,5 @@ sg{
             "dolära tî Zimbäbwe",
         }
     }
-    Version{"2.0.65.46"}
+    Version{"2.0.78.30"}
 }

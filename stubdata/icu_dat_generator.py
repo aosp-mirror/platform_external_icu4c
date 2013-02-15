@@ -25,7 +25,7 @@
 #  Add new dat file:
 #   1. Add icudtxxl-<datname>.txt to $ANDROID_BUILD_TOP/external/icu4c/stubdata.
 #      Check the example file under
-#      $ANDROID_BUILD_TOP/external/icu4c/stubdata/icudt49l-us.txt
+#      $ANDROID_BUILD_TOP/external/icu4c/stubdata/icudt50l-us.txt
 #   2. Add an entry to main() --> datlist[]
 #   3. Run this script to generate dat files.
 #
@@ -78,7 +78,7 @@ def MakeDat(input_file, stubdata_dir):
     sys.exit(1)
   GenResIndex(input_file)
   CopyAndroidCnvFiles(stubdata_dir)
-  # Run "icupkg -tl -s icudt49l -a icudt49l-us.txt new icudt49l.dat".
+  # Run "icupkg -tl -s icudt59l -a icudt50l-us.txt new icudt50l.dat".
   args = ["-tl", "-s", TMP_DAT_PATH, "-a", input_file, "new", ICUDATA + ".dat"]
   InvokeIcuTool("icupkg", TMP_DAT_PATH, args)
 
@@ -109,7 +109,7 @@ def AddResFile(collection, path):
   return
 
 
-# Open input file (such as icudt49l-us.txt).
+# Open input file (such as icudt50l-us.txt).
 # Go through the list and generate res_index.txt for locales, brkitr,
 # coll, et cetera.
 def GenResIndex(input_file):
@@ -221,7 +221,7 @@ def main():
   global ANDROID_BUILD_TOP  # $ANDROID_BUILD_TOP
   global ICU4C_DIR          # $ANDROID_BUILD_TOP/external/icu4c
   global ICU_PREBUILT_DIR   # Directory containing pre-built ICU tools.
-  global ICUDATA       # e.g. "icudt49l"
+  global ICUDATA       # e.g. "icudt50l"
   global CLDR_VERSION  # CLDR version. The value varies between ICU releases.
   global TMP_DAT_PATH  # temp directory to store all resource files and
                        # intermediate dat files.
