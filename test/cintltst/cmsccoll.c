@@ -1404,6 +1404,8 @@ static void RamsRulesTest(void) {
                 uprv_strcmp("my", locName)==0 ||
                 uprv_strcmp("si", locName)==0 ||
                 uprv_strcmp("si_LK", locName)==0 ||
+                uprv_strcmp("th", locName)==0 ||
+                uprv_strcmp("th_TH", locName)==0 ||
                 uprv_strcmp("zh", locName)==0 ||
                 uprv_strcmp("zh_Hant", locName)==0
             ) {
@@ -4674,7 +4676,7 @@ static void TestBeforeTightening(void) {
 
 }
 
-#if 0
+/*
 &m < a
 &[before 1] a < x <<< X << q <<< Q < z
 assert: m <<< M < x <<< X << q <<< Q < z < a < n
@@ -4732,7 +4734,7 @@ assert:  x <<< X << q <<< Q << m <<< \u24DC <<< M < z < n
 
 &[before 3] \u24DC <<< x <<< X << q <<< Q < z
 assert: m <<< x <<< X <<< \u24DC <<< M  << q <<< Q < z < n
-#endif
+*/
 
 
 #if 0
@@ -5170,7 +5172,7 @@ TestTailor6179(void)
         }
         log_err("\n");
     }
-if(isICUVersionAtLeast(50, 0, 0)) {  /* TODO: debug & fix, see ticket #8982 */
+if(isICUVersionAtLeast(51, 1, 0)) {  /* TODO: debug & fix, see ticket #8982 */
     tLen = u_strlen(tData2[1]);
     rLen = ucol_getSortKey(coll, tData2[1], tLen, resColl, 100);
     if (rLen != LEN(firstSecondaryIgnCE) || uprv_memcmp(resColl, firstSecondaryIgnCE, rLen) != 0) {
@@ -6494,9 +6496,9 @@ static void TestHaniReorderWithOtherRules(void)
     const char* strRules[] = {
         "[reorder Hani] &b<a"
     };
-    const int32_t apiRules[] = {
+    /*const int32_t apiRules[] = {
         USCRIPT_HAN
-    };
+    };*/
 
     const static OneTestCase privateUseCharacterStrings[] = {
         { {0x4e00}, {0x0041}, UCOL_LESS },
@@ -6539,7 +6541,7 @@ static void TestMultipleReorder(void)
 /*
  * Test that covers issue reported in ticket 8814
  */
-static void TestReorderWithNumericCollation()
+static void TestReorderWithNumericCollation(void)
 {
     UErrorCode status = U_ZERO_ERROR;
     UCollator  *myCollation;
@@ -6559,7 +6561,6 @@ static void TestReorderWithNumericCollation()
     int32_t fortyThreeP_sortKey_reorder_Length;
     UCollationResult collResult;
     UCollationResult collResultReorder;
-    int i;
 
     log_verbose("Testing reordering with and without numeric collation\n");
 
@@ -6654,6 +6655,7 @@ static void TestImportRulesDeWithPhonebook(void)
   doTestOneTestCase(importTests, LEN(importTests), importRules, LEN(importRules));
 }
 
+#if 0
 static void TestImportRulesFiWithEor(void)
 {
   /* DUCET. */
@@ -6720,6 +6722,7 @@ static void TestImportRulesFiWithEor(void)
   /* doTestOneTestCase(fiEorTests, LEN(fiEorTests), fiEorRules, LEN(fiEorRules)); */
 
 }
+#endif
 
 #if 0
 /*
@@ -7066,7 +7069,7 @@ void addMiscCollTest(TestNode** root)
     /*TEST(TestLimitations);*/
     TEST(TestNonChars);
     TEST(TestExtremeCompression);
-    TEST(TestSurrogates); 
+    TEST(TestSurrogates);
     /* BEGIN android-removed
        To save space, Android does not include the collation tailoring rules.
        We skip the tailing tests for collations. */
@@ -7144,6 +7147,9 @@ void addMiscCollTest(TestNode** root)
     TEST(TestPrivateUseCharactersInList);
     TEST(TestPrivateUseCharactersInRange);
     TEST(TestInvalidListsAndRanges);
+    TEST(TestImportRulesDeWithPhonebook);
+    /* TEST(TestImportRulesFiWithEor); EOR rules removed from CLDR 21 */
+    /* TEST(TestImportRulesCJKWithUnihan); */
     /* BEGIN android-removed: Due to Android does not include reverse UCA table.
     TEST(TestImport);
     TEST(TestImportWithType);
@@ -7161,8 +7167,7 @@ void addMiscCollTest(TestNode** root)
     TEST(TestHaniReorderWithOtherRules);
     TEST(TestMultipleReorder);
     TEST(TestReorderingAcrossCloning);
-    /* test for ticket 8814 - disabled until resolved */
-    /*TEST(TestReorderWithNumericCollation);*/
+    TEST(TestReorderWithNumericCollation);
     
     TEST(TestCaseLevelBufferOverflow);
 }

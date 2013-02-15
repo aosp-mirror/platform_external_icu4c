@@ -36,7 +36,7 @@ static const char gHourFormatTag[]= "hourFormat";
 static const UChar TZID_GMT[] = {0x0045, 0x0074, 0x0063, 0x002F, 0x0047, 0x004D, 0x0054, 0};    // Etc/GMT
 
 static const UChar DEFAULT_GMT_PATTERN[] = {0x0047, 0x004D, 0x0054, 0x007B, 0x0030, 0x007D, 0}; // GMT{0}
-static const UChar DEFAULT_GMT_ZERO[] = {0x0047, 0x004D, 0x0054, 0}; // GMT
+//static const UChar DEFAULT_GMT_ZERO[] = {0x0047, 0x004D, 0x0054, 0}; // GMT
 static const UChar DEFAULT_GMT_POSITIVE_HM[] = {0x002B, 0x0048, 0x0048, 0x003A, 0x006D, 0x006D, 0}; // +HH:mm
 static const UChar DEFAULT_GMT_POSITIVE_HMS[] = {0x002B, 0x0048, 0x0048, 0x003A, 0x006D, 0x006D, 0x003A, 0x0073, 0x0073, 0}; // +HH:mm:ss
 static const UChar DEFAULT_GMT_NEGATIVE_HM[] = {0x002D, 0x0048, 0x0048, 0x003A, 0x006D, 0x006D, 0}; // -HH:mm
@@ -243,7 +243,7 @@ U_CDECL_END
 UOBJECT_DEFINE_RTTI_IMPLEMENTATION(TimeZoneFormat)
 
 TimeZoneFormat::TimeZoneFormat(const Locale& locale, UErrorCode& status) 
-: fLock(NULL),fLocale(locale), fTimeZoneNames(NULL), fTimeZoneGenericNames(NULL), fDefParseOptionFlags(0) {
+: fLocale(locale), fTimeZoneNames(NULL), fTimeZoneGenericNames(NULL), fDefParseOptionFlags(0) {
 
     for (int32_t i = 0; i <= UTZFMT_PAT_NEGATIVE_HMS; i++) {
         fGMTOffsetPatternItems[i] = NULL;
@@ -346,7 +346,6 @@ TimeZoneFormat::~TimeZoneFormat() {
     for (int32_t i = 0; i <= UTZFMT_PAT_NEGATIVE_HMS; i++) {
         delete fGMTOffsetPatternItems[i];
     }
-    umtx_destroy(&fLock);
 }
 
 TimeZoneFormat&
@@ -452,11 +451,11 @@ TimeZoneFormat::setTimeZoneNames(const TimeZoneNames &tznames) {
 }
 
 void
-TimeZoneFormat::setDefaultParseOptions(int32_t flags) {
+TimeZoneFormat::setDefaultParseOptions(uint32_t flags) {
     fDefParseOptionFlags = flags;
 }
 
-int32_t
+uint32_t
 TimeZoneFormat::getDefaultParseOptions(void) const {
     return fDefParseOptionFlags;
 }
@@ -1005,6 +1004,8 @@ TimeZoneFormat::formatSpecific(const TimeZone& tz, UTimeZoneNameType stdType, UT
     return name;
 }
 
+static UMutex gLock = U_MUTEX_INITIALIZER;
+
 const TimeZoneGenericNames*
 TimeZoneFormat::getTimeZoneGenericNames(UErrorCode& status) const {
     if (U_FAILURE(status)) {
@@ -1015,13 +1016,13 @@ TimeZoneFormat::getTimeZoneGenericNames(UErrorCode& status) const {
     UMTX_CHECK(&gZoneMetaLock, (fTimeZoneGenericNames == NULL), create);
     if (create) {
         TimeZoneFormat *nonConstThis = const_cast<TimeZoneFormat *>(this);
-        umtx_lock(&nonConstThis->fLock);
+        umtx_lock(&gLock);
         {
             if (fTimeZoneGenericNames == NULL) {
                 nonConstThis->fTimeZoneGenericNames = TimeZoneGenericNames::createInstance(fLocale, status);
             }
         }
-        umtx_unlock(&nonConstThis->fLock);
+        umtx_unlock(&gLock);
     }
 
     return fTimeZoneGenericNames;
@@ -1691,7 +1692,7 @@ TimeZoneFormat::parseAbuttingAsciiOffsetFields(const UnicodeString& text, ParseP
 
     U_ASSERT(maxDigits <= MAX_OFFSET_DIGITS);
 
-    int32_t digits[MAX_OFFSET_DIGITS];
+    int32_t digits[MAX_OFFSET_DIGITS] = {};
     int32_t numDigits = 0;
     int32_t idx = start;
     while (numDigits < maxDigits && idx < text.length()) {
@@ -2056,7 +2057,7 @@ TimeZoneFormat::expandOffsetPattern(const UnicodeString& offsetHM, UnicodeString
     }
 
     UnicodeString sep;
-    int32_t idx_H = offsetHM.tempSubString(0, idx_mm).lastIndexOf(0x0048 /* H */);
+    int32_t idx_H = offsetHM.tempSubString(0, idx_mm).lastIndexOf((UChar)0x0048 /* H */);
     if (idx_H >= 0) {
         sep = offsetHM.tempSubString(idx_H + 1, idx_mm - (idx_H + 1));
     }

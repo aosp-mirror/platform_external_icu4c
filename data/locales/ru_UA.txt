@@ -2,12 +2,12 @@
 // *
 // * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
-// * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File:<path>/common/main/ru_UA.xml
+// * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
+// * Source File: <path>/common/main/ru_UA.xml
 // *
 // ***************************************************************************
 ru_UA{
-    Version{"2.0.57.98"}
+    Version{"2.0.78.47"}
     calendar{
         gregorian{
             DateTimePatterns{
@@ -15,7 +15,7 @@ ru_UA{
                 "HH:mm:ss z",
                 "HH:mm:ss",
                 "HH:mm",
-                "EEEE, d MMMM y 'г'.",
+                "EEEE, d MMMM y 'г'.",
                 "d MMMM y",
                 "d MMM y",
                 "dd.MM.yy",

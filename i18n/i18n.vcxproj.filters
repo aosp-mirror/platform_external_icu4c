@@ -171,6 +171,9 @@
     <ClCompile Include="fpositer.cpp">
       <Filter>formatting</Filter>
     </ClCompile>
+    <ClCompile Include="gender.cpp">
+      <Filter>formatting</Filter>
+    </ClCompile>
     <ClCompile Include="gregocal.cpp">
       <Filter>formatting</Filter>
     </ClCompile>
@@ -777,6 +780,12 @@
     <ClInclude Include="numsys_impl.h">
       <Filter>formatting</Filter>
     </ClInclude>
+    <ClInclude Include="dcfmtimp.h">
+      <Filter>formatting</Filter>
+    </ClInclude>
+    <ClInclude Include="selfmtimpl.h">
+      <Filter>formatting</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="i18n.rc">
@@ -871,6 +880,9 @@
     <CustomBuild Include="unicode\fpositer.h">
       <Filter>formatting</Filter>
     </CustomBuild>
+    <CustomBuild Include="unicode\gender.h">
+      <Filter>formatting</Filter>
+    </CustomBuild>
     <CustomBuild Include="unicode\gregocal.h">
       <Filter>formatting</Filter>
     </CustomBuild>
@@ -947,6 +959,12 @@
       <Filter>formatting</Filter>
     </CustomBuild>
     <CustomBuild Include="unicode\udatpg.h">
+      <Filter>formatting</Filter>
+    </CustomBuild>
+    <CustomBuild Include="unicode\udisplaycontext.h">
+      <Filter>formatting</Filter>
+    </CustomBuild>
+    <CustomBuild Include="unicode\ugender.h">
       <Filter>formatting</Filter>
     </CustomBuild>
     <CustomBuild Include="unicode\uldnames.h">

@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1997-2011, International Business Machines Corporation and
+ * Copyright (c) 1997-2012, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -508,6 +508,7 @@ IntlTest::IntlTest()
     errorCount = 0;
     dataErrorCount = 0;
     verbose = FALSE;
+    no_time = FALSE;
     no_err_msg = FALSE;
     warn_on_missing_data = FALSE;
     quick = FALSE;
@@ -555,6 +556,13 @@ UBool IntlTest::setVerbose( UBool verboseVal )
 {
     UBool rval = this->verbose;
     this->verbose = verboseVal;
+    return rval;
+}
+
+UBool IntlTest::setNotime( UBool no_time )
+{
+    UBool rval = this->no_time;
+    this->no_time = no_time;
     return rval;
 }
 
@@ -645,7 +653,7 @@ UBool IntlTest::runTest( char* name, char* par, char *baseName )
 }
 
 // call individual tests, to be overriden to call implementations
-void IntlTest::runIndexedTest( int32_t index, UBool exec, const char* &name, char* par )
+void IntlTest::runIndexedTest( int32_t /*index*/, UBool /*exec*/, const char* & /*name*/, char* /*par*/ )
 {
     // to be overriden by a method like:
     /*
@@ -656,7 +664,6 @@ void IntlTest::runIndexedTest( int32_t index, UBool exec, const char* &name, cha
     }
     */
     this->errln("*** runIndexedTest needs to be overriden! ***");
-    name = ""; exec = exec; index = index; par = par;
 }
 
 
@@ -710,7 +717,11 @@ UBool IntlTest::runTestLoop( char* testname, char* par, char *baseName )
             UDate timeStop = uprv_getRawUTCtime();
             rval = TRUE; // at least one test has been called
             char secs[256];
-            sprintf(secs, "%f", (timeStop-timeStart)/1000.0);
+            if(!no_time) {
+              sprintf(secs, "%f", (timeStop-timeStart)/1000.0);
+            } else {
+              secs[0]=0;
+            }
             
 
             strcpy(saveBaseLoc,name);
@@ -723,11 +734,11 @@ UBool IntlTest::runTestLoop( char* testname, char* par, char *baseName )
             
             if (lastErrorCount == errorCount) {
                 sprintf( msg, "   } OK:   %s ", name );
-                str_timeDelta(msg+strlen(msg),timeStop-timeStart);
+                if(!no_time) str_timeDelta(msg+strlen(msg),timeStop-timeStart);
                 lastTestFailed = FALSE;
             }else{
                 sprintf(msg,  "   } ERRORS (%li) in %s", (long)(errorCount-lastErrorCount), name);
-                str_timeDelta(msg+strlen(msg),timeStop-timeStart);
+                if(!no_time) str_timeDelta(msg+strlen(msg),timeStop-timeStart);
 
                 for(int i=0;i<LL_indentlevel;i++) {
                     errorList += " ";
@@ -1073,6 +1084,7 @@ main(int argc, char* argv[])
     UBool all = FALSE;
     UBool verbose = FALSE;
     UBool no_err_msg = FALSE;
+    UBool no_time = FALSE;
     UBool quick = TRUE;
     UBool name = FALSE;
     UBool leaks = FALSE;
@@ -1109,6 +1121,9 @@ main(int argc, char* argv[])
             else if (strcmp("leaks", str) == 0 ||
                      strcmp("l", str) == 0)
                 leaks = TRUE;
+            else if (strcmp("notime", str) == 0 ||
+                     strcmp("T", str) == 0)
+                no_time = TRUE;
             else if (strcmp("x", str)==0) {
               if(++i>=argc) {
                 printf("* Error: '-x' option requires an argument. usage: '-x outfile.xml'.\n");
@@ -1151,6 +1166,7 @@ main(int argc, char* argv[])
                 "### \n"
                 "### Options are: verbose (v), all (a), noerrormsg (n), \n"
                 "### exhaustive (e), leaks (l), -x xmlfile.xml, prop:<propery>=<value>, \n"
+                "### notime (T), \n"
                 "### threads:<threadCount> (Mulithreading must first be \n"
                 "###     enabled otherwise this will be ignored. \n"
                 "###     The default thread count is 1.),\n"
@@ -1181,6 +1197,7 @@ main(int argc, char* argv[])
     major.setLeaks( leaks );
     major.setThreadCount( threadCount );
     major.setWarnOnMissingData( warnOnMissingData );
+    major.setNotime (no_time);
     for (int32_t i = 0; i < nProps; i++) {
         major.setProperty(props[i]);
     }
@@ -1212,6 +1229,7 @@ main(int argc, char* argv[])
     fprintf(stdout, "   No error messages (n)    : %s\n", (no_err_msg?        "On" : "Off"));
     fprintf(stdout, "   Exhaustive (e)           : %s\n", (!quick?            "On" : "Off"));
     fprintf(stdout, "   Leaks (l)                : %s\n", (leaks?             "On" : "Off"));
+    fprintf(stdout, "   notime (T)               : %s\n", (no_time?             "On" : "Off"));
     fprintf(stdout, "   Warn on missing data (w) : %s\n", (warnOnMissingData? "On" : "Off"));
 #if (ICU_USE_THREADS==0)
     fprintf(stdout, "   Threads                  : Disabled\n");
@@ -1394,13 +1412,15 @@ main(int argc, char* argv[])
     if (execCount <= 0) {
         fprintf(stdout, "***** Not all called tests actually exist! *****\n");
     }
-    endTime = uprv_getRawUTCtime();
-    diffTime = (int32_t)(endTime - startTime);
-    printf("Elapsed Time: %02d:%02d:%02d.%03d\n",
-        (int)((diffTime%U_MILLIS_PER_DAY)/U_MILLIS_PER_HOUR),
-        (int)((diffTime%U_MILLIS_PER_HOUR)/U_MILLIS_PER_MINUTE),
-        (int)((diffTime%U_MILLIS_PER_MINUTE)/U_MILLIS_PER_SECOND),
-        (int)(diffTime%U_MILLIS_PER_SECOND));
+    if(!no_time) {
+      endTime = uprv_getRawUTCtime();
+      diffTime = (int32_t)(endTime - startTime);
+      printf("Elapsed Time: %02d:%02d:%02d.%03d\n",
+             (int)((diffTime%U_MILLIS_PER_DAY)/U_MILLIS_PER_HOUR),
+             (int)((diffTime%U_MILLIS_PER_HOUR)/U_MILLIS_PER_MINUTE),
+             (int)((diffTime%U_MILLIS_PER_MINUTE)/U_MILLIS_PER_SECOND),
+             (int)(diffTime%U_MILLIS_PER_SECOND));
+    }
 
     if(ctest_xml_fini())
       return 1;
@@ -1416,10 +1436,10 @@ const char* IntlTest::loadTestData(UErrorCode& err){
         const char* tdrelativepath;
 
 #if defined (U_TOPBUILDDIR)
-        tdrelativepath = "test"U_FILE_SEP_STRING"testdata"U_FILE_SEP_STRING"out"U_FILE_SEP_STRING;
+        tdrelativepath = "test" U_FILE_SEP_STRING "testdata" U_FILE_SEP_STRING "out" U_FILE_SEP_STRING;
         directory = U_TOPBUILDDIR;
 #else
-        tdrelativepath = ".."U_FILE_SEP_STRING"test"U_FILE_SEP_STRING"testdata"U_FILE_SEP_STRING"out"U_FILE_SEP_STRING;
+        tdrelativepath = ".." U_FILE_SEP_STRING "test" U_FILE_SEP_STRING "testdata" U_FILE_SEP_STRING "out" U_FILE_SEP_STRING;
         directory = pathToDataDirectory();
 #endif
 
@@ -1455,17 +1475,17 @@ const char* IntlTest::getTestDataPath(UErrorCode& err) {
 const char *IntlTest::getSourceTestData(UErrorCode& /*err*/) {
     const char *srcDataDir = NULL;
 #ifdef U_TOPSRCDIR
-    srcDataDir = U_TOPSRCDIR U_FILE_SEP_STRING"test"U_FILE_SEP_STRING"testdata"U_FILE_SEP_STRING;
+    srcDataDir = U_TOPSRCDIR U_FILE_SEP_STRING"test" U_FILE_SEP_STRING "testdata" U_FILE_SEP_STRING;
 #else
-    srcDataDir = ".."U_FILE_SEP_STRING".."U_FILE_SEP_STRING"test"U_FILE_SEP_STRING"testdata"U_FILE_SEP_STRING;
-    FILE *f = fopen(".."U_FILE_SEP_STRING".."U_FILE_SEP_STRING"test"U_FILE_SEP_STRING"testdata"U_FILE_SEP_STRING"rbbitst.txt", "r");
+    srcDataDir = ".." U_FILE_SEP_STRING ".." U_FILE_SEP_STRING "test" U_FILE_SEP_STRING "testdata" U_FILE_SEP_STRING;
+    FILE *f = fopen(".." U_FILE_SEP_STRING ".." U_FILE_SEP_STRING "test" U_FILE_SEP_STRING "testdata" U_FILE_SEP_STRING "rbbitst.txt", "r");
     if (f) {
         /* We're in icu/source/test/intltest/ */
         fclose(f);
     }
     else {
         /* We're in icu/source/test/intltest/Platform/(Debug|Release) */
-        srcDataDir = ".."U_FILE_SEP_STRING".."U_FILE_SEP_STRING".."U_FILE_SEP_STRING".."U_FILE_SEP_STRING"test"U_FILE_SEP_STRING"testdata"U_FILE_SEP_STRING;
+        srcDataDir = ".." U_FILE_SEP_STRING ".." U_FILE_SEP_STRING ".." U_FILE_SEP_STRING ".." U_FILE_SEP_STRING "test" U_FILE_SEP_STRING "testdata"U_FILE_SEP_STRING;
     }
 #endif
     return srcDataDir;
@@ -1523,13 +1543,13 @@ const char *  IntlTest::pathToDataDirectory()
         }
         else {
             /* __FILE__ on MSVC7 does not contain the directory */
-            FILE *file = fopen(".."U_FILE_SEP_STRING".."U_FILE_SEP_STRING "data" U_FILE_SEP_STRING "Makefile.in", "r");
+            FILE *file = fopen(".." U_FILE_SEP_STRING ".."U_FILE_SEP_STRING "data" U_FILE_SEP_STRING "Makefile.in", "r");
             if (file) {
                 fclose(file);
-                fgDataDir = ".."U_FILE_SEP_STRING".."U_FILE_SEP_STRING "data" U_FILE_SEP_STRING;
+                fgDataDir = ".." U_FILE_SEP_STRING ".."U_FILE_SEP_STRING "data" U_FILE_SEP_STRING;
             }
             else {
-                fgDataDir = ".."U_FILE_SEP_STRING".."U_FILE_SEP_STRING".."U_FILE_SEP_STRING".."U_FILE_SEP_STRING "data" U_FILE_SEP_STRING;
+                fgDataDir = ".." U_FILE_SEP_STRING ".." U_FILE_SEP_STRING ".." U_FILE_SEP_STRING ".."U_FILE_SEP_STRING "data" U_FILE_SEP_STRING;
             }
         }
     }

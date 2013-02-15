@@ -2,8 +2,8 @@
 // *
 // * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
-// * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File:<path>/common/main/mua.xml
+// * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
+// * Source File: <path>/common/main/mua.xml
 // *
 // ***************************************************************************
 /**
@@ -29,7 +29,7 @@ mua{
             }
         }
     }
-    Version{"2.0.65.46"}
+    Version{"2.0.77.46"}
     calendar{
         gregorian{
             AmPmMarkers{
@@ -72,8 +72,8 @@ mua{
                 yMMMEd{"E d MMM y"}
                 yMMMd{"d MMM y"}
                 yMd{"d/M/y"}
-                yQ{"Q y"}
                 yQQQ{"QQQ y"}
+                yQQQQ{"QQQQ y"}
             }
             dayNames{
                 format{
@@ -126,9 +126,6 @@ mua{
                         "0"{"Tǝ'nahko"}
                         "1"{"Tǝ'nane"}
                     }
-                }
-                dayperiod{
-                    dn{"Cok comme"}
                 }
                 era{
                     dn{"Syii ma tãa"}

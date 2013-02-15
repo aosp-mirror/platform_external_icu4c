@@ -2,8 +2,8 @@
 // *
 // * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
-// * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File:<path>/common/main/nd.xml
+// * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
+// * Source File: <path>/common/main/nd.xml
 // *
 // ***************************************************************************
 /**
@@ -20,7 +20,7 @@ nd{
             "Kwanza yase Angola",
         }
         AUD{
-            "AU$",
+            "A$",
             "Dola yase Australia",
         }
         BHD{
@@ -232,5 +232,5 @@ nd{
             "Dola yase Zimbabwe",
         }
     }
-    Version{"2.0.65.46"}
+    Version{"2.0.77.46"}
 }

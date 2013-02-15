@@ -54,9 +54,9 @@
 #include "ucnvmbcs.h"
 #include "ucnv_ext.h"
 #include "ucnv_cnv.h"
-#include "umutex.h"
 #include "cmemory.h"
 #include "cstring.h"
+#include "umutex.h"
 
 /* control optimizations according to the platform */
 #define MBCS_UNROLL_SINGLE_TO_BMP 1
@@ -1343,7 +1343,6 @@ reconstituteData(UConverterMBCSTable *mbcsTable,
                  UErrorCode *pErrorCode) {
     uint16_t *stage1;
     uint32_t *stage2;
-    uint8_t *bytes;
     uint32_t dataLength=stage1Length*2+fullStage2Length*4+mbcsTable->fromUBytesLength;
     mbcsTable->reconstitutedData=(uint8_t *)uprv_malloc(dataLength);
     if(mbcsTable->reconstitutedData==NULL) {
@@ -1362,7 +1361,7 @@ reconstituteData(UConverterMBCSTable *mbcsTable,
                 stage2Length*4);
 
     mbcsTable->fromUnicodeTable=stage1;
-    mbcsTable->fromUnicodeBytes=bytes=(uint8_t *)(stage2+fullStage2Length);
+    mbcsTable->fromUnicodeBytes=(uint8_t *)(stage2+fullStage2Length);
 
     /* indexes into stage 2 count from the bottom of the fromUnicodeTable */
     stage2=(uint32_t *)stage1;
@@ -3920,6 +3919,11 @@ getTrail:
     pArgs->offsets=offsets;
 }
 
+/* Begin Android-added */
+#undef si_value
+#undef so_value
+/* End Android-added */
+
 U_CFUNC void
 ucnv_MBCSFromUnicodeWithOffsets(UConverterFromUnicodeArgs *pArgs,
                             UErrorCode *pErrorCode) {
@@ -4931,7 +4935,7 @@ ucnv_SBCSFromUTF8(UConverterFromUnicodeArgs *pFromUArgs,
             if(U8_IS_TRAIL(b)) {
                 ++i;
             } else {
-                if(i<utf8_countTrailBytes[b]) {
+                if(i<U8_COUNT_TRAIL_BYTES(b)) {
                     /* exit the conversion loop before the lead byte if there are not enough trail bytes for it */
                     sourceLimit-=i+1;
                 }
@@ -5024,7 +5028,7 @@ ucnv_SBCSFromUTF8(UConverterFromUnicodeArgs *pFromUArgs,
                     /* handle "complicated" and error cases, and continuing partial characters */
                     oldToULength=0;
                     toULength=1;
-                    toULimit=utf8_countTrailBytes[b]+1;
+                    toULimit=U8_COUNT_TRAIL_BYTES(b)+1;
                     c=b;
 moreBytes:
                     while(toULength<toULimit) {
@@ -5123,6 +5127,7 @@ moreBytes:
                      * but then exit the loop because the extension match would
                      * have consumed the source.
                      */
+                    *pErrorCode=U_USING_DEFAULT_WARNING;
                     break;
                 } else {
                     /* a mapping was written to the target, continue */
@@ -5143,10 +5148,12 @@ moreBytes:
      * to stop before a truncated sequence.
      * If so, then collect the truncated sequence now.
      */
-    if(U_SUCCESS(*pErrorCode) && source<(sourceLimit=(uint8_t *)pToUArgs->sourceLimit)) {
+    if(U_SUCCESS(*pErrorCode) &&
+            cnv->preFromUFirstCP<0 &&
+            source<(sourceLimit=(uint8_t *)pToUArgs->sourceLimit)) {
         c=utf8->toUBytes[0]=b=*source++;
         toULength=1;
-        toULimit=utf8_countTrailBytes[b]+1;
+        toULimit=U8_COUNT_TRAIL_BYTES(b)+1;
         while(source<sourceLimit) {
             utf8->toUBytes[toULength++]=b=*source++;
             c=(c<<6)+b;
@@ -5228,7 +5235,7 @@ ucnv_DBCSFromUTF8(UConverterFromUnicodeArgs *pFromUArgs,
             if(U8_IS_TRAIL(b)) {
                 ++i;
             } else {
-                if(i<utf8_countTrailBytes[b]) {
+                if(i<U8_COUNT_TRAIL_BYTES(b)) {
                     /* exit the conversion loop before the lead byte if there are not enough trail bytes for it */
                     sourceLimit-=i+1;
                 }
@@ -5301,7 +5308,7 @@ ucnv_DBCSFromUTF8(UConverterFromUnicodeArgs *pFromUArgs,
                     /* handle "complicated" and error cases, and continuing partial characters */
                     oldToULength=0;
                     toULength=1;
-                    toULimit=utf8_countTrailBytes[b]+1;
+                    toULimit=U8_COUNT_TRAIL_BYTES(b)+1;
                     c=b;
 moreBytes:
                     while(toULength<toULimit) {
@@ -5429,6 +5436,7 @@ unassigned:
                      * but then exit the loop because the extension match would
                      * have consumed the source.
                      */
+                    *pErrorCode=U_USING_DEFAULT_WARNING;
                     break;
                 } else {
                     /* a mapping was written to the target, continue */
@@ -5450,10 +5458,12 @@ unassigned:
      * to stop before a truncated sequence.
      * If so, then collect the truncated sequence now.
      */
-    if(U_SUCCESS(*pErrorCode) && source<(sourceLimit=(uint8_t *)pToUArgs->sourceLimit)) {
+    if(U_SUCCESS(*pErrorCode) &&
+            cnv->preFromUFirstCP<0 &&
+            source<(sourceLimit=(uint8_t *)pToUArgs->sourceLimit)) {
         c=utf8->toUBytes[0]=b=*source++;
         toULength=1;
-        toULimit=utf8_countTrailBytes[b]+1;
+        toULimit=U8_COUNT_TRAIL_BYTES(b)+1;
         while(source<sourceLimit) {
             utf8->toUBytes[toULength++]=b=*source++;
             c=(c<<6)+b;

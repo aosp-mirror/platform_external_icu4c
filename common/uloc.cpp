@@ -118,7 +118,7 @@ static const char * const LANGUAGES[] = {
     "hit", "hmn", "ho",  "hr",  "hsb", "hsn", "ht",  "hu",  "hup", "hy",  "hz",
     "ia",  "iba", "id",  "ie",  "ig",  "ii",  "ijo", "ik",
     "ilo", "inc", "ine", "inh", "io",  "ira", "iro", "is",  "it",
-    "iu",  "ja",  "jbo", "jmc", "jpr", "jrb", "jv",  "ka",  "kaa", "kab",
+    "iu",  "ja",  "jbo", "jgo", "jmc", "jpr", "jrb", "jv",  "ka",  "kaa", "kab",
     "kac", "kaj", "kam", "kar", "kaw", "kbd", "kcg", "kde", "kea", "kfo", "kg",  "kha", "khi",
     "kho", "khq", "ki",  "kj",  "kk",  "kl",  "kln", "km",  "kmb", "kn",
     "ko",  "kok", "kos", "kpe", "kr",  "krc", "krl", "kro", "kru", "ks", "ksb", "ksf",
@@ -126,7 +126,7 @@ static const char * const LANGUAGES[] = {
     "lah", "lam", "lb",  "lez", "lg",  "li",  "ln",  "lo",  "lol",
     "loz", "lt",  "lu",  "lua", "lui", "lun", "luo", "lus", "luy",
     "lv",  "mad", "mag", "mai", "mak", "man", "map", "mas",
-    "mdf", "mdr", "men", "mer", "mfe", "mg",  "mga", "mgh", "mh",  "mi",  "mic", "min",
+    "mdf", "mdr", "men", "mer", "mfe", "mg",  "mga", "mgh", "mgo", "mh",  "mi",  "mic", "min",
     "mis", "mk",  "mkh", "ml",  "mn",  "mnc", "mni", "mno",
     "mo",  "moh", "mos", "mr",  "ms",  "mt",  "mua", "mul", "mun",
     "mus", "mwl", "mwr", "my",  "myn", "myv", "na",  "nah", "nai", "nan", "nap", "naq",
@@ -226,8 +226,8 @@ static const char * const LANGUAGES_3[] = {
     "ina", "iba", "ind", "ile", "ibo", "iii", "ijo", "ipk",
 /*  "ilo", "inc", "ine", "inh", "io",  "ira", "iro", "is",  "it",      */
     "ilo", "inc", "ine", "inh", "ido", "ira", "iro", "isl", "ita",
-/*  "iu",  "ja",  "jbo", "jmc", "jpr", "jrb", "jv",  "ka",  "kaa", "kab",   */
-    "iku", "jpn", "jbo", "jmc", "jpr", "jrb", "jav", "kat", "kaa", "kab",
+/*  "iu",  "ja",  "jbo", "jgo", "jmc", "jpr", "jrb", "jv",  "ka",  "kaa", "kab",   */
+    "iku", "jpn", "jbo", "jgo", "jmc", "jpr", "jrb", "jav", "kat", "kaa", "kab",
 /*  "kac", "kaj", "kam", "kar", "kaw", "kbd", "kcg", "kde", "kea", "kfo", "kg",  "kha", "khi",*/
     "kac", "kaj", "kam", "kar", "kaw", "kbd", "kcg", "kde", "kea", "kfo", "kg",  "kha", "khi",
 /*  "kho", "khq", "ki",  "kj",  "kk",  "kl",  "kln", "km",  "kmb", "kn",     */
@@ -242,8 +242,8 @@ static const char * const LANGUAGES_3[] = {
     "loz", "lit", "lub", "lua", "lui", "lun", "luo", "lus", "luy",
 /*  "lv",  "mad", "mag", "mai", "mak", "man", "map", "mas",    */
     "lav", "mad", "mag", "mai", "mak", "man", "map", "mas",
-/*  "mdf", "mdr", "men", "mer", "mfe", "mg",  "mga", "mgh", "mh",  "mi",  "mic", "min",    */
-    "mdf", "mdr", "men", "mer", "mfe", "mlg", "mga", "mgh", "mah", "mri", "mic", "min",
+/*  "mdf", "mdr", "men", "mer", "mfe", "mg",  "mga", "mgh", "mgo", "mh",  "mi",  "mic", "min",    */
+    "mdf", "mdr", "men", "mer", "mfe", "mlg", "mga", "mgh", "mgo", "mah", "mri", "mic", "min",
 /*  "mis", "mk",  "mkh", "ml",  "mn",  "mnc", "mni", "mno",    */
     "mis", "mkd", "mkh", "mal", "mon", "mnc", "mni", "mno",
 /*  "mo",  "moh", "mos", "mr",  "ms",  "mt",  "mua", "mul", "mun",    */
@@ -1009,7 +1009,7 @@ uloc_setKeywordValue(const char* keywordName,
         while(keywordStart[i-1] == ' ') {
             i--;
         }
-        U_ASSERT(i>=0);
+        U_ASSERT(i>=0 && i<ULOC_KEYWORD_BUFFER_LEN);
         localeKeywordNameBuffer[i] = 0;
 
         nextSeparator = uprv_strchr(nextEqualsign, ';');
@@ -1525,7 +1525,7 @@ uloc_openKeywordList(const char *keywordList, int32_t keywordListSize, UErrorCod
         return NULL;
     }
     uprv_memcpy(result, &gKeywordsEnum, sizeof(UEnumeration));
-    myContext = reinterpret_cast<UKeywordsContext *>(uprv_malloc(sizeof(UKeywordsContext)));
+    myContext = static_cast<UKeywordsContext *>(uprv_malloc(sizeof(UKeywordsContext)));
     if (myContext == NULL) {
         *status = U_MEMORY_ALLOCATION_ERROR;
         uprv_free(result);
@@ -1700,8 +1700,8 @@ _canonicalize(const char* localeID,
                 len+=cntrySize;
             }
             if(_isIDSeparator(*tmpLocaleID)) {
-                /* If there is something else, then we add the _  if we found country before.*/
-                if (cntrySize > 0) {
+                /* If there is something else, then we add the _  if we found country before. */
+                if (cntrySize >= 0 && ! _isIDSeparator(*(tmpLocaleID+1)) ) {
                     ++fieldCount;
                     if(len<nameCapacity) {
                         name[len]='_';
@@ -1839,7 +1839,7 @@ _canonicalize(const char* localeID,
             len += _getKeywords(tmpLocaleID+1, '@', (len<nameCapacity ? name+len : NULL), nameCapacity-len,
                                 NULL, 0, NULL, TRUE, addKeyword, addValue, err);
         } else if (addKeyword != NULL) {
-            U_ASSERT(addValue != NULL);
+            U_ASSERT(addValue != NULL && len < nameCapacity);
             /* inelegant but works -- later make _getKeywords do this? */
             len += _copyCount(name+len, nameCapacity-len, "@");
             len += _copyCount(name+len, nameCapacity-len, addKeyword);
@@ -2330,7 +2330,7 @@ uloc_acceptLanguageFromHTTP(char *result, int32_t resultAvailable, UAcceptResult
         }
         if(n>=jSize) {
             if(j==smallBuffer) {  /* overflowed the small buffer. */
-                j = reinterpret_cast<_acceptLangItem *>(uprv_malloc(sizeof(j[0])*(jSize*2)));
+                j = static_cast<_acceptLangItem *>(uprv_malloc(sizeof(j[0])*(jSize*2)));
                 if(j!=NULL) {
                     uprv_memcpy(j,smallBuffer,sizeof(j[0])*jSize);
                 }
@@ -2338,7 +2338,7 @@ uloc_acceptLanguageFromHTTP(char *result, int32_t resultAvailable, UAcceptResult
                 fprintf(stderr,"malloced at size %d\n", jSize);
 #endif
             } else {
-                j = reinterpret_cast<_acceptLangItem *>(uprv_realloc(j, sizeof(j[0])*jSize*2));
+                j = static_cast<_acceptLangItem *>(uprv_realloc(j, sizeof(j[0])*jSize*2));
 #if defined(ULOC_DEBUG)
                 fprintf(stderr,"re-alloced at size %d\n", jSize);
 #endif
@@ -2360,7 +2360,7 @@ uloc_acceptLanguageFromHTTP(char *result, int32_t resultAvailable, UAcceptResult
         }
         return -1;
     }
-    strs = reinterpret_cast<char **>(uprv_malloc((size_t)(sizeof(strs[0])*n)));
+    strs = static_cast<char **>(uprv_malloc((size_t)(sizeof(strs[0])*n)));
     /* Check for null pointer */
     if (strs == NULL) {
         uprv_free(j); /* Free to avoid memory leak */
@@ -2405,7 +2405,7 @@ uloc_acceptLanguage(char *result, int32_t resultAvailable,
     if(U_FAILURE(*status)) {
         return -1;
     }
-    fallbackList = reinterpret_cast<char **>(uprv_malloc((size_t)(sizeof(fallbackList[0])*acceptListCount)));
+    fallbackList = static_cast<char **>(uprv_malloc((size_t)(sizeof(fallbackList[0])*acceptListCount)));
     if(fallbackList==NULL) {
         *status = U_MEMORY_ALLOCATION_ERROR;
         return -1;
