@@ -35,7 +35,7 @@
 *                           available IDs code.  Misc. cleanup.
 *********************************************************************************/
 
-#include <typeinfo>  // for 'typeid' to work
+#include "utypeinfo.h"  // for 'typeid' to work
 
 #include "unicode/utypes.h"
 #include "unicode/ustring.h"
@@ -106,19 +106,11 @@ static const UChar         WORLD[] = {0x30, 0x30, 0x31, 0x00}; /* "001" */
 
 static const UChar         GMT_ID[] = {0x47, 0x4D, 0x54, 0x00}; /* "GMT" */
 static const UChar         UNKNOWN_ZONE_ID[] = {0x45, 0x74, 0x63, 0x2F, 0x55, 0x6E, 0x6B, 0x6E, 0x6F, 0x77, 0x6E, 0x00}; /* "Etc/Unknown" */
-static const UChar         Z_STR[] = {0x7A, 0x00}; /* "z" */
-static const UChar         ZZZZ_STR[] = {0x7A, 0x7A, 0x7A, 0x7A, 0x00}; /* "zzzz" */
-static const UChar         Z_UC_STR[] = {0x5A, 0x00}; /* "Z" */
-static const UChar         ZZZZ_UC_STR[] = {0x5A, 0x5A, 0x5A, 0x5A, 0x00}; /* "ZZZZ" */
-static const UChar         V_STR[] = {0x76, 0x00}; /* "v" */
-static const UChar         VVVV_STR[] = {0x76, 0x76, 0x76, 0x76, 0x00}; /* "vvvv" */
-static const UChar         V_UC_STR[] = {0x56, 0x00}; /* "V" */
-static const UChar         VVVV_UC_STR[] = {0x56, 0x56, 0x56, 0x56, 0x00}; /* "VVVV" */
 static const int32_t       GMT_ID_LENGTH = 3;
 static const int32_t       UNKNOWN_ZONE_ID_LENGTH = 11;
 
-static UMTX LOCK;
-static UMTX TZSET_LOCK;
+static UMutex LOCK = U_MUTEX_INITIALIZER;
+static UMutex TZSET_LOCK = U_MUTEX_INITIALIZER;
 static icu::TimeZone* DEFAULT_ZONE = NULL;
 static icu::TimeZone* _GMT = NULL;
 static icu::TimeZone* _UNKNOWN_ZONE = NULL;
@@ -160,15 +152,6 @@ static UBool U_CALLCONV timeZone_cleanup(void)
     LEN_CANONICAL_SYSTEM_LOCATION_ZONES = 0;
     uprv_free(MAP_CANONICAL_SYSTEM_LOCATION_ZONES);
     MAP_CANONICAL_SYSTEM_LOCATION_ZONES = 0;
-
-    if (LOCK) {
-        umtx_destroy(&LOCK);
-        LOCK = NULL;
-    }
-    if (TZSET_LOCK) {
-        umtx_destroy(&TZSET_LOCK);
-        TZSET_LOCK = NULL;
-    }
 
     return TRUE;
 }

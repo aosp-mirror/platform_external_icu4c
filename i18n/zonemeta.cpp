@@ -27,7 +27,7 @@
 #include "uhash.h"
 #include "olsontz.h"
 
-static UMTX gZoneMetaLock = NULL;
+static UMutex gZoneMetaLock = U_MUTEX_INITIALIZER;
 
 // CLDR Canonical ID mapping table
 static UHashtable *gCanonicalIDCache = NULL;
@@ -54,8 +54,6 @@ U_CDECL_BEGIN
  */
 static UBool U_CALLCONV zoneMeta_cleanup(void)
 {
-    umtx_destroy(&gZoneMetaLock);
-
     if (gCanonicalIDCache != NULL) {
         uhash_close(gCanonicalIDCache);
         gCanonicalIDCache = NULL;
@@ -873,20 +871,20 @@ ZoneMeta::formatCustomID(uint8_t hour, uint8_t min, uint8_t sec, UBool negative,
     id.setTo(gCustomTzPrefix, -1);
     if (hour != 0 || min != 0) {
         if (negative) {
-            id.append(0x2D);    // '-'
+          id.append((UChar)0x2D);    // '-'
         } else {
-            id.append(0x2B);    // '+'
+          id.append((UChar)0x2B);    // '+'
         }
         // Always use US-ASCII digits
-        id.append(0x30 + (hour%100)/10);
-        id.append(0x30 + (hour%10));
-        id.append(0x3A);    // ':'
-        id.append(0x30 + (min%100)/10);
-        id.append(0x30 + (min%10));
+        id.append((UChar)(0x30 + (hour%100)/10));
+        id.append((UChar)(0x30 + (hour%10)));
+        id.append((UChar)0x3A);    // ':'
+        id.append((UChar)(0x30 + (min%100)/10));
+        id.append((UChar)(0x30 + (min%10)));
         if (sec != 0) {
-            id.append(0x3A);    // ':'
-            id.append(0x30 + (sec%100)/10);
-            id.append(0x30 + (sec%10));
+          id.append((UChar)0x3A);    // ':'
+          id.append((UChar)(0x30 + (sec%100)/10));
+          id.append((UChar)(0x30 + (sec%10)));
         }
     }
     return id;

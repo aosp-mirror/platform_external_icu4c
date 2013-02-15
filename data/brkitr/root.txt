@@ -16,9 +16,12 @@ root{
         word:process(dependency){"word.brk"}
     }
     dictionaries{
+        Hani:process(dependency){"cjdict.dict"}
+        Hira:process(dependency){"cjdict.dict"}
+        Kata:process(dependency){"cjdict.dict"}
 	// BEGIN android-removed
-        // Khmr:process(dependency){"khmerdict.ctd"}
+        // Khmr:process(dependency){"khmerdict.dict}
 	// END android-removed
-        Thai:process(dependency){"thaidict.ctd"}
+        Thai:process(dependency){"thaidict.dict"}
     }
 }

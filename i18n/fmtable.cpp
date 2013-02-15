@@ -36,13 +36,7 @@ U_NAMESPACE_BEGIN
 
 UOBJECT_DEFINE_RTTI_IMPLEMENTATION(Formattable)
 
-struct FmtStackData {
-  DigitList stackDecimalNum;   // 128
-  //CharString stackDecimalStr;  // 64
-  //                         -----
-  //                         192 total
-};
-
+#include "fmtableimp.h"
 
 //-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 
@@ -360,16 +354,12 @@ void Formattable::dispose()
     delete fDecimalStr;
     fDecimalStr = NULL;
     
-#if UCONFIG_INTERNAL_DIGITLIST
     FmtStackData *stackData = (FmtStackData*)fStackData;
     if(fDecimalNum != &(stackData->stackDecimalNum)) {
       delete fDecimalNum;
     } else {
       fDecimalNum->~DigitList(); // destruct, don't deallocate
     }
-#else
-    delete fDecimalNum;
-#endif
     fDecimalNum = NULL;
 }
 
@@ -748,7 +738,6 @@ StringPiece Formattable::getDecimalNumber(UErrorCode &status) {
 }
 
 
-#if UCONFIG_INTERNAL_DIGITLIST
 DigitList *
 Formattable::getInternalDigitList() {
   FmtStackData *stackData = (FmtStackData*)fStackData;
@@ -760,7 +749,6 @@ Formattable::getInternalDigitList() {
   }
   return fDecimalNum;
 }
-#endif
 
 // ---------------------------------------
 void

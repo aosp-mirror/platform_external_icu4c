@@ -42,7 +42,7 @@ TODO: This cache should probably be removed when the deprecated code is
 */
 static UHashtable *cache = NULL;
 
-static UMTX resbMutex = NULL;
+static UMutex resbMutex = U_MUTEX_INITIALIZER;
 
 /* INTERNAL: hashes an entry  */
 static int32_t U_CALLCONV hashEntry(const UHashTok parm) {
@@ -259,9 +259,6 @@ static UBool U_CALLCONV ures_cleanup(void)
             uhash_close(cache);
             cache = NULL;
         }
-    }
-    if (cache == NULL && resbMutex != NULL) {
-        umtx_destroy(&resbMutex);
     }
     return (cache == NULL);
 }
@@ -1717,7 +1714,9 @@ ures_getByKeyWithFallback(const UResourceBundle *resB,
                 rootRes = dataEntry->fData.rootRes;
 
                 if(dataEntry->fBogus == U_ZERO_ERROR) {
-                    uprv_strncpy(path, resPath, len);
+                    if (len > 0) {
+                        uprv_memcpy(path, resPath, len);
+                    }
                     uprv_strcpy(path+len, inKey);
                     myPath = path;
                     key = inKey;
@@ -2324,7 +2323,7 @@ ures_openAvailableLocales(const char *path, UErrorCode *status)
     if(U_FAILURE(*status)) {
         return NULL;
     }
-    myContext = reinterpret_cast<ULocalesContext *>(uprv_malloc(sizeof(ULocalesContext)));
+    myContext = static_cast<ULocalesContext *>(uprv_malloc(sizeof(ULocalesContext)));
     en =  (UEnumeration *)uprv_malloc(sizeof(UEnumeration));
     if(!en || !myContext) {
         *status = U_MEMORY_ALLOCATION_ERROR;

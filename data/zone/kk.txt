@@ -2,15 +2,15 @@
 // *
 // * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
-// * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File:<path>/common/main/kk.xml
+// * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
+// * Source File: <path>/common/main/kk.xml
 // *
 // ***************************************************************************
 /**
  *  ICU <specials> source: <path>/xml/main/kk.xml
  */
 kk{
-    Version{"2.0.65.46"}
+    Version{"2.0.78.17"}
     zoneStrings{
         "Asia:Almaty"{
             ec{"Алматы"}
