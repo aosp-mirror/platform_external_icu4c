@@ -2,8 +2,8 @@
 // *
 // * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
-// * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File:<path>/common/main/sq.xml
+// * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
+// * Source File: <path>/common/main/sq.xml
 // *
 // ***************************************************************************
 /**
@@ -29,11 +29,11 @@ sq{
             }
             symbols{
                 decimal{","}
-                group{"."}
+                group{" "}
             }
         }
     }
-    Version{"2.0.65.46"}
+    Version{"2.0.77.38"}
     calendar{
         gregorian{
             AmPmMarkers{
@@ -198,6 +198,7 @@ sq{
         }
         hour{
             one{"{0} orë"}
+            other{"{0} orë"}
         }
         minute{
             one{"{0} minutë"}
@@ -205,6 +206,7 @@ sq{
         }
         month{
             one{"{0} muaj"}
+            other{"{0} muaj"}
         }
         second{
             one{"{0} sekondë"}
@@ -212,6 +214,7 @@ sq{
         }
         week{
             one{"{0} javë"}
+            other{"{0} javë"}
         }
         year{
             one{"{0} vit"}

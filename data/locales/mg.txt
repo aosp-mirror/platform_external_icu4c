@@ -2,8 +2,8 @@
 // *
 // * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
-// * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File:<path>/common/main/mg.xml
+// * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
+// * Source File: <path>/common/main/mg.xml
 // *
 // ***************************************************************************
 /**
@@ -23,7 +23,7 @@ mg{
             }
         }
     }
-    Version{"2.0.65.46"}
+    Version{"2.0.77.46"}
     calendar{
         gregorian{
             DateTimePatterns{
@@ -60,8 +60,8 @@ mg{
                 yMMM{"MMM y"}
                 yMMMEd{"E d MMM y"}
                 yMMMM{"MMMM y"}
-                yQ{"Q y"}
                 yQQQ{"QQQ y"}
+                yQQQQ{"QQQQ y"}
                 yyMM{"MM/yy"}
                 yyMMM{"MMM yy"}
                 yyMMMEd{"E d MMM yy"}
@@ -140,14 +140,8 @@ mg{
                 week{
                     dn{"Herinandro"}
                 }
-                weekday{
-                    dn{"Andro"}
-                }
                 year{
                     dn{"Taona"}
-                }
-                zone{
-                    dn{"Ora"}
                 }
             }
             monthNames{

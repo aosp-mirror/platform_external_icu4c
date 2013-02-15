@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2011, International Business Machines Corporation and
+ * Copyright (c) 1997-2012, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -14,6 +14,29 @@
 // The following includes utypes.h, uobject.h and unistr.h
 #include "unicode/fmtable.h"
 #include "unicode/testlog.h"
+
+
+#if U_NO_DEFAULT_INCLUDE_UTF_HEADERS
+/* deprecated  - make tests pass with U_NO_DEFAULT_INCLUDE_UTF_HEADERS */
+#include "unicode/utf_old.h" 
+#endif
+
+/**
+ * \def ICU_USE_THREADS
+ *
+ * Enables multi-threaded testing. Moved here from uconfig.h.
+ * Default: enabled
+ *
+ * This switch used to allow thread support (use of mutexes) to be compiled out of ICU.
+ */
+#ifdef ICU_USE_THREADS
+    /* Use the predefined value. */
+#elif defined(APP_NO_THREADS)
+    /* APP_NO_THREADS is an old symbol. We'll honour it if present. */
+#   define ICU_USE_THREADS 0
+#else
+#   define ICU_USE_THREADS 1
+#endif
 
 U_NAMESPACE_USE
 
@@ -109,6 +132,7 @@ public:
     virtual UBool setNoErrMsg( UBool no_err_msg = TRUE );
     virtual UBool setQuick( UBool quick = TRUE );
     virtual UBool setLeaks( UBool leaks = TRUE );
+    virtual UBool setNotime( UBool no_time = TRUE );
     virtual UBool setWarnOnMissingData( UBool warn_on_missing_data = TRUE );
     virtual int32_t setThreadCount( int32_t count = 1);
 
@@ -244,6 +268,7 @@ protected:
     UBool       quick;
     UBool       leaks;
     UBool       warn_on_missing_data;
+    UBool       no_time;
     int32_t     threadCount;
 
 private:

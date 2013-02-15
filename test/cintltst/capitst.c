@@ -1,5 +1,5 @@
 /********************************************************************
- * Copyright (c) 1997-2012 International Business Machines
+ * Copyright (c) 1997-2012, International Business Machines
  * Corporation and others. All Rights Reserved.
  ********************************************************************/
 /*****************************************************************************
@@ -178,6 +178,42 @@ static void doAssert(int condition, const char *message)
     }
 }
 
+#define UTF8_BUF_SIZE 128
+
+static void doStrcoll(const UCollator* coll, const UChar* src, int32_t srcLen, const UChar* tgt, int32_t tgtLen,
+                    UCollationResult expected, const char *message) {
+    UErrorCode err = U_ZERO_ERROR;
+    char srcU8[UTF8_BUF_SIZE], tgtU8[UTF8_BUF_SIZE];
+    int32_t srcU8Len = -1, tgtU8Len = -1;
+    int32_t len = 0;
+
+    if (ucol_strcoll(coll, src, srcLen, tgt, tgtLen) != expected) {
+        log_err("ERROR :  %s\n", message);
+    }
+
+    u_strToUTF8(srcU8, UTF8_BUF_SIZE, &len, src, srcLen, &err);
+    if (U_FAILURE(err) || len >= UTF8_BUF_SIZE) {
+        log_err("ERROR : UTF-8 conversion error\n");
+        return;
+    }
+    if (srcLen >= 0) {
+        srcU8Len = len;
+    }
+    u_strToUTF8(tgtU8, UTF8_BUF_SIZE, &len, tgt, tgtLen, &err);
+    if (U_FAILURE(err) || len >= UTF8_BUF_SIZE) {
+        log_err("ERROR : UTF-8 conversion error\n");
+        return;
+    }
+    if (tgtLen >= 0) {
+        tgtU8Len = len;
+    }
+
+    if (ucol_strcollUTF8(coll, srcU8, srcU8Len, tgtU8, tgtU8Len, &err) != expected
+        || U_FAILURE(err)) {
+        log_err("ERROR: %s (strcollUTF8)\n", message);
+    }
+}
+
 #if 0
 /* We don't have default rules, at least not in the previous sense */
 void TestGetDefaultRules(){
@@ -242,7 +278,8 @@ void TestProperty()
     UCollator *col, *ruled;
     UChar *disName;
     int32_t len = 0;
-    UChar *source, *target;
+    UChar source[12], target[12];
+    char sourceU8[36], targetU8[36];
     int32_t tempLength;
     UErrorCode status = U_ZERO_ERROR;
     /*
@@ -288,37 +325,31 @@ void TestProperty()
               versionUCAArray[0], versionUCAArray[1], versionUCAArray[2], versionUCAArray[3]);
     }
 
-    source=(UChar*)malloc(sizeof(UChar) * 12);
-    target=(UChar*)malloc(sizeof(UChar) * 12);
-
-
     u_uastrcpy(source, "ab");
     u_uastrcpy(target, "abc");
 
-    doAssert((ucol_strcoll(col, source, u_strlen(source), target, u_strlen(target)) == UCOL_LESS), "ab < abc comparison failed");
+    doStrcoll(col, source, u_strlen(source), target, u_strlen(target), UCOL_LESS, "ab < abc comparison failed");
 
     u_uastrcpy(source, "ab");
     u_uastrcpy(target, "AB");
 
-    doAssert((ucol_strcoll(col, source, u_strlen(source), target, u_strlen(target)) == UCOL_LESS), "ab < AB comparison failed");
-/*    u_uastrcpy(source, "black-bird");
-    u_uastrcpy(target, "blackbird"); */
-    u_uastrcpy(target, "black-bird");
-    u_uastrcpy(source, "blackbird");
+    doStrcoll(col, source, u_strlen(source), target, u_strlen(target), UCOL_LESS, "ab < AB comparison failed");
 
-    doAssert((ucol_strcoll(col, source, u_strlen(source), target, u_strlen(target)) == UCOL_GREATER),
-        "black-bird > blackbird comparison failed");
+    u_uastrcpy(source, "blackbird");
+    u_uastrcpy(target, "black-bird");
+
+    doStrcoll(col, source, u_strlen(source), target, u_strlen(target), UCOL_GREATER, "black-bird > blackbird comparison failed");
+
     u_uastrcpy(source, "black bird");
     u_uastrcpy(target, "black-bird");
-    doAssert((ucol_strcoll(col, source, u_strlen(source), target, u_strlen(target)) == UCOL_LESS),
-        "black bird < black-bird comparison failed");
+
+    doStrcoll(col, source, u_strlen(source), target, u_strlen(target), UCOL_LESS, "black bird < black-bird comparison failed");
+
     u_uastrcpy(source, "Hello");
     u_uastrcpy(target, "hello");
 
-    doAssert((ucol_strcoll(col, source, u_strlen(source), target, u_strlen(target)) == UCOL_GREATER),
-        "Hello > hello comparison failed");
-    free(source);
-    free(target);
+    doStrcoll(col, source, u_strlen(source), target, u_strlen(target), UCOL_GREATER, "Hello > hello comparison failed");
+
     log_verbose("Test ucol_strcoll ends.\n");
 
     log_verbose("testing ucol_getStrength() method ...\n");
@@ -629,7 +660,7 @@ void TestSafeClone() {
     UCollator * someClonedCollators [CLONETEST_COLLATOR_COUNT];
     UCollator * col;
     UErrorCode err = U_ZERO_ERROR;
-    int8_t index = 6;    /* Leave this here to test buffer alingment in memory*/
+    int8_t idx = 6;    /* Leave this here to test buffer alingment in memory*/
     uint8_t buffer [CLONETEST_COLLATOR_COUNT] [U_COL_SAFECLONE_BUFFERSIZE];
     int32_t bufferSize = U_COL_SAFECLONE_BUFFERSIZE;
     const char sampleRuleChars[] = "&Z < CH";
@@ -650,8 +681,8 @@ void TestSafeClone() {
     someCollators[2] = ucol_open("ja_JP", &err);
     someCollators[3] = ucol_openRules(sampleRule, -1, UCOL_ON, UCOL_TERTIARY, NULL, &err);
     if(U_FAILURE(err)) {
-        for (index = 0; index < CLONETEST_COLLATOR_COUNT; index++) {
-            ucol_close(someCollators[index]);
+        for (idx = 0; idx < CLONETEST_COLLATOR_COUNT; idx++) {
+            ucol_close(someCollators[idx]);
         }
         log_data_err("Couldn't open one or more collators\n");
         return;
@@ -739,45 +770,45 @@ void TestSafeClone() {
 
     /* change orig & clone & make sure they are independent */
 
-    for (index = 0; index < CLONETEST_COLLATOR_COUNT; index++)
+    for (idx = 0; idx < CLONETEST_COLLATOR_COUNT; idx++)
     {
-        ucol_setStrength(someCollators[index], UCOL_IDENTICAL);
+        ucol_setStrength(someCollators[idx], UCOL_IDENTICAL);
         bufferSize = 1;
         err = U_ZERO_ERROR;
-        ucol_close(ucol_safeClone(someCollators[index], buffer[index], &bufferSize, &err));
+        ucol_close(ucol_safeClone(someCollators[idx], buffer[idx], &bufferSize, &err));
         if (err != U_SAFECLONE_ALLOCATED_WARNING) {
-            log_err("FAIL: collator number %d was not allocated.\n", index);
-            log_err("FAIL: status of Collator[%d] is %d  (hex: %x).\n", index, err, err);
+            log_err("FAIL: collator number %d was not allocated.\n", idx);
+            log_err("FAIL: status of Collator[%d] is %d  (hex: %x).\n", idx, err, err);
         }
 
         bufferSize = U_COL_SAFECLONE_BUFFERSIZE;
         err = U_ZERO_ERROR;
-        someClonedCollators[index] = ucol_safeClone(someCollators[index], buffer[index], &bufferSize, &err);
-        if (someClonedCollators[index] == NULL
-            || someClonedCollators[index] < (UCollator *)buffer[index]
-            || someClonedCollators[index] > (UCollator *)(buffer[index]+(U_COL_SAFECLONE_BUFFERSIZE-1)))
+        someClonedCollators[idx] = ucol_safeClone(someCollators[idx], buffer[idx], &bufferSize, &err);
+        if (someClonedCollators[idx] == NULL
+            || someClonedCollators[idx] < (UCollator *)buffer[idx]
+            || someClonedCollators[idx] > (UCollator *)(buffer[idx]+(U_COL_SAFECLONE_BUFFERSIZE-1)))
         {
             log_err("FAIL: Cloned collator didn't use provided buffer.\n");
             return;
         }
-        if (!ucol_equals(someClonedCollators[index], someCollators[index])) {
-            log_err("FAIL: Cloned collator is not equal to original at index = %d.\n", index);
+        if (!ucol_equals(someClonedCollators[idx], someCollators[idx])) {
+            log_err("FAIL: Cloned collator is not equal to original at index = %d.\n", idx);
         }
 
         /* Check the usability */
-        ucol_setStrength(someCollators[index], UCOL_PRIMARY);
-        ucol_setAttribute(someCollators[index], UCOL_CASE_LEVEL, UCOL_OFF, &err);
+        ucol_setStrength(someCollators[idx], UCOL_PRIMARY);
+        ucol_setAttribute(someCollators[idx], UCOL_CASE_LEVEL, UCOL_OFF, &err);
 
-        doAssert( (ucol_equal(someCollators[index], test1, u_strlen(test1), test2, u_strlen(test2))), "Result should be \"abcda\" == \"abCda\"");
+        doAssert( (ucol_equal(someCollators[idx], test1, u_strlen(test1), test2, u_strlen(test2))), "Result should be \"abcda\" == \"abCda\"");
 
         /* Close the original to make sure that the clone is usable. */
-        ucol_close(someCollators[index]);
+        ucol_close(someCollators[idx]);
 
-        ucol_setStrength(someClonedCollators[index], UCOL_TERTIARY);
-        ucol_setAttribute(someClonedCollators[index], UCOL_CASE_LEVEL, UCOL_OFF, &err);
-        doAssert( (ucol_greater(someClonedCollators[index], test1, u_strlen(test1), test2, u_strlen(test2))), "Result should be \"abCda\" >>> \"abcda\" ");
+        ucol_setStrength(someClonedCollators[idx], UCOL_TERTIARY);
+        ucol_setAttribute(someClonedCollators[idx], UCOL_CASE_LEVEL, UCOL_OFF, &err);
+        doAssert( (ucol_greater(someClonedCollators[idx], test1, u_strlen(test1), test2, u_strlen(test2))), "Result should be \"abCda\" >>> \"abcda\" ");
 
-        ucol_close(someClonedCollators[index]);
+        ucol_close(someClonedCollators[idx]);
     }
 }
 
@@ -2316,19 +2347,19 @@ static void TestGetKeywordValuesForLocale(void) {
             { "de_DE",          "standard", "phonebook", "search", "ducet", NULL, NULL, NULL, NULL },
             { "de_Latn_DE",     "standard", "phonebook", "search", "ducet", NULL, NULL, NULL, NULL },
 #if INCLUDE_UNIHAN_COLLATION
-            { "zh",             "pinyin", "big5han", "gb2312han", "standard", "stroke", "unihan", "ducet", "search" },
-            { "zh_Hans",        "pinyin", "big5han", "gb2312han", "standard", "stroke", "unihan", "ducet", "search" },
-            { "zh_CN",          "pinyin", "big5han", "gb2312han", "standard", "stroke", "unihan", "ducet", "search" },
-            { "zh_Hant",        "stroke", "big5han", "gb2312han", "pinyin", "standard", "unihan", "ducet", "search" },
-            { "zh_TW",          "stroke", "big5han", "gb2312han", "pinyin", "standard", "unihan", "ducet", "search" },
-            { "zh__PINYIN",     "pinyin", "big5han", "gb2312han", "standard", "stroke", "unihan", "ducet", "search" },
+            { "zh",             "pinyin", "big5han", "gb2312han", "standard", "stroke", "zhuyin", "unihan", "ducet", "search" },
+            { "zh_Hans",        "pinyin", "big5han", "gb2312han", "standard", "stroke", "zhuyin", "unihan", "ducet", "search" },
+            { "zh_CN",          "pinyin", "big5han", "gb2312han", "standard", "stroke", "zhuyin", "unihan", "ducet", "search" },
+            { "zh_Hant",        "stroke", "big5han", "gb2312han", "pinyin", "standard", "zhuyin", "unihan", "ducet", "search" },
+            { "zh_TW",          "stroke", "big5han", "gb2312han", "pinyin", "standard", "zhuyin", "unihan", "ducet", "search" },
+            { "zh__PINYIN",     "pinyin", "big5han", "gb2312han", "standard", "stroke", "zhuyin", "unihan", "ducet", "search" },
 #else
-            { "zh",             "pinyin", "big5han", "gb2312han", "standard", "stroke", "ducet", "search", NULL },
-            { "zh_Hans",        "pinyin", "big5han", "gb2312han", "standard", "stroke", "ducet", "search", NULL },
-            { "zh_CN",          "pinyin", "big5han", "gb2312han", "standard", "stroke", "ducet", "search", NULL },
-            { "zh_Hant",        "stroke", "big5han", "gb2312han", "pinyin", "standard", "ducet", "search", NULL },
-            { "zh_TW",          "stroke", "big5han", "gb2312han", "pinyin", "standard", "ducet", "search", NULL },
-            { "zh__PINYIN",     "pinyin", "big5han", "gb2312han", "standard", "stroke", "ducet", "search", NULL },
+            { "zh",             "pinyin", "big5han", "gb2312han", "standard", "stroke", "zhuyin", "ducet", "search", NULL },
+            { "zh_Hans",        "pinyin", "big5han", "gb2312han", "standard", "stroke", "zhuyin", "ducet", "search", NULL },
+            { "zh_CN",          "pinyin", "big5han", "gb2312han", "standard", "stroke", "zhuyin", "ducet", "search", NULL },
+            { "zh_Hant",        "stroke", "big5han", "gb2312han", "pinyin", "standard", "zhuyin", "ducet", "search", NULL },
+            { "zh_TW",          "stroke", "big5han", "gb2312han", "pinyin", "standard", "zhuyin", "ducet", "search", NULL },
+            { "zh__PINYIN",     "pinyin", "big5han", "gb2312han", "standard", "stroke", "zhuyin", "ducet", "search", NULL },
 #endif
             { "es_ES",          "standard", "search", "traditional", "ducet", NULL, NULL, NULL, NULL },
             { "es__TRADITIONAL","traditional", "search", "standard", "ducet", NULL, NULL, NULL, NULL },
@@ -2337,9 +2368,9 @@ static void TestGetKeywordValuesForLocale(void) {
             { "zzz@collation=xxx",          "standard", "ducet", "search", NULL, NULL, NULL, NULL, NULL }
     };
 #if INCLUDE_UNIHAN_COLLATION
-    const int32_t expectedLength[PREFERRED_SIZE] = { 3, 3, 3, 4, 4, 8, 8, 8, 8, 8, 8, 4, 4, 3, 4, 3 };
+    const int32_t expectedLength[PREFERRED_SIZE] = { 3, 3, 3, 4, 4, 9, 9, 9, 9, 9, 9, 4, 4, 3, 4, 3 };
 #else
-    const int32_t expectedLength[PREFERRED_SIZE] = { 3, 3, 3, 4, 4, 7, 7, 7, 7, 7, 7, 4, 4, 3, 4, 3 };
+    const int32_t expectedLength[PREFERRED_SIZE] = { 3, 3, 3, 4, 4, 8, 8, 8, 8, 8, 8, 4, 4, 3, 4, 3 };
 #endif
 
     UErrorCode status = U_ZERO_ERROR;

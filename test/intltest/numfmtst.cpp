@@ -31,6 +31,7 @@
 #include <stdlib.h>
 #include "cstring.h"
 #include "unicode/numsys.h"
+#include "fmtableimp.h"
 
 //#define NUMFMTST_CACHE_DEBUG 1
 #include "stdio.h" /* for sprintf */
@@ -119,6 +120,8 @@ void NumberFormatTest::runIndexedTest( int32_t index, UBool exec, const char* &n
         CASE(53,TestRoundingPattern);
         CASE(54,Test9087);
         CASE(55,TestFormatFastpaths);
+        CASE(56,TestEnumSet);
+        CASE(57,TestFormattableSize);
         default: name = ""; break;
     }
 }
@@ -694,12 +697,12 @@ NumberFormatTest::escape(UnicodeString& s)
 // -------------------------------------
 static const char* testCases[][2]= {
      /* locale ID */  /* expected */
-    {"ca_ES_PREEURO", "1.150\\u00A0\\u20A7" },
+    {"ca_ES_PREEURO", "\\u20A7\\u00A01.150" },
     {"de_LU_PREEURO", "1,150\\u00A0F" },
     {"el_GR_PREEURO", "1.150,50\\u00A0\\u0394\\u03C1\\u03C7" },
     {"en_BE_PREEURO", "1.150,50\\u00A0BEF" },
     {"es_ES_PREEURO", "1.150\\u00A0\\u20A7" },
-    {"eu_ES_PREEURO", "1.150\\u00A0\\u20A7" },
+    {"eu_ES_PREEURO", "\\u20A7\\u00A01.150" },
     {"gl_ES_PREEURO", "1.150\\u00A0\\u20A7" },
     {"it_IT_PREEURO", "ITL\\u00A01.150" },
     {"pt_PT_PREEURO", "1,150$50\\u00A0Esc."},
@@ -3023,7 +3026,7 @@ void NumberFormatTest::TestNumberingSystems() {
         { "ta_IN@numbers=finance", 1234.567, FALSE, "1,234.567" }, // fall back to default per TR35
         { "zh_TW@numbers=native", 1234.567, FALSE, "\\u4e00,\\u4e8c\\u4e09\\u56db.\\u4e94\\u516d\\u4e03" },
         { "zh_TW@numbers=traditional", 1234.567, TRUE, "\\u4E00\\u5343\\u4E8C\\u767E\\u4E09\\u5341\\u56DB\\u9EDE\\u4E94\\u516D\\u4E03" },
-        { "zh_TW@numbers=finance", 1234.567, TRUE, "\\u58F9\\u4EDF\\u8CB3\\u4F70\\u53C4\\u62FE\\u8086\\u9EDE\\u4F0D\\u9678\\u67D2" },
+        { "zh_TW@numbers=finance", 1234.567, TRUE, "\\u58F9\\u4EDF\\u8CB3\\u4F70\\u53C3\\u62FE\\u8086\\u9EDE\\u4F0D\\u9678\\u67D2" },
         { NULL, 0, FALSE, NULL }
     };
 
@@ -3275,12 +3278,12 @@ NumberFormatTest::TestCurrencyIsoPluralFormat() {
         {"en_US", "1", "USD", "$1.00", "USD1.00", "1.00 US dollar"},
         {"en_US", "1234.56", "USD", "$1,234.56", "USD1,234.56", "1,234.56 US dollars"},
         {"en_US", "-1234.56", "USD", "($1,234.56)", "(USD1,234.56)", "-1,234.56 US dollars"},
-        {"zh_CN", "1", "USD", "US$1.00", "USD1.00", "1.00 \\u7F8E\\u5143"},
-        {"zh_CN", "1234.56", "USD", "US$1,234.56", "USD1,234.56", "1,234.56 \\u7F8E\\u5143"},
+        {"zh_CN", "1", "USD", "US$1.00", "USD1.00", "1.00\\u7F8E\\u5143"},
+        {"zh_CN", "1234.56", "USD", "US$1,234.56", "USD1,234.56", "1,234.56\\u7F8E\\u5143"},
         // wrong ISO code {"zh_CN", "1", "CHY", "CHY1.00", "CHY1.00", "1.00 CHY"},
         // wrong ISO code {"zh_CN", "1234.56", "CHY", "CHY1,234.56", "CHY1,234.56", "1,234.56 CHY"},
-        {"zh_CN", "1", "CNY", "\\uFFE51.00", "CNY1.00", "1.00 \\u4EBA\\u6C11\\u5E01"},
-        {"zh_CN", "1234.56", "CNY", "\\uFFE51,234.56", "CNY1,234.56", "1,234.56 \\u4EBA\\u6C11\\u5E01"},
+        {"zh_CN", "1", "CNY", "\\uFFE51.00", "CNY1.00", "1.00\\u4EBA\\u6C11\\u5E01"},
+        {"zh_CN", "1234.56", "CNY", "\\uFFE51,234.56", "CNY1,234.56", "1,234.56\\u4EBA\\u6C11\\u5E01"},
         {"ru_RU", "1", "RUB", "1,00\\u00A0\\u0440\\u0443\\u0431.", "1,00\\u00A0RUB", "1,00 \\u0440\\u043E\\u0441\\u0441\\u0438\\u0439\\u0441\\u043A\\u0438\\u0439 \\u0440\\u0443\\u0431\\u043B\\u044C"},
         {"ru_RU", "2", "RUB", "2,00\\u00A0\\u0440\\u0443\\u0431.", "2,00\\u00A0RUB", "2,00 \\u0440\\u043E\\u0441\\u0441\\u0438\\u0439\\u0441\\u043A\\u0438\\u0445 \\u0440\\u0443\\u0431\\u043B\\u044F"},
         {"ru_RU", "5", "RUB", "5,00\\u00A0\\u0440\\u0443\\u0431.", "5,00\\u00A0RUB", "5,00 \\u0440\\u043E\\u0441\\u0441\\u0438\\u0439\\u0441\\u043A\\u0438\\u0445 \\u0440\\u0443\\u0431\\u043B\\u0435\\u0439"},
@@ -3372,14 +3375,14 @@ NumberFormatTest::TestCurrencyParsing() {
         {"pa_IN", "1", "USD", "US$\\u00a0\\u0a67.\\u0a66\\u0a66", "USD\\u00a0\\u0a67.\\u0a66\\u0a66", "\\u0a67.\\u0a66\\u0a66 USD"},
         {"es_AR", "1", "USD", "US$1,00", "USD1,00", "1,00 d\\u00f3lar estadounidense"},
         {"ar_EG", "1", "USD", "US$\\u00a0\\u0661\\u066b\\u0660\\u0660", "USD\\u00a0\\u0661\\u066b\\u0660\\u0660", "\\u0661\\u066b\\u0660\\u0660 \\u062f\\u0648\\u0644\\u0627\\u0631 \\u0623\\u0645\\u0631\\u064a\\u0643\\u064a"},
-        {"fa_CA", "1", "USD", "\\u06f1\\u066b\\u06f0\\u06f0\\u00a0US$", "\\u06f1\\u066b\\u06f0\\u06f0\\u00a0USD", "\\u06f1\\u066b\\u06f0\\u06f0\\u0020\\u062f\\u0644\\u0627\\u0631\\u0020\\u0627\\u0645\\u0631\\u06cc\\u06a9\\u0627"},
+        {"fa_CA", "1", "USD", "\\u200eUS$\\u06f1\\u066b\\u06f0\\u06f0", "\\u200eUSD\\u06f1\\u066b\\u06f0\\u06f0", "\\u200e\\u062f\\u0644\\u0627\\u0631 \\u0627\\u0645\\u0631\\u06cc\\u06a9\\u0627\\u06f1\\u066b\\u06f0\\u06f0"},
         {"he_IL", "1", "USD", "1.00\\u00a0US$", "1.00\\u00a0USD", "1.00 \\u05d3\\u05d5\\u05dc\\u05e8 \\u05d0\\u05de\\u05e8\\u05d9\\u05e7\\u05d0\\u05d9"},
         {"hr_HR", "1", "USD", "1,00\\u00a0$", "1,00\\u00a0USD", "1,00 Ameri\\u010dki dolar"},
         {"id_ID", "1", "USD", "US$1,00", "USD1,00", "1,00 Dolar Amerika Serikat"},
         {"it_IT", "1", "USD", "US$\\u00a01,00", "USD\\u00a01,00", "1,00 Dollaro Statunitense"},
         {"ko_KR", "1", "USD", "US$1.00", "USD1.00", "1.00 \\ubbf8\\uad6d \\ub2ec\\ub7ec"},
         {"ja_JP", "1", "USD", "$1.00", "USD1.00", "1.00 \\u7c73\\u30c9\\u30eb"},
-        {"zh_CN", "1", "CNY", "\\uFFE51.00", "CNY1.00", "1.00 \\u4EBA\\u6C11\\u5E01"},
+        {"zh_CN", "1", "CNY", "\\uFFE51.00", "CNY1.00", "1.00\\u4EBA\\u6C11\\u5E01"},
         {"zh_TW", "1", "CNY", "\\uFFE51.00", "CNY1.00", "1.00 \\u4eba\\u6c11\\u5e63"},
         {"ru_RU", "1", "RUB", "1,00\\u00A0\\u0440\\u0443\\u0431.", "1,00\\u00A0RUB", "1,00 \\u0420\\u043E\\u0441\\u0441\\u0438\\u0439\\u0441\\u043A\\u0438\\u0439 \\u0440\\u0443\\u0431\\u043B\\u044C"},
     };
@@ -3473,7 +3476,7 @@ NumberFormatTest::TestParseCurrencyInUCurr() {
         "US dollar1.00",
         "US dollars1.00",
         "$1.00",
-        "AU$1.00",
+        "A$1.00",
         "ADP1.00",
         "ADP1.00",
         "AED1.00",
@@ -6378,6 +6381,11 @@ void NumberFormatTest::TestDecimal() {
         }
     }
     
+#if U_PLATFORM != U_PF_CYGWIN || defined(CYGWINMSVC)
+    /*
+     * This test fails on Cygwin (1.7.16) using GCC because of a rounding issue with strtod().
+     * See #9463
+     */
     {
         // Check that a parse returns a decimal number with full accuracy
         UErrorCode status = U_ZERO_ERROR;
@@ -6395,6 +6403,7 @@ void NumberFormatTest::TestDecimal() {
             delete fmtr;
         }
     }
+#endif
 
 }
 
@@ -6577,102 +6586,153 @@ NumberFormatTest::Test9087(void)
 
 void NumberFormatTest::TestFormatFastpaths() {
 #if UCONFIG_FORMAT_FASTPATHS_49
-  logln("Sizeof DecimalFormat = %d, Sizeof DecimalFormatInternal=%d, UNUM_DECIMALFORMAT_INTERNAL_SIZE=%d\n",
+    logln("Sizeof DecimalFormat = %d, Sizeof DecimalFormatInternal=%d, UNUM_DECIMALFORMAT_INTERNAL_SIZE=%d\n",
         sizeof(DecimalFormat), sizeof(DecimalFormatInternal), UNUM_DECIMALFORMAT_INTERNAL_SIZE);
-  if(UNUM_DECIMALFORMAT_INTERNAL_SIZE < sizeof(DecimalFormatInternal)) {
-    errln("Error: sizeof(DecimalFormatInternal)=%d but UNUM_DECIMALFORMAT_INTERNAL_SIZE is only %d. Increase the #define?\n", sizeof(DecimalFormatInternal), UNUM_DECIMALFORMAT_INTERNAL_SIZE);
-  } else if(UNUM_DECIMALFORMAT_INTERNAL_SIZE > (sizeof(DecimalFormatInternal)+16)) {
-    infoln("Note: sizeof(DecimalFormatInternal)=%d but UNUM_DECIMALFORMAT_INTERNAL_SIZE is %d. Decrease the #define? sizeof(DecimalFormat)=%d\n", sizeof(DecimalFormatInternal), UNUM_DECIMALFORMAT_INTERNAL_SIZE, sizeof(DecimalFormat));
-  }
+    if(UNUM_DECIMALFORMAT_INTERNAL_SIZE < sizeof(DecimalFormatInternal)) {
+        errln("Error: sizeof(DecimalFormatInternal)=%d but UNUM_DECIMALFORMAT_INTERNAL_SIZE is only %d. Increase the #define?\n", sizeof(DecimalFormatInternal), UNUM_DECIMALFORMAT_INTERNAL_SIZE);
+    } else if(UNUM_DECIMALFORMAT_INTERNAL_SIZE > (sizeof(DecimalFormatInternal)+16)) {
+        infoln("Note: sizeof(DecimalFormatInternal)=%d but UNUM_DECIMALFORMAT_INTERNAL_SIZE is %d. Decrease the #define? sizeof(DecimalFormat)=%d\n", sizeof(DecimalFormatInternal), UNUM_DECIMALFORMAT_INTERNAL_SIZE, sizeof(DecimalFormat));
+    }
 #else
-  infoln("NOTE: UCONFIG_FORMAT_FASTPATHS not set, test skipped.");
+    infoln("NOTE: UCONFIG_FORMAT_FASTPATHS not set, test skipped.");
 #endif  
 
-  // get some additional case
-  {
-    UErrorCode status=U_ZERO_ERROR;
-    DecimalFormat df(UnicodeString("0000",""),status);
-    int64_t long_number = 1;
-    UnicodeString expect = "0001";
-    UnicodeString result;
-    FieldPosition pos;
-    df.format(long_number, result, pos);
-    if(U_FAILURE(status)||expect!=result) {
-      errln("FAIL: expected '"+expect+"' got '"+result+"' status "+UnicodeString(u_errorName(status),""));
-    } else {
-      logln("OK:  got expected '"+result+"' status "+UnicodeString(u_errorName(status),""));
+    // get some additional case
+    {
+        UErrorCode status=U_ZERO_ERROR;
+        DecimalFormat df(UnicodeString("0000",""),status);
+        int64_t long_number = 1;
+        UnicodeString expect = "0001";
+        UnicodeString result;
+        FieldPosition pos;
+        df.format(long_number, result, pos);
+        if(U_FAILURE(status)||expect!=result) {
+            errcheckln(status, "FAIL: expected '"+expect+"' got '"+result+"' status "+UnicodeString(u_errorName(status),""));
+        } else {
+            logln("OK:  got expected '"+result+"' status "+UnicodeString(u_errorName(status),""));
+        }
     }
-  }
-  {
-    UErrorCode status=U_ZERO_ERROR;
-    DecimalFormat df(UnicodeString("0000000000000000000",""),status);
-    int64_t long_number = U_INT64_MIN; // -9223372036854775808L;
-    // uint8_t bits[8];
-    // memcpy(bits,&long_number,8);
-    // for(int i=0;i<8;i++) {
-    //   logln("bits: %02X", (unsigned int)bits[i]);
-    // }
-    UnicodeString expect = "-9223372036854775808";
-    UnicodeString result;
-    FieldPosition pos;
-    df.format(long_number, result, pos);
-    if(U_FAILURE(status)||expect!=result) {
-      errln("FAIL: expected '"+expect+"' got '"+result+"' status "+UnicodeString(u_errorName(status),"")+" on -9223372036854775808");
-    } else {
-      logln("OK:  got expected '"+result+"' status "+UnicodeString(u_errorName(status),"")+" on -9223372036854775808");
+    {
+        UErrorCode status=U_ZERO_ERROR;
+        DecimalFormat df(UnicodeString("0000000000000000000",""),status);
+        int64_t long_number = U_INT64_MIN; // -9223372036854775808L;
+        // uint8_t bits[8];
+        // memcpy(bits,&long_number,8);
+        // for(int i=0;i<8;i++) {
+        //   logln("bits: %02X", (unsigned int)bits[i]);
+        // }
+        UnicodeString expect = "-9223372036854775808";
+        UnicodeString result;
+        FieldPosition pos;
+        df.format(long_number, result, pos);
+        if(U_FAILURE(status)||expect!=result) {
+            errcheckln(status, "FAIL: expected '"+expect+"' got '"+result+"' status "+UnicodeString(u_errorName(status),"")+" on -9223372036854775808");
+        } else {
+            logln("OK:  got expected '"+result+"' status "+UnicodeString(u_errorName(status),"")+" on -9223372036854775808");
+        }
     }
-  }
-  {
-    UErrorCode status=U_ZERO_ERROR;
-    DecimalFormat df(UnicodeString("0000000000000000000",""),status);
-    int64_t long_number = U_INT64_MAX; // -9223372036854775808L;
-    // uint8_t bits[8];
-    // memcpy(bits,&long_number,8);
-    // for(int i=0;i<8;i++) {
-    //   logln("bits: %02X", (unsigned int)bits[i]);
-    // }
-    UnicodeString expect = "9223372036854775807";
-    UnicodeString result;
-    FieldPosition pos;
-    df.format(long_number, result, pos);
-    if(U_FAILURE(status)||expect!=result) {
-      errln("FAIL: expected '"+expect+"' got '"+result+"' status "+UnicodeString(u_errorName(status),"")+" on U_INT64_MAX");
-    } else {
-      logln("OK:  got expected '"+result+"' status "+UnicodeString(u_errorName(status),"")+" on U_INT64_MAX");
+    {
+        UErrorCode status=U_ZERO_ERROR;
+        DecimalFormat df(UnicodeString("0000000000000000000",""),status);
+        int64_t long_number = U_INT64_MAX; // -9223372036854775808L;
+        // uint8_t bits[8];
+        // memcpy(bits,&long_number,8);
+        // for(int i=0;i<8;i++) {
+        //   logln("bits: %02X", (unsigned int)bits[i]);
+        // }
+        UnicodeString expect = "9223372036854775807";
+        UnicodeString result;
+        FieldPosition pos;
+        df.format(long_number, result, pos);
+        if(U_FAILURE(status)||expect!=result) {
+            errcheckln(status, "FAIL: expected '"+expect+"' got '"+result+"' status "+UnicodeString(u_errorName(status),"")+" on U_INT64_MAX");
+        } else {
+            logln("OK:  got expected '"+result+"' status "+UnicodeString(u_errorName(status),"")+" on U_INT64_MAX");
+        }
     }
-  }
-  {
-    UErrorCode status=U_ZERO_ERROR;
-    DecimalFormat df(UnicodeString("0000000000000000000",""),status);
-    int64_t long_number = 0;
-    // uint8_t bits[8];
-    // memcpy(bits,&long_number,8);
-    // for(int i=0;i<8;i++) {
-    //   logln("bits: %02X", (unsigned int)bits[i]);
-    // }
-    UnicodeString expect = "0000000000000000000";
-    UnicodeString result;
-    FieldPosition pos;
-    df.format(long_number, result, pos);
-    if(U_FAILURE(status)||expect!=result) {
-      errln("FAIL: expected '"+expect+"' got '"+result+"' status "+UnicodeString(u_errorName(status),"")+" on 0");
-    } else {
-      logln("OK:  got expected '"+result+"' status "+UnicodeString(u_errorName(status),"")+" on 0");
+    {
+        UErrorCode status=U_ZERO_ERROR;
+        DecimalFormat df(UnicodeString("0000000000000000000",""),status);
+        int64_t long_number = 0;
+        // uint8_t bits[8];
+        // memcpy(bits,&long_number,8);
+        // for(int i=0;i<8;i++) {
+        //   logln("bits: %02X", (unsigned int)bits[i]);
+        // }
+        UnicodeString expect = "0000000000000000000";
+        UnicodeString result;
+        FieldPosition pos;
+        df.format(long_number, result, pos);
+        if(U_FAILURE(status)||expect!=result) {
+            errcheckln(status, "FAIL: expected '"+expect+"' got '"+result+"' status "+UnicodeString(u_errorName(status),"")+" on 0");
+        } else {
+            logln("OK:  got expected '"+result+"' status "+UnicodeString(u_errorName(status),"")+" on 0");
+        }
     }
-  }
-  {
-    UErrorCode status=U_ZERO_ERROR;
-    DecimalFormat df(UnicodeString("0000000000000000000",""),status);
-    int64_t long_number = U_INT64_MIN + 1;
-    UnicodeString expect = "-9223372036854775807";
-    UnicodeString result;
-    FieldPosition pos;
-    df.format(long_number, result, pos);
-    if(U_FAILURE(status)||expect!=result) {
-      errln("FAIL: expected '"+expect+"' got '"+result+"' status "+UnicodeString(u_errorName(status),"")+" on -9223372036854775807");
-    } else {
-      logln("OK:  got expected '"+result+"' status "+UnicodeString(u_errorName(status),"")+" on -9223372036854775807");
+    {
+        UErrorCode status=U_ZERO_ERROR;
+        DecimalFormat df(UnicodeString("0000000000000000000",""),status);
+        int64_t long_number = U_INT64_MIN + 1;
+        UnicodeString expect = "-9223372036854775807";
+        UnicodeString result;
+        FieldPosition pos;
+        df.format(long_number, result, pos);
+        if(U_FAILURE(status)||expect!=result) {
+            errcheckln(status, "FAIL: expected '"+expect+"' got '"+result+"' status "+UnicodeString(u_errorName(status),"")+" on -9223372036854775807");
+        } else {
+            logln("OK:  got expected '"+result+"' status "+UnicodeString(u_errorName(status),"")+" on -9223372036854775807");
+        }
     }
+}
+
+enum myEnum {
+    MAX_NONBOOLEAN=-1,
+    THING1,
+    THING2,
+    THING3,
+    LIMIT_BOOLEAN
+};
+
+void NumberFormatTest::TestEnumSet(void) {
+    EnumSet<myEnum,
+            MAX_NONBOOLEAN+1,
+            LIMIT_BOOLEAN>
+                            flags;
+    infoln("TODO!! This test doesn't fail on error. Convert printf into error assert.\n");
+
+    logln("Enum is from [%d..%d]\n", MAX_NONBOOLEAN+1,
+          LIMIT_BOOLEAN);
+
+    logln("get(thing1)=%d, get(thing2)=%d, get(thing3)=%d\n",          flags.get(THING1),          flags.get(THING2),          flags.get(THING3));
+    logln("Value now: %d\n", flags.getAll());
+    flags.clear();
+    logln("clear -Value now: %d\n", flags.getAll());
+    logln("get(thing1)=%d, get(thing2)=%d, get(thing3)=%d\n",          flags.get(THING1),          flags.get(THING2),          flags.get(THING3));
+    flags.add(THING1);
+    logln("set THING1 -Value now: %d\n", flags.getAll());
+    logln("get(thing1)=%d, get(thing2)=%d, get(thing3)=%d\n",          flags.get(THING1),          flags.get(THING2),          flags.get(THING3));
+    flags.add(THING3);
+    logln("set THING3 -Value now: %d\n", flags.getAll());
+    logln("get(thing1)=%d, get(thing2)=%d, get(thing3)=%d\n",          flags.get(THING1),          flags.get(THING2),          flags.get(THING3));
+    flags.remove(THING2);
+    logln("remove THING2 -Value now: %d\n", flags.getAll());
+    logln("get(thing1)=%d, get(thing2)=%d, get(thing3)=%d\n",          flags.get(THING1),          flags.get(THING2),          flags.get(THING3));
+    flags.remove(THING1);
+    logln("remove THING1 -Value now: %d\n", flags.getAll());
+    logln("get(thing1)=%d, get(thing2)=%d, get(thing3)=%d\n",          flags.get(THING1),          flags.get(THING2),          flags.get(THING3));
+
+}
+
+void NumberFormatTest::TestFormattableSize(void) {
+  if(sizeof(FmtStackData) > UNUM_INTERNAL_STACKARRAY_SIZE) {
+    errln("Error: sizeof(FmtStackData)=%d, UNUM_INTERNAL_STACKARRAY_SIZE=%d\n",
+          sizeof(FmtStackData), UNUM_INTERNAL_STACKARRAY_SIZE);
+  } else if(sizeof(FmtStackData) < UNUM_INTERNAL_STACKARRAY_SIZE) {
+    logln("Warning: sizeof(FmtStackData)=%d, UNUM_INTERNAL_STACKARRAY_SIZE=%d\n",
+        sizeof(FmtStackData), UNUM_INTERNAL_STACKARRAY_SIZE);
+  } else {
+    logln("sizeof(FmtStackData)=%d, UNUM_INTERNAL_STACKARRAY_SIZE=%d\n",
+        sizeof(FmtStackData), UNUM_INTERNAL_STACKARRAY_SIZE);
   }
 }
 

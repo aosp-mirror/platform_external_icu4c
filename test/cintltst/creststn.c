@@ -281,7 +281,7 @@ static void TestErrorCodes(void) {
 
   /* we look up the resource which is aliased and at our level */
   /* TODO: restore the following test when cldrbug 3058: is fixed */
-  if(U_SUCCESS(status) && r != NULL && isICUVersionAtLeast(50, 0, 0)) {
+  if(U_SUCCESS(status) && r != NULL && isICUVersionAtLeast(51, 0, 0)) {
     status = U_USING_DEFAULT_WARNING;
     r2 = ures_getByKey(r, "Countries", r2, &status);
     checkStatus(__LINE__, U_USING_DEFAULT_WARNING, status);
@@ -1604,7 +1604,7 @@ static UBool testTag(const char* frag,
     int32_t count = 0;
     int32_t row_count=0;
     int32_t column_count=0;
-    int32_t index = 0;
+    int32_t idx = 0;
     int32_t tag_count= 0;
     const char* testdatapath;
     char verboseOutput[256];
@@ -1780,25 +1780,25 @@ static UBool testTag(const char* frag,
 
 
         for (j=0; j<10; ++j){
-            index = count ? (randi(count * 3) - count) : (randi(200) - 100);
+            idx = count ? (randi(count * 3) - count) : (randi(200) - 100);
             status = U_ZERO_ERROR;
             string=kERROR;
             array=ures_getByKey(theBundle, tag, array, &status);
             if(!U_FAILURE(status)){
                 UChar *t=NULL;
-                t=(UChar*)ures_getStringByIndex(array, index, &len, &status);
+                t=(UChar*)ures_getStringByIndex(array, idx, &len, &status);
                 if(!U_FAILURE(status)){
                     UChar element[3];
                     string=t;
                     u_strcpy(expected_string, base);
-                    u_uastrcpy(element, itoa1(index,buf));
+                    u_uastrcpy(element, itoa1(idx,buf));
                     u_strcat(expected_string, element);
                 } else {
                     u_strcpy(expected_string, kERROR);
                 }
 
             }
-            expected_status = (index >= 0 && index < count) ? expected_resource_status : U_MISSING_RESOURCE_ERROR;
+            expected_status = (idx >= 0 && idx < count) ? expected_resource_status : U_MISSING_RESOURCE_ERROR;
             CONFIRM_ErrorCode(status,expected_status);
             CONFIRM_EQ(string,expected_string);
 
@@ -1924,11 +1924,11 @@ static UBool testTag(const char* frag,
             tag_count=ures_getSize(tags);
             CONFIRM_INT_GE((int32_t)tag_count, (int32_t)0); 
 
-            for(index=0; index <tag_count; index++){
+            for(idx=0; idx <tag_count; idx++){
                 UResourceBundle *tagelement=NULL;
                 const char *key=NULL;
                 UChar* value=NULL;
-                tagelement=ures_getByIndex(tags, index, tagelement, &status);
+                tagelement=ures_getByIndex(tags, idx, tagelement, &status);
                 key=ures_getKey(tagelement);
                 value=(UChar*)ures_getNextString(tagelement, &len, &key, &status);
                 log_verbose("tag = %s, value = %s\n", key, u_austrcpy(verboseOutput, value));
@@ -1945,13 +1945,13 @@ static UBool testTag(const char* frag,
 
         /*---------taggedArrayItem----------------------------------------------*/
         count = 0;
-        for (index=-20; index<20; ++index)
+        for (idx=-20; idx<20; ++idx)
         {
 
             status = U_ZERO_ERROR;
             string = kERROR;
             strcpy(item_tag, "tag");
-            strcat(item_tag, itoa1(index,buf));
+            strcat(item_tag, itoa1(idx,buf));
             tags=ures_getByKey(theBundle, tag, tags, &status);
             if(U_SUCCESS(status)){
                 UResourceBundle *tagelement=NULL;
@@ -1970,14 +1970,14 @@ static UBool testTag(const char* frag,
                         string=t;
                     }
                 }
-                if (index < 0) {
+                if (idx < 0) {
                     CONFIRM_ErrorCode(status,U_MISSING_RESOURCE_ERROR);
                 }
                 else{
                     if (status != U_MISSING_RESOURCE_ERROR) {
                         UChar element[3];
                         u_strcpy(expected_string, base);
-                        u_uastrcpy(element, itoa1(index,buf));
+                        u_uastrcpy(element, itoa1(idx,buf));
                         u_strcat(expected_string, element);
                         CONFIRM_EQ(string,expected_string);
                         count++;
@@ -2190,26 +2190,7 @@ static void TestResourceLevelAliasing(void) {
       } else if(seqLen != strLen || u_strncmp(sequence, string, seqLen) != 0) {
         log_err("Referencing alias didn't get the right string (3)\n");
       }
-      
 
-      {
-            UResourceBundle* ja = ures_open(U_ICUDATA_BRKITR,"ja", &status);
-            const UChar *got = NULL, *exp=NULL;
-            int32_t gotLen = 0, expLen=0;
-            ja = ures_getByKey(ja, "boundaries", ja, &status);
-            exp = tres_getString(ja, -1, "word", &expLen, &status);
-              
-            tb = ures_getByKey(aliasB, "boundaries", tb, &status);
-            got = tres_getString(tb, -1, "word", &gotLen, &status);
-                
-            if(U_FAILURE(status)) {
-                log_err("%s trying to read str boundaries\n", u_errorName(status));
-            } else if(gotLen != expLen || u_strncmp(exp, got, gotLen) != 0) {
-                log_err("Referencing alias didn't get the right data\n");
-            }
-            ures_close(ja);
-            status = U_ZERO_ERROR;
-      }
       /* simple alias */
       testtypes = ures_open(testdatapath, "testtypes", &status);
       strcpy(buffer, "menu/file/open");
@@ -2813,7 +2794,7 @@ static void TestStackReuse(void) {
  */
 extern const UChar *
 tres_getString(const UResourceBundle *resB,
-               int32_t index, const char *key,
+               int32_t idx, const char *key,
                int32_t *length,
                UErrorCode *status) {
     char buffer8[16];
@@ -2827,8 +2808,8 @@ tres_getString(const UResourceBundle *resB,
     if(length == NULL) {
         length = &length16;
     }
-    if(index >= 0) {
-        s16 = ures_getStringByIndex(resB, index, length, status);
+    if(idx >= 0) {
+        s16 = ures_getStringByIndex(resB, idx, length, status);
     } else if(key != NULL) {
         s16 = ures_getStringByKey(resB, key, length, status);
     } else {
@@ -2843,8 +2824,8 @@ tres_getString(const UResourceBundle *resB,
     for(forceCopy = FALSE; forceCopy <= TRUE; ++forceCopy) {
         p8 = buffer8;
         length8 = (int32_t)sizeof(buffer8);
-        if(index >= 0) {
-            s8 = ures_getUTF8StringByIndex(resB, index, p8, &length8, forceCopy, status);
+        if(idx >= 0) {
+            s8 = ures_getUTF8StringByIndex(resB, idx, p8, &length8, forceCopy, status);
         } else if(key != NULL) {
             s8 = ures_getUTF8StringByKey(resB, key, p8, &length8, forceCopy, status);
         } else {
@@ -2860,8 +2841,8 @@ tres_getString(const UResourceBundle *resB,
             if(p8 == NULL) {
                 return s16;
             }
-            if(index >= 0) {
-                s8 = ures_getUTF8StringByIndex(resB, index, p8, &length8, forceCopy, status);
+            if(idx >= 0) {
+                s8 = ures_getUTF8StringByIndex(resB, idx, p8, &length8, forceCopy, status);
             } else if(key != NULL) {
                 s8 = ures_getUTF8StringByKey(resB, key, p8, &length8, forceCopy, status);
             } else {
@@ -2878,13 +2859,13 @@ tres_getString(const UResourceBundle *resB,
 
         if(forceCopy && s8 != p8) {
             log_err("ures_getUTF8String(%p, %ld, '%s') did not write the string to dest\n",
-                    resB, (long)index, key);
+                    resB, (long)idx, key);
         }
 
         /* verify NUL-termination */
         if((p8 != buffer8 || length8 < sizeof(buffer8)) && s8[length8] != 0) {
             log_err("ures_getUTF8String(%p, %ld, '%s') did not NUL-terminate\n",
-                    resB, (long)index, key);
+                    resB, (long)idx, key);
         }
         /* verify correct string */
         i16 = i8 = 0;
@@ -2893,17 +2874,17 @@ tres_getString(const UResourceBundle *resB,
             U8_NEXT(s8, i8, length8, c8);
             if(c16 != c8) {
                 log_err("ures_getUTF8String(%p, %ld, '%s') got a bad string, c16=U+%04lx!=U+%04lx=c8 before i16=%ld\n",
-                        resB, (long)index, key, (long)c16, (long)c8, (long)i16);
+                        resB, (long)idx, key, (long)c16, (long)c8, (long)i16);
             }
         }
         /* verify correct length */
         if(i16 < length16) {
             log_err("ures_getUTF8String(%p, %ld, '%s') UTF-8 string too short, length8=%ld, length16=%ld\n",
-                    resB, (long)index, key, (long)length8, (long)length16);
+                    resB, (long)idx, key, (long)length8, (long)length16);
         }
         if(i8 < length8) {
             log_err("ures_getUTF8String(%p, %ld, '%s') UTF-8 string too long, length8=%ld, length16=%ld\n",
-                    resB, (long)index, key, (long)length8, (long)length16);
+                    resB, (long)idx, key, (long)length8, (long)length16);
         }
 
         /* clean up */
