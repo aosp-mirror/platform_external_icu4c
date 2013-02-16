@@ -16,6 +16,24 @@
       "revId": "31015c7f64b33b9e5df5dadfcd5d64c5b3a82baa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "P3oqunS8",
+        "filename": "stubdata/icudt50l-default.txt",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1006607
+      },
+      "writtenOn": "2013-02-16T00:17:51Z",
+      "side": 1,
+      "message": "Agree!",
+      "parentUuid": "P3wlUex4",
+      "revId": "31015c7f64b33b9e5df5dadfcd5d64c5b3a82baa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
