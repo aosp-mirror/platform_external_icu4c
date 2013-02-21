@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "P3kGGJyA",
+        "filename": "data/misc/postalCodeData.txt",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1006607
+      },
+      "writtenOn": "2013-02-21T00:58:27Z",
+      "side": 1,
+      "message": "This is a new ICU data file added in ICU50.  We should add it to icudt50l-default.txt and re-run the icu_dat_generator.py. Without adding this, it could or could not have problems in format call.",
+      "revId": "66aa785726d8caf6c01b6c760c6e4a2226bea602",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
