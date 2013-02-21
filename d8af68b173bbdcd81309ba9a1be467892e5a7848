@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "P3mFmw7k",
+        "filename": "stubdata/icu_dat_generator.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 1006607
+      },
+      "writtenOn": "2013-02-21T00:37:06Z",
+      "side": 1,
+      "message": "Change it to icudt50 instead of icudt59.",
+      "revId": "d8af68b173bbdcd81309ba9a1be467892e5a7848",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
