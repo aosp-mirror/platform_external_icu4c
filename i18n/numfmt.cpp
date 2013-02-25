@@ -139,7 +139,7 @@ static const char *gFormatKeys[UNUM_FORMAT_STYLE_COUNT] = {
 // Static hashtable cache of NumberingSystem objects used by NumberFormat
 static UHashtable * NumberingSystem_cache = NULL;
 
-static UMTX nscacheMutex = NULL;
+static UMutex nscacheMutex = U_MUTEX_INITIALIZER;
 
 #if !UCONFIG_NO_SERVICE
 static icu::ICULocaleService* gService = NULL;
@@ -361,6 +361,46 @@ NumberFormat::format(int64_t /* unused number */,
     }
     return toAppendTo;
 }
+
+// ------------------------------------------
+// These functions add the status code, just fall back to the non-status versions
+UnicodeString&
+NumberFormat::format(double number,
+                     UnicodeString& appendTo,
+                     FieldPosition& pos,
+                     UErrorCode &status) const {
+    if(U_SUCCESS(status)) {
+        return format(number,appendTo,pos);
+    } else {
+        return appendTo;
+    }
+}
+
+UnicodeString&
+NumberFormat::format(int32_t number,
+                     UnicodeString& appendTo,
+                     FieldPosition& pos,
+                     UErrorCode &status) const {
+    if(U_SUCCESS(status)) {
+        return format(number,appendTo,pos);
+    } else {
+        return appendTo;
+    }
+}
+
+UnicodeString&
+NumberFormat::format(int64_t number,
+                     UnicodeString& appendTo,
+                     FieldPosition& pos,
+                     UErrorCode &status) const {
+    if(U_SUCCESS(status)) {
+        return format(number,appendTo,pos);
+    } else {
+        return appendTo;
+    }
+}
+
+
 
 // -------------------------------------
 // Decimal Number format() default implementation 

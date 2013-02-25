@@ -5,7 +5,7 @@
 *******************************************************************************
 */
 
-#include <typeinfo>  // for 'typeid' to work
+#include "utypeinfo.h"  // for 'typeid' to work
 
 #include "unicode/utypes.h"
 
@@ -19,6 +19,7 @@
 #include "unicode/simpletz.h"
 #include "unicode/ustring.h"
 #include "unicode/strenum.h"
+#include "unicode/localpointer.h"
 #include "cmemory.h"
 #include "cstring.h"
 #include "ustrenum.h"
@@ -725,6 +726,31 @@ ucal_getKeywordValuesForLocale(const char * /* key */, const char* locale, UBool
     memcpy(en, &defaultKeywordValues, sizeof(UEnumeration));
     en->context = values;
     return en;
+}
+
+U_CAPI UBool U_EXPORT2 
+ucal_getTimeZoneTransitionDate(const UCalendar* cal, UTimeZoneTransitionType type,
+                               UDate* transition, UErrorCode* status)
+{
+    if (U_FAILURE(*status)) {
+        return FALSE;
+    }
+    UDate base = ((Calendar*)cal)->getTime(*status);
+    const TimeZone& tz = ((Calendar*)cal)->getTimeZone();
+    const BasicTimeZone * btz = dynamic_cast<const BasicTimeZone *>(&tz);
+    if (btz != NULL && U_SUCCESS(*status)) {
+        TimeZoneTransition tzt;
+        LocalPointer<BasicTimeZone> btzClone(static_cast<BasicTimeZone *>(btz->clone())); // getNext/PreviousTransition are non-const
+        UBool inclusive = (type == UCAL_TZ_TRANSITION_NEXT_INCLUSIVE || type == UCAL_TZ_TRANSITION_PREVIOUS_INCLUSIVE);
+        UBool result = (type == UCAL_TZ_TRANSITION_NEXT || type == UCAL_TZ_TRANSITION_NEXT_INCLUSIVE)?
+                        btzClone->getNextTransition(base, inclusive, tzt):
+                        btzClone->getPreviousTransition(base, inclusive, tzt);
+        if (result) {
+            *transition = tzt.getTime();
+            return TRUE;
+        }
+    }
+    return FALSE;
 }
 
 #endif /* #if !UCONFIG_NO_FORMATTING */
