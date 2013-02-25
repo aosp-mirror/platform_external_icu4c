@@ -2,8 +2,8 @@
 // *
 // * Copyright (C) 2012 International Business Machines
 // * Corporation and others.  All Rights Reserved.
-// * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
-// * Source File:<path>/common/main/tzm.xml
+// * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
+// * Source File: <path>/common/main/tzm.xml
 // *
 // ***************************************************************************
 /**
@@ -27,7 +27,7 @@ tzm{
             }
         }
     }
-    Version{"2.0.65.46"}
+    Version{"2.0.77.46"}
     calendar{
         gregorian{
             AmPmMarkers{
@@ -69,8 +69,8 @@ tzm{
                 yMMM{"MMM y"}
                 yMMMEd{"E, MMM d, y"}
                 yMMMM{"MMMM y"}
-                yQ{"Q y"}
                 yQQQ{"QQQ y"}
+                yQQQQ{"QQQQ y"}
             }
             dayNames{
                 format{

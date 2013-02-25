@@ -21,6 +21,7 @@
 #include "unicode/numfmt.h"
 #include "unicode/dtfmtsym.h"
 #include "unicode/ustring.h"
+#include "unicode/udisplaycontext.h"
 #include "cpputils.h"
 #include "reldtfmt.h"
 #include "umutex.h"
@@ -138,7 +139,7 @@ udat_open(UDateFormatStyle  timeStyle,
         return (UDateFormat*)fmt;
       } // else fall through.
     }
-    if(timeStyle != UDAT_IGNORE) {
+    if(timeStyle != UDAT_PATTERN) {
         if(locale == 0) {
             fmt = DateFormat::createDateTimeInstance((DateFormat::EStyle)dateStyle,
                 (DateFormat::EStyle)timeStyle);
@@ -943,27 +944,23 @@ udat_getLocaleByType(const UDateFormat *fmt,
 
 
 U_CAPI void U_EXPORT2
-udat_setDefaultContext(UDateFormat* fmt,
-                       UDateFormatContextType type, UDateFormatContextValue value,
-                       UErrorCode* status)
+udat_setContext(UDateFormat* fmt, UDisplayContext value, UErrorCode* status)
 {
     verifyIsSimpleDateFormat(fmt, status);
     if (U_FAILURE(*status)) {
         return;
     }
-    ((SimpleDateFormat*)fmt)->setDefaultContext(type, value, *status);
+    ((SimpleDateFormat*)fmt)->setContext(value, *status);
 }
 
-U_CAPI int32_t U_EXPORT2
-udat_getDefaultContext(UDateFormat* fmt,
-                       UDateFormatContextType type,
-                       UErrorCode* status)
+U_CAPI UDisplayContext U_EXPORT2
+udat_getContext(UDateFormat* fmt, UDisplayContextType type, UErrorCode* status)
 {
     verifyIsSimpleDateFormat(fmt, status);
     if (U_FAILURE(*status)) {
-        return 0;
+        return (UDisplayContext)0;
     }
-    return ((SimpleDateFormat*)fmt)->getDefaultContext(type, *status);
+    return ((SimpleDateFormat*)fmt)->getContext(type, *status);
 }
 
 

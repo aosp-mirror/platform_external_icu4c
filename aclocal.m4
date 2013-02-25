@@ -1,5 +1,5 @@
 # aclocal.m4 for ICU
-# Copyright (c) 1999-2011, International Business Machines Corporation and
+# Copyright (c) 1999-2012, International Business Machines Corporation and
 # others. All Rights Reserved.
 # Stephen F. Booth
 
@@ -452,16 +452,9 @@ AC_DEFUN(AC_CHECK_STRICT_COMPILE,
     then
         if test "$GCC" = yes
         then
-            case "${host}" in
-            *-*-solaris*)
-                CFLAGS="$CFLAGS -Wall -ansi -pedantic -Wshadow -Wpointer-arith -Wmissing-prototypes -Wwrite-strings -Wno-long-long"
-                CFLAGS="$CFLAGS -D__STDC__=0";;
-            *-*-hpux*)
-                echo "# Note: We are not using '-ansi' with HP/UX GCC because int64_t broke, see <http://bugs.icu-project.org/trac/ticket/8493>"
-                CFLAGS="$CFLAGS -Wall -pedantic -Wshadow -Wpointer-arith -Wmissing-prototypes -Wwrite-strings -Wno-long-long";;
-            *)
-                CFLAGS="$CFLAGS -Wall -ansi -pedantic -Wshadow -Wpointer-arith -Wmissing-prototypes -Wwrite-strings -Wno-long-long";;
-            esac
+            # Do not use -ansi. It limits us to C90, and it breaks some platforms.
+            # We use -std=c99 to disable the gnu99 defaults and its associated warnings
+            CFLAGS="$CFLAGS -Wall -std=c99 -pedantic -Wshadow -Wpointer-arith -Wmissing-prototypes -Wwrite-strings"
         else
             case "${host}" in
             *-*-cygwin)
@@ -473,11 +466,7 @@ AC_DEFUN(AC_CHECK_STRICT_COMPILE,
         fi
         if test "$GXX" = yes
         then
-            CXXFLAGS="$CXXFLAGS -W -Wall -ansi -pedantic -Wpointer-arith -Wwrite-strings -Wno-long-long"
-            case "${host}" in
-            *-*-solaris*)
-                CXXFLAGS="$CXXFLAGS -D__STDC__=0";;
-            esac
+            CXXFLAGS="$CXXFLAGS -W -Wall -pedantic -Wpointer-arith -Wwrite-strings -Wno-long-long"
         else
             case "${host}" in
             *-*-cygwin)

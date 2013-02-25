@@ -122,7 +122,7 @@
  * <p>
  * The date or time format strings are not part of the definition of a
  * calendar, as those must be modifiable or overridable by the user at
- * runtime. Use {@link DateFormat}
+ * runtime. Use {@link icu::DateFormat}
  * to format dates.
  *
  * <p>
@@ -564,7 +564,7 @@ typedef enum USystemTimeZoneType USystemTimeZoneType;
  *          *ec will indicate the error.
  * @stable ICU 4.8
  */ 
-U_DRAFT UEnumeration* U_EXPORT2
+U_STABLE UEnumeration* U_EXPORT2
 ucal_openTimeZoneIDEnumeration(USystemTimeZoneType zoneType, const char* region,
                                 const int32_t* rawOffset, UErrorCode* ec);
 
@@ -1064,6 +1064,9 @@ ucal_equivalentTo(const UCalendar*  cal1,
 /**
  * Add a specified signed amount to a particular field in a UCalendar.
  * This can modify more significant fields in the calendar.
+ * Adding a positive value always means moving forward in time, so for the Gregorian calendar,
+ * starting with 100 BC and adding +1 to year results in 99 BC (even though this actually reduces
+ * the numeric value of the field itself).
  * @param cal The UCalendar to which to add.
  * @param field The field to which to add the signed value; one of UCAL_ERA, UCAL_YEAR, UCAL_MONTH,
  * UCAL_WEEK_OF_YEAR, UCAL_WEEK_OF_MONTH, UCAL_DATE, UCAL_DAY_OF_YEAR, UCAL_DAY_OF_WEEK,
@@ -1085,6 +1088,15 @@ ucal_add(UCalendar*           cal,
 /**
  * Add a specified signed amount to a particular field in a UCalendar.
  * This will not modify more significant fields in the calendar.
+ * Rolling by a positive value always means moving forward in time (unless the limit of the
+ * field is reached, in which case it may pin or wrap), so for Gregorian calendar,
+ * starting with 100 BC and rolling the year by +1 results in 99 BC.
+ * When eras have a definite beginning and end (as in the Chinese calendar, or as in most eras in the
+ * Japanese calendar) then rolling the year past either limit of the era will cause the year to wrap around.
+ * When eras only have a limit at one end, then attempting to roll the year past that limit will result in
+ * pinning the year at that limit. Note that for most calendars in which era 0 years move forward in time
+ * (such as Buddhist, Hebrew, or Islamic), it is possible for add or roll to result in negative years for
+ * era 0 (that is the only way to represent years before the calendar epoch).
  * @param cal The UCalendar to which to add.
  * @param field The field to which to add the signed value; one of UCAL_ERA, UCAL_YEAR, UCAL_MONTH,
  * UCAL_WEEK_OF_YEAR, UCAL_WEEK_OF_MONTH, UCAL_DATE, UCAL_DAY_OF_YEAR, UCAL_DAY_OF_WEEK,
@@ -1414,11 +1426,67 @@ ucal_isWeekend(const UCalendar *cal, UDate date, UErrorCode *status);
  * @return The date difference for the specified field.
  * @stable ICU 4.8
  */
-U_DRAFT int32_t U_EXPORT2 
+U_STABLE int32_t U_EXPORT2 
 ucal_getFieldDifference(UCalendar* cal,
                         UDate target,
                         UCalendarDateFields field,
                         UErrorCode* status);
+
+#ifndef U_HIDE_DRAFT_API
+/**
+ * Time zone transition types for ucal_getTimeZoneTransitionDate
+ * @draft ICU 50
+ */
+enum UTimeZoneTransitionType {
+    /**
+     * Get the next transition after the current date,
+     * i.e. excludes the current date
+     * @draft ICU 50
+     */
+    UCAL_TZ_TRANSITION_NEXT,
+    /**
+     * Get the next transition on or after the current date,
+     * i.e. may include the current date
+     * @draft ICU 50
+     */
+    UCAL_TZ_TRANSITION_NEXT_INCLUSIVE,
+    /**
+     * Get the previous transition before the current date,
+     * i.e. excludes the current date
+     * @draft ICU 50
+     */
+    UCAL_TZ_TRANSITION_PREVIOUS,
+    /**
+     * Get the previous transition on or before the current date,
+     * i.e. may include the current date
+     * @draft ICU 50
+     */
+    UCAL_TZ_TRANSITION_PREVIOUS_INCLUSIVE
+};
+
+/** @draft ICU 50 */
+typedef enum UTimeZoneTransitionType UTimeZoneTransitionType;
+
+/**
+* Get the UDate for the next/previous time zone transition relative to
+* the calendar's current date, in the time zone to which the calendar
+* is currently set. If there is no known time zone transition of the
+* requested type relative to the calendar's date, the function returns
+* FALSE.
+* @param cal The UCalendar to query.
+* @param type The type of transition desired.
+* @param transition A pointer to a UDate to be set to the transition time.
+*         If the function returns FALSE, the value set is unspecified.
+* @param status A pointer to a UErrorCode to receive any errors.
+* @return TRUE if a valid transition time is set in *transition, FALSE
+*         otherwise.
+* @draft ICU 50
+*/
+U_DRAFT UBool U_EXPORT2 
+ucal_getTimeZoneTransitionDate(const UCalendar* cal, UTimeZoneTransitionType type,
+                               UDate* transition, UErrorCode* status);
+
+#endif  /* U_HIDE_DRAFT_API */
 
 #endif /* #if !UCONFIG_NO_FORMATTING */
 
