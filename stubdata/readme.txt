@@ -5,19 +5,13 @@ This directory is used for building our Android ICU data file.
      ./icu_dat_generator.py [-v] [-h]
 
 2. To add a resource to Android ICU data file: insert an entry to
-   icudtxx-<tag name>.txt under external/icu4c/stubdata directory then
-   run the icu_dat_generator.py.
-   For example, to add French sort to icudt 48l-us.dat, you need to
-   a. Add an entry, "coll/fr.res", into external/icu4c/stubdata/icudt 48l-us.txt
+   icu-data-default.txt in external/icu4c/stubdata then
+   run icu_dat_generator.py.
+   For example, to add French collation, you need to
+   a. Add an entry, "coll/fr.res", into external/icu4c/stubdata/icu-data-default.txt
    b. run "./icu_dat_generator.py".
 
-3. To add a new Android ICU data file: create the .txt file and run the script
-   to generate the .dat file.
-   For example, to add icudt 48l-latin.dat, you need to
-   a. Make a new file icudt 48l-latin.txt to include the resource list.
-   b. run "./icu_dat_generator.py".
-
-4. Add a new resource or modify existing ICU resource definition:
+3. Add a new resource or modify existing ICU resource definition:
    Note: This is a rare case. You should talk to ICU team first if it is a bug
    in ICU resource or a feature enhancement before making such changes.
    If you would like to add existing ICU resource to Android, please check #2.
@@ -30,19 +24,19 @@ This directory is used for building our Android ICU data file.
       makefile.
       i.e. $ANDROID_BUILD_TOP/external/icu4c/runConfigureICU Linux
    e. make -j2
-   f. The new icudtxxl.dat is under data/out/tmp and the individual resources are
-      under data/out/build/icudtxxl
-      For example, you can find data/out/tmp/icudt 48l.dat and data/out/build/icudt 48l/*.res.
-   g. Copy the new icudtxxl.dat over $ANDROID_BUILD_TOP/external/icu4c/stubdata/icudtxxl-all.dat.
-      i.e. cp data/out/tmp/icudt 48l.dat $ANDROID_BUILD_TOP/external/icu4c/stubdata/icudt 48l-all.dat.
+   f. The new icudtXXl.dat is under data/out/tmp and the individual resources are
+      under data/out/build/icudtXXl
+      For example, you can find data/out/tmp/icudtXXl.dat and data/out/build/icudtXX48l/*.res.
+   g. Copy the new icudtXXl.dat over $ANDROID_BUILD_TOP/external/icu4c/stubdata/icudtXXl-all.dat.
+      i.e. cp data/out/tmp/icudtXXl.dat $ANDROID_BUILD_TOP/external/icu4c/stubdata/icudtXXl-all.dat.
    h. Check #1 or #2 to replace or add resource to ICU.
    i. Clean up ICU build directory.
    j. Discuss with icu-team how to include the change to public ICU.
 
 Locale Resource Files:
-- icudt 48l-all.dat contains the resources in packed
+- icudtXXl-all.dat contains the resources in packed
   form. It includes everything that comes with
-  a vanilla ICU  4.8. icu_dat_generator.py uses this file to generate
+  a vanilla ICU release. icu_dat_generator.py uses this file to generate
   custom build dat files.
 
 - cnv/*.cnv are the additional encodings required by Android.
@@ -56,14 +50,14 @@ Locale Resource Files:
   - softbank-shift_jis-2007.cnv
 
 - Text format ICU resource files are under external/icu4c/data directory.
-  Binary resource files are packaged in external/icu4c/stubdata/icudtxxl-all.dat.
-  If you have special need such as bug fxings or examining individual resource size,
-  you can run icupkg utility to extract icudtxxl-all.dat into a temporary directory.
+  Binary resource files are packaged in external/icu4c/stubdata/icudtXXl-all.dat.
+  If you have bug fixes to apply or want to examine individual resource sizes,
+  you can run icupkg utility to extract icudtXXl-all.dat into a temporary directory.
   For example:
   cd $ANDROID_BUILD_TOP/external/icu4c/stubdata
-  cp icudt 48l-all.dat icudt 48l.dat
+  cp icudtXXl-all.dat icudtXXl.dat
   mkdir tempDir
-  $ANDROID_BUILD_TOP/prebuilt/linux-x86_64/icu-4.8/icupkg  icudt 48l.dat -x "*" -d tempDir
+  $ANDROID_BUILD_TOP/prebuilt/linux-x86_64/icu-4.8/icupkg  icudtXXl.dat -x "*" -d tempDir
 
 Run ICU tests:
 ICU tests are not part of Android build. If you change the ICU code or data,
@@ -81,10 +75,3 @@ it is highly recommended to run ICU tests.
     i.e. $ANDROID_BUILD_TOP/external/icu4c/runConfigureICU Linux
  5. make -j2 check
  6. Check the result. Ignore the errors from tsconv.
-
-Note:
-  1. The script assumes you have done
-  envsetup.sh and choosecombo before, because
-  it relies on an environment variable pointing
-  to the prebuilt tools.
-
