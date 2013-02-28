@@ -13,25 +13,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
-# Generate ICU dat files for locale relevant resources.
+
+# Generates icudtXXl-default.dat from icudtXXl-all.dat and icu-data-default.txt.
 #
 # Usage:
 #    icu_dat_generator.py [-v] [-h]
 #
 # Sample usage:
 #   $ANDROID_BUILD_TOP/external/icu4c/stubdata$ ./icu_dat_generator.py --verbose
-#
-#  Add new dat file:
-#   1. Add icudtxxl-<datname>.txt to $ANDROID_BUILD_TOP/external/icu4c/stubdata.
-#      Check the example file under
-#      $ANDROID_BUILD_TOP/external/icu4c/stubdata/icudt50l-us.txt
-#   2. Add an entry to main() --> datlist[]
-#   3. Run this script to generate dat files.
-#
-#  For ICU upgrade
-#    We cannot get CLDR version from dat file unless calling ICU function.
-#    If there is a CLDR version change, please modify "global CLDR_VERSION".
 
 import getopt
 import glob
@@ -63,10 +52,10 @@ def InvokeIcuTool(tool, working_dir, args):
     sys.exit(command_list[0:])
 
 
-def ExtractAllResourceToTempDir():
-  # copy icudtxxl-all.dat to icudtxxl.dat
-  src_dat = os.path.join(ICU4C_DIR, "stubdata", ICUDATA + "-all.dat")
-  dst_dat = os.path.join(ICU4C_DIR, "stubdata", ICUDATA + ".dat")
+def ExtractAllResourceFilesToTmpDir():
+  # copy icudtXXl-all.dat to icudtXXl.dat
+  src_dat = os.path.join(ICU4C_DIR, "stubdata", ICU_DATA + "-all.dat")
+  dst_dat = os.path.join(ICU4C_DIR, "stubdata", ICU_DATA + ".dat")
   shutil.copyfile(src_dat, dst_dat)
   InvokeIcuTool("icupkg", None, [dst_dat, "-x", "*", "-d", TMP_DAT_PATH])
 
@@ -78,18 +67,16 @@ def MakeDat(input_file, stubdata_dir):
     sys.exit(1)
   GenResIndex(input_file)
   CopyAndroidCnvFiles(stubdata_dir)
-  # Run "icupkg -tl -s icudt50l -a icudt50l-us.txt new icudt50l.dat".
-  args = ["-tl", "-s", TMP_DAT_PATH, "-a", input_file, "new", ICUDATA + ".dat"]
+  # Run "icupkg -tl -s icudtXXl -a icu-data-default.txt new icudtXXl.dat".
+  args = ["-tl", "-s", TMP_DAT_PATH, "-a", input_file, "new", ICU_DATA + ".dat"]
   InvokeIcuTool("icupkg", TMP_DAT_PATH, args)
 
 
-def WriteIndex(path, locales, cldr_version=None):
+def WriteIndex(path, locales):
   empty_value = " {\"\"}\n"  # key-value pair for all locale entries
 
   f = open(path, "w")
   f.write("res_index:table(nofallback) {\n")
-  if cldr_version:
-    f.write("  CLDRVersion { %s }\n" % cldr_version)
   f.write("  InstalledLocales {\n")
   for locale in locales:
     f.write(locale + empty_value)
@@ -109,7 +96,7 @@ def AddResFile(collection, path):
   return
 
 
-# Open input file (such as icudt50l-us.txt).
+# Open input file (such as icu-data-default.txt).
 # Go through the list and generate res_index.txt for locales, brkitr,
 # coll, et cetera.
 def GenResIndex(input_file):
@@ -187,7 +174,7 @@ def GenResIndex(input_file):
     print "warning: missing data for supported locale: %s" % relative_path
 
   # Write the genrb input files.
-  WriteIndex(os.path.join(TMP_DAT_PATH, res_index), locales, CLDR_VERSION)
+  WriteIndex(os.path.join(TMP_DAT_PATH, res_index), locales)
   for kind, locales in kind_to_locales.items():
     if kind == "locales":
       continue
@@ -221,13 +208,11 @@ def main():
   global ANDROID_BUILD_TOP  # $ANDROID_BUILD_TOP
   global ICU4C_DIR          # $ANDROID_BUILD_TOP/external/icu4c
   global ICU_PREBUILT_DIR   # Directory containing pre-built ICU tools.
-  global ICUDATA       # e.g. "icudt50l"
-  global CLDR_VERSION  # CLDR version. The value varies between ICU releases.
-  global TMP_DAT_PATH  # temp directory to store all resource files and
-                       # intermediate dat files.
+  global ICU_DATA           # e.g. "icudt50l"
+  global TMP_DAT_PATH       # Temporary directory to store all resource files and
+                            # intermediate dat files.
   global VERBOSE
 
-  CLDR_VERSION = "2.0.1"
   VERBOSE = False
 
   show_help = False
@@ -253,21 +238,19 @@ def main():
   ICU4C_DIR = os.path.join(ANDROID_BUILD_TOP, "external", "icu4c")
   stubdata_dir = os.path.join(ICU4C_DIR, "stubdata")
 
-  # Find all the input files.
-  input_files = glob.glob(os.path.join(stubdata_dir, "icudt[0-9][0-9]l-*.txt"))
-
-  # Work out the ICU version from the input filenames, so we can find the
+  # Work out the ICU version from the source .dat filename, so we can find the
   # appropriate pre-built ICU tools.
-  icu_version = re.sub(r"([^0-9])", "", os.path.basename(input_files[0]))
+  source_dat = os.path.basename(glob.glob(os.path.join(stubdata_dir, "icudt*.dat"))[0])
+  icu_version = re.sub(r"([^0-9])", "", source_dat)
   ICU_PREBUILT_DIR = os.path.join(os.environ.get("ANDROID_BUILD_TOP"),
       "prebuilts", "misc", "linux-x86_64", "icu-%s%s" % (icu_version[0], icu_version[1]))
   if not os.path.exists(ICU_PREBUILT_DIR):
     print "%s does not exist!" % ICU_PREBUILT_DIR
 
-  ICUDATA = "icudt" + icu_version + "l"
+  ICU_DATA = "icudt" + icu_version + "l"
 
-  # Check that -all.dat exists (since we build the other .dat files from that).
-  full_data_filename = os.path.join(stubdata_dir, ICUDATA + "-all.dat")
+  # Check that icudtXXl-all.dat exists (since we build the other .dat files from that).
+  full_data_filename = os.path.join(stubdata_dir, ICU_DATA + "-all.dat")
   if not os.path.isfile(full_data_filename):
     print "%s not present." % full_data_filename
     sys.exit(1)
@@ -278,19 +261,18 @@ def main():
     shutil.rmtree(TMP_DAT_PATH)
   os.mkdir(TMP_DAT_PATH)
 
-  # Extract resource files from icudtxxl-all.dat to TMP_DAT_PATH.
-  ExtractAllResourceToTempDir()
+  # Extract resource files from icudtXXl-all.dat to TMP_DAT_PATH.
+  ExtractAllResourceFilesToTmpDir()
 
-  # Process each input file in turn.
-  for input_file in sorted(input_files):
-    output_file = input_file[:-3] + "dat"
-    MakeDat(input_file, stubdata_dir)
-    shutil.copyfile(os.path.join(TMP_DAT_PATH, ICUDATA + ".dat"), output_file)
-    print "Generated ICU data: %s" % output_file
+  input_file = os.path.join(stubdata_dir, "icu-data-default.txt")
+  output_file = os.path.join(stubdata_dir, ICU_DATA + "-default.dat")
+  MakeDat(input_file, stubdata_dir)
+  shutil.copyfile(os.path.join(TMP_DAT_PATH, ICU_DATA + ".dat"), output_file)
+  print "Generated ICU data: %s" % output_file
 
-  # Cleanup temporary working directory and icudtxxl.dat
+  # Cleanup temporary working directory and icudtXXl.dat
   shutil.rmtree(TMP_DAT_PATH)
-  os.remove(os.path.join(stubdata_dir, ICUDATA + ".dat"))
+  os.remove(os.path.join(stubdata_dir, ICU_DATA + ".dat"))
 
 if __name__ == "__main__":
   main()
