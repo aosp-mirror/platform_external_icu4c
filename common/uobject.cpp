@@ -108,6 +108,8 @@ UObject::~UObject() {}
 //         c = * (UClassID*) c;
 //     }
 // }
+// Android patch: tiny part of ICU 51's r32776 (only the one next line)
+UClassID UObject::getDynamicClassID() const { return NULL; }
 
 U_NAMESPACE_END
 

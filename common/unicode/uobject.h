@@ -240,7 +240,7 @@ public:
      *
      * @stable ICU 2.2
      */
-    virtual UClassID getDynamicClassID() const = 0;
+    virtual UClassID getDynamicClassID() const;  // Android patch: tiny part of ICU 51's r32776
 
 protected:
     // the following functions are protected to prevent instantiation and
