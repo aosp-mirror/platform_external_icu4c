@@ -75,6 +75,7 @@ az{
         }
         standard{
             Sequence{
+                " [reorder Latn Cyrl]"
                 "&C<ç<<<Ç"
                 "&G<ğ<<<Ğ"
                 "&[before 1]i<ı<<<I"

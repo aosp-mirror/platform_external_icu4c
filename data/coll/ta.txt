@@ -14,7 +14,8 @@ ta{
     collations{
         standard{
             Sequence{
-                " [normalization on ]"
+                " [normalization on] [reorder Taml Deva Beng Guru Gujr Orya Telu Knda"
+                " Mlym Sinh]"
                 "&ஔ<ஂ<ஃ"
                 "&ஹ<க்ஷ"
                 "&[before 1]க<க்"

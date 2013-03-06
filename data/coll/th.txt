@@ -14,7 +14,7 @@ th{
     collations{
         standard{
             Sequence{
-                " [alternate shifted ] [normalization on ]"
+                " [alternate shifted] [normalization on] [reorder Thai]"
                 "&[before 1]๚<ฯ"
                 "&๛<ๆ"
                 "&๎<<์"
