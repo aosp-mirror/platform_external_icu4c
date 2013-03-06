@@ -119,9 +119,9 @@
  *  only appears in this string if it non-zero. 
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.4
- * BEGIN Android patch of version for cherry pick of alphabetic index in 50.1
+ * BEGIN Android patch: cherry pick of alphabetic index data from ICU 51.
  */
-#define U_ICU_VERSION "50.1.1.1"
+#define U_ICU_VERSION "50.1.1.2"
 /* END Android patch */
 
 /** The current ICU library major/minor version as a string without dots, for library name suffixes. 
