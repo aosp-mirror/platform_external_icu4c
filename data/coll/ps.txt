@@ -14,7 +14,7 @@ ps{
     collations{
         standard{
             Sequence{
-                " [normalization on ]"
+                " [normalization on ] [reorder Arab]"
                 "&َ<<ِ<<ُ<<ً<<ٍ<<ٌ"
                 "&[before 1]ا<آ"
                 "&ا<<أ<<*ٲٱ<<إ<<*ٳ<ء"
