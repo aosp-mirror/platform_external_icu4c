@@ -13,7 +13,10 @@ be{
     Version{"2.0.49.75"}
     collations{
         standard{
-            Sequence{"[suppressContractions [АаӘәГгЕеЖжЗзІіОоӨөКкЧчЫыЭэѴѵ] ]&Е<ё<<<Ё"}
+            Sequence{
+                " [reorder Cyrl][suppressContractions [АаӘәГгЕеЖжЗзІіОоӨөКкЧчЫыЭэѴѵ]]"
+                "&Е<ё<<<Ё"
+            }
             Version{"22.1.1"}
         }
     }

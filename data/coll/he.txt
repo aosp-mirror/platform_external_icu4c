@@ -13,7 +13,7 @@ he{
     Version{"2.0.41.26"}
     collations{
         standard{
-            Sequence{" [normalization on ]"}
+            Sequence{" [normalization on] [reorder Hebr]"}
             Version{"22.1.1"}
         }
     }
