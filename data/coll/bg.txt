@@ -13,7 +13,10 @@ bg{
     Version{"2.0.61.82"}
     collations{
         standard{
-            Sequence{"[suppressContractions [АаӘәГгЕеЖжЗзІіОоӨөКкУуЧчЫыЭэѴѵ] ]"}
+            Sequence{
+                " [reorder Cyrl][suppressContractions [АаӘәГгЕеЖжЗзІіОоӨөКкУуЧчЫыЭэѴѵ"
+                "]]"
+            }
             Version{"22.1.1"}
         }
     }
