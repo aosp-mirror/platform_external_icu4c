@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "REFLG9I8",
+        "filename": "common/unicode/uvernum.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 1020315
+      },
+      "writtenOn": "2013-03-07T00:51:35Z",
+      "side": 1,
+      "message": "We increment the last version field when we make non-trivial changes to Android ICU.\n\n(Sorry I didn\u0027t read this carefully on your screen.)",
+      "revId": "208e05bfcab53447dfb99b2c4925d2a439c9649d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
