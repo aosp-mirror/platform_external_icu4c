@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "Q-g1PWeg",
+        "filename": "data/coll/bn.txt",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1020315
+      },
+      "writtenOn": "2013-03-07T00:19:56Z",
+      "side": 1,
+      "message": "You are dropping the tailoring rules (\u0026ঔ\u003cং\u003cঃ\u003cঁ), please restore.",
+      "revId": "8c017c810dce93fd9dc65fe34f1130bcae55b76d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "Q-m1WDYM",
+        "filename": "data/coll/he.txt",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1020315
+      },
+      "writtenOn": "2013-03-07T00:19:56Z",
+      "side": 1,
+      "message": "Please replace the initial tab with spaces.",
+      "revId": "8c017c810dce93fd9dc65fe34f1130bcae55b76d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
