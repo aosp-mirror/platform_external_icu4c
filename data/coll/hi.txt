@@ -13,7 +13,11 @@ hi{
     Version{"2.0.63.59"}
     collations{
         standard{
-            Sequence{" [normalization on ]&ॐ<ं<<ँ<ः"}
+            Sequence{
+                " [normalization on] [reorder Deva Beng Guru Gujr Orya Taml Telu Knda"
+                " Mlym Sinh]"
+                "&ॐ<ं<<ँ<ः"
+            }
             Version{"22.1.1"}
         }
     }

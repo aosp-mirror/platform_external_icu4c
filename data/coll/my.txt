@@ -14,7 +14,7 @@ my{
     collations{
         standard{
             Sequence{
-                " [normalization on ]"
+                " [normalization on] [reorder Mymr]"
                 "&ႌ<့<း<့း"
                 "&ာ<<ါ"
                 "&ဲ<ော<<ေါ<ော်<<ေါ်"

@@ -14,7 +14,8 @@ kk{
     collations{
         standard{
             Sequence{
-                "[suppressContractions [АаӘәГгЕеЖжЗзІіОоӨөКкУуЧчЫыЭэѴѵ] ]"
+                " [reorder Cyrl][suppressContractions [АаӘәГгЕеЖжЗзІіОоӨөКкУуЧчЫыЭэѴѵ"
+                "]]"
                 "&Е<ё<<<Ё"
                 "&Ұ<ү<<<Ү"
                 "&[before 1]ь<і<<<І"
