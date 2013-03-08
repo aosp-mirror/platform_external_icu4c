@@ -14,6 +14,8 @@ ml{
     collations{
         standard{
             Sequence{
+                " [reorder Mlym Latn Deva Arab Taml Knda Telu Beng Guru Gujr Orya Sin"
+                "h]"
                 "&ഃ<<ഽ"
                 "&ോ<ൗ"
                 "&ൗ<<<ൌ"

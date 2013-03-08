@@ -14,7 +14,7 @@ km{
     collations{
         standard{
             Sequence{
-                " [normalization on ]"
+                " [normalization on ] [reorder Khmr]"
                 "&[last tertiary ignorable ]=឴=឵"
                 "&។ល។<<<៘"
                 "&ៈ<<៎<<៏<<៑<<័<<ៈ<<៝<<់<<៉<<៊<<៍"
