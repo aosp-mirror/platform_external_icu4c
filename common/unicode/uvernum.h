@@ -78,7 +78,7 @@
  * Update U_ICU_VERSION below for consistency.
  */
 #ifndef U_ICU_VERSION_BUILDLEVEL_NUM
-#define U_ICU_VERSION_BUILDLEVEL_NUM 2
+#define U_ICU_VERSION_BUILDLEVEL_NUM 3
 #endif
 /* END Android patch */
 
