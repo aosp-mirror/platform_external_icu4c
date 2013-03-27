@@ -78,7 +78,7 @@
  * Update U_ICU_VERSION below for consistency.
  */
 #ifndef U_ICU_VERSION_BUILDLEVEL_NUM
-#define U_ICU_VERSION_BUILDLEVEL_NUM 2
+#define U_ICU_VERSION_BUILDLEVEL_NUM 3
 #endif
 /* END Android patch */
 
@@ -124,7 +124,7 @@
  * to Android ICU.
  * Update U_ICU_VERSION_BUILDLEVEL_NUM above for consistency.
  */
-#define U_ICU_VERSION "50.1.1.2"
+#define U_ICU_VERSION "50.1.1.3"
 /* END Android patch */
 
 /** The current ICU library major/minor version as a string without dots, for library name suffixes. 
