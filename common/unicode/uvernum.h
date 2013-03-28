@@ -75,10 +75,9 @@
  *  This value is for use by ICU clients. It defaults to 0.
  *  @stable ICU 4.0
  * BEGIN Android patch
- * Update U_ICU_VERSION below for consistency.
  */
 #ifndef U_ICU_VERSION_BUILDLEVEL_NUM
-#define U_ICU_VERSION_BUILDLEVEL_NUM 2
+#define U_ICU_VERSION_BUILDLEVEL_NUM 3
 #endif
 /* END Android patch */
 
@@ -124,7 +123,9 @@
  * to Android ICU.
  * Update U_ICU_VERSION_BUILDLEVEL_NUM above for consistency.
  */
-#define U_ICU_VERSION "50.1.1.2"
+#define U_ICU_STRINGIFY_1(x) #x
+#define U_ICU_STRINGIFY(x) U_ICU_STRINGIFY_1(x)
+#define U_ICU_VERSION "50.1.1." U_ICU_STRINGIFY(U_ICU_VERSION_BUILDLEVEL_NUM)
 /* END Android patch */
 
 /** The current ICU library major/minor version as a string without dots, for library name suffixes. 
