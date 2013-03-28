@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "SkymiYTo",
+        "filename": "common/unicode/uvernum.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-03-28T18:18:23Z",
+      "side": 1,
+      "message": "TODO: generate the whole string from the constants above.\n\nTODO: upstream this or something like it.",
+      "revId": "501047dc5a704aac368943b57ab493bf03f025da",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
