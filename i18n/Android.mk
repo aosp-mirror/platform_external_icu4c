@@ -120,9 +120,9 @@ ifeq ($(WITH_HOST_DALVIK),true)
     LOCAL_SRC_FILES := $(src_files)
     LOCAL_C_INCLUDES := $(c_includes)
     LOCAL_CFLAGS += $(local_cflags)
-    LOCAL_SHARED_LIBRARIES += libicuuc
+    LOCAL_SHARED_LIBRARIES += libicuuc-host
     LOCAL_LDLIBS += $(local_ldlibs)
     LOCAL_MODULE_TAGS := optional
-    LOCAL_MODULE := libicui18n
+    LOCAL_MODULE := libicui18n-host
     include $(BUILD_HOST_SHARED_LIBRARY)
 endif

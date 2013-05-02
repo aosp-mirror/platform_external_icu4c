@@ -165,6 +165,6 @@ ifeq ($(WITH_HOST_DALVIK),true)
     LOCAL_LDLIBS += $(local_ldlibs)
     LOCAL_ADDITIONAL_DEPENDENCIES += $(HOST_OUT)/usr/icu/$(root).dat
     LOCAL_MODULE_TAGS := optional
-    LOCAL_MODULE := libicuuc
+    LOCAL_MODULE := libicuuc-host
     include $(BUILD_HOST_SHARED_LIBRARY)
 endif
