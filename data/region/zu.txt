@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/zu.xml
 // *
@@ -141,7 +141,7 @@ zu{
         GU{"i-Guam"}
         GW{"i-Guinea-Bissau"}
         GY{"i-Guyana"}
-        HK{"e-Hong Kong SAR China"}
+        HK{"i-Hong Kong"}
         HM{"i-Heard Island ne-McDonald Islands"}
         HN{"i-Honduras"}
         HR{"i-Croatia"}
@@ -195,7 +195,7 @@ zu{
         ML{"i-Mali"}
         MM{"e-Myanmar [Burma]"}
         MN{"i-Mongolia"}
-        MO{"i-Macau SAR China"}
+        MO{"i-Macau"}
         MP{"i-Northern Mariana Islands"}
         MQ{"i-Martinique"}
         MR{"i-Mauritania"}
@@ -230,7 +230,7 @@ zu{
         PM{"i-Saint Pierre kanye ne-Miquelon"}
         PN{"i-Pitcairn Islands"}
         PR{"i-Puerto Rico"}
-        PS{"i-Palestinian Territories"}
+        PS{"iPhalestina"}
         PT{"i-Portugal"}
         PW{"i-Palau"}
         PY{"i-Paraguay"}

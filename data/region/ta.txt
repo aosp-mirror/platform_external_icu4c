@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/ta.xml
 // *
@@ -141,7 +141,7 @@ ta{
         GU{"குவாம்"}
         GW{"கினி-பிஸ்ஸாவ்"}
         GY{"கயானா"}
-        HK{"ஹாங்காங் சார் சீனா"}
+        HK{"ஹாங்காங்"}
         HM{"ஹேர்ட் மற்றும் மெக்டொனால்டு"}
         HN{"ஹாண்டுராஸ்"}
         HR{"குரோசியா"}
@@ -195,7 +195,7 @@ ta{
         ML{"மாலீ"}
         MM{"மியான்மார் [பர்மா]"}
         MN{"மங்கோலியா"}
-        MO{"மகாவோ சார் சீனா"}
+        MO{"மகாவோ"}
         MP{"வடக்கு மரியானா தீவுகள்"}
         MQ{"மார்டினிக்"}
         MR{"மௌரிடானியா"}
@@ -230,7 +230,7 @@ ta{
         PM{"செயின்ட் பியர் மற்றும் மிக்வேலான்"}
         PN{"பிட்கெய்ர்ன்"}
         PR{"பியூர்டோ ரிகோ"}
-        PS{"பாலஸ்தீனியன் மாஹாணங்கள்"}
+        PS{"பாலஸ்தீனம்"}
         PT{"போர்ச்சுக்கல்"}
         PW{"பாலோ"}
         PY{"பாரகுவே"}

@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/ne.xml
 // *
@@ -141,7 +141,7 @@ ne{
         GU{"गुवाम"}
         GW{"गिनी-बिसाउ"}
         GY{"गुयाना"}
-        HK{"हङकङ चिनिँया समाजवादी स्वायत्त क्षेत्र"}
+        HK{"हङकङ"}
         HM{"हर्ड टापु र म्याकडोनाल्ड टापु"}
         HN{"हन्डुरास"}
         HR{"क्रोएशिया"}
@@ -195,7 +195,7 @@ ne{
         ML{"माली"}
         MM{"म्यान्मार [बर्मा]"}
         MN{"मङ्गोलिया"}
-        MO{"मकावो चिनिँया स्वशासित क्षेत्र"}
+        MO{"मकावो"}
         MP{"उत्तरी मारिआना टापु"}
         MQ{"मार्टिनिक"}
         MR{"माउरिटानिया"}
@@ -230,7 +230,7 @@ ne{
         PM{"सेन्ट पिर्रे र मिक्केलोन"}
         PN{"पिटकाइर्न टापु"}
         PR{"प्युर्टोरिको"}
-        PS{"प्यालेस्टनी भू-भागहरु"}
+        PS{"प्यालेसटाइन"}
         PT{"पोर्तुगल"}
         PW{"पलाउ"}
         PY{"प्यारागुये"}

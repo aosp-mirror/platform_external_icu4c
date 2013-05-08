@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/ko.xml
 // *
@@ -141,7 +141,7 @@ ko{
         GU{"괌"}
         GW{"기네비쏘"}
         GY{"가이아나"}
-        HK{"홍콩, 중국 특별행정구"}
+        HK{"홍콩"}
         HM{"허드섬-맥도널드제도"}
         HN{"온두라스"}
         HR{"크로아티아"}
@@ -195,7 +195,7 @@ ko{
         ML{"말리"}
         MM{"미얀마"}
         MN{"몽골"}
-        MO{"마카오, 중국 특별행정구"}
+        MO{"마카오"}
         MP{"북마리아나제도"}
         MQ{"말티니크"}
         MR{"모리타니"}
@@ -230,7 +230,7 @@ ko{
         PM{"세인트피에르-미케롱"}
         PN{"핏케언섬"}
         PR{"푸에르토리코"}
-        PS{"팔레스타인 지구"}
+        PS{"팔레스타인"}
         PT{"포르투갈"}
         PW{"팔라우"}
         PY{"파라과이"}
