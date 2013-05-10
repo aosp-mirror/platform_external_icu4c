@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/kn.xml
 // *
@@ -141,7 +141,7 @@ kn{
         GU{"ಗುಯಾಮ್"}
         GW{"ಗಿನಿ-ಬಿಸ್ಸಾವ್"}
         GY{"ಗಯಾನಾ"}
-        HK{"ಹಾಂಕ್‌ ಕಾಂಗ್ SAR ಚೈನಾ"}
+        HK{"ಹಾಂಗ್ ಕಾಂಗ್"}
         HM{"ಹರ್ಡ್ ದ್ವೀಪ ಮತ್ತು ಮ್ಯಾಕ್ಡೊನಾಲ್ಡ್ ದ್ವೀಪಗಳು"}
         HN{"ಹೊಂಡುರಾಸ್"}
         HR{"ಕ್ರೋಯೇಶಿಯಾ"}
@@ -195,7 +195,7 @@ kn{
         ML{"ಮಾಲಿ"}
         MM{"ಮಯನ್ಮಾರ್"}
         MN{"ಮೊಂಗೋಲಿಯಾ"}
-        MO{"ಮ್ಯಾಕು SAR ಚೈನಾ"}
+        MO{"ಮಖಾವ್"}
         MP{"ಉತ್ತರ ಮರಿಯಾನಾ ದ್ವೀಪಗಳು"}
         MQ{"ಮಾರ್ಟಿನಿಕ್"}
         MR{"ಮಾರಿಟಾನಿಯಾ"}
@@ -230,7 +230,7 @@ kn{
         PM{"ಸೇಂಟ್ ಪಿಯರೆ ಮತ್ತು ಮಿಕೆಲನ್"}
         PN{"ಪಿಟ್‌ಕೈರ್ನ್ ದ್ವೀಪಗಳು"}
         PR{"ಪ್ಯೂರ್ಟೋ ರಿಕೊ"}
-        PS{"ಪ್ಯಾಲಿಸ್ಟೇನಿಯನ್ ಪ್ರದೇಶ"}
+        PS{"ಪ್ಯಾಲೆಸ್ತಿನಾ"}
         PT{"ಪೋರ್ಚುಗಲ್"}
         PW{"ಪಲಾವು"}
         PY{"ಪರಾಗ್ವೇ"}

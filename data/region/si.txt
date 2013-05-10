@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/si.xml
 // *
@@ -141,7 +141,7 @@ si{
         GU{"ගුවාම්"}
         GW{"ගිනි බිසව්"}
         GY{"ගයනාව"}
-        HK{"හොංකොං චීන විශේෂ පරිපාලන කලාපය"}
+        HK{"හොංකොං"}
         HM{"හාඩ් සහ මැක්ඩොනල්ඩ් දූපත්"}
         HN{"හොන්ඩුරාස්"}
         HR{"ක්‍රොටියා"}
@@ -195,7 +195,7 @@ si{
         ML{"මාලි"}
         MM{"මියන්මාරය"}
         MN{"මොන්ගෝලියාව"}
-        MO{"මකාවු සාර් චීන"}
+        MO{"මකාවු"}
         MP{"උතුරු මරියානා දූපත්"}
         MQ{"මර්ටිනික්"}
         MR{"මාර්ටිනික්"}

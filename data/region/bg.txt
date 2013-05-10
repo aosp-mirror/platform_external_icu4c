@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/bg.xml
 // *
@@ -141,7 +141,7 @@ bg{
         GU{"Гуам"}
         GW{"Гвинея-Бисау"}
         GY{"Гвиана"}
-        HK{"Хонг-Конг О.А.Р. на Китай"}
+        HK{"Хонконг"}
         HM{"Остров Хърд и Острови Макдоналд"}
         HN{"Хондурас"}
         HR{"Хърватска"}
@@ -195,7 +195,7 @@ bg{
         ML{"Мали"}
         MM{"Мианмар [Бирма]"}
         MN{"Монголия"}
-        MO{"Макао О.А.Р. на Китай"}
+        MO{"Макао"}
         MP{"Северни Мариански Острови"}
         MQ{"Мартиника"}
         MR{"Мавритания"}
@@ -230,7 +230,7 @@ bg{
         PM{"Сен Пиер и Мигелон"}
         PN{"Питкайрн"}
         PR{"Пуерто Рико"}
-        PS{"Палестински територии"}
+        PS{"Палестина"}
         PT{"Португалия"}
         PW{"Палау"}
         PY{"Парагвай"}

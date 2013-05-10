@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/ja.xml
 // *
@@ -141,7 +141,7 @@ ja{
         GU{"グアム"}
         GW{"ギニアビサウ"}
         GY{"ガイアナ"}
-        HK{"中華人民共和国香港特別行政区"}
+        HK{"香港"}
         HM{"ハード島・マクドナルド諸島"}
         HN{"ホンジュラス"}
         HR{"クロアチア"}
@@ -195,7 +195,7 @@ ja{
         ML{"マリ"}
         MM{"ミャンマー"}
         MN{"モンゴル"}
-        MO{"中華人民共和国マカオ特別行政区"}
+        MO{"マカオ"}
         MP{"北マリアナ諸島"}
         MQ{"マルティニーク"}
         MR{"モーリタニア"}
@@ -282,7 +282,7 @@ ja{
         UA{"ウクライナ"}
         UG{"ウガンダ"}
         UM{"米領太平洋諸島"}
-        US{"アメリカ"}
+        US{"アメリカ合衆国"}
         UY{"ウルグアイ"}
         UZ{"ウズベキスタン"}
         VA{"バチカン市国"}

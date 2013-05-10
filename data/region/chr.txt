@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/chr.xml
 // *
@@ -157,7 +157,7 @@ chr{
         ML{"ᎹᎵ"}
         MM{"ᎹᏯᎹᎵ"}
         MN{"ᎹᏂᎪᎵᎠ"}
-        MO{"ᎹᎧᎣ [ᎤᏓᏤᎵᏓ ᏧᏂᎸᏫᏍᏓᏁᏗ ᎢᎬᎾᏕᎾ] ᏣᎢ"}
+        MO{"ᎹᎧᎣ"}
         MP{"ᎾᏍᎩ ᎤᏴᏢ ᏗᏜ ᎹᎵᎠᎾ ᏚᎦᏚᏛ"}
         MQ{"ᎹᏘᏂᎨ"}
         MR{"ᎹᏘᎢᏯ"}

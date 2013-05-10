@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/he.xml
 // *
@@ -141,7 +141,7 @@ he{
         GU{"גואם"}
         GW{"גיניאה-ביסאו"}
         GY{"גיאנה"}
-        HK{"הונג קונג - מחוז מנהלי מיוחד של סין"}
+        HK{"הונג קונג"}
         HM{"איי הרד ואיי מקדונלנד"}
         HN{"הונדורס"}
         HR{"קרואטיה"}
@@ -195,7 +195,7 @@ he{
         ML{"מאלי"}
         MM{"מיאנמאר [בורמה]‎"}
         MN{"מונגוליה"}
-        MO{"מקאו - מחוז מנהלי מיוחד של סין"}
+        MO{"מקאו"}
         MP{"איי מריאנה הצפוניים"}
         MQ{"מרטיניק"}
         MR{"מאוריטניה"}
@@ -230,7 +230,7 @@ he{
         PM{"סנט פייר ומיקלון"}
         PN{"איי פיטקרן"}
         PR{"פורטו ריקו"}
-        PS{"השטחים הפלסטיניים"}
+        PS{"פלסטין"}
         PT{"פורטוגל"}
         PW{"פאלאו"}
         PY{"פרגוואי"}

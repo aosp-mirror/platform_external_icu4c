@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/eu.xml
 // *
@@ -141,7 +141,7 @@ eu{
         GU{"Guam"}
         GW{"Ginea-Bissau"}
         GY{"Guyana"}
-        HK{"Hong Kong AEB Txina"}
+        HK{"Hong Kong"}
         HM{"Heard eta McDonald Uharteak"}
         HN{"Honduras"}
         HR{"Kroazia"}
@@ -195,7 +195,7 @@ eu{
         ML{"Mali"}
         MM{"Myanmar"}
         MN{"Mongolia"}
-        MO{"Makau"}
+        MO{"Macau"}
         MP{"Iparraldeko Mariana uharteak"}
         MQ{"Martinika"}
         MR{"Mauritania"}
@@ -230,7 +230,7 @@ eu{
         PM{"Saint-Pierre eta Mikelune"}
         PN{"Pitcairn uharteak"}
         PR{"Puerto Rico"}
-        PS{"Palestinako Lurraldeak"}
+        PS{"Palestina"}
         PT{"Portugal"}
         PW{"Palau"}
         PY{"Paraguai"}
