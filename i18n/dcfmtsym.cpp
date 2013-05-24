@@ -417,6 +417,10 @@ DecimalFormatSymbols::initialize() {
     fSymbols[kNaNSymbol] = (UChar)0xfffd;               // SUB NaN
     fSymbols[kSignificantDigitSymbol] = (UChar)0x0040;  // '@' significant digit
     fSymbols[kMonetaryGroupingSeparatorSymbol].remove(); // 
+
+    // BEGIN android-added
+    *validLocale = *actualLocale = 0;
+    // END android-added
 }
 
 Locale
