@@ -79,6 +79,8 @@ DecimalFormatSymbols::DecimalFormatSymbols(const Locale& loc, UErrorCode& status
 
 DecimalFormatSymbols::DecimalFormatSymbols()
 {
+    *validLocale = *actualLocale = 0;
+    currPattern = NULL;
     initialize();
 }
 // END android-added
@@ -417,10 +419,6 @@ DecimalFormatSymbols::initialize() {
     fSymbols[kNaNSymbol] = (UChar)0xfffd;               // SUB NaN
     fSymbols[kSignificantDigitSymbol] = (UChar)0x0040;  // '@' significant digit
     fSymbols[kMonetaryGroupingSeparatorSymbol].remove(); // 
-
-    // BEGIN android-added
-    *validLocale = *actualLocale = 0;
-    // END android-added
 }
 
 Locale
