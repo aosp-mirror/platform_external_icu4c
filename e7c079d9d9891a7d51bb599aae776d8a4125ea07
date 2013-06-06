@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1d879d2a_a14a4931",
+        "filename": "i18n/dcfmtsym.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 422,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-06-06T23:35:24Z",
+      "side": 0,
+      "message": "icu folks: note that this was only just added in jb-mr2. prior to that, we\u0027d been leaving these char[]s uninitialized, along with currPattern.",
+      "revId": "e7c079d9d9891a7d51bb599aae776d8a4125ea07",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
