@@ -74,7 +74,7 @@ DecimalFormatSymbols::DecimalFormatSymbols(const Locale& loc, UErrorCode& status
     initialize(locale, status);
 }
 
-// BEGIN android-added: we need a default constructor for performance.
+// BEGIN android-added: we need a default constructor for performance (http://bugs.icu-project.org/trac/ticket/7392).
 // -------------------------------------
 
 DecimalFormatSymbols::DecimalFormatSymbols()
