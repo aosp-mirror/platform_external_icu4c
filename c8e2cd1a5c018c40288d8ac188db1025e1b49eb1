@@ -16,6 +16,24 @@
       "revId": "c8e2cd1a5c018c40288d8ac188db1025e1b49eb1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7dfb39ce_c76500f3",
+        "filename": "i18n/dcfmtsym.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-06-07T23:22:51Z",
+      "side": 1,
+      "message": "there are two \u0027initialize\u0027s, one of which calls the other after setting these. i think upstream the zero-arg initialize should be renamed to make it clear that it\u0027s just setting the fallback values. these two lines might want to be an initializeFields or somesuch.\n\nfor Android, though, this keeps the android-changed bit all in one place, and follows the style of the other caller of the zero-arg initialize. (these lines are copy \u0026 pasted from there.)",
+      "parentUuid": "1d879d2a_7ca9d882",
+      "revId": "c8e2cd1a5c018c40288d8ac188db1025e1b49eb1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
