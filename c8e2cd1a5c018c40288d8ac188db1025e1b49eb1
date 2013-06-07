@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1d879d2a_7ca9d882",
+        "filename": "i18n/dcfmtsym.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1020315
+      },
+      "writtenOn": "2013-06-07T16:59:00Z",
+      "side": 1,
+      "message": "Should this not still be set in initialize() or _somewhere_? Probably cleanest as a constructor initializer?",
+      "revId": "c8e2cd1a5c018c40288d8ac188db1025e1b49eb1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
