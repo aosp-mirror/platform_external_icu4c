@@ -43,11 +43,11 @@ Locale Resource Files:
   These are
   - gsm-03.38-2000.cnv
   - iso-8859_16-2001.cnv
-  - docomo-shift_jis-2007.cnv
+  - docomo-shift_jis-2012.cnv
   - kddi-jisx-208-2007.cnv
-  - kddi-shift_jis-2007.cnv
+  - kddi-shift_jis-2012.cnv
   - softbank-jisx-208-2007.cnv
-  - softbank-shift_jis-2007.cnv
+  - softbank-shift_jis-2012.cnv
 
 - Text format ICU resource files are under external/icu4c/data directory.
   Binary resource files are packaged in external/icu4c/stubdata/icudtXXl-all.dat.

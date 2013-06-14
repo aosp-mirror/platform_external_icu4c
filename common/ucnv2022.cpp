@@ -476,8 +476,7 @@ _ISO2022Open(UConverter *cnv, UConverterLoadArgs *pArgs, UErrorCode *errorCode){
         }
         version = pArgs->options & UCNV_OPTIONS_VERSION_MASK;
         myConverterData->version = version;
-
-        /* BEGIN android-changed */
+        /* Begin Google-specific change. */
         /* The "jk" locale ID was made up for KDDI ISO-2022-JP. */
         /* The "js" locale ID was made up for SoftBank ISO-2022-JP. */
         if((myLocale[0]=='j' &&
@@ -502,9 +501,18 @@ _ISO2022Open(UConverter *cnv, UConverterLoadArgs *pArgs, UErrorCode *errorCode){
                 myConverterData->myConverterArray[JISX208] =
                     ucnv_loadSharedData("softbank-jisx-208-2007", &stackPieces, &stackArgs, errorCode);
             } else {
-                myConverterData->myConverterArray[JISX208] =
-                    ucnv_loadSharedData("Shift-JIS", &stackPieces, &stackArgs, errorCode);
+                /*
+                 * Change for http://b/issue?id=937017 :
+                 * Restore JIS X 0208 ISO-2022-JP mappings from before
+                 * sharing the table with the Shift-JIS converter
+                 * (CL 5963009 and http://bugs.icu-project.org/trac/ticket/5797).
+                 * TODO(mscherer): Create and use a new, unified Google Shift-JIS
+                 * table for both Shift-JIS and ISO-2022-JP.
+                 */
+                myConverterData->myConverterArray[JISX208]  = 
+                    ucnv_loadSharedData("jisx-208", &stackPieces, &stackArgs, errorCode);
             }
+            /* End Google-specific change. */
             /* END android-changed */
 
             if(jpCharsetMasks[version]&CSM(JISX212)) {

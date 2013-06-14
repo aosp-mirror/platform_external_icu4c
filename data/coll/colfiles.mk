@@ -1,6 +1,6 @@
-# *   Copyright (C) 1998-2012, International Business Machines
+# *   Copyright (C) 1998-2013, International Business Machines
 # *   Corporation and others.  All Rights Reserved.
-COLLATION_CLDR_VERSION = 22.1.1
+COLLATION_CLDR_VERSION = 23
 # A list of txt's to build
 # Note:
 #
@@ -27,11 +27,10 @@ COLLATION_CLDR_VERSION = 22.1.1
 
 # Aliases without a corresponding xx.xml file (see icu-config.xml & build.xml)
 COLLATION_SYNTHETIC_ALIAS = de_.txt de__PHONEBOOK.txt es_.txt es__TRADITIONAL.txt\
- hi_.txt hi__DIRECT.txt in.txt in_ID.txt iw.txt\
- iw_IL.txt mo.txt no.txt no_NO.txt pa_IN.txt\
- sh.txt sh_BA.txt sh_YU.txt sr_BA.txt sr_ME.txt\
- sr_RS.txt zh_.txt zh_CN.txt zh_HK.txt zh_MO.txt\
- zh_SG.txt zh_TW.txt zh_TW_STROKE.txt zh__PINYIN.txt
+ in.txt in_ID.txt iw.txt iw_IL.txt mo.txt\
+ no.txt no_NO.txt pa_IN.txt sh.txt sh_BA.txt\
+ sh_YU.txt sr_BA.txt sr_ME.txt sr_RS.txt zh_CN.txt\
+ zh_HK.txt zh_MO.txt zh_SG.txt zh_TW.txt
 
 
 # All aliases (to not be included under 'installed'), but not including root.
@@ -86,23 +85,24 @@ COLLATION_EMPTY_SOURCE = af_NA.txt af_ZA.txt ar_001.txt ar_AE.txt\
  ka_GE.txt kk_KZ.txt kl_GL.txt km_KH.txt kn_IN.txt\
  ko_KP.txt ko_KR.txt kok_IN.txt ln_AO.txt ln_CD.txt\
  ln_CF.txt ln_CG.txt lt_LT.txt lv_LV.txt mk_MK.txt\
- ml_IN.txt mr_IN.txt ms.txt ms_BN.txt ms_MY.txt\
- ms_SG.txt mt_MT.txt my_MM.txt nb_NO.txt nl.txt\
- nl_AW.txt nl_BE.txt nl_CW.txt nl_NL.txt nl_SR.txt\
- nl_SX.txt nn_NO.txt om_ET.txt om_KE.txt or_IN.txt\
- pa_Arab.txt pa_Arab_PK.txt pa_Guru.txt pa_Guru_IN.txt pl_PL.txt\
- ps_AF.txt pt.txt pt_AO.txt pt_BR.txt pt_CV.txt\
- pt_GW.txt pt_MO.txt pt_MZ.txt pt_PT.txt pt_ST.txt\
- pt_TL.txt ro_MD.txt ro_RO.txt ru_BY.txt ru_KG.txt\
- ru_KZ.txt ru_MD.txt ru_RU.txt ru_UA.txt si_LK.txt\
- sk_SK.txt sl_SI.txt sq_AL.txt sq_MK.txt sr_Cyrl.txt\
- sr_Cyrl_BA.txt sr_Cyrl_ME.txt sr_Cyrl_RS.txt sr_Latn_BA.txt sr_Latn_ME.txt\
- sr_Latn_RS.txt sv_AX.txt sv_FI.txt sv_SE.txt sw.txt\
- sw_KE.txt sw_TZ.txt sw_UG.txt ta_IN.txt ta_LK.txt\
- ta_MY.txt ta_SG.txt te_IN.txt th_TH.txt to_TO.txt\
- tr_CY.txt tr_TR.txt uk_UA.txt ur_IN.txt ur_PK.txt\
- vi_VN.txt yo_NG.txt zh_Hans.txt zh_Hans_CN.txt zh_Hans_SG.txt\
- zh_Hant_HK.txt zh_Hant_MO.txt zh_Hant_TW.txt zu.txt zu_ZA.txt
+ ml_IN.txt mr_IN.txt ms.txt ms_Latn.txt ms_Latn_BN.txt\
+ ms_Latn_MY.txt ms_Latn_SG.txt mt_MT.txt my_MM.txt nb_NO.txt\
+ nl.txt nl_AW.txt nl_BE.txt nl_CW.txt nl_NL.txt\
+ nl_SR.txt nl_SX.txt nn_NO.txt om_ET.txt om_KE.txt\
+ or_IN.txt pa_Arab.txt pa_Arab_PK.txt pa_Guru.txt pa_Guru_IN.txt\
+ pl_PL.txt ps_AF.txt pt.txt pt_AO.txt pt_BR.txt\
+ pt_CV.txt pt_GW.txt pt_MO.txt pt_MZ.txt pt_PT.txt\
+ pt_ST.txt pt_TL.txt ro_MD.txt ro_RO.txt ru_BY.txt\
+ ru_KG.txt ru_KZ.txt ru_MD.txt ru_RU.txt ru_UA.txt\
+ si_LK.txt sk_SK.txt sl_SI.txt sq_AL.txt sq_MK.txt\
+ sr_Cyrl.txt sr_Cyrl_BA.txt sr_Cyrl_ME.txt sr_Cyrl_RS.txt sr_Latn_BA.txt\
+ sr_Latn_ME.txt sr_Latn_RS.txt sv_AX.txt sv_FI.txt sv_SE.txt\
+ sw.txt sw_KE.txt sw_TZ.txt sw_UG.txt ta_IN.txt\
+ ta_LK.txt ta_MY.txt ta_SG.txt te_IN.txt th_TH.txt\
+ to_TO.txt tr_CY.txt tr_TR.txt uk_UA.txt ur_IN.txt\
+ ur_PK.txt vi_VN.txt yo_NG.txt zh_Hans.txt zh_Hans_CN.txt\
+ zh_Hans_SG.txt zh_Hant_HK.txt zh_Hant_MO.txt zh_Hant_TW.txt zu.txt\
+ zu_ZA.txt
 
 
 # Ordinary resources
