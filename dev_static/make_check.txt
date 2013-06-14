@@ -1,0 +1,969 @@
+Note: rebuild with "make VERBOSE=1 check" to show all compiler parameters.
+make[0]: Making `all' in `stubdata'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/stubdata'
+make[1]: Nothing to be done for `all'.
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/stubdata'
+make[0]: Making `all' in `common'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/common'
+make[1]: Nothing to be done for `all'.
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/common'
+make[0]: Making `all' in `i18n'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/i18n'
+make[1]: Nothing to be done for `all'.
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/i18n'
+make[0]: Making `all' in `layout'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/layout'
+make[1]: Nothing to be done for `all'.
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/layout'
+make[0]: Making `all' in `layoutex'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/layoutex'
+make[1]: Nothing to be done for `all'.
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/layoutex'
+make[0]: Making `all' in `tools'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools'
+make[1]: Making `all' in `toolutil'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/toolutil'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/toolutil'
+make[1]: Making `all' in `ctestfw'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/ctestfw'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/ctestfw'
+make[1]: Making `all' in `makeconv'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/makeconv'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/makeconv'
+make[1]: Making `all' in `genrb'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/genrb'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/genrb'
+make[1]: Making `all' in `genbrk'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/genbrk'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/genbrk'
+make[1]: Making `all' in `gencnval'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gencnval'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gencnval'
+make[1]: Making `all' in `gensprep'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gensprep'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gensprep'
+make[1]: Making `all' in `icuinfo'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/icuinfo'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/icuinfo'
+make[1]: Making `all' in `genccode'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/genccode'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/genccode'
+make[1]: Making `all' in `gencmn'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gencmn'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gencmn'
+make[1]: Making `all' in `icupkg'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/icupkg'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/icupkg'
+make[1]: Making `all' in `pkgdata'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/pkgdata'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/pkgdata'
+make[1]: Making `all' in `gentest'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gentest'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gentest'
+make[1]: Making `all' in `gennorm2'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gennorm2'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gennorm2'
+make[1]: Making `all' in `gencfu'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gencfu'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gencfu'
+make[1]: Making `all' in `gendict'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gendict'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gendict'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools'
+make[2]: Nothing to be done for `all-local'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools'
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools'
+make[0]: Making `all' in `data'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/data'
+LD_LIBRARY_PATH=../stubdata:../tools/ctestfw:../lib:$LD_LIBRARY_PATH  ../bin/pkgdata -O ../data/icupkg.inc -q -c -s /usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/data/out/build/icudt51l -d ../lib -e icudt51  -T ./out/tmp -p icudt51l -m static -r 51.1 -L icudata ./out/tmp/icudata.lst
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/data'
+make[0]: Making `all' in `io'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/io'
+make[1]: Nothing to be done for `all'.
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/io'
+make[0]: Making `all' in `extra'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/extra'
+make[1]: Making `all' in `uconv'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/extra/uconv'
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/extra/uconv'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/extra'
+make[2]: Nothing to be done for `all-local'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/extra'
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/extra'
+make[0]: Making `all' in `samples'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/samples'
+make[1]: Making `all' in `date'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/samples/date'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/samples/date'
+make[1]: Making `all' in `cal'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/samples/cal'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/samples/cal'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/samples'
+make[2]: Nothing to be done for `all-local'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/samples'
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/samples'
+make[0]: Making `all' in `test'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/test'
+make[1]: Nothing to be done for `all'.
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/test'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static'
+Note: rebuild with "make VERBOSE=1 all-local" to show all compiler parameters.
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static'
+make[0]: Making `check' in `stubdata'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/stubdata'
+make[1]: Nothing to be done for `check'.
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/stubdata'
+make[0]: Making `check' in `common'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/common'
+make[1]: Nothing to be done for `check'.
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/common'
+make[0]: Making `check' in `i18n'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/i18n'
+make[1]: Nothing to be done for `check'.
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/i18n'
+make[0]: Making `check' in `layout'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/layout'
+make[1]: Nothing to be done for `check'.
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/layout'
+make[0]: Making `check' in `layoutex'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/layoutex'
+make[1]: Nothing to be done for `check'.
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/layoutex'
+make[0]: Making `check' in `tools'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools'
+make[1]: Making `check' in `toolutil'
+make[1]: Making `all' in `toolutil'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/toolutil'
+make[2]: Nothing to be done for `check'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/toolutil'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/toolutil'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/toolutil'
+make[1]: Making `check' in `ctestfw'
+make[1]: Making `all' in `ctestfw'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/ctestfw'
+make[2]: Nothing to be done for `check'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/ctestfw'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/ctestfw'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/ctestfw'
+make[1]: Making `check' in `makeconv'
+make[1]: Making `all' in `makeconv'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/makeconv'
+make[2]: Nothing to be done for `check'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/makeconv'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/makeconv'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/makeconv'
+make[1]: Making `check' in `genrb'
+make[1]: Making `all' in `genrb'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/genrb'
+make[2]: Nothing to be done for `check'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/genrb'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/genrb'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/genrb'
+make[1]: Making `check' in `genbrk'
+make[1]: Making `all' in `genbrk'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/genbrk'
+make[2]: Nothing to be done for `check'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/genbrk'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/genbrk'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/genbrk'
+make[1]: Making `check' in `gencnval'
+make[1]: Making `all' in `gencnval'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gencnval'
+make[2]: Nothing to be done for `check'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gencnval'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gencnval'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gencnval'
+make[1]: Making `check' in `gensprep'
+make[1]: Making `all' in `gensprep'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gensprep'
+make[2]: Nothing to be done for `check'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gensprep'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gensprep'
+make[2]: Nothing to be done for `all'.
+make[1]: Making `check' in `icuinfo'
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gensprep'
+make[1]: Making `all' in `icuinfo'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/icuinfo'
+LD_LIBRARY_PATH=../../lib:../../stubdata:../../tools/ctestfw:$LD_LIBRARY_PATH  ./icuinfo -i ../../data/out/build/icudt51l -x ../../config/icuinfo.xml -v -K
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/icuinfo'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/icuinfo'
+make[1]: Making `all' in `genccode'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/genccode'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/genccode'
+make[1]: Making `all' in `gencmn'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gencmn'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gencmn'
+make[1]: Making `all' in `icupkg'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/icupkg'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/icupkg'
+make[1]: Making `all' in `pkgdata'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/pkgdata'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/pkgdata'
+make[1]: Making `all' in `gentest'
+ <icuSystemParams type="icu4c">
+    <param name="copyright"> Copyright (C) 2012, International Business Machines Corporation and others. All Rights Reserved. </param>
+    <param name="product">icu4c</param>
+    <param name="product.full">International Components for Unicode for C/C++</param>
+    <param name="version">51.1</param>
+    <param name="version.unicode">6.2</param>
+    <param name="platform.number">4000</param>
+    <param name="platform.type">Linux</param>
+    <param name="locale.default">en_US</param>
+    <param name="locale.default.bcp47">en-US</param>
+    <param name="converter.default">UTF-8</param>
+    <param name="icudata.name">icudt51l</param>
+    <param name="icudata.path">../../data/out/build/icudt51l</param>
+    <param name="cldr.version">23.0</param>
+    <param name="tz.version">2013c</param>
+    <param name="tz.default">US/Pacific-New</param>
+    <param name="cpu.bits">64</param>
+    <param name="cpu.big_endian">0</param>
+    <param name="os.wchar_width">4</param>
+    <param name="os.charset_family">0</param>
+    <param name="os.host">x86_64-unknown-linux-gnu</param>
+    <param name="build.build">x86_64-unknown-linux-gnu</param>
+    <param name="build.cc">clang</param>
+    <param name="build.cxx">clang++</param>
+    <param name="uconfig.internal_digitlist">1</param>
+    <param name="uconfig.have_parseallinput">1</param>
+    <param name="uconfig.format_fastpaths_49">1</param>
+ </icuSystemParams>
+
+
+ICU Initialization returned: U_ZERO_ERROR
+Plugin file is: /usr/local/lib/icu/icuplugins51.txt
+ICU u_cleanup() called.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/icuinfo'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gentest'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gentest'
+make[1]: Making `check' in `genccode'
+make[1]: Making `all' in `gennorm2'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/genccode'
+make[2]: Nothing to be done for `check'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/genccode'
+make[1]: Making `check' in `gencmn'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gennorm2'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gennorm2'
+make[1]: Making `all' in `gencfu'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gencmn'
+make[2]: Nothing to be done for `check'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gencmn'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gencfu'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gencfu'
+make[1]: Making `check' in `icupkg'
+make[1]: Making `all' in `gendict'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/icupkg'
+make[2]: Nothing to be done for `check'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/icupkg'
+make[1]: Making `check' in `pkgdata'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gendict'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gendict'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools'
+make[2]: Nothing to be done for `all-local'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/pkgdata'
+make[2]: Nothing to be done for `check'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/pkgdata'
+make[1]: Making `check' in `gentest'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gentest'
+make[2]: Nothing to be done for `check'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gentest'
+make[1]: Making `check' in `gennorm2'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gennorm2'
+make[2]: Nothing to be done for `check'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gennorm2'
+make[1]: Making `check' in `gencfu'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gencfu'
+make[2]: Nothing to be done for `check'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gencfu'
+make[1]: Making `check' in `gendict'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gendict'
+make[2]: Nothing to be done for `check'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools/gendict'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools'
+make[2]: Nothing to be done for `check-local'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools'
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/tools'
+make[0]: Making `check' in `data'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/data'
+LD_LIBRARY_PATH=../stubdata:../tools/ctestfw:../lib:$LD_LIBRARY_PATH  ../bin/pkgdata -O ../data/icupkg.inc -q -c -s /usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/data/out/build/icudt51l -d ../lib -e icudt51  -T ./out/tmp -p icudt51l -m static -r 51.1 -L icudata ./out/tmp/icudata.lst
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/data'
+make[0]: Making `check' in `io'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/io'
+make[1]: Nothing to be done for `check'.
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/io'
+make[0]: Making `check' in `extra'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/extra'
+make[1]: Making `all' in `uconv'
+make[1]: Making `check' in `uconv'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/extra/uconv'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/extra/uconv'
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/extra/uconv'
+LD_LIBRARY_PATH=../../lib:../../stubdata:../../tools/ctestfw:$LD_LIBRARY_PATH  ./../../bin/uconv -f ibm-37 ../../../extra/uconv/samples/ibm-37-test.txt
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/extra'
+make[2]: Nothing to be done for `all-local'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/extra'
+PASS: Conversion from ibm-37 was successful.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/extra/uconv'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/extra'
+make[2]: Nothing to be done for `check-local'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/extra'
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/extra'
+make[0]: Making `check' in `samples'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/samples'
+make[1]: Making `all' in `date'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/samples/date'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/samples/date'
+make[1]: Making `all' in `cal'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/samples/cal'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/samples/cal'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/samples'
+make[2]: Nothing to be done for `all-local'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/samples'
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/samples'
+make[0]: Making `check' in `test'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/test'
+make[1]: Making `all' in `testdata'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/test/testdata'
+LD_LIBRARY_PATH=../../lib:../../stubdata:../../tools/ctestfw:$LD_LIBRARY_PATH   ../../bin/pkgdata -q -c -s /usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/test/testdata/out/build/icudt51l -T ../../test/testdata/out/build -d ../../test/testdata/out -s ../../test/testdata/out/build -p testdata -m common ../../test/testdata/out/build/testdata.lst
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/test/testdata'
+make[1]: Making `all' in `intltest'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/test/intltest'
+   (deps)	 ../../../test/intltest/regiontst.cpp
+   (deps)	 ../../../test/intltest/compactdecimalformattest.cpp
+   (deps)	 ../../../test/intltest/genderinfotest.cpp
+   (deps)	 ../../../test/intltest/listformattertest.cpp
+   (deps)	 ../../../test/intltest/dcfmtest.cpp
+   (deps)	 ../../../test/intltest/alphaindextst.cpp
+   (deps)	 ../../../test/intltest/locnmtst.cpp
+   (deps)	 ../../../test/intltest/bidiconf.cpp
+   (deps)	 ../../../test/intltest/simplethread.cpp
+   (deps)	 ../../../test/intltest/itspoof.cpp
+   (deps)	 ../../../test/intltest/tufmtts.cpp
+   (deps)	 ../../../test/intltest/dtifmtts.cpp
+   (deps)	 ../../../test/intltest/ssearch.cpp
+   (deps)	 ../../../test/intltest/tzfmttst.cpp
+   (deps)	 ../../../test/intltest/tzoffloc.cpp
+   (deps)	 ../../../test/intltest/tzrulets.cpp
+   (deps)	 ../../../test/intltest/csdetest.cpp
+   (deps)	 ../../../test/intltest/winutil.cpp
+   (deps)	 ../../../test/intltest/winnmtst.cpp
+   (deps)	 ../../../test/intltest/windttst.cpp
+   (deps)	 ../../../test/intltest/utxttest.cpp
+   (deps)	 ../../../test/intltest/tokiter.cpp
+   (deps)	 ../../../test/intltest/textfile.cpp
+   (deps)	 ../../../test/intltest/uvectest.cpp
+   (deps)	 ../../../test/intltest/v32test.cpp
+   (deps)	 ../../../test/intltest/calcasts.cpp
+   (deps)	 ../../../test/intltest/incaltst.cpp
+   (deps)	 ../../../test/intltest/uts46test.cpp
+   (deps)	 ../../../test/intltest/testidna.cpp
+   (deps)	 ../../../test/intltest/testidn.cpp
+   (deps)	 ../../../test/intltest/punyref.c
+   (deps)	 ../../../test/intltest/nptrans.cpp
+   (deps)	 ../../../test/intltest/idnaconf.cpp
+   (deps)	 ../../../test/intltest/idnaref.cpp
+   (deps)	 ../../../test/intltest/uobjtest.cpp
+   (deps)	 ../../../test/intltest/icusvtst.cpp
+   (deps)	 ../../../test/intltest/ucaconf.cpp
+   (deps)	 ../../../test/intltest/itrbnfp.cpp
+   (deps)	 ../../../test/intltest/itrbnfrt.cpp
+   (deps)	 ../../../test/intltest/itrbnf.cpp
+   (deps)	 ../../../test/intltest/regextst.cpp
+   (deps)	 ../../../test/intltest/reptest.cpp
+   (deps)	 ../../../test/intltest/srchtest.cpp
+   (deps)	 ../../../test/intltest/jamotest.cpp
+   (deps)	 ../../../test/intltest/sfwdchit.cpp
+   (deps)	 ../../../test/intltest/normconf.cpp
+   (deps)	 ../../../test/intltest/trnserr.cpp
+   (deps)	 ../../../test/intltest/transrt.cpp
+   (deps)	 ../../../test/intltest/testutil.cpp
+   (deps)	 ../../../test/intltest/cpdtrtst.cpp
+   (deps)	 ../../../test/intltest/transapi.cpp
+   (deps)	 ../../../test/intltest/ittrans.cpp
+   (deps)	 ../../../test/intltest/rbbitst.cpp
+   (deps)	 ../../../test/intltest/rbbiapts.cpp
+   (deps)	 ../../../test/intltest/itrbbi.cpp
+   (deps)	 ../../../test/intltest/ucharstrietest.cpp
+   (deps)	 ../../../test/intltest/bytestrietest.cpp
+   (deps)	 ../../../test/intltest/thcoll.cpp
+   (deps)	 ../../../test/intltest/strtest.cpp
+   (deps)	 ../../../test/intltest/transtst.cpp
+   (deps)	 ../../../test/intltest/strcase.cpp
+   (deps)	 ../../../test/intltest/ustrtest.cpp
+   (deps)	 ../../../test/intltest/usettest.cpp
+   (deps)	 ../../../test/intltest/ucdtest.cpp
+   (deps)	 ../../../test/intltest/tztest.cpp
+   (deps)	 ../../../test/intltest/tzregts.cpp
+   (deps)	 ../../../test/intltest/tzbdtest.cpp
+   (deps)	 ../../../test/intltest/tstnorm.cpp
+   (deps)	 ../../../test/intltest/tstnrapi.cpp
+   (deps)	 ../../../test/intltest/tsputil.cpp
+   (deps)	 ../../../test/intltest/tsnmfmt.cpp
+   (deps)	 ../../../test/intltest/tsmthred.cpp
+   (deps)	 ../../../test/intltest/tsdtfmsy.cpp
+   (deps)	 ../../../test/intltest/tsdcfmsy.cpp
+   (deps)	 ../../../test/intltest/tsdate.cpp
+   (deps)	 ../../../test/intltest/tscoll.cpp
+   (deps)	 ../../../test/intltest/trcoll.cpp
+   (deps)	 ../../../test/intltest/tmsgfmt.cpp
+   (deps)	 ../../../test/intltest/tfsmalls.cpp
+   (deps)	 ../../../test/intltest/selfmts.cpp
+   (deps)	 ../../../test/intltest/tchcfmt.cpp
+   (deps)	 ../../../test/intltest/svccoll.cpp
+   (deps)	 ../../../test/intltest/sdtfmtts.cpp
+   (deps)	 ../../../test/intltest/restsnew.cpp
+   (deps)	 ../../../test/intltest/restest.cpp
+   (deps)	 ../../../test/intltest/regcoll.cpp
+   (deps)	 ../../../test/intltest/pptest.cpp
+   (deps)	 ../../../test/intltest/plurfmts.cpp
+   (deps)	 ../../../test/intltest/plurults.cpp
+   (deps)	 ../../../test/intltest/numrgts.cpp
+   (deps)	 ../../../test/intltest/numfmtst.cpp
+   (deps)	 ../../../test/intltest/nmfmtrt.cpp
+   (deps)	 ../../../test/intltest/nmfmapts.cpp
+   (deps)	 ../../../test/intltest/msfmrgts.cpp
+   (deps)	 ../../../test/intltest/mnkytst.cpp
+   (deps)	 ../../../test/intltest/miscdtfm.cpp
+   (deps)	 ../../../test/intltest/loctest.cpp
+   (deps)	 ../../../test/intltest/lcukocol.cpp
+   (deps)	 ../../../test/intltest/jacoll.cpp
+   (deps)	 ../../../test/intltest/itutil.cpp
+   (deps)	 ../../../test/intltest/itmajor.cpp
+   (deps)	 ../../../test/intltest/itformat.cpp
+   (deps)	 ../../../test/intltest/itercoll.cpp
+   (deps)	 ../../../test/intltest/intltest.cpp
+   (deps)	 ../../../test/intltest/g7coll.cpp
+   (deps)	 ../../../test/intltest/frcoll.cpp
+   (deps)	 ../../../test/intltest/ficoll.cpp
+   (deps)	 ../../../test/intltest/escoll.cpp
+   (deps)	 ../../../test/intltest/encoll.cpp
+   (deps)	 ../../../test/intltest/dtptngts.cpp
+   (deps)	 ../../../test/intltest/dtfmtrtts.cpp
+   (deps)	 ../../../test/intltest/dtfmttst.cpp
+   (deps)	 ../../../test/intltest/dtfmrgts.cpp
+   (deps)	 ../../../test/intltest/dtfmapts.cpp
+   (deps)	 ../../../test/intltest/decoll.cpp
+   (deps)	 ../../../test/intltest/dcfmapts.cpp
+   (deps)	 ../../../test/intltest/dadrcoll.cpp
+   (deps)	 ../../../test/intltest/dadrcal.cpp
+   (deps)	 ../../../test/intltest/dadrfmt.cpp
+   (deps)	 ../../../test/intltest/fldset.cpp
+   (deps)	 ../../../test/intltest/currcoll.cpp
+   (deps)	 ../../../test/intltest/convtest.cpp
+   (deps)	 ../../../test/intltest/colldata.cpp
+   (deps)	 ../../../test/intltest/cntabcol.cpp
+   (deps)	 ../../../test/intltest/citrtest.cpp
+   (deps)	 ../../../test/intltest/canittst.cpp
+   (deps)	 ../../../test/intltest/caltztst.cpp
+   (deps)	 ../../../test/intltest/caltest.cpp
+   (deps)	 ../../../test/intltest/calregts.cpp
+   (deps)	 ../../../test/intltest/callimts.cpp
+   (deps)	 ../../../test/intltest/astrotst.cpp
+   (deps)	 ../../../test/intltest/apicoll.cpp
+   (deps)	 ../../../test/intltest/allcoll.cpp
+   (deps)	 ../../../test/intltest/aliastst.cpp
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/test/intltest'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/test/intltest'
+   clang++	 ...  ../../../test/intltest/aliastst.cpp
+   clang++	 ...  ../../../test/intltest/allcoll.cpp
+   clang++	 ...  ../../../test/intltest/apicoll.cpp
+   clang++	 ...  ../../../test/intltest/astrotst.cpp
+   clang++	 ...  ../../../test/intltest/callimts.cpp
+   clang++	 ...  ../../../test/intltest/calregts.cpp
+   clang++	 ...  ../../../test/intltest/caltest.cpp
+   clang++	 ...  ../../../test/intltest/caltztst.cpp
+   clang++	 ...  ../../../test/intltest/canittst.cpp
+   clang++	 ...  ../../../test/intltest/citrtest.cpp
+   clang++	 ...  ../../../test/intltest/cntabcol.cpp
+   clang++	 ...  ../../../test/intltest/colldata.cpp
+   clang++	 ...  ../../../test/intltest/convtest.cpp
+   clang++	 ...  ../../../test/intltest/currcoll.cpp
+   clang++	 ...  ../../../test/intltest/fldset.cpp
+   clang++	 ...  ../../../test/intltest/dadrfmt.cpp
+   clang++	 ...  ../../../test/intltest/dadrcal.cpp
+   clang++	 ...  ../../../test/intltest/dadrcoll.cpp
+   clang++	 ...  ../../../test/intltest/dcfmapts.cpp
+   clang++	 ...  ../../../test/intltest/decoll.cpp
+   clang++	 ...  ../../../test/intltest/dtfmapts.cpp
+../../../test/intltest/dcfmapts.cpp:526:22: warning: conversion from string literal to 'char *' is deprecated [-Wdeprecated-writable-strings]
+        { 100.0, 3,  "100,000" },
+                     ^
+../../../test/intltest/dcfmapts.cpp:527:24: warning: conversion from string literal to 'char *' is deprecated [-Wdeprecated-writable-strings]
+        { 10034.0, -2, "100.34" },
+                       ^
+../../../test/intltest/dcfmapts.cpp:528:21: warning: conversion from string literal to 'char *' is deprecated [-Wdeprecated-writable-strings]
+        { 0.86, -3, "0.0009" },
+                    ^
+../../../test/intltest/dcfmapts.cpp:529:25: warning: conversion from string literal to 'char *' is deprecated [-Wdeprecated-writable-strings]
+        { -0.000455, 1, "-0%" },
+                        ^
+../../../test/intltest/dcfmapts.cpp:530:25: warning: conversion from string literal to 'char *' is deprecated [-Wdeprecated-writable-strings]
+        { -0.000555, 1, "-1%" },
+                        ^
+../../../test/intltest/dcfmapts.cpp:531:24: warning: conversion from string literal to 'char *' is deprecated [-Wdeprecated-writable-strings]
+        { 0.000455, 1, "0%" },
+                       ^
+../../../test/intltest/dcfmapts.cpp:532:24: warning: conversion from string literal to 'char *' is deprecated [-Wdeprecated-writable-strings]
+        { 0.000555, 1, "1%" },
+                       ^
+../../../test/intltest/dcfmapts.cpp:548:23: warning: comparison of integers of different signs: 'int32_t' (aka 'int') and 'unsigned long' [-Wsign-compare]
+    for(int32_t i=0;i < sizeof(testData)/sizeof(testData[0]);i++) {
+                    ~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   clang++	 ...  ../../../test/intltest/dtfmrgts.cpp
+   clang++	 ...  ../../../test/intltest/dtfmtrtts.cpp
+   clang++	 ...  ../../../test/intltest/dtfmttst.cpp
+   clang++	 ...  ../../../test/intltest/dtptngts.cpp
+8 warnings generated.
+   clang++	 ...  ../../../test/intltest/encoll.cpp
+   clang++	 ...  ../../../test/intltest/escoll.cpp
+   clang++	 ...  ../../../test/intltest/ficoll.cpp
+   clang++	 ...  ../../../test/intltest/frcoll.cpp
+   clang++	 ...  ../../../test/intltest/g7coll.cpp
+   clang++	 ...  ../../../test/intltest/intltest.cpp
+   clang++	 ...  ../../../test/intltest/itercoll.cpp
+   clang++	 ...  ../../../test/intltest/itformat.cpp
+   clang++	 ...  ../../../test/intltest/itmajor.cpp
+   clang++	 ...  ../../../test/intltest/itutil.cpp
+   clang++	 ...  ../../../test/intltest/jacoll.cpp
+   clang++	 ...  ../../../test/intltest/lcukocol.cpp
+   clang++	 ...  ../../../test/intltest/loctest.cpp
+   clang++	 ...  ../../../test/intltest/miscdtfm.cpp
+   clang++	 ...  ../../../test/intltest/mnkytst.cpp
+   clang++	 ...  ../../../test/intltest/msfmrgts.cpp
+   clang++	 ...  ../../../test/intltest/nmfmapts.cpp
+   clang++	 ...  ../../../test/intltest/nmfmtrt.cpp
+   clang++	 ...  ../../../test/intltest/numfmtst.cpp
+   clang++	 ...  ../../../test/intltest/numrgts.cpp
+   clang++	 ...  ../../../test/intltest/plurults.cpp
+   clang++	 ...  ../../../test/intltest/plurfmts.cpp
+   clang++	 ...  ../../../test/intltest/pptest.cpp
+   clang++	 ...  ../../../test/intltest/regcoll.cpp
+   clang++	 ...  ../../../test/intltest/restest.cpp
+   clang++	 ...  ../../../test/intltest/restsnew.cpp
+   clang++	 ...  ../../../test/intltest/sdtfmtts.cpp
+   clang++	 ...  ../../../test/intltest/svccoll.cpp
+   clang++	 ...  ../../../test/intltest/tchcfmt.cpp
+   clang++	 ...  ../../../test/intltest/selfmts.cpp
+   clang++	 ...  ../../../test/intltest/tfsmalls.cpp
+   clang++	 ...  ../../../test/intltest/tmsgfmt.cpp
+   clang++	 ...  ../../../test/intltest/trcoll.cpp
+   clang++	 ...  ../../../test/intltest/tscoll.cpp
+   clang++	 ...  ../../../test/intltest/tsdate.cpp
+   clang++	 ...  ../../../test/intltest/tsdcfmsy.cpp
+   clang++	 ...  ../../../test/intltest/tsdtfmsy.cpp
+   clang++	 ...  ../../../test/intltest/tsmthred.cpp
+   clang++	 ...  ../../../test/intltest/tsnmfmt.cpp
+   clang++	 ...  ../../../test/intltest/tsputil.cpp
+   clang++	 ...  ../../../test/intltest/tstnrapi.cpp
+   clang++	 ...  ../../../test/intltest/tstnorm.cpp
+   clang++	 ...  ../../../test/intltest/tzbdtest.cpp
+   clang++	 ...  ../../../test/intltest/tzregts.cpp
+   clang++	 ...  ../../../test/intltest/tztest.cpp
+   clang++	 ...  ../../../test/intltest/ucdtest.cpp
+   clang++	 ...  ../../../test/intltest/usettest.cpp
+   clang++	 ...  ../../../test/intltest/ustrtest.cpp
+   clang++	 ...  ../../../test/intltest/strcase.cpp
+   clang++	 ...  ../../../test/intltest/transtst.cpp
+   clang++	 ...  ../../../test/intltest/strtest.cpp
+   clang++	 ...  ../../../test/intltest/thcoll.cpp
+   clang++	 ...  ../../../test/intltest/bytestrietest.cpp
+   clang++	 ...  ../../../test/intltest/ucharstrietest.cpp
+   clang++	 ...  ../../../test/intltest/itrbbi.cpp
+   clang++	 ...  ../../../test/intltest/rbbiapts.cpp
+   clang++	 ...  ../../../test/intltest/rbbitst.cpp
+   clang++	 ...  ../../../test/intltest/ittrans.cpp
+   clang++	 ...  ../../../test/intltest/transapi.cpp
+   clang++	 ...  ../../../test/intltest/cpdtrtst.cpp
+   clang++	 ...  ../../../test/intltest/testutil.cpp
+   clang++	 ...  ../../../test/intltest/transrt.cpp
+   clang++	 ...  ../../../test/intltest/trnserr.cpp
+   clang++	 ...  ../../../test/intltest/normconf.cpp
+   clang++	 ...  ../../../test/intltest/sfwdchit.cpp
+   clang++	 ...  ../../../test/intltest/jamotest.cpp
+   clang++	 ...  ../../../test/intltest/srchtest.cpp
+   clang++	 ...  ../../../test/intltest/reptest.cpp
+   clang++	 ...  ../../../test/intltest/regextst.cpp
+   clang++	 ...  ../../../test/intltest/itrbnf.cpp
+   clang++	 ...  ../../../test/intltest/itrbnfrt.cpp
+   clang++	 ...  ../../../test/intltest/itrbnfp.cpp
+   clang++	 ...  ../../../test/intltest/ucaconf.cpp
+   clang++	 ...  ../../../test/intltest/icusvtst.cpp
+   clang++	 ...  ../../../test/intltest/uobjtest.cpp
+   clang++	 ...  ../../../test/intltest/idnaref.cpp
+   clang++	 ...  ../../../test/intltest/idnaconf.cpp
+   clang++	 ...  ../../../test/intltest/nptrans.cpp
+   clang	 ...  ../../../test/intltest/punyref.c
+   clang++	 ...  ../../../test/intltest/testidn.cpp
+   clang++	 ...  ../../../test/intltest/testidna.cpp
+   clang++	 ...  ../../../test/intltest/uts46test.cpp
+   clang++	 ...  ../../../test/intltest/incaltst.cpp
+   clang++	 ...  ../../../test/intltest/calcasts.cpp
+   clang++	 ...  ../../../test/intltest/v32test.cpp
+   clang++	 ...  ../../../test/intltest/uvectest.cpp
+   clang++	 ...  ../../../test/intltest/textfile.cpp
+   clang++	 ...  ../../../test/intltest/tokiter.cpp
+   clang++	 ...  ../../../test/intltest/utxttest.cpp
+   clang++	 ...  ../../../test/intltest/windttst.cpp
+   clang++	 ...  ../../../test/intltest/winnmtst.cpp
+   clang++	 ...  ../../../test/intltest/winutil.cpp
+   clang++	 ...  ../../../test/intltest/csdetest.cpp
+   clang++	 ...  ../../../test/intltest/tzrulets.cpp
+   clang++	 ...  ../../../test/intltest/tzoffloc.cpp
+   clang++	 ...  ../../../test/intltest/tzfmttst.cpp
+   clang++	 ...  ../../../test/intltest/ssearch.cpp
+   clang++	 ...  ../../../test/intltest/dtifmtts.cpp
+   clang++	 ...  ../../../test/intltest/tufmtts.cpp
+   clang++	 ...  ../../../test/intltest/itspoof.cpp
+   clang++	 ...  ../../../test/intltest/simplethread.cpp
+   clang++	 ...  ../../../test/intltest/bidiconf.cpp
+   clang++	 ...  ../../../test/intltest/locnmtst.cpp
+   clang++	 ...  ../../../test/intltest/dcfmtest.cpp
+   clang++	 ...  ../../../test/intltest/alphaindextst.cpp
+   clang++	 ...  ../../../test/intltest/listformattertest.cpp
+   clang++	 ...  ../../../test/intltest/genderinfotest.cpp
+   clang++	 ...  ../../../test/intltest/compactdecimalformattest.cpp
+   clang++	 ...  ../../../test/intltest/regiontst.cpp
+clang++ -O3 -W -Wall -pedantic -Wpointer-arith -Wwrite-strings -Wno-long-long -std=c++11  -Wl,--gc-sections  -o intltest aliastst.o allcoll.o apicoll.o astrotst.o callimts.o calregts.o caltest.o caltztst.o canittst.o citrtest.o cntabcol.o colldata.o convtest.o currcoll.o fldset.o dadrfmt.o dadrcal.o dadrcoll.o dcfmapts.o decoll.o dtfmapts.o dtfmrgts.o dtfmtrtts.o dtfmttst.o dtptngts.o encoll.o escoll.o ficoll.o frcoll.o g7coll.o intltest.o itercoll.o itformat.o itmajor.o itutil.o jacoll.o lcukocol.o loctest.o miscdtfm.o mnkytst.o msfmrgts.o nmfmapts.o nmfmtrt.o numfmtst.o numrgts.o plurults.o plurfmts.o pptest.o regcoll.o restest.o restsnew.o sdtfmtts.o svccoll.o tchcfmt.o selfmts.o tfsmalls.o tmsgfmt.o trcoll.o tscoll.o tsdate.o tsdcfmsy.o tsdtfmsy.o tsmthred.o tsnmfmt.o tsputil.o tstnrapi.o tstnorm.o tzbdtest.o tzregts.o tztest.o ucdtest.o usettest.o ustrtest.o strcase.o transtst.o strtest.o thcoll.o bytestrietest.o ucharstrietest.o itrbbi.o rbbiapts.o rbbitst.o ittrans.o transapi.o cpdtrtst.o testutil.o transrt.o trnserr.o normconf.o sfwdchit.o jamotest.o srchtest.o reptest.o regextst.o itrbnf.o itrbnfrt.o itrbnfp.o ucaconf.o icusvtst.o uobjtest.o idnaref.o idnaconf.o nptrans.o punyref.o testidn.o testidna.o uts46test.o incaltst.o calcasts.o v32test.o uvectest.o textfile.o tokiter.o utxttest.o windttst.o winnmtst.o winutil.o csdetest.o tzrulets.o tzoffloc.o tzfmttst.o ssearch.o dtifmtts.o tufmtts.o itspoof.o simplethread.o bidiconf.o locnmtst.o dcfmtest.o alphaindextst.o listformattertest.o genderinfotest.o compactdecimalformattest.o regiontst.o -L../../tools/ctestfw -licutest -L../../lib -licui18n -L../../lib -licuuc -L../../stubdata -licudata -L../../lib -licutu -lpthread -ldl -lm   
+/usr/bin/ld: skipping incompatible ../../lib/libicudata.a when searching for -licudata
+/usr/bin/ld: skipping incompatible ../../lib/libicudata.a when searching for -licudata
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/test/intltest'
+make[1]: Making `all' in `iotest'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/test/iotest'
+   (deps)	 ../../../test/iotest/trnstst.c
+   (deps)	 ../../../test/iotest/filetst.c
+   (deps)	 ../../../test/iotest/stream.cpp
+   (deps)	 ../../../test/iotest/strtst.c
+   (deps)	 ../../../test/iotest/iotest.cpp
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/test/iotest'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/test/iotest'
+   clang++	 ...  ../../../test/iotest/iotest.cpp
+   clang++	 ...  ../../../test/iotest/stream.cpp
+   clang	 ...  ../../../test/iotest/strtst.c
+   clang	 ...  ../../../test/iotest/filetst.c
+   clang	 ...  ../../../test/iotest/trnstst.c
+clang++ -O3 -W -Wall -pedantic -Wpointer-arith -Wwrite-strings -Wno-long-long -std=c++11  -Wl,--gc-sections  -o iotest iotest.o stream.o strtst.o filetst.o trnstst.o -L../../tools/ctestfw -licutest -L../../lib -licutu -L../../lib -licuio -L../../lib -licui18n -L../../lib -licuuc -L../../stubdata -licudata -lpthread -ldl -lm  
+/usr/bin/ld: skipping incompatible ../../lib/libicudata.a when searching for -licudata
+/usr/bin/ld: skipping incompatible ../../lib/libicudata.a when searching for -licudata
+/usr/bin/ld: skipping incompatible ../../lib/libicudata.a when searching for -licudata
+/usr/bin/ld: skipping incompatible ../../lib/libicudata.a when searching for -licudata
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/test/iotest'
+make[1]: Making `all' in `cintltst'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/test/cintltst'
+   (deps)	 ../../../test/cintltst/cgendtst.c
+   (deps)	 ../../../test/cintltst/spooftest.c
+   (deps)	 ../../../test/cintltst/ucsdetst.c
+   (deps)	 ../../../test/cintltst/utexttst.c
+   (deps)	 ../../../test/cintltst/reapits.c
+   (deps)	 ../../../test/cintltst/tracetst.c
+   (deps)	 ../../../test/cintltst/hpmufn.c
+   (deps)	 ../../../test/cintltst/sprpdata.c
+   (deps)	 ../../../test/cintltst/spreptst.c
+   (deps)	 ../../../test/cintltst/nfsprep.c
+   (deps)	 ../../../test/cintltst/idnatest.c
+   (deps)	 ../../../test/cintltst/currtest.c
+   (deps)	 ../../../test/cintltst/utmstest.c
+   (deps)	 ../../../test/cintltst/uenumtst.c
+   (deps)	 ../../../test/cintltst/usettest.c
+   (deps)	 ../../../test/cintltst/trie2test.c
+   (deps)	 ../../../test/cintltst/trietest.c
+   (deps)	 ../../../test/cintltst/sorttest.c
+   (deps)	 ../../../test/cintltst/custrtrn.c
+   (deps)	 ../../../test/cintltst/usrchtst.c
+   (deps)	 ../../../test/cintltst/stdnmtst.c
+   (deps)	 ../../../test/cintltst/utf8tst.c
+   (deps)	 ../../../test/cintltst/udatpg_test.c
+   (deps)	 ../../../test/cintltst/cstrtest.c
+   (deps)	 ../../../test/cintltst/ncnvtst.c
+   (deps)	 ../../../test/cintltst/putiltst.c
+   (deps)	 ../../../test/cintltst/ncnvfbts.c
+   (deps)	 ../../../test/cintltst/utransts.c
+   (deps)	 ../../../test/cintltst/utf16tst.c
+   (deps)	 ../../../test/cintltst/udatatst.c
+   (deps)	 ../../../test/cintltst/eurocreg.c
+   (deps)	 ../../../test/cintltst/cbididat.c
+   (deps)	 ../../../test/cintltst/cbiditst.c
+   (deps)	 ../../../test/cintltst/bocu1tst.c
+   (deps)	 ../../../test/cintltst/nccbtst.c
+   (deps)	 ../../../test/cintltst/nucnvtst.c
+   (deps)	 ../../../test/cintltst/cutiltst.c
+   (deps)	 ../../../test/cintltst/cstrcase.c
+   (deps)	 ../../../test/cintltst/custrtst.c
+   (deps)	 ../../../test/cintltst/cucdtst.c
+   (deps)	 ../../../test/cintltst/cucdapi.c
+   (deps)	 ../../../test/cintltst/cturtst.c
+   (deps)	 ../../../test/cintltst/creststn.c
+   (deps)	 ../../../test/cintltst/crestst.c
+   (deps)	 ../../../test/cintltst/cnumtst.c
+   (deps)	 ../../../test/cintltst/cnormtst.c
+   (deps)	 ../../../test/cintltst/cnmdptst.c
+   (deps)	 ../../../test/cintltst/cldrtest.c
+   (deps)	 ../../../test/cintltst/cposxtst.c
+   (deps)	 ../../../test/cintltst/cpluralrulestest.c
+   (deps)	 ../../../test/cintltst/cmsgtst.c
+   (deps)	 ../../../test/cintltst/cmsccoll.c
+   (deps)	 ../../../test/cintltst/cloctst.c
+   (deps)	 ../../../test/cintltst/cjaptst.c
+   (deps)	 ../../../test/cintltst/citertst.c
+   (deps)	 ../../../test/cintltst/cintltst.c
+   (deps)	 ../../../test/cintltst/chashtst.c
+   (deps)	 ../../../test/cintltst/cg7coll.c
+   (deps)	 ../../../test/cintltst/cformtst.c
+   (deps)	 ../../../test/cintltst/cfrtst.c
+   (deps)	 ../../../test/cintltst/cfintst.c
+   (deps)	 ../../../test/cintltst/cestst.c
+   (deps)	 ../../../test/cintltst/cdtrgtst.c
+   (deps)	 ../../../test/cintltst/cdtdptst.c
+   (deps)	 ../../../test/cintltst/cdetst.c
+   (deps)	 ../../../test/cintltst/cdattst.c
+   (deps)	 ../../../test/cintltst/cdateintervalformattest.c
+   (deps)	 ../../../test/cintltst/ccurrtst.c
+   (deps)	 ../../../test/cintltst/cconvtst.c
+   (deps)	 ../../../test/cintltst/encoll.c
+   (deps)	 ../../../test/cintltst/ccolltst.c
+   (deps)	 ../../../test/cintltst/ccapitst.c
+   (deps)	 ../../../test/cintltst/cctest.c
+   (deps)	 ../../../test/cintltst/ucnvseltst.c
+   (deps)	 ../../../test/cintltst/ccaltst.c
+   (deps)	 ../../../test/cintltst/cbiapts.c
+   (deps)	 ../../../test/cintltst/cbkittst.c
+   (deps)	 ../../../test/cintltst/capitst.c
+   (deps)	 ../../../test/cintltst/colutil.c
+   (deps)	 ../../../test/cintltst/calltest.c
+   (deps)	 ../../../test/cintltst/callcoll.c
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/test/cintltst'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/test/cintltst'
+   clang	 ...  ../../../test/cintltst/callcoll.c
+   clang	 ...  ../../../test/cintltst/calltest.c
+   clang	 ...  ../../../test/cintltst/colutil.c
+   clang	 ...  ../../../test/cintltst/capitst.c
+   clang	 ...  ../../../test/cintltst/cbiapts.c
+   clang	 ...  ../../../test/cintltst/cbkittst.c
+   clang	 ...  ../../../test/cintltst/ucnvseltst.c
+   clang	 ...  ../../../test/cintltst/ccaltst.c
+   clang	 ...  ../../../test/cintltst/cctest.c
+../../../test/cintltst/capitst.c:278:22: warning: unused variable 'ruled' [-Wunused-variable]
+    UCollator *col, *ruled;
+                     ^
+../../../test/cintltst/capitst.c:282:13: warning: unused variable 'tempLength' [-Wunused-variable]
+    int32_t tempLength;
+            ^
+   clang	 ...  ../../../test/cintltst/ccapitst.c
+   clang	 ...  ../../../test/cintltst/ccolltst.c
+../../../test/cintltst/capitst.c:2134:1: warning: unused function 'TestGetContractionsAndUnsafes' [-Wunused-function]
+TestGetContractionsAndUnsafes(void)
+^
+   clang	 ...  ../../../test/cintltst/encoll.c
+   clang	 ...  ../../../test/cintltst/cconvtst.c
+   clang	 ...  ../../../test/cintltst/ccurrtst.c
+   clang	 ...  ../../../test/cintltst/cdateintervalformattest.c
+   clang	 ...  ../../../test/cintltst/cdattst.c
+   clang	 ...  ../../../test/cintltst/cdetst.c
+   clang	 ...  ../../../test/cintltst/cdtdptst.c
+3 warnings generated.
+   clang	 ...  ../../../test/cintltst/cdtrgtst.c
+   clang	 ...  ../../../test/cintltst/cestst.c
+   clang	 ...  ../../../test/cintltst/cfintst.c
+   clang	 ...  ../../../test/cintltst/cformtst.c
+   clang	 ...  ../../../test/cintltst/cfrtst.c
+   clang	 ...  ../../../test/cintltst/cg7coll.c
+   clang	 ...  ../../../test/cintltst/chashtst.c
+   clang	 ...  ../../../test/cintltst/cintltst.c
+../../../test/cintltst/cg7coll.c:141:13: warning: unused function 'TestG7Locales' [-Wunused-function]
+static void TestG7Locales()
+            ^
+   clang	 ...  ../../../test/cintltst/citertst.c
+1 warning generated.
+   clang	 ...  ../../../test/cintltst/cjaptst.c
+   clang	 ...  ../../../test/cintltst/cloctst.c
+   clang	 ...  ../../../test/cintltst/cmsccoll.c
+   clang	 ...  ../../../test/cintltst/cmsgtst.c
+   clang	 ...  ../../../test/cintltst/cpluralrulestest.c
+   clang	 ...  ../../../test/cintltst/cposxtst.c
+   clang	 ...  ../../../test/cintltst/cldrtest.c
+   clang	 ...  ../../../test/cintltst/cnmdptst.c
+../../../test/cintltst/cmsccoll.c:2964:13: warning: unused function 'TestVariableTopSetting' [-Wunused-function]
+static void TestVariableTopSetting(void) {
+            ^
+../../../test/cintltst/cmsccoll.c:6771:13: warning: unused function 'TestImport' [-Wunused-function]
+static void TestImport(void)
+            ^
+../../../test/cintltst/cmsccoll.c:6872:13: warning: unused function 'TestImportWithType' [-Wunused-function]
+static void TestImportWithType(void)
+            ^
+   clang	 ...  ../../../test/cintltst/cnormtst.c
+   clang	 ...  ../../../test/cintltst/cnumtst.c
+   clang	 ...  ../../../test/cintltst/crestst.c
+   clang	 ...  ../../../test/cintltst/creststn.c
+   clang	 ...  ../../../test/cintltst/cturtst.c
+   clang	 ...  ../../../test/cintltst/cucdapi.c
+   clang	 ...  ../../../test/cintltst/cucdtst.c
+   clang	 ...  ../../../test/cintltst/custrtst.c
+   clang	 ...  ../../../test/cintltst/cstrcase.c
+   clang	 ...  ../../../test/cintltst/cutiltst.c
+   clang	 ...  ../../../test/cintltst/nucnvtst.c
+   clang	 ...  ../../../test/cintltst/nccbtst.c
+3 warnings generated.
+   clang	 ...  ../../../test/cintltst/bocu1tst.c
+../../../test/cintltst/nucnvtst.c:5399:13: warning: unused function 'TestJitterbug981' [-Wunused-function]
+static void TestJitterbug981(){
+            ^
+../../../test/cintltst/nucnvtst.c:3307:1: warning: unused function 'TestISO_2022_JP' [-Wunused-function]
+TestISO_2022_JP() {
+^
+../../../test/cintltst/nucnvtst.c:3845:1: warning: unused function 'TestISO_2022_JP_1' [-Wunused-function]
+TestISO_2022_JP_1() {
+^
+../../../test/cintltst/nucnvtst.c:3928:1: warning: unused function 'TestISO_2022_JP_2' [-Wunused-function]
+TestISO_2022_JP_2() {
+^
+../../../test/cintltst/nucnvtst.c:4019:1: warning: unused function 'TestISO_2022_KR' [-Wunused-function]
+TestISO_2022_KR() {
+^
+../../../test/cintltst/nucnvtst.c:4098:1: warning: unused function 'TestISO_2022_KR_1' [-Wunused-function]
+TestISO_2022_KR_1() {
+^
+../../../test/cintltst/nucnvtst.c:4483:1: warning: unused function 'TestISO_2022_CN' [-Wunused-function]
+TestISO_2022_CN() {
+^
+../../../test/cintltst/nucnvtst.c:4606:13: warning: unused function 'TestJitterbug6175' [-Wunused-function]
+static void TestJitterbug6175(void) {
+            ^
+../../../test/cintltst/nccbtst.c:139:13: warning: unused function 'TestSubWithValueCallBack' [-Wunused-function]
+static void TestSubWithValueCallBack()
+            ^
+   clang	 ...  ../../../test/cintltst/cbiditst.c
+   clang	 ...  ../../../test/cintltst/cbididat.c
+   clang	 ...  ../../../test/cintltst/eurocreg.c
+   clang	 ...  ../../../test/cintltst/udatatst.c
+   clang	 ...  ../../../test/cintltst/utf16tst.c
+   clang	 ...  ../../../test/cintltst/utransts.c
+1 warning generated.
+   clang	 ...  ../../../test/cintltst/ncnvfbts.c
+   clang	 ...  ../../../test/cintltst/ncnvtst.c
+   clang	 ...  ../../../test/cintltst/putiltst.c
+8 warnings generated.
+   clang	 ...  ../../../test/cintltst/cstrtest.c
+   clang	 ...  ../../../test/cintltst/udatpg_test.c
+   clang	 ...  ../../../test/cintltst/utf8tst.c
+   clang	 ...  ../../../test/cintltst/stdnmtst.c
+   clang	 ...  ../../../test/cintltst/usrchtst.c
+   clang	 ...  ../../../test/cintltst/custrtrn.c
+   clang	 ...  ../../../test/cintltst/sorttest.c
+   clang	 ...  ../../../test/cintltst/trietest.c
+   clang	 ...  ../../../test/cintltst/trie2test.c
+   clang	 ...  ../../../test/cintltst/usettest.c
+   clang	 ...  ../../../test/cintltst/uenumtst.c
+   clang	 ...  ../../../test/cintltst/utmstest.c
+   clang	 ...  ../../../test/cintltst/currtest.c
+   clang	 ...  ../../../test/cintltst/idnatest.c
+   clang	 ...  ../../../test/cintltst/nfsprep.c
+   clang	 ...  ../../../test/cintltst/spreptst.c
+   clang	 ...  ../../../test/cintltst/sprpdata.c
+   clang	 ...  ../../../test/cintltst/hpmufn.c
+   clang	 ...  ../../../test/cintltst/tracetst.c
+   clang	 ...  ../../../test/cintltst/reapits.c
+   clang	 ...  ../../../test/cintltst/utexttst.c
+   clang	 ...  ../../../test/cintltst/ucsdetst.c
+   clang	 ...  ../../../test/cintltst/spooftest.c
+   clang	 ...  ../../../test/cintltst/cgendtst.c
+clang++ -O3 -W -Wall -pedantic -Wpointer-arith -Wwrite-strings -Wno-long-long -std=c++11  -Wl,--gc-sections  -o cintltst callcoll.o calltest.o colutil.o capitst.o cbiapts.o cbkittst.o ccaltst.o ucnvseltst.o cctest.o ccapitst.o ccolltst.o encoll.o cconvtst.o ccurrtst.o cdateintervalformattest.o cdattst.o cdetst.o cdtdptst.o cdtrgtst.o cestst.o cfintst.o cformtst.o cfrtst.o cg7coll.o chashtst.o cintltst.o citertst.o cjaptst.o cloctst.o cmsccoll.o cmsgtst.o cpluralrulestest.o cposxtst.o cldrtest.o cnmdptst.o cnormtst.o cnumtst.o crestst.o creststn.o cturtst.o cucdapi.o cucdtst.o custrtst.o cstrcase.o cutiltst.o nucnvtst.o nccbtst.o bocu1tst.o cbiditst.o cbididat.o eurocreg.o udatatst.o utf16tst.o utransts.o ncnvfbts.o ncnvtst.o putiltst.o cstrtest.o udatpg_test.o utf8tst.o stdnmtst.o usrchtst.o custrtrn.o sorttest.o trietest.o trie2test.o usettest.o uenumtst.o utmstest.o currtest.o idnatest.o nfsprep.o spreptst.o sprpdata.o hpmufn.o tracetst.o reapits.o utexttst.o ucsdetst.o spooftest.o cgendtst.o -L../../tools/ctestfw -licutest -L../../lib -licui18n -L../../lib -licutu -L../../lib -licuuc -L../../stubdata -licudata -lpthread -ldl -lm  
+/usr/bin/ld: skipping incompatible ../../lib/libicudata.a when searching for -licudata
+/usr/bin/ld: skipping incompatible ../../lib/libicudata.a when searching for -licudata
+/usr/bin/ld: skipping incompatible ../../lib/libicudata.a when searching for -licudata
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/test/cintltst'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/test'
+make[2]: Nothing to be done for `all-local'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/test'
+make[1]: Making `check' in `testdata'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/test/testdata'
+LD_LIBRARY_PATH=../../lib:../../stubdata:../../tools/ctestfw:$LD_LIBRARY_PATH   ../../bin/pkgdata -q -c -s /usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/test/testdata/out/build/icudt51l -T ../../test/testdata/out/build -d ../../test/testdata/out -s ../../test/testdata/out/build -p testdata -m common ../../test/testdata/out/build/testdata.lst
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/test/testdata'
+make[1]: Making `check' in `intltest'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/test/intltest'
+LD_LIBRARY_PATH=../../lib:../../stubdata:../../tools/ctestfw:$LD_LIBRARY_PATH  ./intltest  
+#### Note:  ICU Init without build-specific setDataDirectory() failed.
+#### ERROR! ./intltest: u_init() failed with status = "U_FILE_ACCESS_ERROR".
+*** Check the ICU_DATA environment variable and 
+*** check that the data files are present.
+*** Exiting.  Use the '-w' option if data files were
+*** purposely removed, to continue test anyway.
+-----------------------------------------------
+ IntlTest (C++) Test Suite for                 
+   International Components for Unicode 51.1
+   Bits: 64, Byte order: Little endian, Chars: ASCII
+-----------------------------------------------
+ Options:                                       
+   all (a)                  : On
+   Verbose (v)              : Off
+   No error messages (n)    : Off
+   Exhaustive (e)           : Off
+   Leaks (l)                : Off
+   notime (T)               : Off
+   Warn on missing data (w) : Off
+   Threads                  : 1
+-----------------------------------------------
+make[2]: *** [check-local] Error 1
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/test/intltest'
+make[1]: Making `check' in `iotest'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/test/iotest'
+LD_LIBRARY_PATH=../../lib:../../stubdata:../../tools/ctestfw:$LD_LIBRARY_PATH  ./iotest  
+#### Note:  ICU Init without build-specific setDataDirectory() failed.
+#### ERROR! ./iotest: u_init() failed with status = "U_FILE_ACCESS_ERROR".
+*** Check the ICU_DATA environment variable and 
+*** check that the data files are present.
+make[2]: *** [check-local] Error 1
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/test/iotest'
+make[1]: Making `check' in `cintltst'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/test/cintltst'
+LD_LIBRARY_PATH=../../lib:../../stubdata:../../tools/ctestfw:$LD_LIBRARY_PATH  ./cintltst 
+#### Note:  ICU Init without build-specific setDataDirectory() failed. U_FILE_ACCESS_ERROR
+#### ERROR! ./cintltst: u_init() failed with status = "U_FILE_ACCESS_ERROR".
+*** Check the ICU_DATA environment variable and 
+*** check that the data files are present.
+*** Exiting.  Use the '-w' option if data files were
+*** purposely removed, to continue test anyway.
+make[2]: *** [check-local] Error 1
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/test/cintltst'
+---------------
+ALL TESTS SUMMARY:
+ok:  testdata
+===== ERRS:  intltest iotest cintltst
+make[1]: *** [check-recursive] Error 1
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev_static/test'
+make: *** [check-recursive] Error 2

@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/el.xml
 // *
@@ -1054,6 +1054,10 @@ el{
         }
         ZMK{
             "ZMK",
+            "Κουάνζα Ζαΐρ (1968-2012)",
+        }
+        ZMW{
+            "ZMW",
             "Κουάνζα Ζαΐρ",
         }
         ZRN{
@@ -2103,6 +2107,10 @@ el{
             other{"ραντ Νότιας Αφρικής"}
         }
         ZMK{
+            one{"κουάτσα Ζάμπιας (1968-2012)"}
+            other{"κουάτσα Ζάμπιας (1968-2012)"}
+        }
+        ZMW{
             one{"κουάτσα Ζάμπιας"}
             other{"κουάτσα Ζάμπιας"}
         }
@@ -2124,7 +2132,8 @@ el{
         }
     }
     CurrencyUnitPatterns{
+        one{"{0} {1}"}
         other{"{0} {1}"}
     }
-    Version{"2.0.78.32"}
+    Version{"2.0.82.45"}
 }

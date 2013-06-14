@@ -1,6 +1,6 @@
 /*
 ********************************************************************************
-*   Copyright (C) 1997-2012, International Business Machines
+*   Copyright (C) 1997-2013, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 ********************************************************************************
 *
@@ -408,7 +408,6 @@ DecimalFormatSymbols::getSymbol(ENumberFormatSymbol symbol) const {
     return *strPtr;
 }
 
-#ifndef U_HIDE_INTERNAL_API
 inline const UnicodeString &
 DecimalFormatSymbols::getConstSymbol(ENumberFormatSymbol symbol) const {
     const UnicodeString *strPtr;
@@ -419,7 +418,6 @@ DecimalFormatSymbols::getConstSymbol(ENumberFormatSymbol symbol) const {
     }
     return *strPtr;
 }
-#endif
 
 
 // -------------------------------------
@@ -450,12 +448,10 @@ DecimalFormatSymbols::getLocale() const {
     return locale;
 }
 
-#ifndef U_HIDE_INTERNAL_API
 inline const UChar*
 DecimalFormatSymbols::getCurrencyPattern() const {
     return currPattern;
 }
-#endif
 
 U_NAMESPACE_END
 

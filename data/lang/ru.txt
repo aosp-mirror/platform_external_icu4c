@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/ru.xml
 // *
@@ -523,7 +523,7 @@ ru{
         tli{"тлингит"}
         tmh{"тамашек"}
         tn{"тсвана"}
-        to{"тонга"}
+        to{"тонганский"}
         tog{"ньяса (тонга)"}
         tpi{"ток-писин"}
         tr{"турецкий"}
@@ -601,7 +601,7 @@ ru{
         Bugi{"Бугинизийская"}
         Buhd{"Бухид"}
         Cakm{"Чакмийская"}
-        Cans{"Унифицированные Символы Канадских Аборигенов"}
+        Cans{"Канадское слоговое письмо"}
         Cari{"Карийская"}
         Cham{"Чамская"}
         Cher{"Чероки"}
@@ -723,7 +723,7 @@ ru{
             chinese{"Китайский календарь"}
             coptic{"Коптский календарь"}
             ethiopic{"Эфиопский календарь"}
-            ethiopic-amete-alem{"Эфиопский календарь \"Амете Алем\""}
+            ethiopic-amete-alem{"Эфиопский календарь \u0022Амете Алем\u0022"}
             gregorian{"Григорианский календарь"}
             hebrew{"Еврейский календарь"}
             indian{"Национальный календарь Индии"}
@@ -811,7 +811,7 @@ ru{
         VALENCIA{"Валенсийский"}
         WADEGILE{"Система Уэйда – Джайлза"}
     }
-    Version{"2.0.78.39"}
+    Version{"2.0.82.45"}
     codePatterns{
         language{"Язык: {0}"}
         script{"Написание: {0}"}

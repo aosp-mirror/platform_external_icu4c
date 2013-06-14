@@ -1,6 +1,6 @@
 /*
  *******************************************************************************
- * Copyright (C) 1996-2012, International Business Machines Corporation and
+ * Copyright (C) 1996-2013, International Business Machines Corporation and
  * others. All Rights Reserved.
  *******************************************************************************
  */
@@ -745,6 +745,24 @@ ucal_setTimeZone(UCalendar*    cal,
                  int32_t       len,
                  UErrorCode*   status);
 
+#ifndef U_HIDE_DRAFT_API
+/** 
+ * Get the ID of the UCalendar's time zone. 
+ * 
+ * @param cal           The UCalendar to query. 
+ * @param result        Receives the UCalendar's time zone ID. 
+ * @param resultLength  The maximum size of result. 
+ * @param status        Receives the status. 
+ * @return              The total buffer size needed; if greater than resultLength, the output was truncated. 
+ * @draft ICU 51 
+ */ 
+U_DRAFT int32_t U_EXPORT2 
+ucal_getTimeZoneID(const UCalendar *cal,
+                   UChar *result,
+                   int32_t resultLength,
+                   UErrorCode *status);
+#endif /* U_HIDE_DRAFT_API */
+
 /**
  * Possible formats for a UCalendar's display name 
  * @stable ICU 2.0
@@ -861,22 +879,19 @@ enum UCalendarAttribute {
    * Minimum number of days in first week
    * @stable ICU 2.0
    */
-  UCAL_MINIMAL_DAYS_IN_FIRST_WEEK
-#ifndef U_HIDE_DRAFT_API
-  ,
+  UCAL_MINIMAL_DAYS_IN_FIRST_WEEK,
   /**
    * The behavior for handling wall time repeating multiple times
    * at negative time zone offset transitions
-   * @draft ICU 49
+   * @stable ICU 49
    */
   UCAL_REPEATED_WALL_TIME,
   /**
    * The behavior for handling skipped wall time at positive time
    * zone offset transitions.
-   * @draft ICU 49
+   * @stable ICU 49
    */
   UCAL_SKIPPED_WALL_TIME
-#endif  /* U_HIDE_DRAFT_API */
 };
 
 /** @stable ICU 2.0 */
@@ -885,34 +900,31 @@ typedef enum UCalendarAttribute UCalendarAttribute;
 /**
  * Options for handling ambiguous wall time at time zone
  * offset transitions.
- * @draft ICU 49
+ * @stable ICU 49
  */
 enum UCalendarWallTimeOption {
     /**
      * An ambiguous wall time to be interpreted as the latest.
      * This option is valid for UCAL_REPEATED_WALL_TIME and
      * UCAL_SKIPPED_WALL_TIME.
-     * @draft ICU 49
+     * @stable ICU 49
      */
-    UCAL_WALLTIME_LAST
-#ifndef U_HIDE_DRAFT_API
-    ,
+    UCAL_WALLTIME_LAST,
     /**
      * An ambiguous wall time to be interpreted as the earliest.
      * This option is valid for UCAL_REPEATED_WALL_TIME and
      * UCAL_SKIPPED_WALL_TIME.
-     * @draft ICU 49
+     * @stable ICU 49
      */
     UCAL_WALLTIME_FIRST,
     /**
      * An ambiguous wall time to be interpreted as the next valid
      * wall time. This option is valid for UCAL_SKIPPED_WALL_TIME.
-     * @draft ICU 49
+     * @stable ICU 49
      */
     UCAL_WALLTIME_NEXT_VALID
-#endif  /* U_HIDE_DRAFT_API */
 };
-/** @draft ICU 49 */
+/** @stable ICU 49 */
 typedef enum UCalendarWallTimeOption UCalendarWallTimeOption;
 
 /**

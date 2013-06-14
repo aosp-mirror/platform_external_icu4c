@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/lt.xml
 // *
@@ -269,7 +269,7 @@ lt{
         }
         CNX{
             "CNX",
-            "Kinijos \"People\" banko doleriai",
+            "Kinijos \u0022People\u0022 banko doleriai",
         }
         CNY{
             "CN¥",
@@ -1161,6 +1161,10 @@ lt{
         }
         ZMK{
             "ZMK",
+            "Zambijos kvača (1968-2012)",
+        }
+        ZMW{
+            "ZMW",
             "Zambijos kvača",
         }
         ZRN{
@@ -1506,9 +1510,9 @@ lt{
             other{"Čilės pesai"}
         }
         CNX{
-            few{"Kinijos \"People\" banko doleriai"}
-            one{"Kinijos \"People\" banko doleris"}
-            other{"Kinijos \"People\" banko doleriai"}
+            few{"Kinijos \u0022People\u0022 banko doleriai"}
+            one{"Kinijos \u0022People\u0022 banko doleris"}
+            other{"Kinijos \u0022People\u0022 banko doleriai"}
         }
         CNY{
             few{"Kinijos juaniai"}
@@ -2616,6 +2620,11 @@ lt{
             other{"Pietų Afrikos randas"}
         }
         ZMK{
+            few{"Zambijos kvačos (1968-2012)"}
+            one{"Zambijos kvača (1968-2012)"}
+            other{"Zambijos kvačos (1968-2012)"}
+        }
+        ZMW{
             few{"Zambijos kvačos"}
             one{"Zambijos kvača"}
             other{"Zambijos kvačos"}
@@ -2651,5 +2660,5 @@ lt{
         one{"{0} {1}"}
         other{"{0} {1}"}
     }
-    Version{"2.0.78.38"}
+    Version{"2.0.82.57"}
 }

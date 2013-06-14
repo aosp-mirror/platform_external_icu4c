@@ -1,0 +1,129 @@
+Note: rebuild with "make VERBOSE=1 " to show all compiler parameters.
+make[0]: Making `all' in `stubdata'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/stubdata'
+make[1]: Nothing to be done for `all'.
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/stubdata'
+make[0]: Making `all' in `common'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/common'
+make[1]: Nothing to be done for `all'.
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/common'
+make[0]: Making `all' in `i18n'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/i18n'
+make[1]: Nothing to be done for `all'.
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/i18n'
+make[0]: Making `all' in `layout'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/layout'
+make[1]: Nothing to be done for `all'.
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/layout'
+make[0]: Making `all' in `layoutex'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/layoutex'
+make[1]: Nothing to be done for `all'.
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/layoutex'
+make[0]: Making `all' in `tools'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools'
+make[1]: Making `all' in `toolutil'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/toolutil'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/toolutil'
+make[1]: Making `all' in `ctestfw'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/ctestfw'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/ctestfw'
+make[1]: Making `all' in `makeconv'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/makeconv'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/makeconv'
+make[1]: Making `all' in `genrb'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/genrb'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/genrb'
+make[1]: Making `all' in `genbrk'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/genbrk'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/genbrk'
+make[1]: Making `all' in `gencnval'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/gencnval'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/gencnval'
+make[1]: Making `all' in `gensprep'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/gensprep'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/gensprep'
+make[1]: Making `all' in `icuinfo'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/icuinfo'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/icuinfo'
+make[1]: Making `all' in `genccode'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/genccode'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/genccode'
+make[1]: Making `all' in `gencmn'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/gencmn'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/gencmn'
+make[1]: Making `all' in `icupkg'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/icupkg'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/icupkg'
+make[1]: Making `all' in `pkgdata'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/pkgdata'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/pkgdata'
+make[1]: Making `all' in `gentest'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/gentest'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/gentest'
+make[1]: Making `all' in `gennorm2'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/gennorm2'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/gennorm2'
+make[1]: Making `all' in `gencfu'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/gencfu'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/gencfu'
+make[1]: Making `all' in `gendict'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/gendict'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools/gendict'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools'
+make[2]: Nothing to be done for `all-local'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools'
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/tools'
+make[0]: Making `all' in `data'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/data'
+LD_LIBRARY_PATH=../stubdata:../tools/ctestfw:../lib:$LD_LIBRARY_PATH  ../bin/pkgdata -O ../data/icupkg.inc -q -c -s /usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/data/out/build/icudt51l -d ../lib -e icudt51  -T ./out/tmp -p icudt51l -m dll -r 51.1.0.1 -L icudata ./out/tmp/icudata.lst
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/data'
+make[0]: Making `all' in `io'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/io'
+make[1]: Nothing to be done for `all'.
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/io'
+make[0]: Making `all' in `extra'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/extra'
+make[1]: Making `all' in `uconv'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/extra/uconv'
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/extra/uconv'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/extra'
+make[2]: Nothing to be done for `all-local'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/extra'
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/extra'
+make[0]: Making `all' in `samples'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/samples'
+make[1]: Making `all' in `date'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/samples/date'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/samples/date'
+make[1]: Making `all' in `cal'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/samples/cal'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/samples/cal'
+make[2]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/samples'
+make[2]: Nothing to be done for `all-local'.
+make[2]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/samples'
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/samples'
+make[0]: Making `all' in `test'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/test'
+make[1]: Nothing to be done for `all'.
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev/test'
+make[1]: Entering directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev'
+Note: rebuild with "make VERBOSE=1 all-local" to show all compiler parameters.
+make[1]: Leaving directory `/usr/local/google/home/android_dalvik_icu51/master/external/icu4c/dev'

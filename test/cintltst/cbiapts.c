@@ -777,7 +777,9 @@ static const RBBITailoringTest tailoringTests[] = {
     { "he", UBRK_LINE,      heTest, heTestOffs_heFwd, heTestOffs_heRev, sizeof(heTestOffs_heFwd)/sizeof(heTestOffs_heFwd[0]) },
     { "en", UBRK_LINE,      fiTest, fiTestOffs_enFwd, fiTestOffs_enRev, sizeof(fiTestOffs_enFwd)/sizeof(fiTestOffs_enFwd[0]) },
     { "fi", UBRK_LINE,      fiTest, fiTestOffs_fiFwd, fiTestOffs_fiRev, sizeof(fiTestOffs_fiFwd)/sizeof(fiTestOffs_fiFwd[0]) },
-    { "km", UBRK_WORD,      kmTest, kmTestOffs_kmFwd, kmTestOffs_kmRev, sizeof(kmTestOffs_kmFwd)/sizeof(kmTestOffs_kmFwd[0]) },
+    // BEGIN android-remove
+    // { "km", UBRK_WORD,      kmTest, kmTestOffs_kmFwd, kmTestOffs_kmRev, sizeof(kmTestOffs_kmFwd)/sizeof(kmTestOffs_kmFwd[0]) },
+    // END android-remove
     { NULL, 0, NULL, NULL, NULL, 0 },
 };
 
