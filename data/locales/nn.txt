@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/nn.xml
 // *
@@ -38,8 +38,135 @@ nn{
             }
         }
     }
-    Version{"2.0.78.30"}
+    Version{"2.0.82.47"}
     calendar{
+        generic{
+            DateTimePatterns{
+                "'kl'. HH:mm:ss zzzz",
+                "HH:mm:ss z",
+                "HH:mm:ss",
+                "HH:mm",
+                "EEEE d. MMMM y G",
+                "d. MMMM y G",
+                "d. MMM y G",
+                "dd.MM.yy GGGGG",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+            }
+            availableFormats{
+                Ed{"E d."}
+                Hm{"HH:mm"}
+                Hms{"HH:mm:ss"}
+                MEd{"E d.M"}
+                MMMEd{"E d. MMM"}
+                MMMMd{"d. MMMM"}
+                MMMd{"d. MMM"}
+                MMdd{"d.M."}
+                Md{"d.M."}
+                d{"d."}
+                hm{"h:mm a"}
+                hms{"h:mm:ss a"}
+                ms{"mm:ss"}
+                yM{"M y"}
+                yMEd{"E d.M.y"}
+                yMM{"MM.y"}
+                yMMM{"MMM y"}
+                yMMMEd{"E d. MMM y"}
+                yMMMM{"MMMM y"}
+                yMMMd{"d. MMM y"}
+                yMd{"d.M.y"}
+                yQQQ{"QQQ y"}
+                yQQQQ{"QQQQ y"}
+            }
+            intervalFormats{
+                Hm{
+                    H{"HH:mm–HH:mm"}
+                    m{"HH:mm–HH:mm"}
+                }
+                Hmv{
+                    H{"HH:mm–HH:mm v"}
+                    m{"HH:mm–HH:mm v"}
+                }
+                M{
+                    M{"M.–M."}
+                }
+                MEd{
+                    M{"E dd.MM.–E dd.MM."}
+                    d{"E dd.MM.–E dd.MM."}
+                }
+                MMM{
+                    M{"MMM–MMM"}
+                }
+                MMMEd{
+                    M{"E d. MMM–E d. MMM"}
+                    d{"E d.–E d. MMM"}
+                }
+                MMMd{
+                    M{"d. MMM–d. MMM"}
+                    d{"d.–d. MMM"}
+                }
+                Md{
+                    M{"dd.MM–dd.MM"}
+                    d{"dd.MM–dd.MM"}
+                }
+                d{
+                    d{"d.–d."}
+                }
+                fallback{"{0} – {1}"}
+                h{
+                    h{"h–h a"}
+                }
+                hm{
+                    h{"h:mm–h:mm a"}
+                    m{"h:mm–h:mm a"}
+                }
+                hmv{
+                    h{"h:mm–h:mm a v"}
+                    m{"h:mm–h:mm a v"}
+                }
+                hv{
+                    h{"h–h a v"}
+                }
+                y{
+                    y{"y–y"}
+                }
+                yM{
+                    M{"MM.y–MM.y"}
+                    y{"MM.y–MM.y"}
+                }
+                yMEd{
+                    M{"E dd.MM.y–E dd.MM.y"}
+                    d{"E dd.MM.y–E dd.MM.y"}
+                    y{"E dd.MM.y–E dd.MM.y"}
+                }
+                yMMM{
+                    M{"MMM–MMM y"}
+                    y{"MMM y–MMM y"}
+                }
+                yMMMEd{
+                    M{"E d. MMM–E d. MMM y"}
+                    d{"E d.–E d. MMM y"}
+                    y{"E d. MMM y–E d. MMM"}
+                }
+                yMMMM{
+                    M{"MMMM–MMMM y"}
+                    y{"MMMM y–MMMM y"}
+                }
+                yMMMd{
+                    M{"d. MMM–d. MMM y"}
+                    d{"d.–d. MMM y"}
+                    y{"d. MMM y–d. MMM y"}
+                }
+                yMd{
+                    M{"dd.MM.y–dd.MM.y"}
+                    d{"dd.MM.y–dd.MM.y"}
+                    y{"dd.MM.y–dd.MM.y"}
+                }
+            }
+        }
         gregorian{
             AmPmMarkers{
                 "formiddag",
@@ -75,15 +202,15 @@ nn{
                 hms{"h:mm:ss a"}
                 ms{"mm:ss"}
                 yM{"M y"}
-                yMEd{"E d.M.yyyy"}
+                yMEd{"E d.M.y"}
+                yMM{"MM.y"}
                 yMMM{"MMM y"}
                 yMMMEd{"E d. MMM y"}
+                yMMMM{"MMMM y"}
                 yMMMd{"d. MMM y"}
-                yMd{"d.M.yyyy"}
+                yMd{"d.M.y"}
                 yQQQ{"QQQ y"}
                 yQQQQ{"QQQQ y"}
-                yyMM{"MM.yy"}
-                yyyyMMMM{"MMMM y"}
             }
             dayNames{
                 format{
@@ -126,48 +253,6 @@ nn{
                 wide{
                     "f.Kr.",
                     "e.Kr.",
-                }
-            }
-            fields{
-                day{
-                    dn{"dag"}
-                    relative{
-                        "-1"{"i går"}
-                        "-2"{"i forgårs"}
-                        "0"{"i dag"}
-                        "1"{"i morgon"}
-                        "2"{"i overmorgon"}
-                    }
-                }
-                dayperiod{
-                    dn{"f.m./e.m.-val"}
-                }
-                era{
-                    dn{"æra"}
-                }
-                hour{
-                    dn{"time"}
-                }
-                minute{
-                    dn{"minutt"}
-                }
-                month{
-                    dn{"månad"}
-                }
-                second{
-                    dn{"sekund"}
-                }
-                week{
-                    dn{"veke"}
-                }
-                weekday{
-                    dn{"vekedag"}
-                }
-                year{
-                    dn{"år"}
-                }
-                zone{
-                    dn{"sone"}
                 }
             }
             intervalFormats{
@@ -223,13 +308,13 @@ nn{
                     y{"y–y"}
                 }
                 yM{
-                    M{"MM.yy–MM.yy"}
-                    y{"MM.yy–MM.yy"}
+                    M{"MM.y–MM.y"}
+                    y{"MM.y–MM.y"}
                 }
                 yMEd{
-                    M{"E dd.MM.yy–E dd.MM.yy"}
-                    d{"E dd.MM.yy–E dd.MM.yy"}
-                    y{"E dd.MM.yy–E dd.MM.yy"}
+                    M{"E dd.MM.y–E dd.MM.y"}
+                    d{"E dd.MM.y–E dd.MM.y"}
+                    y{"E dd.MM.y–E dd.MM.y"}
                 }
                 yMMM{
                     M{"MMM–MMM y"}
@@ -250,9 +335,9 @@ nn{
                     y{"d. MMM y–d. MMM y"}
                 }
                 yMd{
-                    M{"dd.MM.yy–dd.MM.yy"}
-                    d{"dd.MM.yy–dd.MM.yy"}
-                    y{"dd.MM.yy–dd.MM.yy"}
+                    M{"dd.MM.y–dd.MM.y"}
+                    d{"dd.MM.y–dd.MM.y"}
+                    y{"dd.MM.y–dd.MM.y"}
                 }
             }
             monthNames{
@@ -326,6 +411,48 @@ nn{
         alternateQuotationStart{"‘"}
         quotationEnd{"»"}
         quotationStart{"«"}
+    }
+    fields{
+        day{
+            dn{"dag"}
+            relative{
+                "-1"{"i går"}
+                "-2"{"i forgårs"}
+                "0"{"i dag"}
+                "1"{"i morgon"}
+                "2"{"i overmorgon"}
+            }
+        }
+        dayperiod{
+            dn{"f.m./e.m.-val"}
+        }
+        era{
+            dn{"æra"}
+        }
+        hour{
+            dn{"time"}
+        }
+        minute{
+            dn{"minutt"}
+        }
+        month{
+            dn{"månad"}
+        }
+        second{
+            dn{"sekund"}
+        }
+        week{
+            dn{"veke"}
+        }
+        weekday{
+            dn{"vekedag"}
+        }
+        year{
+            dn{"år"}
+        }
+        zone{
+            dn{"sone"}
+        }
     }
     listPattern{
         standard{
