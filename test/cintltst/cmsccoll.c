@@ -1,7 +1,7 @@
 
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 2001-2012, International Business Machines Corporation and
+ * Copyright (c) 2001-2013, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /*******************************************************************************
@@ -653,6 +653,7 @@ static void testCollator(UCollator *coll, UErrorCode *status) {
       }
     }
     uprv_free(src.source);
+    uprv_free(src.reorderCodes);
   }
 }
 
@@ -1000,6 +1001,7 @@ static void testAgainstUCA(UCollator *coll, UCollator *UCA, const char *refName,
       log_verbose("No immediate difference with Win32!\n");
     }
     uprv_free(src.source);
+    uprv_free(src.reorderCodes);
   }
 }
 
@@ -1287,6 +1289,7 @@ static void testCEs(UCollator *coll, UErrorCode *status) {
             lastContCE = currContCE & 0xFFFFFFBF;
         }
         uprv_free(src.source);
+        uprv_free(src.reorderCodes);
     }
     ucol_close(UCA);
     uprv_delete_collIterate(c);
@@ -1398,12 +1401,18 @@ static void RamsRulesTest(void) {
                 continue;
             }
             if (uprv_strcmp("bn", locName)==0 ||
+                uprv_strcmp("bs", locName)==0 ||            /* Add due to import per cldrbug 5647 */
+                uprv_strcmp("bs_Cyrl", locName)==0 ||       /* Add due to import per cldrbug 5647 */
                 uprv_strcmp("en_US_POSIX", locName)==0 ||
+                uprv_strcmp("fa_AF", locName)==0 ||         /* Add due to import per cldrbug 5647 */
+                uprv_strcmp("he", locName)==0 ||            /* Add due to new tailoring of \u05F3 vs \u0027 per cldrbug 5576 */
+                uprv_strcmp("he_IL", locName)==0 ||         /* Add due to new tailoring of \u05F3 vs \u0027 per cldrbug 5576 */
                 uprv_strcmp("km", locName)==0 ||
                 uprv_strcmp("km_KH", locName)==0 ||
                 uprv_strcmp("my", locName)==0 ||
                 uprv_strcmp("si", locName)==0 ||
                 uprv_strcmp("si_LK", locName)==0 ||
+                uprv_strcmp("sr_Latn", locName)==0 ||       /* Add due to import per cldrbug 5647 */
                 uprv_strcmp("th", locName)==0 ||
                 uprv_strcmp("th_TH", locName)==0 ||
                 uprv_strcmp("zh", locName)==0 ||
@@ -5172,7 +5181,7 @@ TestTailor6179(void)
         }
         log_err("\n");
     }
-if(isICUVersionAtLeast(51, 1, 0)) {  /* TODO: debug & fix, see ticket #8982 */
+if(isICUVersionAtLeast(52, 0, 1)) {  /* TODO: debug & fix, see ticket #8982 */
     tLen = u_strlen(tData2[1]);
     rLen = ucol_getSortKey(coll, tData2[1], tLen, resColl, 100);
     if (rLen != LEN(firstSecondaryIgnCE) || uprv_memcmp(resColl, firstSecondaryIgnCE, rLen) != 0) {
@@ -6652,7 +6661,9 @@ static void TestImportRulesDeWithPhonebook(void)
   };
 
   doTestOneTestCase(normalTests, LEN(normalTests), normalRules, LEN(normalRules));
-  doTestOneTestCase(importTests, LEN(importTests), importRules, LEN(importRules));
+  // BEGIN Android-remove. Android does not use rule-based collation0
+  // doTestOneTestCase(importTests, LEN(importTests), importRules, LEN(importRules));
+  // END Android-remove
 }
 
 #if 0

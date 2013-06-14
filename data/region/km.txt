@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/km.xml
 // *
@@ -293,6 +293,7 @@ km{
         VU{"វ៉ាន់ណៅទូ"}
         WF{"វ៉ាលីស និង​ហ្វូទូណា"}
         WS{"សាមូអា"}
+        XK{"កូសូវ៉ូ"}
         YE{"យេមែន"}
         YT{"ម៉ាយុត"}
         ZA{"អាព្រិក​ភាគ​ខាង​ត្បូង"}
@@ -300,5 +301,5 @@ km{
         ZW{"ហ្ស៊ីមបាបវ៉េ"}
         ZZ{"មិន​ស្គាល់​តំបន់"}
     }
-    Version{"2.0.78.39"}
+    Version{"2.0.82.45"}
 }

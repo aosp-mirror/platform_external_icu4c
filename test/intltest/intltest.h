@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2012, International Business Machines Corporation and
+ * Copyright (c) 1997-2013, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -120,6 +120,9 @@ UnicodeString toString(int32_t n);
         break; \
     }
 
+#define TEST_ASSERT_TRUE(x) \
+  assertTrue(#x, (x), FALSE, FALSE, __FILE__, __LINE__)
+
 class IntlTest : public TestLog {
 public:
 
@@ -231,7 +234,7 @@ public:
 
 protected:
     /* JUnit-like assertions. Each returns TRUE if it succeeds. */
-    UBool assertTrue(const char* message, UBool condition, UBool quiet=FALSE, UBool possibleDataError=FALSE);
+    UBool assertTrue(const char* message, UBool condition, UBool quiet=FALSE, UBool possibleDataError=FALSE, const char *file=NULL, int line=0);
     UBool assertFalse(const char* message, UBool condition, UBool quiet=FALSE);
     UBool assertSuccess(const char* message, UErrorCode ec, UBool possibleDataError=FALSE);
     UBool assertEquals(const char* message, const UnicodeString& expected,

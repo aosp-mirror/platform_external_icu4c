@@ -165,6 +165,7 @@ public:
      */
     virtual const void *getFontTable(LETag tableTag) const = 0;
 
+#if 0  /* Google Patch: withdraw this function. https://b.corp.google.com/issue?id=8593098 */
     /**
      * This method reads a table from the font. Note that in general,
      * it only makes sense to call this method on an <code>LEFontInstance</code>
@@ -183,6 +184,7 @@ public:
      * @internal
      */
     virtual const void* getFontTable(LETag tableTag, size_t &length) const { length=-1; return getFontTable(tableTag); }  /* -1 = unknown length */
+#endif  /* End Google Patch */
 
     /**
      * This method is used to determine if the font can
