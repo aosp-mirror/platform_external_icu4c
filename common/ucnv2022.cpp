@@ -502,8 +502,8 @@ _ISO2022Open(UConverter *cnv, UConverterLoadArgs *pArgs, UErrorCode *errorCode){
                 myConverterData->myConverterArray[JISX208] =
                     ucnv_loadSharedData("softbank-jisx-208-2007", &stackPieces, &stackArgs, errorCode);
             } else {
-                myConverterData->myConverterArray[JISX208] =
-                    ucnv_loadSharedData("Shift-JIS", &stackPieces, &stackArgs, errorCode);
+            myConverterData->myConverterArray[JISX208] =
+                ucnv_loadSharedData("Shift-JIS", &stackPieces, &stackArgs, errorCode);
             }
             /* END android-changed */
 
