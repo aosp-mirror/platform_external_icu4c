@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/lt.xml
 // *
@@ -27,7 +27,7 @@ lt{
             patterns{
                 currencyFormat{"#,##0.00 ¤"}
                 decimalFormat{"#,##0.###"}
-                percentFormat{"#,##0%"}
+                percentFormat{"#,##0 %"}
                 scientificFormat{"#E0"}
             }
             patternsLong{
@@ -172,7 +172,7 @@ lt{
             }
         }
     }
-    Version{"2.0.78.38"}
+    Version{"2.0.82.57"}
     calendar{
         buddhist{
             DateTimePatterns{
@@ -181,9 +181,9 @@ lt{
                 "HH:mm:ss",
                 "HH:mm",
                 "y G, MMMM d, EEEE",
-                "G y MMMM d",
+                "G y 'm'. MMMM d 'd'.",
                 "G y MMM d",
-                "GGGGG yyyy-MM-dd",
+                "GGGGG y-MM-dd",
                 "{1} {0}",
                 "{1} {0}",
                 "{1} {0}",
@@ -329,20 +329,16 @@ lt{
                 }
             }
         }
-        gregorian{
-            AmPmMarkers{
-                "priešpiet",
-                "popiet",
-            }
+        generic{
             DateTimePatterns{
                 "HH:mm:ss zzzz",
                 "HH:mm:ss z",
                 "HH:mm:ss",
                 "HH:mm",
-                "y 'm'. MMMM d 'd'., EEEE",
-                "y 'm'. MMMM d 'd'.",
-                "y MMM d",
-                "yyyy-MM-dd",
+                "G y 'm'. MMMM d 'd'., EEEE",
+                "G y 'm'. MMMM d 'd'.",
+                "G y MMM d",
+                "GGGGG y-MM-dd",
                 "{1} {0}",
                 "{1} {0}",
                 "{1} {0}",
@@ -370,14 +366,158 @@ lt{
                 y{"y"}
                 yM{"y-MM"}
                 yMEd{"E, y-MM-d"}
+                yMM{"y.MM"}
                 yMMM{"MMM, y"}
                 yMMMEd{"E, MMM d, y"}
                 yMMMd{"y MMM d"}
                 yMd{"y-M-d"}
                 yQQQ{"y QQQ"}
                 yQQQQ{"y QQQQ"}
-                yyQQQ{"QQQ yy"}
-                yyyyMM{"yyyy.MM"}
+            }
+            intervalFormats{
+                H{
+                    H{"HH–HH"}
+                }
+                Hm{
+                    H{"HH:mm–HH:mm"}
+                    m{"HH:mm–HH:mm"}
+                }
+                Hmv{
+                    H{"HH:mm–HH:mm v"}
+                    m{"HH:mm–HH:mm v"}
+                }
+                Hv{
+                    H{"HH–HH v"}
+                }
+                M{
+                    M{"M–M"}
+                }
+                MEd{
+                    M{"MM-dd, E – MM-dd, E"}
+                    d{"MM-dd, E – MM-dd, E"}
+                }
+                MMM{
+                    M{"LLL–LLL"}
+                }
+                MMMEd{
+                    M{"MMM d 'd'. E. - MMM d 'd'. E."}
+                    d{"MMM d 'd'. E. – d 'd'. E."}
+                }
+                MMMd{
+                    M{"MMM d 'd'.– MMM d 'd'."}
+                    d{"MMM. d 'd'.–d 'd'"}
+                }
+                Md{
+                    M{"MM-dd – MM-dd"}
+                    d{"MM-dd – MM-dd"}
+                }
+                d{
+                    d{"d–d"}
+                }
+                fallback{"{0} – {1}"}
+                h{
+                    a{"H–H"}
+                    h{"h–h a"}
+                }
+                hm{
+                    a{"hh:mm a–hh:mm a"}
+                    h{"h:mm–h:mm a"}
+                    m{"h:mm–h:mm a"}
+                }
+                hmv{
+                    a{"hh:mm a–hh:mm a v"}
+                    h{"h:mm–h:mm a v"}
+                    m{"h:mm–h:mm a v"}
+                }
+                hv{
+                    a{"H–H v"}
+                    h{"h–h a v"}
+                }
+                y{
+                    y{"y–y"}
+                }
+                yM{
+                    M{"y-MM – y-MM"}
+                    y{"y-MM – y-MM"}
+                }
+                yMEd{
+                    M{"y-MM-dd E. – y-MM-dd E."}
+                    d{"y-MM-dd E. – y-MM-dd E."}
+                    y{"y-MM-dd E. – y-MM-dd E."}
+                }
+                yMMM{
+                    M{"y 'm'. MMM-MMM"}
+                    y{"y-MM – y-MM"}
+                }
+                yMMMEd{
+                    M{"y-MM-dd E. – y-MM-dd E."}
+                    d{"y-MM-dd E. – y-MM-dd E."}
+                    y{"y-MM-dd E. – y-MM-dd E."}
+                }
+                yMMMM{
+                    M{"y-MM– MM"}
+                    y{"MMMM, y–MMMM, y"}
+                }
+                yMMMd{
+                    M{"y-MM-dd – MM-d"}
+                    d{"y 'm'. MMM d 'd'.–d 'd'."}
+                    y{"y-MM-dd – y-MM-dd"}
+                }
+                yMd{
+                    M{"y-MM-dd– y-MM-dd"}
+                    d{"y-MM-dd–y-MM-dd"}
+                    y{"y-MM-dd – y-MM-dd"}
+                }
+            }
+        }
+        gregorian{
+            AmPmMarkers{
+                "priešpiet",
+                "popiet",
+            }
+            DateTimePatterns{
+                "HH:mm:ss zzzz",
+                "HH:mm:ss z",
+                "HH:mm:ss",
+                "HH:mm",
+                "y 'm'. MMMM d 'd'., EEEE",
+                "y 'm'. MMMM d 'd'.",
+                "y MMM d",
+                "y-MM-dd",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+            }
+            availableFormats{
+                Ed{"E, d"}
+                H{"HH"}
+                Hm{"HH:mm"}
+                Hms{"HH:mm:ss"}
+                M{"LL"}
+                MEd{"M-d, E"}
+                MMM{"LLL"}
+                MMMEd{"MMM d, E"}
+                MMMd{"MMM d"}
+                MMMdd{"MMM-dd"}
+                MMdd{"MM.dd"}
+                Md{"MM-d"}
+                d{"d"}
+                h{"hh a"}
+                hm{"hh:mm a"}
+                hms{"hh:mm:ss a"}
+                ms{"mm:ss"}
+                y{"y"}
+                yM{"y-MM"}
+                yMEd{"E, y-MM-d"}
+                yMM{"y.MM"}
+                yMMM{"MMM, y"}
+                yMMMEd{"E, MMM d, y"}
+                yMMMd{"y MMM d"}
+                yMd{"y-M-d"}
+                yQQQ{"y QQQ"}
+                yQQQQ{"y QQQQ"}
             }
             dayNames{
                 format{
@@ -471,63 +611,6 @@ lt{
                     "po Kristaus",
                 }
             }
-            fields{
-                day{
-                    dn{"diena"}
-                    relative{
-                        "-1"{"vakar"}
-                        "-2"{"užvakar"}
-                        "0"{"šiandien"}
-                        "1"{"rytoj"}
-                        "2"{"poryt"}
-                    }
-                }
-                dayperiod{
-                    dn{"iki pietų / po pietų"}
-                }
-                era{
-                    dn{"era"}
-                }
-                hour{
-                    dn{"valanda"}
-                }
-                minute{
-                    dn{"minutė"}
-                }
-                month{
-                    dn{"mėnuo"}
-                    relative{
-                        "-1"{"praėjusį mėnesį"}
-                        "0"{"šį mėnesį"}
-                        "1"{"kitą mėnesį"}
-                    }
-                }
-                second{
-                    dn{"sekundė"}
-                }
-                week{
-                    dn{"savaitė"}
-                    relative{
-                        "-1"{"praėjusią savaitę"}
-                        "0"{"šią savaitę"}
-                        "1"{"kitą savaitę"}
-                    }
-                }
-                weekday{
-                    dn{"savaitės diena"}
-                }
-                year{
-                    dn{"metai"}
-                    relative{
-                        "-1"{"praėjusiais metais"}
-                        "0"{"šiais metais"}
-                        "1"{"kitais metais"}
-                    }
-                }
-                zone{
-                    dn{"laiko juosta"}
-                }
-            }
             intervalFormats{
                 H{
                     H{"HH–HH"}
@@ -591,36 +674,36 @@ lt{
                     y{"y–y"}
                 }
                 yM{
-                    M{"yyyy-MM – yyyy-MM"}
-                    y{"yyyy-MM – yyyy-MM"}
+                    M{"y-MM – y-MM"}
+                    y{"y-MM – y-MM"}
                 }
                 yMEd{
-                    M{"yyyy-MM-dd E. – yyyy-MM-dd E."}
-                    d{"yyyy-MM-dd E. – yyyy-MM-dd E."}
-                    y{"yyyy-MM-dd E. – yyyy-MM-dd E."}
+                    M{"y-MM-dd E. – y-MM-dd E."}
+                    d{"y-MM-dd E. – y-MM-dd E."}
+                    y{"y-MM-dd E. – y-MM-dd E."}
                 }
                 yMMM{
                     M{"y 'm'. MMM-MMM"}
-                    y{"yyyy-MM – yyyy-MM"}
+                    y{"y-MM – y-MM"}
                 }
                 yMMMEd{
-                    M{"yyyy-MM-dd E. – yyyy-MM-dd E."}
-                    d{"yyyy-MM-dd E. – yyyy-MM-dd E."}
-                    y{"yyyy-MM-dd E. – yyyy-MM-dd E."}
+                    M{"y-MM-dd E. – y-MM-dd E."}
+                    d{"y-MM-dd E. – y-MM-dd E."}
+                    y{"y-MM-dd E. – y-MM-dd E."}
                 }
                 yMMMM{
-                    M{"yyyy-MM– MM"}
+                    M{"y-MM– MM"}
                     y{"MMMM, y–MMMM, y"}
                 }
                 yMMMd{
-                    M{"yyyy-MM-dd – MM-d"}
+                    M{"y-MM-dd – MM-d"}
                     d{"y 'm'. MMM d 'd'.–d 'd'."}
-                    y{"yyyy-MM-dd – yyyy-MM-dd"}
+                    y{"y-MM-dd – y-MM-dd"}
                 }
                 yMd{
-                    M{"yyyy-MM-dd– yyyy-MM-dd"}
-                    d{"yyyy-MM-dd–yyyy-MM-dd"}
-                    y{"yyyy-MM-dd – yyyy-MM-dd"}
+                    M{"y-MM-dd– y-MM-dd"}
+                    d{"y-MM-dd–y-MM-dd"}
+                    y{"y-MM-dd – y-MM-dd"}
                 }
             }
             monthNames{
@@ -762,6 +845,63 @@ lt{
         alternateQuotationStart{"„"}
         quotationEnd{"“"}
         quotationStart{"„"}
+    }
+    fields{
+        day{
+            dn{"diena"}
+            relative{
+                "-1"{"vakar"}
+                "-2"{"užvakar"}
+                "0"{"šiandien"}
+                "1"{"rytoj"}
+                "2"{"poryt"}
+            }
+        }
+        dayperiod{
+            dn{"iki pietų / po pietų"}
+        }
+        era{
+            dn{"era"}
+        }
+        hour{
+            dn{"valanda"}
+        }
+        minute{
+            dn{"minutė"}
+        }
+        month{
+            dn{"mėnuo"}
+            relative{
+                "-1"{"praėjusį mėnesį"}
+                "0"{"šį mėnesį"}
+                "1"{"kitą mėnesį"}
+            }
+        }
+        second{
+            dn{"sekundė"}
+        }
+        week{
+            dn{"savaitė"}
+            relative{
+                "-1"{"praėjusią savaitę"}
+                "0"{"šią savaitę"}
+                "1"{"kitą savaitę"}
+            }
+        }
+        weekday{
+            dn{"savaitės diena"}
+        }
+        year{
+            dn{"metai"}
+            relative{
+                "-1"{"praėjusiais metais"}
+                "0"{"šiais metais"}
+                "1"{"kitais metais"}
+            }
+        }
+        zone{
+            dn{"laiko juosta"}
+        }
     }
     listPattern{
         standard{

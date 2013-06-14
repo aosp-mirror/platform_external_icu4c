@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1997-2012, International Business Machines Corporation and
+ * Copyright (c) 1997-2013, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /*****************************************************************************
@@ -244,6 +244,7 @@ void addLocaleTest(TestNode** root)
     TESTCASE(TestForLanguageTag);
     TESTCASE(TestTrailingNull);
     TESTCASE(TestUnicodeDefines);
+    TESTCASE(TestEnglishExemplarCharacters);
 }
 
 
@@ -1216,7 +1217,7 @@ static void TestSimpleDisplayNames()
      and country codes to make sure we have the correct names for them.
   */
     char languageCodes[] [4] = { "he", "id", "iu", "ug", "yi", "za", "419" };
-    const char* languageNames [] = { "Hebrew", "Indonesian", "Inuktitut", "Uighur", "Yiddish",
+    const char* languageNames [] = { "Hebrew", "Indonesian", "Inuktitut", "Uyghur", "Yiddish",
                                "Zhuang", "419" };
     const char* inLocale [] = { "en_US", "zh_Hant"};
     UErrorCode status=U_ZERO_ERROR;
@@ -2509,6 +2510,37 @@ static void TestGetLocale(void) {
     }
 #endif
 }
+static void TestEnglishExemplarCharacters(void) {
+    UErrorCode status = U_ZERO_ERROR;
+    int i;
+    USet *exSet = NULL;
+    UChar testChars[] = {
+        0x61,   /* standard */
+        0xE1,   /* auxiliary */
+        0x41,   /* index */
+        0x2D    /* punctuation */
+    };
+    ULocaleData *uld = ulocdata_open("en", &status);
+    if (U_FAILURE(status)) {
+        log_data_err("ulocdata_open() failed : %s - (Are you missing data?)\n", u_errorName(status));
+        return;
+    }
+
+    for (i = 0; i < ULOCDATA_ES_COUNT; i++) {
+        exSet = ulocdata_getExemplarSet(uld, exSet, 0, (ULocaleDataExemplarSetType)i, &status);
+        if (U_FAILURE(status)) {
+            log_err_status(status, "ulocdata_getExemplarSet() for type %d failed\n", i);
+            status = U_ZERO_ERROR;
+            continue;
+        }
+        if (!uset_contains(exSet, (UChar32)testChars[i])) {
+            log_err("Character U+%04X is not included in exemplar type %d\n", testChars[i], i);
+        }
+    }
+
+    uset_close(exSet);
+    ulocdata_close(uld);
+}
 
 static void TestNonexistentLanguageExemplars(void) {
     /* JB 4068 - Nonexistent language */
@@ -3568,7 +3600,7 @@ const char* const full_data[][3] = {
     "pa_PK"
   }, {
     "pap",
-    "pap_Latn_AN",
+    "pap_Latn_BQ",
     "pap"
   }, {
     "pau",
@@ -3761,7 +3793,7 @@ const char* const full_data[][3] = {
   }, {
     "und_AN",
     "pap_Latn_AN",
-    "pap"
+    "pap_AN"
   }, {
     "und_AO",
     "pt_Latn_AO",
@@ -3988,8 +4020,8 @@ const char* const full_data[][3] = {
     "es"
   }, {
     "und_ET",
-    "en_Latn_ET",
-    "en_ET"
+    "am_Ethi_ET",
+    "am"
   }, {
     "und_Ethi",
     "am_Ethi_ET",
@@ -4728,8 +4760,8 @@ const char* const full_data[][3] = {
     "zh_HK"
   }, {
     "und_AQ",
-    "en_Latn_AQ",
-    "en_AQ"
+    "und_Latn_AQ",
+    "und_AQ"
   }, {
     "und_Zzzz",
     "en_Latn_US",
@@ -4752,8 +4784,8 @@ const char* const full_data[][3] = {
     "zh_HK"
   }, {
     "und_Zzzz_AQ",
-    "en_Latn_AQ",
-    "en_AQ"
+    "und_Latn_AQ",
+    "und_AQ"
   }, {
     "und_Latn",
     "en_Latn_US",
@@ -4768,16 +4800,16 @@ const char* const full_data[][3] = {
     "za"
   }, {
     "und_Latn_TW",
-    "zh_Latn_TW",
-    "zh_Latn_TW"
+    "trv_Latn_TW",
+    "trv"
   }, {
     "und_Latn_HK",
     "zh_Latn_HK",
     "zh_Latn_HK"
   }, {
     "und_Latn_AQ",
-    "en_Latn_AQ",
-    "en_AQ"
+    "und_Latn_AQ",
+    "und_AQ"
   }, {
     "und_Hans",
     "zh_Hans_CN",
@@ -4848,8 +4880,8 @@ const char* const full_data[][3] = {
     "zh_Moon_HK"
   }, {
     "und_Moon_AQ",
-    "en_Moon_AQ",
-    "en_Moon_AQ"
+    "und_Moon_AQ",
+    "und_Moon_AQ"
   }, {
     "es",
     "es_Latn_ES",

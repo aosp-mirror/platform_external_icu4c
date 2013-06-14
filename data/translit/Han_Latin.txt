@@ -1,6 +1,6 @@
 ﻿# ***************************************************************************
 # *
-# *  Copyright (C) 2004-2012, International Business Machines
+# *  Copyright (C) 2004-2013, International Business Machines
 # *  Corporation; Unicode, Inc.; and others.  All Rights Reserved.
 # *
 # ***************************************************************************
@@ -8,6 +8,7 @@
 # Generated from CLDR 
 #
 ::Han-Spacedhan();
+藏文→zàngwén;
 [呵锕阿𠼞𥥩𨉚]→ā;
 [嗄]→á;
 [啊]→a;
