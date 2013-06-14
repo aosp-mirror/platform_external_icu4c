@@ -214,11 +214,11 @@ def GenResIndex(input_file):
 def CopyAndroidCnvFiles(stubdata_dir):
   android_specific_cnv = ["gsm-03.38-2000.cnv",
                           "iso-8859_16-2001.cnv",
-                          "docomo-shift_jis-2007.cnv",
+                          "docomo-shift_jis-2012.cnv",
                           "kddi-jisx-208-2007.cnv",
-                          "kddi-shift_jis-2007.cnv",
+                          "kddi-shift_jis-2012.cnv",
                           "softbank-jisx-208-2007.cnv",
-                          "softbank-shift_jis-2007.cnv"]
+                          "softbank-shift_jis-2012.cnv"]
   for cnv_file in android_specific_cnv:
     src_path = os.path.join(stubdata_dir, "cnv", cnv_file)
     dst_path = os.path.join(TMP_DAT_PATH, cnv_file)

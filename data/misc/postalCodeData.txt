@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/postalCodeData.xml
 // *
@@ -168,6 +168,7 @@ postalCodeData:table(nofallback){
     VE{"\d{4}"}
     VI{"008(([0-4]\d)|(5[01]))([ \-]\d{4})?"}
     WF{"986\d{2}"}
+    XK{"\d{5}"}
     YT{"976\d{2}"}
     YU{"\d{5}"}
     ZA{"\d{4}"}

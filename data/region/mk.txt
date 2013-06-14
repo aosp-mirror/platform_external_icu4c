@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/mk.xml
 // *
@@ -141,7 +141,7 @@ mk{
         GU{"Гвам"}
         GW{"Гвинеа-Биса"}
         GY{"Гвајана"}
-        HK{"Хонг Конг С.А.Р Кина"}
+        HK{"Хонг Конг"}
         HM{"Хардови острови и Мекдоналд Острови"}
         HN{"Хондурас"}
         HR{"Хрватска"}
@@ -195,7 +195,7 @@ mk{
         ML{"Мали"}
         MM{"Мјанмар [Бурма]"}
         MN{"Монголија"}
-        MO{"Макао С.А.Р Кина"}
+        MO{"Макао"}
         MP{"Северни Маријанини Острови"}
         MQ{"Мартиник"}
         MR{"Мавританија"}
@@ -301,5 +301,5 @@ mk{
         ZW{"Зимбабве"}
         ZZ{"Непознат регион"}
     }
-    Version{"2.0.78.17"}
+    Version{"2.0.82.45"}
 }

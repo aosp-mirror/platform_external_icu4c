@@ -20,7 +20,11 @@ set -e
 set -x
 
 # TODO: extract this from the .dat file's name.
+<<<<<<< HEAD
 ICU_VERSION=50
+=======
+ICU_VERSION=51
+>>>>>>> Update ICU4C to version 51.1.
 
 ICU_BIN=$ANDROID_BUILD_TOP/prebuilts/misc/linux-x86_64/icu-$ICU_VERSION
 ICU4C_DIR=$ANDROID_BUILD_TOP/external/icu4c
@@ -28,6 +32,7 @@ ICU4C_DIR=$ANDROID_BUILD_TOP/external/icu4c
 # Make a temporary directory.
 rm -rf $ICU4C_DIR/tmp
 mkdir $ICU4C_DIR/tmp
+<<<<<<< HEAD
 
 # TODO: expand this to more than just the curr and region files.
 data_kinds="curr region"
@@ -40,15 +45,31 @@ for data_kind in $data_kinds ; do
   for locale in *.txt ; do
     $ICU_BIN/genrb -d $ICU4C_DIR/tmp/$data_kind ../../data/$data_kind/$locale
   done
+=======
+mkdir $ICU4C_DIR/tmp/region
+
+# Compile the region .txt files to .res files.
+# TODO: expand this to more than just the region files.
+cd $ICU4C_DIR/data/region
+for locale in *.txt ;
+do
+  $ICU_BIN/genrb -d $ICU4C_DIR/tmp/region ../../data/region/$locale
+>>>>>>> Update ICU4C to version 51.1.
 done
 
 # Create a copy of the .dat file that uses the new .res files.
 cp $ICU4C_DIR/stubdata/icudt${ICU_VERSION}l-all.dat $ICU4C_DIR/tmp/icudt${ICU_VERSION}l.dat
 cd $ICU4C_DIR/tmp
+<<<<<<< HEAD
 for data_kind in $data_kinds ; do
   for res in $data_kind/*.res ; do
     $ICU_BIN/icupkg -a $res icudt${ICU_VERSION}l.dat
   done
+=======
+for res in region/*.res ;
+do
+  $ICU_BIN/icupkg -a $res icudt${ICU_VERSION}l.dat
+>>>>>>> Update ICU4C to version 51.1.
 done
 
 # Make the modified .dat file the canonical copy.

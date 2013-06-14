@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1999-2012, International Business Machines Corporation and
+ * Copyright (c) 1999-2013, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /************************************************************************
@@ -142,8 +142,8 @@ void RBBITest::runIndexedTest( int32_t index, UBool exec, const char* &name, cha
             break;
 #endif
 
-        case 22: name = "skip";
-            break;
+        case 22: name = "TestBug9983";
+            if (exec) TestBug9983();                           break;
         case 23: name = "TestDictRules";
             if (exec) TestDictRules();                         break;
         case 24: name = "TestBug5532";
@@ -956,6 +956,53 @@ void RBBITest::executeTest(TestParams *t) {
                       i, t->srcLine->elementAti(i), t->srcCol->elementAti(i));
         }
     }
+
+    // Check isBoundary()
+    for (i=0; i<t->expectedBreaks->size(); i++) {
+        UBool boundaryExpected = (t->expectedBreaks->elementAti(i) != 0);
+        UBool boundaryFound    = t->bi->isBoundary(i);
+        if (boundaryExpected != boundaryFound) {
+            errln("isBoundary(%d) incorrect. File line,col= %4d,%4d\n"
+                  "        Expected, Actual= %s, %s",
+                  i, t->srcLine->elementAti(i), t->srcCol->elementAti(i),
+                  boundaryExpected ? "true":"false", boundaryFound? "true" : "false");
+        }
+    }
+
+    // Check following()
+    for (i=0; i<t->expectedBreaks->size(); i++) {
+        int32_t actualBreak = t->bi->following(i);
+        int32_t expectedBreak = BreakIterator::DONE;
+        for (int32_t j=i+1; j < t->expectedBreaks->size(); j++) {
+            if (t->expectedBreaks->elementAti(j) != 0) {
+                expectedBreak = j;
+                break;
+            }
+        }
+        if (expectedBreak != actualBreak) {
+            errln("following(%d) incorrect. File line,col= %4d,%4d\n"
+                  "        Expected, Actual= %d, %d",
+                  i, t->srcLine->elementAti(i), t->srcCol->elementAti(i), expectedBreak, actualBreak);
+        }
+    }
+
+    // Check preceding()
+    for (i=t->expectedBreaks->size(); i>=0; i--) {
+        int32_t actualBreak = t->bi->preceding(i);
+        int32_t expectedBreak = BreakIterator::DONE;
+
+        for (int32_t j=i-1; j >= 0; j--) {
+            if (t->expectedBreaks->elementAti(j) != 0) {
+                expectedBreak = j;
+                break;
+            }
+        }
+        if (expectedBreak != actualBreak) {
+            errln("preceding(%d) incorrect. File line,col= %4d,%4d\n"
+                  "        Expected, Actual= %d, %d",
+                  i, t->srcLine->elementAti(i), t->srcCol->elementAti(i), expectedBreak, actualBreak);
+        }
+    }
 }
 
 
@@ -1100,7 +1147,7 @@ void RBBITest::TestExtended() {
                 char localeName8[100];
                 localeName.extract(0, localeName.length(), localeName8, sizeof(localeName8), 0);
                 locale = Locale::createFromName(localeName8);
-                charIdx += localeMatcher.group(0, status).length();
+                charIdx += localeMatcher.group(0, status).length() - 1;
                 TEST_ASSERT_SUCCESS(status);
                 break;
             }
@@ -4169,6 +4216,38 @@ void RBBITest::TestBug5532(void)  {
     }
     delete bi;
     utext_close(&utext);
+}
+
+
+void RBBITest::TestBug9983(void)  {
+    UnicodeString text = UnicodeString("\\u002A"  // * Other
+                                       "\\uFF65"  //   Other
+                                       "\\u309C"  //   Katakana
+                                       "\\uFF9F"  //   Extend
+                                       "\\uFF65"  //   Other
+                                       "\\u0020"  //   Other
+                                       "\\u0000").unescape();
+
+    UErrorCode status = U_ZERO_ERROR;
+    LocalPointer<RuleBasedBreakIterator> brkiter(static_cast<RuleBasedBreakIterator *>(
+        BreakIterator::createWordInstance(Locale::getRoot(), status)));
+    TEST_ASSERT_SUCCESS(status);
+    if (U_FAILURE(status)) {
+        return;
+    }
+    brkiter->setText(text);
+    int32_t offset, rstatus;
+    brkiter->last();
+    int32_t iterationCount = 0;
+    while ( (offset = brkiter->previous()) != UBRK_DONE ) {
+        iterationCount++;
+        rstatus = brkiter->getRuleStatus();
+        // printf(" %d(%d)", offset, rstatus);
+        if (iterationCount >= 10) {
+           break; 
+        }
+    }
+    TEST_ASSERT(iterationCount == 6);
 }
 
 

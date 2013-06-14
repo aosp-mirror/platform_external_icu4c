@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/az.xml
 // *
@@ -133,7 +133,7 @@ az{
         GU{"Quam"}
         GW{"Qvineya-Bisau"}
         GY{"Quyana"}
-        HK{"Honk Konq çina"}
+        HK{"Honk Konq"}
         HM{"Hörd və Makdonald Adaları"}
         HN{"Qonduras"}
         HR{"Xorvatiya"}
@@ -186,7 +186,7 @@ az{
         ML{"Mali"}
         MM{"Myanmar"}
         MN{"Monqoliya"}
-        MO{"Makao Çina"}
+        MO{"Makao"}
         MP{"Şimal Mariana Adaları"}
         MQ{"Martiniqu"}
         MR{"Mavritaniya"}
@@ -289,5 +289,5 @@ az{
         ZW{"Zimbabve"}
         ZZ{"bilinmir"}
     }
-    Version{"2.0.74.65"}
+    Version{"2.0.82.45"}
 }
