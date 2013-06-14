@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/en.xml
 // *
@@ -19,6 +19,7 @@ en{
         colHiraganaQuaternary{"Kana Sorting"}
         colNormalization{"Normalized Sorting"}
         colNumeric{"Numeric Sorting"}
+        colReorder{"Script/Block Reordering"}
         colStrength{"Sorting Strength"}
         collation{"Sort Order"}
         currency{"Currency"}
@@ -325,6 +326,7 @@ en{
         lez{"Lezghian"}
         lg{"Ganda"}
         li{"Limburgish"}
+        lkt{"Lakota"}
         ln{"Lingala"}
         lo{"Lao"}
         lol{"Mongo"}
@@ -561,7 +563,7 @@ en{
         tyv{"Tuvinian"}
         tzm{"Central Atlas Tamazight"}
         udm{"Udmurt"}
-        ug{"Uighur"}
+        ug{"Uyghur"}
         uga{"Ugaritic"}
         uk{"Ukrainian"}
         umb{"Umbundu"}
@@ -786,6 +788,7 @@ en{
             indian{"Indian National Calendar"}
             islamic{"Islamic Calendar"}
             islamic-civil{"Islamic-Civil Calendar"}
+            iso8601{"ISO-8601 Calendar"}
             japanese{"Japanese Calendar"}
             persian{"Persian Calendar"}
             roc{"Minguo Calendar"}
@@ -801,6 +804,7 @@ en{
             reformed{"Reformed Sort Order"}
             search{"General-Purpose Search"}
             searchjl{"Search By Hangul Initial Consonant"}
+            standard{"Standard Sort Order"}
             stroke{"Stroke Sort Order"}
             traditional{"Traditional Sort Order"}
             unihan{"Radical-Stroke Sort Order"}
@@ -813,6 +817,8 @@ en{
             armnlow{"Armenian Lowercase Numerals"}
             bali{"Balinese Digits"}
             beng{"Bengali Digits"}
+            brah{"Brahmi Digits"}
+            cakm{"Chakma Digits"}
             cham{"Cham Digits"}
             deva{"Devanagari Digits"}
             ethi{"Ethiopic Numerals"}
@@ -850,10 +856,14 @@ en{
             nkoo{"N'Ko Digits"}
             olck{"Ol Chiki Digits"}
             orya{"Oriya Digits"}
+            osma{"Osmanya Digits"}
             roman{"Roman Numerals"}
             romanlow{"Roman Lowercase Numerals"}
             saur{"Saurashtra Digits"}
+            shrd{"Sharada Digits"}
+            sora{"Sora Sompeng Digits"}
             sund{"Sundanese Digits"}
+            takr{"Takri Digits"}
             talu{"New Tai Lue Digits"}
             taml{"Traditional Tamil Numerals"}
             tamldec{"Tamil Digits"}
@@ -862,6 +872,9 @@ en{
             tibt{"Tibetan Digits"}
             traditional{"Traditional Numerals"}
             vaii{"Vai Digits"}
+        }
+        va{
+            posix{"POSIX Compliant Locale"}
         }
     }
     Variants{
@@ -912,7 +925,7 @@ en{
         VALENCIA{"Valencian"}
         WADEGILE{"Wade-Giles Romanization"}
     }
-    Version{"2.0.78.36"}
+    Version{"2.0.82.76"}
     codePatterns{
         language{"Language: {0}"}
         script{"Script: {0}"}

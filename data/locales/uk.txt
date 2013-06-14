@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/uk.xml
 // *
@@ -190,7 +190,7 @@ uk{
             }
         }
     }
-    Version{"2.0.78.38"}
+    Version{"2.0.82.45"}
     calendar{
         coptic{
             monthNames{
@@ -210,6 +210,152 @@ uk{
                         "Мисра",
                         "Насі",
                     }
+                }
+            }
+        }
+        generic{
+            DateTimePatterns{
+                "HH:mm:ss zzzz",
+                "HH:mm:ss z",
+                "HH:mm:ss",
+                "HH:mm",
+                "EEEE, d MMMM y 'р'. G",
+                "d MMMM y 'р'. G",
+                "d MMM y G",
+                "dd.MM.yy GGGGG",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+            }
+            availableFormats{
+                Ed{"E, d"}
+                H{"HH"}
+                HHmm{"HH:mm"}
+                HHmmss{"HH:mm:ss"}
+                Hm{"HH:mm"}
+                Hms{"HH:mm:ss"}
+                M{"L"}
+                MEd{"E, dd.MM"}
+                MMM{"LLL"}
+                MMMEd{"E, d MMM"}
+                MMMMEd{"E, d MMMM"}
+                MMMMd{"d MMMM"}
+                MMMd{"d MMM"}
+                MMdd{"dd.MM"}
+                Md{"dd.MM"}
+                d{"d"}
+                h{"h a"}
+                hm{"h:mm a"}
+                hms{"h:mm:ss a"}
+                mmss{"mm:ss"}
+                ms{"mm:ss"}
+                y{"y"}
+                yM{"MM.y"}
+                yMEd{"E, dd.MM.y"}
+                yMM{"MM.y"}
+                yMMM{"LLL y"}
+                yMMMEd{"E, d MMM y"}
+                yMMMM{"LLLL y"}
+                yMMMd{"d MMM y"}
+                yMd{"dd.MM.y"}
+                yQQQ{"QQQ y"}
+                yQQQQ{"QQQQ y 'р'."}
+            }
+            intervalFormats{
+                H{
+                    H{"HH–HH"}
+                }
+                Hm{
+                    H{"HH:mm–HH:mm"}
+                    m{"HH:mm–HH:mm"}
+                }
+                Hmv{
+                    H{"HH:mm–HH:mm v"}
+                    m{"HH:mm–HH:mm v"}
+                }
+                Hv{
+                    H{"HH–HH v"}
+                }
+                M{
+                    M{"M–M"}
+                }
+                MEd{
+                    M{"E, dd.MM – E, dd.MM"}
+                    d{"E, dd.MM – E, dd.MM"}
+                }
+                MMM{
+                    M{"LLL–LLL"}
+                }
+                MMMEd{
+                    M{"E, d MMM – E, d MMM"}
+                    d{"E, d – E, d MMM"}
+                }
+                MMMd{
+                    M{"d MMM – d MMM"}
+                    d{"d–d MMM"}
+                }
+                Md{
+                    M{"dd.MM – dd.MM"}
+                    d{"dd.MM – dd.MM"}
+                }
+                d{
+                    d{"d–d"}
+                }
+                fallback{"{0} – {1}"}
+                h{
+                    a{"h a – h a"}
+                    h{"h–h a"}
+                }
+                hm{
+                    a{"h:mm a – h:mm a"}
+                    h{"h:mm–h:mm a"}
+                    m{"h:mm–h:mm a"}
+                }
+                hmv{
+                    a{"h:mm a – h:mm a v"}
+                    h{"h:mm–h:mm a v"}
+                    m{"h:mm–h:mm a v"}
+                }
+                hv{
+                    a{"h a – h a v"}
+                    h{"h–h a v"}
+                }
+                y{
+                    y{"y–y"}
+                }
+                yM{
+                    M{"MM.y – MM.y"}
+                    y{"MM.y – MM.y"}
+                }
+                yMEd{
+                    M{"E, dd.MM.y – E, dd.MM.y"}
+                    d{"E, dd.MM.y – E, dd.MM.y"}
+                    y{"E, dd.MM.y – E, dd.MM.y"}
+                }
+                yMMM{
+                    M{"LLL–LLL y"}
+                    y{"LLL y – LLL y"}
+                }
+                yMMMEd{
+                    M{"E, d MMM – E, d MMM y"}
+                    d{"E, d – E, d MMM y"}
+                    y{"E, d MMM y – E, d MMM y"}
+                }
+                yMMMM{
+                    M{"LLLL – LLLL y"}
+                    y{"LLLL y – LLLL y"}
+                }
+                yMMMd{
+                    M{"d MMM – d MMM y"}
+                    d{"d–d MMM y"}
+                    y{"d MMM y – d MMM y"}
+                }
+                yMd{
+                    M{"dd.MM.y – dd.MM.y"}
+                    d{"dd.MM.y – dd.MM.y"}
+                    y{"dd.MM.y – dd.MM.y"}
                 }
             }
         }
@@ -256,19 +402,16 @@ uk{
                 mmss{"mm:ss"}
                 ms{"mm:ss"}
                 y{"y"}
-                yM{"MM.yyyy"}
-                yMEd{"E, dd.MM.yyyy"}
+                yM{"MM.y"}
+                yMEd{"E, dd.MM.y"}
+                yMM{"MM.y"}
                 yMMM{"LLL y"}
                 yMMMEd{"E, d MMM y"}
                 yMMMM{"LLLL y"}
                 yMMMd{"d MMM y"}
-                yMd{"dd.MM.yy"}
+                yMd{"dd.MM.y"}
                 yQQQ{"QQQ y"}
                 yQQQQ{"QQQQ y 'р'."}
-                yyMM{"MM.yy"}
-                yyMMM{"LLL yy"}
-                yyyyMMMM{"LLLL y"}
-                yyyyQQQQ{"QQQQ y 'р'."}
             }
             dayNames{
                 format{
@@ -329,63 +472,6 @@ uk{
                 wide{
                     "до нашої ери",
                     "нашої ери",
-                }
-            }
-            fields{
-                day{
-                    dn{"День"}
-                    relative{
-                        "-1"{"Вчора"}
-                        "-2"{"Позавчора"}
-                        "0"{"Сьогодні"}
-                        "1"{"Завтра"}
-                        "2"{"Післязавтра"}
-                    }
-                }
-                dayperiod{
-                    dn{"Частина доби"}
-                }
-                era{
-                    dn{"Ера"}
-                }
-                hour{
-                    dn{"Година"}
-                }
-                minute{
-                    dn{"Хвилина"}
-                }
-                month{
-                    dn{"Місяць"}
-                    relative{
-                        "-1"{"Минулого місяця"}
-                        "0"{"Цього місяця"}
-                        "1"{"Наступного місяця"}
-                    }
-                }
-                second{
-                    dn{"Секунда"}
-                }
-                week{
-                    dn{"Тиждень"}
-                    relative{
-                        "-1"{"Минулого тижня"}
-                        "0"{"Цього тижня"}
-                        "1"{"Наступного тижня"}
-                    }
-                }
-                weekday{
-                    dn{"День тижня"}
-                }
-                year{
-                    dn{"Рік"}
-                    relative{
-                        "-1"{"Минулого року"}
-                        "0"{"Цього року"}
-                        "1"{"Наступного року"}
-                    }
-                }
-                zone{
-                    dn{"Зона"}
                 }
             }
             intervalFormats{
@@ -451,13 +537,13 @@ uk{
                     y{"y–y"}
                 }
                 yM{
-                    M{"MM.yy – MM.yy"}
-                    y{"MM.yy – MM.yy"}
+                    M{"MM.y – MM.y"}
+                    y{"MM.y – MM.y"}
                 }
                 yMEd{
-                    M{"E, dd.MM.yy – E, dd.MM.yy"}
-                    d{"E, dd.MM.yy – E, dd.MM.yy"}
-                    y{"E, dd.MM.yy – E, dd.MM.yy"}
+                    M{"E, dd.MM.y – E, dd.MM.y"}
+                    d{"E, dd.MM.y – E, dd.MM.y"}
+                    y{"E, dd.MM.y – E, dd.MM.y"}
                 }
                 yMMM{
                     M{"LLL–LLL y"}
@@ -478,9 +564,9 @@ uk{
                     y{"d MMM y – d MMM y"}
                 }
                 yMd{
-                    M{"dd.MM.yy – dd.MM.yy"}
-                    d{"dd.MM.yy – dd.MM.yy"}
-                    y{"dd.MM.yy – dd.MM.yy"}
+                    M{"dd.MM.y – dd.MM.y"}
+                    d{"dd.MM.y – dd.MM.y"}
+                    y{"dd.MM.y – dd.MM.y"}
                 }
             }
             monthNames{
@@ -692,6 +778,63 @@ uk{
         alternateQuotationStart{"„"}
         quotationEnd{"»"}
         quotationStart{"«"}
+    }
+    fields{
+        day{
+            dn{"День"}
+            relative{
+                "-1"{"Вчора"}
+                "-2"{"Позавчора"}
+                "0"{"Сьогодні"}
+                "1"{"Завтра"}
+                "2"{"Післязавтра"}
+            }
+        }
+        dayperiod{
+            dn{"Частина доби"}
+        }
+        era{
+            dn{"Ера"}
+        }
+        hour{
+            dn{"Година"}
+        }
+        minute{
+            dn{"Хвилина"}
+        }
+        month{
+            dn{"Місяць"}
+            relative{
+                "-1"{"Минулого місяця"}
+                "0"{"Цього місяця"}
+                "1"{"Наступного місяця"}
+            }
+        }
+        second{
+            dn{"Секунда"}
+        }
+        week{
+            dn{"Тиждень"}
+            relative{
+                "-1"{"Минулого тижня"}
+                "0"{"Цього тижня"}
+                "1"{"Наступного тижня"}
+            }
+        }
+        weekday{
+            dn{"День тижня"}
+        }
+        year{
+            dn{"Рік"}
+            relative{
+                "-1"{"Минулого року"}
+                "0"{"Цього року"}
+                "1"{"Наступного року"}
+            }
+        }
+        zone{
+            dn{"Зона"}
+        }
     }
     listPattern{
         standard{

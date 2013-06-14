@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/be.xml
 // *
@@ -127,7 +127,7 @@ be{
         GT{"Гватэмала"}
         GW{"Гвінея-Бісаў"}
         GY{"Гаяна"}
-        HK{"Гон-Конг, Кітай (САР)"}
+        HK{"Гон-Конг"}
         HM{"Гэрда востраў і МакДоналда астравы"}
         HN{"Гандурас"}
         HR{"Харватыя"}
@@ -177,7 +177,7 @@ be{
         ML{"Малі"}
         MM{"М'янма"}
         MN{"Манголія"}
-        MO{"Макао, Кітай (САР)"}
+        MO{"Макао"}
         MP{"Паўночныя Марыянскія астравы"}
         MQ{"Марцініка"}
         MR{"Маўрытанія"}
@@ -274,5 +274,5 @@ be{
         ZW{"Зімбабвэ"}
         ZZ{"Невядомы рэгіён"}
     }
-    Version{"2.0.78.38"}
+    Version{"2.0.82.49"}
 }

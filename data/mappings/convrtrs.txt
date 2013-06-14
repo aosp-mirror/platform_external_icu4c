@@ -1,6 +1,6 @@
 # ******************************************************************************
 # *
-# *   Copyright (C) 1995-2012, International Business Machines
+# *   Copyright (C) 1995-2013, International Business Machines
 # *   Corporation and others.  All Rights Reserved.
 # *
 # ******************************************************************************
@@ -285,7 +285,7 @@ UTF-16,version=1                JavaUnicode # alias made up to avoid java.nio.ch
 # From Unicode: Write BE BOM and BE bytes
 # To Unicode: Detects and consumes BOM. Defaults to BE.
 # BEGIN Android-changed
-UTF-16,version=2               JavaUnicode # alias made up to avoid java.nio.charset.IllegalCharsetNameException
+UTF-16,version=2               JavaUnicode2 # alias made up to avoid java.nio.charset.IllegalCharsetNameException
 # END Android-changed
 
 # Note: ICU does not currently support Java-specific, non-Unicode-standard UTF-32 variants.
@@ -626,12 +626,6 @@ ibm-943_P130-1999 { UTR22* }
 ibm-33722_P12A_P12A-2009_U2 { UTR22* }
                         ibm-33722   # Leave untagged because this isn't the default
                         ibm-5050    # Leave untagged because this isn't the default, and yes this alias is correct
-                        # BEGIN android-removed
-                        # EUC-JP { IANA MIME* WINDOWS }
-                        # Extended_UNIX_Code_Packed_Format_for_Japanese { IANA* WINDOWS }
-                        # csEUCPkdFmtJapanese { IANA WINDOWS }
-                        # END android-removed
-                        X-EUC-JP { WINDOWS }   # Japan EUC. x-euc-jp is a MIME name
                         ibm-33722_VPUA
                         IBM-eucJP
 windows-51932-2006 { UTR22* }
@@ -652,23 +646,17 @@ ibm-33722_P120-1999 { UTR22* }  # Japan EUC with \ <-> Yen mapping
 # ibm-954 contains more PUA characters than the others.
 ibm-954_P101-2007 { UTR22* }
                         ibm-954 { IBM* }
-                        # BEGIN android-removed
-                        # EUC-JP { JAVA* } # Matches more closely with ibm-1350
-                        # Extended_UNIX_Code_Packed_Format_for_Japanese { JAVA }
-                        # csEUCPkdFmtJapanese { JAVA }
-                        # END android-removed
-                        # BEGIN android-added
-                        EUC-JP { IANA MIME* JAVA* } # Matches more closely with ibm-1350
-                        Extended_UNIX_Code_Packed_Format_for_Japanese { IANA* JAVA }
-                        csEUCPkdFmtJapanese { IANA JAVA }
-                        # END android-added
-                        X-EUC-JP { JAVA }   # Japan EUC. x-euc-jp is a MIME name
-                        eucjis { JAVA }
-                        ujis # Linux sometimes uses this name. This is an unfortunate generic and rarely used name. Its use is discouraged.
-                        x-IBM954 { JAVA }
+                        x-IBM954 { JAVA* }
                         x-IBM954C { JAVA }
                         # eucJP # This is closest to Solaris EUC-JP.
-                        
+euc-jp-2007 { UTR22* }
+                        EUC-JP { MIME* IANA JAVA* WINDOWS* }
+                        Extended_UNIX_Code_Packed_Format_for_Japanese { IANA* JAVA WINDOWS }
+                        csEUCPkdFmtJapanese { IANA JAVA WINDOWS }
+                        X-EUC-JP { MIME JAVA WINDOWS }   # Japan EUC. x-euc-jp is a MIME name
+                        eucjis {JAVA}
+                        ujis # Linux sometimes uses this name. This is an unfortunate generic and rarely used name. Its use is discouraged.
+
 aix-IBM_udcJP-4.3.6 { UTR22* }
                         x-IBM-udcJP { JAVA* }
 
@@ -691,6 +679,7 @@ windows-950-2000 { UTR22* }
                         windows-950 { WINDOWS* }
                         x-windows-950 { JAVA }
                         x-big5
+                        ms950
 ibm-950_P110-1999 { UTR22* }                # Taiwan Big-5 (w/o euro update)
                         ibm-950 { IBM* JAVA }
                         cp950 { JAVA* }
@@ -898,27 +887,16 @@ windows-874-2000 { UTR22* }   # Thai (w/ euro update)
                         windows-874 { JAVA WINDOWS* }
                         # END android-changed
                         MS874 { JAVA* }
-                        x-windows-874 { JAVA }
                         # iso-8859-11 { WINDOWS } # iso-8859-11 is similar to TIS-620. ibm-13162 is a closer match.
-                        # BEGIN android-added
+
+ibm-874_P100-1995 { UTR22* }    # Thai PC (w/o euro update).
                         ibm-874 { IBM* JAVA }
                         ibm-9066 { IBM }    # Yes ibm-874 == ibm-9066. ibm-1161 has the euro update.
-                        cp874 { JAVA }
+                        cp874 { JAVA* }
+                        TIS-620 { IANA* JAVA }  # This is actually separate from ibm-874, which is similar to this table
                         tis620.2533 { JAVA }    # This is actually separate from ibm-874, which is similar to this table
                         eucTH               # eucTH is an unusual alias from Solaris.  eucTH has fewer mappings than TIS620
                         x-IBM874 { JAVA }
-                        # END android-added
-
-ibm-874_P100-1995 { UTR22* }    # Thai PC (w/o euro update).
-                        # BEGIN android-removed
-                        # ibm-874 { IBM* JAVA }
-                        # ibm-9066 { IBM }    # Yes ibm-874 == ibm-9066. ibm-1161 has the euro update.
-                        # cp874 { JAVA* }
-                        # TIS-620 { IANA* JAVA }  # This is actually separate from ibm-874, which is similar to this table
-                        # tis620.2533 { JAVA }    # This is actually separate from ibm-874, which is similar to this table
-                        # eucTH               # eucTH is an unusual alias from Solaris.  eucTH has fewer mappings than TIS620
-                        # x-IBM874 { JAVA }
-                        # END android-removed
 
 ibm-1162_P100-1999 { UTR22* }   # Thai (w/ euro update)
                         ibm-1162 { IBM* }
@@ -1336,11 +1314,6 @@ ibm-953_P100-2000 { UTR22* }    ibm-953 { IBM* } JIS_X0212-1990 { IANA* } # Pure
 ibm-955_P110-1997 { UTR22* }    ibm-955 { IBM* } # Pure DBCS, Japanese EUC, G0 - JIS X208-1978
 ibm-9577_P100-2001 { UTR22* }   ibm-9577 { IBM* } ibm-1385 { IBM } x-IBM1385 { JAVA* } # ibm-9577 and ibm-1385 are identical DBCS tables.
 iso-8859_16-2001 { UTR22* }     ISO-8859-16 { IANA* } iso-ir-226 { IANA } ISO_8859-16:2001 { IANA } latin10 { IANA } l10 { IANA }
-# BEGIN android-added
-docomo-shift_jis-2007 { UTR22* } docomo-emoji # DoCoMo specific Shift-JIS
-kddi-shift_jis-2007 { UTR22* } kddi-emoji # KDDI specific Shift-JIS
-softbank-shift_jis-2007 { UTR22* } softbank-emoji # SoftBank specific Shift-JIS
-# END android-added
 
 # To be considered for listing at a later date for the data library customization tool
 #ibm-1159_P100-1999 { UTR22* }   ibm-1159 { IBM* } # SBCS T-Ch Host. Euro update of ibm-28709. This is used in combination with another CCSID mapping.
