@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/af.xml
 // *
@@ -143,8 +143,150 @@ af{
             }
         }
     }
-    Version{"2.0.78.32"}
+    Version{"2.0.82.45"}
     calendar{
+        generic{
+            DateTimePatterns{
+                "h:mm:ss a zzzz",
+                "h:mm:ss a z",
+                "h:mm:ss a",
+                "h:mm a",
+                "EEEE dd MMMM y G",
+                "dd MMMM y G",
+                "dd MMM y G",
+                "GGGGG y-MM-dd",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+            }
+            availableFormats{
+                Ed{"E d"}
+                H{"HH"}
+                Hm{"HH:mm"}
+                Hms{"HH:mm:ss"}
+                M{"L"}
+                MEd{"E, M/d"}
+                MMM{"LLL"}
+                MMMEd{"E, MMM d"}
+                MMMMEd{"E, MMMM d"}
+                MMMMd{"MMMM d"}
+                MMMMdd{"dd MMMM"}
+                MMMd{"MMM d"}
+                Md{"M/d"}
+                d{"d"}
+                h{"h a"}
+                hm{"h:mm a"}
+                hms{"h:mm:ss a"}
+                ms{"mm:ss"}
+                y{"y"}
+                yM{"M/y"}
+                yMEd{"E, d/M/y"}
+                yMMM{"MMM y"}
+                yMMMEd{"E, d MMM y"}
+                yMMMM{"MMMM y"}
+                yMMMd{"d MMM y"}
+                yMd{"M/d/y"}
+                yQQQ{"QQQ y"}
+                yQQQQ{"QQQQ y"}
+            }
+            intervalFormats{
+                H{
+                    H{"HH–HH"}
+                }
+                Hm{
+                    H{"HH:mm–HH:mm"}
+                    m{"HH:mm–HH:mm"}
+                }
+                Hmv{
+                    H{"HH:mm–HH:mm v"}
+                    m{"HH:mm–HH:mm v"}
+                }
+                Hv{
+                    H{"HH–HH v"}
+                }
+                M{
+                    M{"M–M"}
+                }
+                MEd{
+                    M{"E, M/d – E, M/d"}
+                    d{"E, M/d – E, M/d"}
+                }
+                MMM{
+                    M{"MMM–MMM"}
+                }
+                MMMEd{
+                    M{"E, MMM d – E, MMM d"}
+                    d{"E, MMM d – E, MMM d"}
+                }
+                MMMd{
+                    M{"MMM d – MMM d"}
+                    d{"MMM d–d"}
+                }
+                Md{
+                    M{"M/d – M/d"}
+                    d{"M/d – M/d"}
+                }
+                d{
+                    d{"d–d"}
+                }
+                fallback{"{0} – {1}"}
+                h{
+                    a{"h a – h a"}
+                    h{"h–h a"}
+                }
+                hm{
+                    a{"h:mm a – h:mm a"}
+                    h{"h:mm–h:mm a"}
+                    m{"h:mm–h:mm a"}
+                }
+                hmv{
+                    a{"h:mm a – h:mm a v"}
+                    h{"h:mm–h:mm a v"}
+                    m{"h:mm–h:mm a v"}
+                }
+                hv{
+                    a{"h a – h a v"}
+                    h{"h–h a v"}
+                }
+                y{
+                    y{"y–y"}
+                }
+                yM{
+                    M{"M/y – M/y"}
+                    y{"M/y – M/y"}
+                }
+                yMEd{
+                    M{"E, M/d/y – E, M/d/y"}
+                    d{"E, M/d/y – E, M/d/y"}
+                    y{"E, M/d/y – E, M/d/y"}
+                }
+                yMMM{
+                    M{"MMM–MMM y"}
+                    y{"MMM y – MMM y"}
+                }
+                yMMMEd{
+                    M{"E, d MMM – E, d MMM, y"}
+                    d{"E, d MMM – E, d MMM, y"}
+                    y{"E, MMM d, y – E, MMM d, y"}
+                }
+                yMMMM{
+                    M{"MMMM–MMMM y"}
+                    y{"MMMM y – MMMM y"}
+                }
+                yMMMd{
+                    M{"MMM d – MMM d, y"}
+                    d{"d–d MMM, y"}
+                    y{"d MMM, y – d MMM, y"}
+                }
+                yMd{
+                    M{"M/d/y – M/d/y"}
+                    d{"M/d/y – M/d/y"}
+                    y{"M/d/y – M/d/y"}
+                }
+            }
+        }
         gregorian{
             AmPmMarkers{
                 "vm.",
@@ -158,7 +300,7 @@ af{
                 "EEEE dd MMMM y",
                 "dd MMMM y",
                 "dd MMM y",
-                "yyyy-MM-dd",
+                "y-MM-dd",
                 "{1} {0}",
                 "{1} {0}",
                 "{1} {0}",
@@ -256,63 +398,6 @@ af{
                     "na Christus",
                 }
             }
-            fields{
-                day{
-                    dn{"Dag"}
-                    relative{
-                        "-1"{"Gister"}
-                        "-2"{"Die dag voor gister"}
-                        "0"{"Vandag"}
-                        "1"{"Môre"}
-                        "2"{"Die dag na môre"}
-                    }
-                }
-                dayperiod{
-                    dn{"AM/PM"}
-                }
-                era{
-                    dn{"Era"}
-                }
-                hour{
-                    dn{"Uur"}
-                }
-                minute{
-                    dn{"Minuut"}
-                }
-                month{
-                    dn{"Maand"}
-                    relative{
-                        "-1"{"Verlede maand"}
-                        "0"{"Vandeesmaand"}
-                        "1"{"Volgende maand"}
-                    }
-                }
-                second{
-                    dn{"Sekonde"}
-                }
-                week{
-                    dn{"Week"}
-                    relative{
-                        "-1"{"Verlede week"}
-                        "0"{"Vandeesweek"}
-                        "1"{"Volgende week"}
-                    }
-                }
-                weekday{
-                    dn{"Weeksdag"}
-                }
-                year{
-                    dn{"Jaar"}
-                    relative{
-                        "-1"{"Verlede jaar"}
-                        "0"{"Hierdie jaar"}
-                        "1"{"Volgende jaar"}
-                    }
-                }
-                zone{
-                    dn{"Tydsone"}
-                }
-            }
             intervalFormats{
                 H{
                     H{"HH–HH"}
@@ -376,13 +461,13 @@ af{
                     y{"y–y"}
                 }
                 yM{
-                    M{"M/yy – M/yy"}
-                    y{"M/yy – M/yy"}
+                    M{"M/y – M/y"}
+                    y{"M/y – M/y"}
                 }
                 yMEd{
-                    M{"E, M/d/yy – E, M/d/yy"}
-                    d{"E, M/d/yy – E, M/d/yy"}
-                    y{"E, M/d/yy – E, M/d/yy"}
+                    M{"E, M/d/y – E, M/d/y"}
+                    d{"E, M/d/y – E, M/d/y"}
+                    y{"E, M/d/y – E, M/d/y"}
                 }
                 yMMM{
                     M{"MMM–MMM y"}
@@ -403,9 +488,9 @@ af{
                     y{"d MMM, y – d MMM, y"}
                 }
                 yMd{
-                    M{"M/d/yy – M/d/yy"}
-                    d{"M/d/yy – M/d/yy"}
-                    y{"M/d/yy – M/d/yy"}
+                    M{"M/d/y – M/d/y"}
+                    d{"M/d/y – M/d/y"}
+                    y{"M/d/y – M/d/y"}
                 }
             }
             monthNames{
@@ -507,6 +592,63 @@ af{
         alternateQuotationStart{"‘"}
         quotationEnd{"”"}
         quotationStart{"“"}
+    }
+    fields{
+        day{
+            dn{"Dag"}
+            relative{
+                "-1"{"Gister"}
+                "-2"{"Die dag voor gister"}
+                "0"{"Vandag"}
+                "1"{"Môre"}
+                "2"{"Die dag na môre"}
+            }
+        }
+        dayperiod{
+            dn{"AM/PM"}
+        }
+        era{
+            dn{"Era"}
+        }
+        hour{
+            dn{"Uur"}
+        }
+        minute{
+            dn{"Minuut"}
+        }
+        month{
+            dn{"Maand"}
+            relative{
+                "-1"{"Verlede maand"}
+                "0"{"Vandeesmaand"}
+                "1"{"Volgende maand"}
+            }
+        }
+        second{
+            dn{"Sekonde"}
+        }
+        week{
+            dn{"Week"}
+            relative{
+                "-1"{"Verlede week"}
+                "0"{"Vandeesweek"}
+                "1"{"Volgende week"}
+            }
+        }
+        weekday{
+            dn{"Weeksdag"}
+        }
+        year{
+            dn{"Jaar"}
+            relative{
+                "-1"{"Verlede jaar"}
+                "0"{"Hierdie jaar"}
+                "1"{"Volgende jaar"}
+            }
+        }
+        zone{
+            dn{"Tydsone"}
+        }
     }
     listPattern{
         standard{

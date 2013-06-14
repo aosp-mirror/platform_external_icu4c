@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/hu.xml
 // *
@@ -141,7 +141,7 @@ hu{
         GU{"Guam"}
         GW{"Guinea-Bissau"}
         GY{"Guyana"}
-        HK{"Hongkong SAR Kína"}
+        HK{"Hongkong"}
         HM{"Heard és McDonald Szigetek"}
         HN{"Honduras"}
         HR{"Horvátország"}
@@ -195,7 +195,7 @@ hu{
         ML{"Mali"}
         MM{"Mianmar [Burma]"}
         MN{"Mongólia"}
-        MO{"Makaó SAR Kína"}
+        MO{"Makaó"}
         MP{"Északi Mariana-szigetek"}
         MQ{"Martinique"}
         MR{"Mauritánia"}
@@ -230,7 +230,7 @@ hu{
         PM{"Saint Pierre és Miquelon"}
         PN{"Pitcairn-szigetek"}
         PR{"Puerto Rico"}
-        PS{"Palesztin Terület"}
+        PS{"Palesztina"}
         PT{"Portugália"}
         PW{"Palau"}
         PY{"Paraguay"}
@@ -294,6 +294,7 @@ hu{
         VU{"Vanuatu"}
         WF{"Wallis- és Futuna-szigetek"}
         WS{"Szamoa"}
+        XK{"Koszovó"}
         YE{"Jemen"}
         YT{"Mayotte"}
         ZA{"Dél-afrikai Köztársaság"}
@@ -301,5 +302,5 @@ hu{
         ZW{"Zimbabwe"}
         ZZ{"Ismeretlen vagy érvénytelen körzet"}
     }
-    Version{"2.0.78.47"}
+    Version{"2.0.82.47"}
 }
