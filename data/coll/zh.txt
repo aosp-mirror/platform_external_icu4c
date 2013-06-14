@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
+// * Copyright (C) 2013 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // * Tool: com.ibm.icu.dev.tool.cldr.LDML2ICUConverter.java
 // * Source File:<path>/common/collation/zh.xml
@@ -10,7 +10,7 @@
  *  ICU <specials> source: <path>/xml/collation/zh.xml
  */
 zh{
-    Version{"2.0.75.85"}
+    Version{"2.0.82.42"}
     collations{
         // BEGIN android-remove
         // Omitted big5han
@@ -792,21 +792,7 @@ zh{
                 "&龟<<<⻳"
                 "&龠<<<⿕"
             }
-            Version{"22.1.1"}
-        }
-        standard{
-            Sequence{
-                "&[before 2]a<<ā<<<Ā<<á<<<Á<<ǎ<<<Ǎ<<à<<<À"
-                "&[before 2]e<<ē<<<Ē<<é<<<É<<ě<<<Ě<<è<<<È"
-                "&e<<ê̄<<<Ê̄<<ế<<<Ế<<ê̌<<<Ê̌<<ề<<<Ề"
-                "&[before 2]i<<ī<<<Ī<<í<<<Í<<ǐ<<<Ǐ<<ì<<<Ì"
-                "&[before 2]m<<m̄<<<M̄<<ḿ<<<Ḿ<<m̌<<<M̌<<m̀<<<M̀"
-                "&[before 2]n<<n̄<<<N̄<<ń<<<Ń<<ň<<<Ň<<ǹ<<<Ǹ"
-                "&[before 2]o<<ō<<<Ō<<ó<<<Ó<<ǒ<<<Ǒ<<ò<<<Ò"
-                "&[before 2]u<<ū<<<Ū<<ú<<<Ú<<ǔ<<<Ǔ<<ù<<<Ù"
-                "&U<<ǖ<<<Ǖ<<ǘ<<<Ǘ<<ǚ<<<Ǚ<<ǜ<<<Ǜ<<ü<<<Ü"
-            }
-            Version{"22.1.1"}
+            Version{"23"}
         }
         stroke{
             Sequence{
@@ -1460,7 +1446,7 @@ zh{
                 "&龟<<<⻳"
                 "&龠<<<⿕"
             }
-            Version{"22.1.1"}
+            Version{"23"}
         }
         // BEGIN android-remove
         // Omitted unihan

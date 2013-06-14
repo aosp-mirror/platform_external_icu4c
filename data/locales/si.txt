@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/si.xml
 // *
@@ -32,8 +32,146 @@ si{
             }
         }
     }
-    Version{"2.0.78.39"}
+    Version{"2.0.82.45"}
     calendar{
+        generic{
+            DateTimePatterns{
+                "a HH:mm:ss zzzz",
+                "a h:mm:ss z",
+                "a h.mm.ss",
+                "a h.mm",
+                "G y MMMM d, EEEE",
+                "G y MMMM d",
+                "G y MMM d",
+                "GGGGG y/MM/dd",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+            }
+            availableFormats{
+                Ed{"d E"}
+                H{"HH"}
+                Hm{"HH:mm"}
+                Hms{"HH:mm:ss"}
+                M{"L"}
+                MEd{"M-d, E"}
+                MMM{"LLL"}
+                MMMEd{"MMM d E"}
+                MMMd{"MMM d"}
+                Md{"M-d"}
+                d{"d"}
+                h{"a h"}
+                hm{"a h.mm"}
+                hms{"a h.mm.ss"}
+                ms{"mm.ss"}
+                y{"y"}
+                yM{"y-M"}
+                yMEd{"y-M-d, E"}
+                yMMM{"y MMM"}
+                yMMMEd{"y MMM d, E"}
+                yMMMd{"y MMM d"}
+                yMd{"y-M-d"}
+                yQQQ{"y QQQ"}
+                yQQQQ{"y QQQQ"}
+            }
+            intervalFormats{
+                H{
+                    H{"HH–HH"}
+                }
+                Hm{
+                    H{"HH:mm–HH:mm"}
+                    m{"HH:mm–HH:mm"}
+                }
+                Hmv{
+                    H{"HH:mm–HH:mm v"}
+                    m{"HHmm-HHmm v"}
+                }
+                Hv{
+                    H{"HH–HH v"}
+                }
+                M{
+                    M{"M–M"}
+                }
+                MEd{
+                    M{"E, M-d – E, M-d"}
+                    d{"E, M-d – E, M-d"}
+                }
+                MMM{
+                    M{"LLL–LLL"}
+                }
+                MMMEd{
+                    M{"MMM-dd, E – MMM-dd, E"}
+                    d{"MMM-d, E – MMM-d, E"}
+                }
+                MMMd{
+                    M{"MMM d - MMM d"}
+                    d{"MMM d-d"}
+                }
+                Md{
+                    M{"M-d - M-d"}
+                    d{"M-d - M-d"}
+                }
+                d{
+                    d{"d–d"}
+                }
+                fallback{"{0} – {1}"}
+                h{
+                    a{"a h - a h"}
+                    h{"a h-h"}
+                }
+                hm{
+                    a{"a h:mm - a h:mm"}
+                    h{"a h.mm - h.mm"}
+                    m{"a h.mm - h.mm"}
+                }
+                hmv{
+                    a{"a h.mm - a hhh.mm v"}
+                    h{"a h.mm - h.mm v"}
+                    m{"a h:mm - h.mm v"}
+                }
+                hv{
+                    a{"a h - a h v"}
+                    h{"a h - h vv"}
+                }
+                y{
+                    y{"y–y"}
+                }
+                yM{
+                    M{"M-y - M-y"}
+                    y{"M-y - M-y"}
+                }
+                yMEd{
+                    M{"E, M-d-y - E, M-d-y"}
+                    d{"E, y-MM-dd – E, y-MM-dd"}
+                    y{"M-d-y, E - M-d-y, E"}
+                }
+                yMMM{
+                    M{"y MMM–MMM"}
+                    y{"y MMM - y MMM"}
+                }
+                yMMMEd{
+                    M{"y MMM d, E - y MMM d, E"}
+                    d{"y MMM d, E - y MMM d, E"}
+                    y{"y MMM d, E - y MMM d, E"}
+                }
+                yMMMM{
+                    M{"y MMMM - MMMM"}
+                    y{"y MMMM - y MMMM"}
+                }
+                yMMMd{
+                    M{"y MMM d - MMM d"}
+                    d{"y MMM d - d"}
+                    y{"y MMM d - y MMM d"}
+                }
+                yMd{
+                    M{"M-d-y - M-d-y"}
+                    d{"M-d-y - M-d-y"}
+                    y{"M-d-y - M-d-y"}
+                }
+            }
+        }
         gregorian{
             AmPmMarkers{
                 "පෙ.ව.",
@@ -47,7 +185,7 @@ si{
                 "y MMMM d, EEEE",
                 "y MMMM d",
                 "y MMM d",
-                "yyyy/MM/dd",
+                "y/MM/dd",
                 "{1} {0}",
                 "{1} {0}",
                 "{1} {0}",
@@ -168,48 +306,6 @@ si{
                     "ක්‍රිස්තු වර්‍ෂ",
                 }
             }
-            fields{
-                day{
-                    dn{"දිනය"}
-                    relative{
-                        "-1"{"ඊයෙ"}
-                        "-2"{"පෙරේදා"}
-                        "0"{"අද"}
-                        "1"{"හෙට"}
-                        "2"{"අනිද්දා"}
-                    }
-                }
-                dayperiod{
-                    dn{"දිවා කාලය"}
-                }
-                era{
-                    dn{"යුගය"}
-                }
-                hour{
-                    dn{"පැය"}
-                }
-                minute{
-                    dn{"මිනිස්තුව"}
-                }
-                month{
-                    dn{"මාසය"}
-                }
-                second{
-                    dn{"තප්පරය"}
-                }
-                week{
-                    dn{"සතිය"}
-                }
-                weekday{
-                    dn{"සතියේ දිනය"}
-                }
-                year{
-                    dn{"වර්ෂ"}
-                }
-                zone{
-                    dn{"වේලා කලාපය"}
-                }
-            }
             intervalFormats{
                 H{
                     H{"HH–HH"}
@@ -273,13 +369,13 @@ si{
                     y{"y–y"}
                 }
                 yM{
-                    M{"M-yy - M-yy"}
-                    y{"M-yy - M-yy"}
+                    M{"M-y - M-y"}
+                    y{"M-y - M-y"}
                 }
                 yMEd{
-                    M{"E, M-d-yy - E, M-d-yy"}
-                    d{"E, yyyy-MM-dd – E, yyyy-MM-dd"}
-                    y{"M-d-yy, E - M-d-yy, E"}
+                    M{"E, M-d-y - E, M-d-y"}
+                    d{"E, y-MM-dd – E, y-MM-dd"}
+                    y{"M-d-y, E - M-d-y, E"}
                 }
                 yMMM{
                     M{"y MMM–MMM"}
@@ -300,9 +396,9 @@ si{
                     y{"y MMM d - y MMM d"}
                 }
                 yMd{
-                    M{"M-d-yy - M-d-yy"}
-                    d{"M-d-yy - M-d-yy"}
-                    y{"M-d-yy - M-d-yy"}
+                    M{"M-d-y - M-d-y"}
+                    d{"M-d-y - M-d-y"}
+                    y{"M-d-y - M-d-y"}
                 }
             }
             monthNames{
@@ -444,6 +540,48 @@ si{
         alternateQuotationStart{"‘"}
         quotationEnd{"”"}
         quotationStart{"“"}
+    }
+    fields{
+        day{
+            dn{"දිනය"}
+            relative{
+                "-1"{"ඊයෙ"}
+                "-2"{"පෙරේදා"}
+                "0"{"අද"}
+                "1"{"හෙට"}
+                "2"{"අනිද්දා"}
+            }
+        }
+        dayperiod{
+            dn{"දිවා කාලය"}
+        }
+        era{
+            dn{"යුගය"}
+        }
+        hour{
+            dn{"පැය"}
+        }
+        minute{
+            dn{"මිනිස්තුව"}
+        }
+        month{
+            dn{"මාසය"}
+        }
+        second{
+            dn{"තප්පරය"}
+        }
+        week{
+            dn{"සතිය"}
+        }
+        weekday{
+            dn{"සතියේ දිනය"}
+        }
+        year{
+            dn{"වර්ෂ"}
+        }
+        zone{
+            dn{"වේලා කලාපය"}
+        }
     }
     listPattern{
         standard{

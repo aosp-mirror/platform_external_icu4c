@@ -81,7 +81,8 @@ public:
 
    /* Test getting the locale base name */
    void TestGetBaseName(void);
-    
+    void TestTrailingNull(void);  /* Google Patch */
+
 #if !UCONFIG_NO_FORMATTING
     void Test4105828(void) ;
 #endif
@@ -169,6 +170,7 @@ private:
         DNAME_NO
     };
 };
+
 
 
 

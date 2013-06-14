@@ -1544,9 +1544,10 @@ static void TestAmbiguous()
             const char* cnvName = ucnv_getName(cnv, &status);
             if (strlen(cnvName) < 8 ||
                 strncmp(cnvName, "ISO_2022", 8) != 0) {
-            TestAmbiguousConverter(cnv);
+                TestAmbiguousConverter(cnv);
             }
             /* END android-changed */
+            ucnv_close(cnv);
         } else {
             log_err("error: unable to open available converter \"%s\"\n", name);
             status=U_ZERO_ERROR;
