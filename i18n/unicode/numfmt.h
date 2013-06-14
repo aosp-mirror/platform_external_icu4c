@@ -1,6 +1,6 @@
 /*
 ********************************************************************************
-* Copyright (C) 1997-2012, International Business Machines Corporation and others.
+* Copyright (C) 1997-2013, International Business Machines Corporation and others.
 * All Rights Reserved.
 ********************************************************************************
 *
@@ -71,6 +71,9 @@ class StringEnumeration;
  *    cout << " Example 1: " << myString << endl;
  * \endcode
  * </pre>
+ * Note that there are additional factory methods within subclasses of
+ * NumberFormat.
+ * <P>
  * If you are formatting multiple numbers, it is more efficient to get
  * the format and use it multiple times so that the system doesn't
  * have to fetch the information about the local language and country
@@ -620,7 +623,6 @@ public:
                        Formattable& result,
                        UErrorCode& status) const;
 
-/* Cannot use #ifndef U_HIDE_DRAFT_API for the following draft method since it is virtual */
     /**
      * Parses text from the given string as a currency amount.  Unlike
      * the parse() method, this method will attempt to parse a generic
@@ -638,7 +640,7 @@ public:
      * @return     if parse succeeds, a pointer to a newly-created CurrencyAmount
      *             object (owned by the caller) containing information about
      *             the parsed currency; if parse fails, this is NULL.
-     * @draft ICU 49
+     * @stable ICU 49
      */
     virtual CurrencyAmount* parseCurrency(const UnicodeString& text,
                                           ParsePosition& pos) const;
@@ -982,6 +984,19 @@ protected:
      * @internal
      */
     virtual void getEffectiveCurrency(UChar* result, UErrorCode& ec) const;
+
+#ifndef U_HIDE_INTERNAL_API
+    /**
+     * Creates the specified number format style of the desired locale.
+     * If mustBeDecimalFormat is TRUE, then the returned pointer is
+     * either a DecimalFormat or it is NULL.
+     * @internal
+     */
+    static NumberFormat* makeInstance(const Locale& desiredLocale,
+                                      UNumberFormatStyle style,
+                                      UBool mustBeDecimalFormat,
+                                      UErrorCode& errorCode);
+#endif  /* U_HIDE_INTERNAL_API */
 
 private:
 

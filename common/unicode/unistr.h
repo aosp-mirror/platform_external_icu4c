@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 1998-2012, International Business Machines
+*   Copyright (C) 1998-2013, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *
@@ -54,6 +54,7 @@ U_STABLE int32_t U_EXPORT2
 u_strlen(const UChar *s);
 #endif
 
+#ifndef U_HIDE_INTERNAL_API
 /**
  * \def U_STRING_CASE_MAPPER_DEFINED
  * @internal
@@ -73,6 +74,7 @@ UStringCaseMapper(const UCaseMap *csm,
                   UErrorCode *pErrorCode);
 
 #endif
+#endif  /* U_HIDE_INTERNAL_API */
 
 U_NAMESPACE_BEGIN
 
@@ -142,7 +144,7 @@ class UnicodeStringAppendable;  // unicode/appendable.h
  * This can be defined to be empty or "explicit".
  * If explicit, then the UnicodeString(UChar) and UnicodeString(UChar32)
  * constructors are marked as explicit, preventing their inadvertent use.
- * @draft ICU 49
+ * @stable ICU 49
  */
 #ifndef UNISTR_FROM_CHAR_EXPLICIT
 # if defined(U_COMBINED_IMPLEMENTATION) || defined(U_COMMON_IMPLEMENTATION) || defined(U_I18N_IMPLEMENTATION) || defined(U_IO_IMPLEMENTATION)
@@ -162,7 +164,7 @@ class UnicodeStringAppendable;  // unicode/appendable.h
  *
  * In particular, this helps prevent accidentally depending on ICU conversion code
  * by passing a string literal into an API with a const UnicodeString & parameter.
- * @draft ICU 49
+ * @stable ICU 49
  */
 #ifndef UNISTR_FROM_STRING_EXPLICIT
 # if defined(U_COMBINED_IMPLEMENTATION) || defined(U_COMMON_IMPLEMENTATION) || defined(U_I18N_IMPLEMENTATION) || defined(U_IO_IMPLEMENTATION)
@@ -2852,7 +2854,7 @@ public:
   /** Construct an empty UnicodeString.
    * @stable ICU 2.0
    */
-  UnicodeString();
+  inline UnicodeString();
 
   /**
    * Construct a UnicodeString with capacity to hold <TT>capacity</TT> UChars
@@ -3205,7 +3207,7 @@ public:
    * character.  See unescape() for a listing of the recognized escape
    * sequences.  The character at offset-1 is assumed (without
    * checking) to be a backslash.  If the escape sequence is
-   * ill-formed, or the offset is out of range, (UChar32)0xFFFFFFFF is
+   * ill-formed, or the offset is out of range, U_SENTINEL=-1 is
    * returned.
    *
    * @param offset an input output parameter.  On input, it is the
@@ -3213,7 +3215,7 @@ public:
    * after the initial backslash.  On output, it is advanced after the
    * last character parsed.  On error, it is not advanced at all.
    * @return the character represented by the escape sequence at
-   * offset, or (UChar32)0xFFFFFFFF on error.
+   * offset, or U_SENTINEL=-1 on error.
    * @see UnicodeString#unescape()
    * @see u_unescape()
    * @see u_unescapeAt()
@@ -3602,6 +3604,16 @@ UnicodeString::getArrayStart()
 inline const UChar*
 UnicodeString::getArrayStart() const
 { return (fFlags&kUsingStackBuffer) ? fUnion.fStackBuffer : fUnion.fFields.fArray; }
+
+//========================================
+// Default constructor
+//========================================
+
+inline
+UnicodeString::UnicodeString()
+  : fShortLength(0),
+    fFlags(kShortString)
+{}
 
 //========================================
 // Read-only implementation methods

@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 2011-2012, International Business Machines Corporation and    *
+* Copyright (C) 2011-2013, International Business Machines Corporation and    *
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 */
@@ -14,7 +14,7 @@
 #include "unicode/utypes.h"
 
 #if !UCONFIG_NO_FORMATTING
-#ifndef U_HIDE_INTERNAL_API
+#ifndef U_HIDE_DRAFT_API
 
 #include "unicode/uloc.h"
 #include "unicode/unistr.h"
@@ -60,7 +60,14 @@ typedef enum UTimeZoneNameType {
      * Short display name for daylight saving time, such as "EDT".
      * @draft ICU 50
      */
-    UTZNM_SHORT_DAYLIGHT    = 0x20
+    UTZNM_SHORT_DAYLIGHT    = 0x20,
+#ifndef U_HIDE_DRAFT_API
+    /**
+     * Exemplar location name, such as "Los Angeles".
+     * @draft ICU 51
+     */
+    UTZNM_EXEMPLAR_LOCATION = 0x40
+#endif /* U_HIDE_DRAFT_API */
 } UTimeZoneNameType;
 
 U_CDECL_END
@@ -111,6 +118,13 @@ struct MatchInfo;
  * may provide time zone names only through {@link #getTimeZoneDisplayName}, or only through {@link #getMetaZoneDisplayName},
  * or both.
  * 
+ * <p>
+ * The default <code>TimeZoneNames</code> implementation returned by {@link #createInstance}
+ * uses the locale data imported from CLDR. In CLDR, set of meta zone IDs and mappings between zone IDs and meta zone
+ * IDs are shared by all locales. Therefore, the behavior of {@link #getAvailableMetaZoneIDs},
+ * {@link #getMetaZoneID}, and {@link #getReferenceZoneID} won't be changed no matter
+ * what locale is used for getting an instance of <code>TimeZoneNames</code>.
+ *
  * @draft ICU 50
  */
 class U_I18N_API TimeZoneNames : public UObject {
@@ -187,6 +201,12 @@ public:
 
     /**
      * Returns the reference zone ID for the given meta zone ID for the region.
+     *
+     * Note: Each meta zone must have a reference zone associated with a special region "001" (world).
+     * Some meta zones may have region specific reference zone IDs other than the special region
+     * "001". When a meta zone does not have any region specific reference zone IDs, this method
+     * return the reference zone ID for the special region "001" (world).
+     *
      * @param mzID The meta zone ID.
      * @param region The region.
      * @param tzID Receives the reference zone ID ("golden zone" in the LDML specification) for the given time zone ID for the
@@ -277,6 +297,7 @@ public:
          */
         virtual ~MatchInfoCollection();
 
+#ifndef U_HIDE_INTERNAL_API
         /**
          * Adds a zone match.
          * @param nameType The name type.
@@ -342,6 +363,7 @@ public:
          * @internal
          */
         UBool getMetaZoneIDAt(int32_t idx, UnicodeString& mzID) const;
+#endif  /* U_HIDE_INTERNAL_API */
 
     private:
         UVector* fMatches;  // vector of MatchEntry
@@ -363,14 +385,10 @@ public:
      * @internal
      */
     virtual MatchInfoCollection* find(const UnicodeString& text, int32_t start, uint32_t types, UErrorCode& status) const = 0;
-
-private:
-    // No ICU "poor man's RTTI" for this class nor its subclasses.
-    virtual UClassID getDynamicClassID() const;
 };
 
 U_NAMESPACE_END
 
-#endif  /* U_HIDE_INTERNAL_API */
+#endif /* U_HIDE_DRAFT_API */
 #endif
 #endif
