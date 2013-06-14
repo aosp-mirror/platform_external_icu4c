@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/gl.xml
 // *
@@ -10,7 +10,7 @@
  *  ICU <specials> source: <path>/xml/main/gl.xml
  */
 gl{
-    Version{"2.0.78.30"}
+    Version{"2.0.82.45"}
     zoneStrings{
         "Africa:Djibouti"{
             ec{"Xibutí"}
@@ -685,6 +685,8 @@ gl{
             ls{"Horario estándar de Samara"}
         }
         "meta:Samoa"{
+            ld{"Horario de verán de Samoa"}
+            lg{"Horario de Samoa"}
             ls{"Horario estándar de Samoa"}
         }
         "meta:Seychelles"{
@@ -698,9 +700,6 @@ gl{
         }
         "meta:South_Georgia"{
             ls{"Horario de Xeorxia do Sur"}
-        }
-        "meta:Suriname"{
-            ls{"Horario de Surinam"}
         }
         "meta:Syowa"{
             ls{"Horario de Syowa"}

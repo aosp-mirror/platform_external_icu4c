@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/seh.xml
 // *
@@ -229,6 +229,10 @@ seh{
         }
         ZMK{
             "ZMK",
+            "Cuacha zambiano (1968-2012)",
+        }
+        ZMW{
+            "ZMW",
             "Cuacha zambiano",
         }
         ZWD{
@@ -236,5 +240,5 @@ seh{
             "Dólar do Zimbábue",
         }
     }
-    Version{"2.0.77.46"}
+    Version{"2.0.82.45"}
 }

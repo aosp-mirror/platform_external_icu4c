@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/af.xml
 // *
@@ -10,7 +10,7 @@
  *  ICU <specials> source: <path>/xml/main/af.xml
  */
 af{
-    Version{"2.0.78.32"}
+    Version{"2.0.82.45"}
     zoneStrings{
         "Africa:Sao_Tome"{
             ec{"São Tomé"}
@@ -530,11 +530,13 @@ af{
             ls{"Sakhalin-standaardtyd"}
         }
         "meta:Samara"{
-            ld{"Samara-somertyd"}
+            ld{"Samara-dagligtyd"}
             lg{"Samara-tyd"}
             ls{"Samara-standaardtyd"}
         }
         "meta:Samoa"{
+            ld{"Samoa-dagligtyd"}
+            lg{"Samoa-tyd"}
             ls{"Samoa-standaardtyd"}
         }
         "meta:Seychelles"{
