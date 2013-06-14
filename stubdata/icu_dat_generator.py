@@ -22,10 +22,8 @@
 # Sample usage:
 #   $ANDROID_BUILD_TOP/external/icu4c/stubdata$ ./icu_dat_generator.py --verbose
 
-import fnmatch
 import getopt
 import glob
-import os
 import os.path
 import re
 import shutil
@@ -39,19 +37,6 @@ def PrintHelpAndExit():
   print "Example:"
   print "  $ANDROID_BUILD_TOP/external/icu4c/stubdata$ ./icu_dat_generator.py"
   sys.exit(1)
-
-
-def FindCountries(pattern, path):
-  result = []
-  for root, dirs, files in os.walk(path):
-    for name in files:
-      if fnmatch.fnmatch(name, pattern):
-        country = re.sub(r"[^_]*?_([[A-Za-z0-9]*).*", r'\1', name)
-        if len(country) > 0:
-          result.append(country)
-    if 'translit' in dirs:
-      dirs.remove('translit')
-  return sorted(set(result))
 
 
 def InvokeIcuTool(tool, working_dir, args):
@@ -188,14 +173,6 @@ def GenResIndex(input_file):
     relative_path = "/".join(missing_file.split("/")[-2:])
     print "warning: missing data for supported locale: %s" % relative_path
 
-  # Find cases where we've included only some of a language's countries.
-  for language in sorted(every_language):
-      all_countries = FindCountries('%s_*.txt' % language, '../data')
-      for country in all_countries:
-          if not '%s_%s' % (language, country) in every_locale:
-              print 'warning: language %s is missing country %s' % (language, country)
-
-
   # Write the genrb input files.
   WriteIndex(os.path.join(TMP_DAT_PATH, res_index), locales)
   for kind, locales in kind_to_locales.items():
@@ -214,11 +191,11 @@ def GenResIndex(input_file):
 def CopyAndroidCnvFiles(stubdata_dir):
   android_specific_cnv = ["gsm-03.38-2000.cnv",
                           "iso-8859_16-2001.cnv",
-                          "docomo-shift_jis-2007.cnv",
+                          "docomo-shift_jis-2012.cnv",
                           "kddi-jisx-208-2007.cnv",
-                          "kddi-shift_jis-2007.cnv",
+                          "kddi-shift_jis-2012.cnv",
                           "softbank-jisx-208-2007.cnv",
-                          "softbank-shift_jis-2007.cnv"]
+                          "softbank-shift_jis-2012.cnv"]
   for cnv_file in android_specific_cnv:
     src_path = os.path.join(stubdata_dir, "cnv", cnv_file)
     dst_path = os.path.join(TMP_DAT_PATH, cnv_file)

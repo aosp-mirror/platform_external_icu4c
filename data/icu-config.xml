@@ -1,7 +1,7 @@
 <!--
 /*
 *******************************************************************************
-* Copyright (C) 2005-2012, International Business Machines Corporation and    *
+* Copyright (C) 2005-2013, International Business Machines Corporation and    *
 * others. All Rights Reserved.	                                         *
 *******************************************************************************
 */
@@ -419,13 +419,20 @@
 		<include locales="mk_MK"/>
 		<include locales="ml"/>
 		<include locales="ml_IN"/>
+		<include locales="mn"/>
+		<include locales="mn_Cyrl"/>
+		<include locales="mn_Cyrl_MN"/>
 		<include locales="mo"/>
 		<include locales="mr"/>
 		<include locales="mr_IN"/>
 		<include locales="ms"/>
 		<include locales="ms_BN"/>
-		<include locales="ms_SG"/>
+		<include locales="ms_Latn"/>
+		<include locales="ms_Latn_BN"/>
+		<include locales="ms_Latn_MY"/>
+		<include locales="ms_Latn_SG"/>
 		<include locales="ms_MY"/>
+		<include locales="ms_SG"/>
 		<include locales="mt"/>
 		<include locales="mt_MT"/>
 		<include locales="mua"/>
@@ -644,6 +651,12 @@
 		<include locales="zh_TW"/>
 		<include locales="zu"/>
 		<include locales="zu_ZA"/>
+
+		<!-- Google-specific addition of fil data generation regardless of draft status. -->
+		<include locales="fil" draft=".*" />
+		<include locales="fil_PH"/>
+		<include locales="tl"/>
+		<include locales="tl_PH"/>
 	</locales>
 	<paths>
 		<include xpath="//ldml/.*"/>
