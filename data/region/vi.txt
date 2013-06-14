@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/vi.xml
 // *
@@ -140,7 +140,7 @@ vi{
         GU{"Guam"}
         GW{"Guinea-Bissau"}
         GY{"Guyana"}
-        HK{"Đặc khu hành chính Hồng Kông thuộc CHND Trung Hoa"}
+        HK{"Hồng Kông"}
         HM{"Đảo Heard và Quần đảo McDonald"}
         HN{"Hôn-đu-rát"}
         HR{"Croatia"}
@@ -194,7 +194,7 @@ vi{
         ML{"Mali"}
         MM{"Myanmar [Miến Điện]"}
         MN{"Mông Cổ"}
-        MO{"Đặc khu hành chính Macao thuộc CHND Trung Hoa"}
+        MO{"Macao"}
         MP{"Quần Đảo Bắc Mariana"}
         MQ{"Martinique"}
         MR{"Mauritania"}
@@ -229,7 +229,7 @@ vi{
         PM{"Saint Pierre và Miquelon"}
         PN{"Quần đảo Pitcairn"}
         PR{"Puerto Rico"}
-        PS{"Lãnh thổ Palestine"}
+        PS{"Palestine"}
         PT{"Bồ Đào Nha"}
         PW{"Palau"}
         PY{"Paraguay"}
@@ -293,6 +293,7 @@ vi{
         VU{"Vanuatu"}
         WF{"Wallis và Futuna"}
         WS{"Samoa"}
+        XK{"Kosovo"}
         YE{"Yemen"}
         YT{"Mayotte"}
         ZA{"Nam Phi"}
@@ -300,5 +301,5 @@ vi{
         ZW{"Zimbabwe"}
         ZZ{"Vùng Chưa biết hoặc không Hợp lệ"}
     }
-    Version{"2.0.78.30"}
+    Version{"2.0.82.57"}
 }

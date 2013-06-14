@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/pt.xml
 // *
@@ -139,7 +139,7 @@ pt{
         GU{"Guam"}
         GW{"Guiné Bissau"}
         GY{"Guiana"}
-        HK{"Hong Kong, RAE da China"}
+        HK{"Hong Kong"}
         HM{"Ilha Heard e Ilhas McDonald"}
         HN{"Honduras"}
         HR{"Croácia"}
@@ -193,7 +193,7 @@ pt{
         ML{"Mali"}
         MM{"Mianmar [Birmânia]"}
         MN{"Mongólia"}
-        MO{"Macau, RAE da China"}
+        MO{"Macau"}
         MP{"Ilhas Marianas do Norte"}
         MQ{"Martinica"}
         MR{"Mauritânia"}
@@ -228,7 +228,7 @@ pt{
         PM{"Saint Pierre e Miquelon"}
         PN{"Ilhas Pitcairn"}
         PR{"Porto Rico"}
-        PS{"Territórios palestinos"}
+        PS{"Palestina"}
         PT{"Portugal"}
         PW{"Palau"}
         PY{"Paraguai"}
@@ -292,6 +292,7 @@ pt{
         VU{"Vanuatu"}
         WF{"Wallis e Futuna"}
         WS{"Samoa"}
+        XK{"Kosovo"}
         YE{"Iêmen"}
         YT{"Mayotte"}
         ZA{"África do Sul"}
@@ -299,5 +300,5 @@ pt{
         ZW{"Zimbábue"}
         ZZ{"Região desconhecida"}
     }
-    Version{"2.0.78.30"}
+    Version{"2.0.82.47"}
 }

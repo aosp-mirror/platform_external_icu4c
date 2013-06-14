@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/el.xml
 // *
@@ -10,7 +10,7 @@
  *  ICU <specials> source: <path>/xml/main/el.xml
  */
 el{
-    Version{"2.0.78.32"}
+    Version{"2.0.82.45"}
     zoneStrings{
         "Africa:Abidjan"{
             ec{"Αμπιτζάν"}
@@ -909,51 +909,6 @@ el{
         "Australia:Sydney"{
             ec{"Σίδνεϊ"}
         }
-        "Etc:GMT"{
-            ec{"[GMT]"}
-        }
-        "Etc:GMT-1"{
-            ec{"[GMT-1]"}
-        }
-        "Etc:GMT-10"{
-            ec{"[GMT-10]"}
-        }
-        "Etc:GMT-11"{
-            ec{"[GMT-11]"}
-        }
-        "Etc:GMT-12"{
-            ec{"[GMT-12]"}
-        }
-        "Etc:GMT-13"{
-            ec{"[GMT-13]"}
-        }
-        "Etc:GMT-14"{
-            ec{"[GMT-14]"}
-        }
-        "Etc:GMT-2"{
-            ec{"[GMT-2]"}
-        }
-        "Etc:GMT-3"{
-            ec{"[GMT-3]"}
-        }
-        "Etc:GMT-4"{
-            ec{"[GMT-4]"}
-        }
-        "Etc:GMT-5"{
-            ec{"[GMT-5]"}
-        }
-        "Etc:GMT-6"{
-            ec{"[GMT-6]"}
-        }
-        "Etc:GMT-7"{
-            ec{"[GMT-7]"}
-        }
-        "Etc:GMT-8"{
-            ec{"[GMT-8]"}
-        }
-        "Etc:GMT-9"{
-            ec{"[GMT-9]"}
-        }
         "Etc:Unknown"{
             ec{"Άγνωστη πόλη"}
         }
@@ -1288,11 +1243,6 @@ el{
             lg{"Ώρα Δυτικής Αφρικής"}
             ls{"Χειμερινή ώρα Δυτικής Αφρικής"}
         }
-        "meta:Aktyubinsk"{
-            ld{"Θερινή ώρα Ακτιουμπίνσκ"}
-            lg{"Ώρα Ακτιουμπίνσκ"}
-            ls{"Χειμερινή ώρα Ακτιουμπίνσκ"}
-        }
         "meta:Alaska"{
             ld{"Θερινή ώρα Αλάσκας"}
             lg{"Ώρα Αλάσκας"}
@@ -1382,11 +1332,6 @@ el{
             ld{"Θερινή ώρα Αζορών"}
             lg{"Ώρα Αζορών"}
             ls{"Χειμερινή ώρα Αζορών"}
-        }
-        "meta:Baku"{
-            ld{"Θερινή ώρα Μπακού"}
-            lg{"Ώρα Μπακού"}
-            ls{"Χειμερινή ώρα Μπακού"}
         }
         "meta:Bangladesh"{
             ld{"Θερινή ώρα Μπανγκλαντές"}
@@ -1626,9 +1571,6 @@ el{
             lg{"Ώρα Κρασνόγιαρσκ"}
             ls{"Χειμερινή ώρα Κρασνόγιαρσκ"}
         }
-        "meta:Kwajalein"{
-            ls{"Ώρα Κουαχαλέιν"}
-        }
         "meta:Kyrgystan"{
             ls{"Ώρα Κιργιστάν"}
         }
@@ -1788,7 +1730,9 @@ el{
             ls{"Χειμερινή ώρα Σάμαρας"}
         }
         "meta:Samoa"{
-            ls{"Ώρα Σαμόα"}
+            ld{"Θερινή ώρα Σαμόα"}
+            lg{"Ώρα Σαμόα"}
+            ls{"Χειμερινή ώρα Σαμόα"}
         }
         "meta:Seychelles"{
             ls{"Ώρα Σεϋχελλών"}
@@ -1819,11 +1763,6 @@ el{
         "meta:Tajikistan"{
             ls{"Ώρα Τατζικιστάν"}
         }
-        "meta:Tbilisi"{
-            ld{"Θερινή ώρα Τυφλίδας"}
-            lg{"Ώρα Τυφλίδας"}
-            ls{"Χειμερινή ώρα Τυφλίδας"}
-        }
         "meta:Tokelau"{
             ls{"Ώρα Τοκελάου"}
         }
@@ -1834,11 +1773,6 @@ el{
         }
         "meta:Truk"{
             ls{"Ώρα Τσουκ"}
-        }
-        "meta:Turkey"{
-            ld{"Θερινή ώρα Τουρκίας"}
-            lg{"Ώρα Τουρκίας"}
-            ls{"Χειμερινή ώρα Τουρκίας"}
         }
         "meta:Turkmenistan"{
             ld{"Θερινή ώρα Τουρκμενιστάν"}
@@ -1894,11 +1828,6 @@ el{
             ld{"Θερινή ώρα Γεκατερίνμπουργκ"}
             lg{"Ώρα Γεκατερίνμπουργκ"}
             ls{"Χειμερινή ώρα Γεκατερίνμπουργκ"}
-        }
-        "meta:Yerevan"{
-            ld{"Θερινή ώρα Ερεβάν"}
-            lg{"Ώρα Ερεβάν"}
-            ls{"Χειμερινή ώρα Ερεβάν"}
         }
         fallbackFormat{"{1} ({0})"}
         fallbackRegionFormat{"Ώρα {1} ({0})"}

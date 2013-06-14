@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/sw.xml
 // *
@@ -141,8 +141,146 @@ sw{
             }
         }
     }
-    Version{"2.0.77.46"}
+    Version{"2.0.82.45"}
     calendar{
+        generic{
+            DateTimePatterns{
+                "h:mm:ss a zzzz",
+                "h:mm:ss a z",
+                "h:mm:ss a",
+                "h:mm a",
+                "EEEE, d MMMM y G",
+                "d MMMM y G",
+                "d MMM y G",
+                "dd/MM/y GGGGG",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+            }
+            availableFormats{
+                Ed{"d E"}
+                H{"HH"}
+                Hm{"HH:mm"}
+                Hms{"HH:mm:ss"}
+                M{"L"}
+                MEd{"E, d/M"}
+                MMM{"LLL"}
+                MMMEd{"E, d MMM"}
+                MMMMEd{"E, d MMMM"}
+                MMMMd{"d MMMM"}
+                MMMd{"d MMM"}
+                Md{"d-M"}
+                d{"d"}
+                hm{"h:mm a"}
+                ms{"mm:ss"}
+                y{"y"}
+                yM{"M/y"}
+                yMEd{"E, d/M/y"}
+                yMMM{"MMM y"}
+                yMMMEd{"E, MMM d, y"}
+                yMMMM{"MMMM y"}
+                yMMMd{"d MMM y"}
+                yMd{"d/M/y"}
+                yQQQ{"QQQ y"}
+                yQQQQ{"QQQQ y"}
+            }
+            intervalFormats{
+                H{
+                    H{"HH – HH"}
+                }
+                Hm{
+                    H{"HH:mm - HH:mm"}
+                    m{"HH:mm – HH:mm"}
+                }
+                Hmv{
+                    H{"HH:mm – HH:mm v"}
+                    m{"HH:mm - HH:mm v"}
+                }
+                Hv{
+                    H{"HH – HH v"}
+                }
+                M{
+                    M{"M - M"}
+                }
+                MEd{
+                    M{"E, d/M - E, d/M"}
+                    d{"E, d/M - E, d/M"}
+                }
+                MMM{
+                    M{"MMM - MMM"}
+                }
+                MMMEd{
+                    M{"E, d MMM - E, d MMM"}
+                    d{"E, d MMM - E, d MMM"}
+                }
+                MMMd{
+                    M{"d MMM - d MMM"}
+                    d{"d - d MMM"}
+                }
+                Md{
+                    M{"d/M - d/M"}
+                    d{"d/M - d/M"}
+                }
+                d{
+                    d{"d - d"}
+                }
+                h{
+                    a{"h a – h a"}
+                    h{"h – h a"}
+                }
+                hm{
+                    a{"h:mm a – h:mm a"}
+                    h{"h:mm–h:mm a"}
+                    m{"h:mm – h:mm a"}
+                }
+                hmv{
+                    a{"h:mm a – h:mm a v"}
+                    h{"h:mm - h:mm a v"}
+                    m{"h:mm - h:mm a v"}
+                }
+                hv{
+                    a{"h a – h a v"}
+                    h{"h – h a v"}
+                }
+                y{
+                    y{"y - y"}
+                }
+                yM{
+                    M{"M/y - M/y"}
+                    y{"M/y - M/y"}
+                }
+                yMEd{
+                    M{"E, d/M/y - E, d/M/y"}
+                    d{"E, d/M/y - E, d/M/y"}
+                    y{"E, d/M/y - E, d/M/y"}
+                }
+                yMMM{
+                    M{"MMM - MMM y"}
+                    y{"MMM y - MMM y"}
+                }
+                yMMMEd{
+                    M{"E, d MMM - E, d MMM y"}
+                    d{"E, d MMM - E, d MMM y"}
+                    y{"E, d MMM y - E, d MMM y"}
+                }
+                yMMMM{
+                    M{"MMMM-MMMM y"}
+                    y{"MMMM y – MMMM y"}
+                }
+                yMMMd{
+                    M{"d MMM - d MMM y"}
+                    d{"d - d MMM y"}
+                    y{"d MMM y - d MMM y"}
+                }
+                yMd{
+                    M{"d/M/y - d/M/y"}
+                    d{"d/M/y - d/M/y"}
+                    y{"d/M/y - d/M/y"}
+                }
+            }
+        }
         gregorian{
             AmPmMarkers{
                 "asubuhi",
@@ -156,7 +294,7 @@ sw{
                 "EEEE, d MMMM y",
                 "d MMMM y",
                 "d MMM y",
-                "dd/MM/yyyy",
+                "dd/MM/y",
                 "{1} {0}",
                 "{1} {0}",
                 "{1} {0}",
@@ -251,63 +389,6 @@ sw{
                     "Baada ya Kristo",
                 }
             }
-            fields{
-                day{
-                    dn{"Siku"}
-                    relative{
-                        "-1"{"Jana"}
-                        "-2"{"Mtondo"}
-                        "0"{"Leo"}
-                        "1"{"Kesho"}
-                        "2"{"Kesho kutwa"}
-                    }
-                }
-                dayperiod{
-                    dn{"Muda wa siku"}
-                }
-                era{
-                    dn{"Enzi"}
-                }
-                hour{
-                    dn{"Saa"}
-                }
-                minute{
-                    dn{"Dakika"}
-                }
-                month{
-                    dn{"Mwezi"}
-                    relative{
-                        "-1"{"Mwezi uliopita"}
-                        "0"{"Mwezi huu"}
-                        "1"{"Mwezi ujao"}
-                    }
-                }
-                second{
-                    dn{"Sekunde"}
-                }
-                week{
-                    dn{"Wiki"}
-                    relative{
-                        "-1"{"Wiki iliyopita"}
-                        "0"{"Wiki hii"}
-                        "1"{"Wiki ijayo"}
-                    }
-                }
-                weekday{
-                    dn{"Siku ya wiki"}
-                }
-                year{
-                    dn{"Mwaka"}
-                    relative{
-                        "-1"{"Mwaka uliopita"}
-                        "0"{"Mwaka huu"}
-                        "1"{"Mwaka ujao"}
-                    }
-                }
-                zone{
-                    dn{"Majira ya saa"}
-                }
-            }
             intervalFormats{
                 H{
                     H{"HH – HH"}
@@ -370,13 +451,13 @@ sw{
                     y{"y - y"}
                 }
                 yM{
-                    M{"M/yy - M/yy"}
-                    y{"M/yy - M/yy"}
+                    M{"M/y - M/y"}
+                    y{"M/y - M/y"}
                 }
                 yMEd{
-                    M{"E, d/M/yy - E, d/M/yy"}
-                    d{"E, d/M/yy - E, d/M/yy"}
-                    y{"E, d/M/yy - E, d/M/yy"}
+                    M{"E, d/M/y - E, d/M/y"}
+                    d{"E, d/M/y - E, d/M/y"}
+                    y{"E, d/M/y - E, d/M/y"}
                 }
                 yMMM{
                     M{"MMM - MMM y"}
@@ -397,9 +478,9 @@ sw{
                     y{"d MMM y - d MMM y"}
                 }
                 yMd{
-                    M{"d/M/yy - d/M/yy"}
-                    d{"d/M/yy - d/M/yy"}
-                    y{"d/M/yy - d/M/yy"}
+                    M{"d/M/y - d/M/y"}
+                    d{"d/M/y - d/M/y"}
+                    y{"d/M/y - d/M/y"}
                 }
             }
             monthNames{
@@ -493,6 +574,63 @@ sw{
         alternateQuotationStart{"‘"}
         quotationEnd{"”"}
         quotationStart{"“"}
+    }
+    fields{
+        day{
+            dn{"Siku"}
+            relative{
+                "-1"{"Jana"}
+                "-2"{"Mtondo"}
+                "0"{"Leo"}
+                "1"{"Kesho"}
+                "2"{"Kesho kutwa"}
+            }
+        }
+        dayperiod{
+            dn{"Muda wa siku"}
+        }
+        era{
+            dn{"Enzi"}
+        }
+        hour{
+            dn{"Saa"}
+        }
+        minute{
+            dn{"Dakika"}
+        }
+        month{
+            dn{"Mwezi"}
+            relative{
+                "-1"{"Mwezi uliopita"}
+                "0"{"Mwezi huu"}
+                "1"{"Mwezi ujao"}
+            }
+        }
+        second{
+            dn{"Sekunde"}
+        }
+        week{
+            dn{"Wiki"}
+            relative{
+                "-1"{"Wiki iliyopita"}
+                "0"{"Wiki hii"}
+                "1"{"Wiki ijayo"}
+            }
+        }
+        weekday{
+            dn{"Siku ya wiki"}
+        }
+        year{
+            dn{"Mwaka"}
+            relative{
+                "-1"{"Mwaka uliopita"}
+                "0"{"Mwaka huu"}
+                "1"{"Mwaka ujao"}
+            }
+        }
+        zone{
+            dn{"Majira ya saa"}
+        }
     }
     listPattern{
         standard{

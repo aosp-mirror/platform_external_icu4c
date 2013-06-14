@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/is.xml
 // *
@@ -141,7 +141,7 @@ is{
         GU{"Gvam"}
         GW{"Gínea-Bissá"}
         GY{"Gvæjana"}
-        HK{"Sjálfstjórnarsvæðið Hong Kong"}
+        HK{"Hong Kong"}
         HM{"Heard og McDonaldseyjar"}
         HN{"Hondúras"}
         HR{"Króatía"}
@@ -195,7 +195,7 @@ is{
         ML{"Malí"}
         MM{"Mjanmar [Búrma]"}
         MN{"Mongólía"}
-        MO{"Sjálfstjórnarsvæðið Makaó"}
+        MO{"Makaó"}
         MP{"Norður-Maríanaeyjar"}
         MQ{"Martiník"}
         MR{"Máritanía"}
@@ -230,7 +230,7 @@ is{
         PM{"Sankti Pierre og Miquelon"}
         PN{"Pitcairneyjar"}
         PR{"Púertó Ríkó"}
-        PS{"Heimastjórnarsvæði Palestínumanna"}
+        PS{"Palestína"}
         PT{"Portúgal"}
         PW{"Palá"}
         PY{"Paragvæ"}
@@ -294,6 +294,7 @@ is{
         VU{"Vanúatú"}
         WF{"Wallis- og Fútúnaeyjar"}
         WS{"Samóa"}
+        XK{"Kósóvó"}
         YE{"Jemen"}
         YT{"Mayotte"}
         ZA{"Suður-Afríka"}
@@ -301,5 +302,5 @@ is{
         ZW{"Simbabve"}
         ZZ{"Óþekkt svæði"}
     }
-    Version{"2.0.78.32"}
+    Version{"2.0.82.45"}
 }
