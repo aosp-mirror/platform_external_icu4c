@@ -33,16 +33,19 @@ src_files += \
 	anytrans.cpp    astro.cpp    buddhcal.cpp \
 	basictz.cpp     calendar.cpp casetrn.cpp  \
 	choicfmt.cpp    coleitr.cpp  coll.cpp     \
+	compactdecimalformat.cpp \
 	cpdtrans.cpp    csdetect.cpp csmatch.cpp  \
 	csr2022.cpp     csrecog.cpp  csrmbcs.cpp  \
 	csrsbcs.cpp     csrucode.cpp csrutf8.cpp  \
 	curramt.cpp     currfmt.cpp  currunit.cpp \
+	dangical.cpp \
 	datefmt.cpp     dcfmtsym.cpp decimfmt.cpp \
 	digitlst.cpp    dtfmtsym.cpp esctrn.cpp   \
 	fmtable_cnv.cpp fmtable.cpp  format.cpp   \
 	funcrepl.cpp    gender.cpp \
 	gregocal.cpp gregoimp.cpp \
-	hebrwcal.cpp    inputext.cpp islamcal.cpp \
+	hebrwcal.cpp 	identifier_info.cpp \
+	inputext.cpp islamcal.cpp \
 	japancal.cpp    measfmt.cpp  measure.cpp  \
 	msgfmt.cpp      name2uni.cpp nfrs.cpp     \
 	nfrule.cpp      nfsubs.cpp   nortrans.cpp \
@@ -50,8 +53,9 @@ src_files += \
 	quant.cpp       rbnf.cpp     rbt.cpp      \
 	rbt_data.cpp    rbt_pars.cpp rbt_rule.cpp \
 	rbt_set.cpp     regexcmp.cpp regexst.cpp  \
-	regeximp.cpp \
+	regeximp.cpp 	region.cpp \
 	rematch.cpp     remtrans.cpp repattrn.cpp \
+	scriptset.cpp \
 	search.cpp      simpletz.cpp smpdtfmt.cpp \
 	sortkey.cpp     strmatch.cpp strrepl.cpp  \
 	stsearch.cpp    tblcoll.cpp  timezone.cpp \
@@ -70,7 +74,6 @@ src_files += \
 	brktrans.cpp    wintzimpl.cpp plurrule.cpp \
 	plurfmt.cpp     dtitvfmt.cpp dtitvinf.cpp \
 	tmunit.cpp      tmutamt.cpp  tmutfmt.cpp  \
-	colldata.cpp    bmsearch.cpp bms.cpp      \
         currpinf.cpp    uspoof.cpp   uspoof_impl.cpp \
         uspoof_build.cpp     \
         regextxt.cpp    selfmt.cpp   uspoof_conf.cpp \

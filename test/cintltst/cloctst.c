@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1997-2012, International Business Machines Corporation and
+ * Copyright (c) 1997-2013, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /*****************************************************************************
@@ -244,6 +244,7 @@ void addLocaleTest(TestNode** root)
     TESTCASE(TestForLanguageTag);
     TESTCASE(TestTrailingNull);
     TESTCASE(TestUnicodeDefines);
+    TESTCASE(TestEnglishExemplarCharacters);
 }
 
 
@@ -1216,7 +1217,7 @@ static void TestSimpleDisplayNames()
      and country codes to make sure we have the correct names for them.
   */
     char languageCodes[] [4] = { "he", "id", "iu", "ug", "yi", "za", "419" };
-    const char* languageNames [] = { "Hebrew", "Indonesian", "Inuktitut", "Uighur", "Yiddish",
+    const char* languageNames [] = { "Hebrew", "Indonesian", "Inuktitut", "Uyghur", "Yiddish",
                                "Zhuang", "419" };
     const char* inLocale [] = { "en_US", "zh_Hant"};
     UErrorCode status=U_ZERO_ERROR;
@@ -2509,6 +2510,37 @@ static void TestGetLocale(void) {
     }
 #endif
 }
+static void TestEnglishExemplarCharacters(void) {
+    UErrorCode status = U_ZERO_ERROR;
+    int i;
+    USet *exSet = NULL;
+    UChar testChars[] = {
+        0x61,   /* standard */
+        0xE1,   /* auxiliary */
+        0x41,   /* index */
+        0x2D    /* punctuation */
+    };
+    ULocaleData *uld = ulocdata_open("en", &status);
+    if (U_FAILURE(status)) {
+        log_data_err("ulocdata_open() failed : %s - (Are you missing data?)\n", u_errorName(status));
+        return;
+    }
+
+    for (i = 0; i < ULOCDATA_ES_COUNT; i++) {
+        exSet = ulocdata_getExemplarSet(uld, exSet, 0, (ULocaleDataExemplarSetType)i, &status);
+        if (U_FAILURE(status)) {
+            log_err_status(status, "ulocdata_getExemplarSet() for type %d failed\n", i);
+            status = U_ZERO_ERROR;
+            continue;
+        }
+        if (!uset_contains(exSet, (UChar32)testChars[i])) {
+            log_err("Character U+%04X is not included in exemplar type %d\n", testChars[i], i);
+        }
+    }
+
+    uset_close(exSet);
+    ulocdata_close(uld);
+}
 
 static void TestNonexistentLanguageExemplars(void) {
     /* JB 4068 - Nonexistent language */
@@ -3568,7 +3600,7 @@ const char* const full_data[][3] = {
     "pa_PK"
   }, {
     "pap",
-    "pap_Latn_AN",
+    "pap_Latn_BQ",
     "pap"
   }, {
     "pau",
@@ -3761,7 +3793,7 @@ const char* const full_data[][3] = {
   }, {
     "und_AN",
     "pap_Latn_AN",
-    "pap"
+    "pap_AN"
   }, {
     "und_AO",
     "pt_Latn_AO",
@@ -3804,8 +3836,8 @@ const char* const full_data[][3] = {
     "ur"
   }, {
     "und_Arab_SN",
-    "ar_Arab_SN",
-    "ar_SN"
+    "wo_Arab_SN",  /* Google patch */
+    "wo_Arab"  /* Google patch */
   }, {
     "und_Armn",
     "hy_Armn_AM",
@@ -3936,8 +3968,8 @@ const char* const full_data[][3] = {
     "ru"
   }, {
     "und_Cyrl_KZ",
-    "ru_Cyrl_KZ",
-    "ru_KZ"
+    "kk_Cyrl_KZ",  /* Google patch */
+    "kk"  /* Google patch */
   }, {
     "und_DE",
     "de_Latn_DE",
@@ -3988,16 +4020,16 @@ const char* const full_data[][3] = {
     "es"
   }, {
     "und_ET",
-    "en_Latn_ET",
-    "en_ET"
+    "am_Ethi_ET",
+    "am"
   }, {
     "und_Ethi",
     "am_Ethi_ET",
     "am"
   }, {
     "und_Ethi_ER",
-    "am_Ethi_ER",
-    "am_ER"
+    "ti_Ethi_ER",  /* Google patch */
+    "ti_ER"  /* Google patch */
   }, {
     "und_FI",
     "fi_Latn_FI",
@@ -4052,8 +4084,8 @@ const char* const full_data[][3] = {
     "es_GT"
   }, {
     "und_GU",
-    "en_Latn_GU",
-    "en_GU"
+    "ch_Latn_GU",  /* Google patch */
+    "ch"  /* Google patch */
   }, {
     "und_GW",
     "pt_Latn_GW",
@@ -4232,8 +4264,8 @@ const char* const full_data[][3] = {
     "es"
   }, {
     "und_Latn_ET",
-    "en_Latn_ET",
-    "en_ET"
+    "en_Latn_ET",  /* Google patch */
+    "en_ET"  /* Google patch */
   }, {
     "und_Latn_GB",
     "en_Latn_GB",
@@ -4260,8 +4292,8 @@ const char* const full_data[][3] = {
     "tr"
   }, {
     "und_Latn_ZA",
-    "en_Latn_ZA",
-    "en_ZA"
+    "af_Latn_ZA",  /* Google patch */
+    "af"  /* Google patch */
   }, {
     "und_MA",
     "ar_Arab_MA",
@@ -4284,8 +4316,8 @@ const char* const full_data[][3] = {
     "mg"
   }, {
     "und_MH",
-    "en_Latn_MH",
-    "en_MH"
+    "mh_Latn_MH",   /* Google patch */
+    "mh"  /* Google patch */
   }, {
     "und_MK",
     "mk_Cyrl_MK",
@@ -4368,20 +4400,20 @@ const char* const full_data[][3] = {
     "nl"
   }, {
     "und_NO",
-    "nb_Latn_NO",
-    "nb"
+    "no_Latn_NO",  /* Google patch */
+    "no"  /* Google patch */
   }, {
     "und_NP",
     "ne_Deva_NP",
     "ne"
   }, {
     "und_NR",
-    "en_Latn_NR",
-    "en_NR"
+    "na_Latn_NR",  /* Google patch */
+    "na"  /* Google patch */
   }, {
     "und_NU",
-    "en_Latn_NU",
-    "en_NU"
+    "niu_Latn_NU",  /* Google patch */
+    "niu"  /* Google patch */
   }, {
     "und_OM",
     "ar_Arab_OM",
@@ -4484,8 +4516,8 @@ const char* const full_data[][3] = {
     "sl"
   }, {
     "und_SJ",
-    "nb_Latn_SJ",
-    "nb_SJ"
+    "no_Latn_SJ",  /* Google patch */
+    "no_SJ"  /* Google patch */
   }, {
     "und_SK",
     "sk_Latn_SK",
@@ -4728,8 +4760,8 @@ const char* const full_data[][3] = {
     "zh_HK"
   }, {
     "und_AQ",
-    "en_Latn_AQ",
-    "en_AQ"
+    "und_Latn_AQ",
+    "und_AQ"
   }, {
     "und_Zzzz",
     "en_Latn_US",
@@ -4752,8 +4784,8 @@ const char* const full_data[][3] = {
     "zh_HK"
   }, {
     "und_Zzzz_AQ",
-    "en_Latn_AQ",
-    "en_AQ"
+    "und_Latn_AQ",
+    "und_AQ"
   }, {
     "und_Latn",
     "en_Latn_US",
@@ -4768,16 +4800,16 @@ const char* const full_data[][3] = {
     "za"
   }, {
     "und_Latn_TW",
-    "zh_Latn_TW",
-    "zh_Latn_TW"
+    "trv_Latn_TW",
+    "trv"
   }, {
     "und_Latn_HK",
     "zh_Latn_HK",
     "zh_Latn_HK"
   }, {
     "und_Latn_AQ",
-    "en_Latn_AQ",
-    "en_AQ"
+    "und_Latn_AQ",
+    "und_AQ"
   }, {
     "und_Hans",
     "zh_Hans_CN",
@@ -4848,8 +4880,8 @@ const char* const full_data[][3] = {
     "zh_Moon_HK"
   }, {
     "und_Moon_AQ",
-    "en_Moon_AQ",
-    "en_Moon_AQ"
+    "und_Moon_AQ",
+    "und_Moon_AQ"
   }, {
     "es",
     "es_Latn_ES",

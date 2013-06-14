@@ -20,7 +20,7 @@ set -e
 set -x
 
 # TODO: extract this from the .dat file's name.
-ICU_VERSION=50
+ICU_VERSION=51
 
 ICU_BIN=$ANDROID_BUILD_TOP/prebuilts/misc/linux-x86_64/icu-$ICU_VERSION
 ICU4C_DIR=$ANDROID_BUILD_TOP/external/icu4c

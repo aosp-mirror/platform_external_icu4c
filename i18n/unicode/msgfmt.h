@@ -1071,6 +1071,7 @@ private:
      */
     class U_I18N_API DummyFormat : public Format {
     public:
+        using Format::format;
         virtual UBool operator==(const Format&) const;
         virtual Format* clone() const;
         virtual UnicodeString& format(const Formattable& obj,
@@ -1087,7 +1088,6 @@ private:
         virtual void parseObject(const UnicodeString&,
                                  Formattable&,
                                  ParsePosition&) const;
-        virtual UClassID getDynamicClassID() const;
     };
 
     friend class MessageFormatAdapter; // getFormatTypeList() access
