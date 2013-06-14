@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/ko.xml
 // *
@@ -1133,6 +1133,10 @@ ko{
         }
         ZMK{
             "ZMK",
+            "쟘비아 콰쳐 (1968-2012)",
+        }
+        ZMW{
+            "ZMW",
             "쟘비아 콰쳐",
         }
         ZRN{
@@ -1159,5 +1163,5 @@ ko{
     CurrencyUnitPatterns{
         other{"{0} {1}"}
     }
-    Version{"2.0.78.30"}
+    Version{"2.0.82.57"}
 }

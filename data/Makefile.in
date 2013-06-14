@@ -551,6 +551,8 @@ $(CNV_FILES_SPECIAL) : $(UCM_FILES_SPECIAL) $(TOOLBINDIR)/makeconv$(TOOLEXEEXT)
 	$(INVOKE) $(TOOLBINDIR)/makeconv --ignore-siso-check -c -d $(BUILDDIR) $(UCMSRCDIR)/$(@F:%.cnv=%.ucm) 
 # BEGIN android-changed
 $(BUILDDIR)/%.cnv: $(UCMSRCDIR)/%.ucm $(TOOLBINDIR)/makeconv$(TOOLEXEEXT)
+	$(INVOKE) $(TOOLBINDIR)/makeconv -c -d $(BUILDDIR) $(UCMSRCDIR)/$(<F)
+
 	$(INVOKE) $(TOOLBINDIR)/makeconv -c --small -d $(BUILDDIR) $(UCMSRCDIR)/$(<F)
 #END android-changed
 ####################################################    RES

@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/ps.xml
 // *
@@ -43,8 +43,31 @@ ps{
         }
         native{"arabext"}
     }
-    Version{"2.0.75.94"}
+    Version{"2.0.82.45"}
     calendar{
+        default{"persian"}
+        generic{
+            DateTimePatterns{
+                "H:mm:ss (zzzz)",
+                "H:mm:ss (z)",
+                "H:mm:ss",
+                "H:mm",
+                "EEEE د G y د MMMM d",
+                "د G y د MMMM d",
+                "d MMM y G",
+                "GGGGG y/M/d",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+            }
+            availableFormats{
+                H{"H"}
+                Hm{"H:mm"}
+                Hms{"H:mm:ss"}
+            }
+        }
         gregorian{
             AmPmMarkers{
                 "غ.م.",
@@ -58,7 +81,7 @@ ps{
                 "EEEE د y د MMMM d",
                 "د y د MMMM d",
                 "d MMM y",
-                "yyyy/M/d",
+                "y/M/d",
                 "{1} {0}",
                 "{1} {0}",
                 "{1} {0}",
@@ -131,6 +154,5 @@ ps{
     }
     layout{
         characters{"right-to-left"}
-        lines{"top-to-bottom"}
     }
 }
