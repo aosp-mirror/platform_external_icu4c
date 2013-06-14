@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/km.xml
 // *
@@ -637,11 +637,15 @@ km{
         }
         ZMK{
             "ZMK",
+            "ក្វាចា សំប៊ី (1968-2012)",
+        }
+        ZMW{
+            "ZMW",
             "ក្វាចា សំប៊ី",
         }
     }
     CurrencyUnitPatterns{
         other{"{0} {1}"}
     }
-    Version{"2.0.78.39"}
+    Version{"2.0.82.45"}
 }
