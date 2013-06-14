@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 1997-2012, International Business Machines Corporation and    *
+* Copyright (C) 1997-2013, International Business Machines Corporation and    *
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 *
@@ -70,6 +70,15 @@
 #include "hash.h"
 #include "decfmtst.h"
 #include "dcfmtimp.h"
+
+/*
+ * On certain platforms, round is a macro defined in math.h
+ * This undefine is to avoid conflict between the macro and
+ * the function defined below.
+ */
+#ifdef round
+#undef round
+#endif
 
 U_NAMESPACE_BEGIN
 
@@ -341,6 +350,7 @@ DecimalFormat::init(UErrorCode &status) {
     fNegSuffixPattern = 0;
     fCurrencyChoice = 0;
     fMultiplier = NULL;
+    fScale = 0;
     fGroupingSize = 0;
     fGroupingSize2 = 0;
     fDecimalSeparatorAlwaysShown = FALSE;
@@ -1057,6 +1067,8 @@ void DecimalFormat::handleChanged() {
     debug("No format fastpath: fMinSignificantDigits!=1");
   } else if(fMultiplier!=NULL) {
     debug("No format fastpath: fMultiplier!=NULL");
+  } else if(fScale!=0) {
+    debug("No format fastpath: fScale!=0");
   } else if(0x0030 != getConstSymbol(DecimalFormatSymbols::kZeroDigitSymbol).char32At(0)) {
     debug("No format fastpath: 0x0030 != getConstSymbol(DecimalFormatSymbols::kZeroDigitSymbol).char32At(0)");
   } else if(fDecimalSeparatorAlwaysShown) {
@@ -1344,7 +1356,94 @@ DecimalFormat::format(const DigitList &number,
     return appendTo;
 }
 
+DigitList&
+DecimalFormat::_round(const DigitList &number, DigitList &adjustedNum, UBool& isNegative, UErrorCode &status) const {
+    if (U_FAILURE(status)) {
+        return adjustedNum;
+    }
+    adjustedNum = number;
+    isNegative = false;
+    if (number.isNaN()) {
+        return adjustedNum;
+    }
 
+    // Do this BEFORE checking to see if value is infinite or negative! Sets the
+    // begin and end index to be length of the string composed of
+    // localized name of Infinite and the positive/negative localized
+    // signs.
+
+    adjustedNum.setRoundingMode(fRoundingMode);
+    if (fMultiplier != NULL) {
+        adjustedNum.mult(*fMultiplier, status);
+        if (U_FAILURE(status)) {
+            return adjustedNum;
+        }
+    }
+
+    if (fScale != 0) {
+        DigitList ten;
+        ten.set(10);
+        if (fScale > 0) {
+            for (int32_t i = fScale ; i > 0 ; i--) {
+                adjustedNum.mult(ten, status);
+                if (U_FAILURE(status)) {
+                    return adjustedNum;
+                }
+            }
+        } else {
+            for (int32_t i = fScale ; i < 0 ; i++) {
+                adjustedNum.div(ten, status);
+                if (U_FAILURE(status)) {
+                    return adjustedNum;
+                }
+            }
+        }
+    }
+
+    /*
+     * Note: sign is important for zero as well as non-zero numbers.
+     * Proper detection of -0.0 is needed to deal with the
+     * issues raised by bugs 4106658, 4106667, and 4147706.  Liu 7/6/98.
+     */
+    isNegative = !adjustedNum.isPositive();
+
+    // Apply rounding after multiplier
+
+    adjustedNum.fContext.status &= ~DEC_Inexact;
+    if (fRoundingIncrement != NULL) {
+        adjustedNum.div(*fRoundingIncrement, status);
+        adjustedNum.toIntegralValue();
+        adjustedNum.mult(*fRoundingIncrement, status);
+        adjustedNum.trim();
+        if (U_FAILURE(status)) {
+            return adjustedNum;
+        }
+    }
+    if (fRoundingMode == kRoundUnnecessary && (adjustedNum.fContext.status & DEC_Inexact)) {
+        status = U_FORMAT_INEXACT_ERROR;
+        return adjustedNum;
+    }
+
+    if (adjustedNum.isInfinite()) {
+        return adjustedNum;
+    }
+
+    if (fUseExponentialNotation || areSignificantDigitsUsed()) {
+        int32_t sigDigits = precision();
+        if (sigDigits > 0) {
+            adjustedNum.round(sigDigits);
+        }
+    } else {
+        // Fixed point format.  Round to a set number of fraction digits.
+        int32_t numFractionDigits = precision();
+        adjustedNum.roundFixedPoint(numFractionDigits);
+    }
+    if (fRoundingMode == kRoundUnnecessary && (adjustedNum.fContext.status & DEC_Inexact)) {
+        status = U_FORMAT_INEXACT_ERROR;
+        return adjustedNum;
+    }
+    return adjustedNum;
+}
 
 UnicodeString&
 DecimalFormat::_format(const DigitList &number,
@@ -1352,6 +1451,10 @@ DecimalFormat::_format(const DigitList &number,
                         FieldPositionHandler& handler,
                         UErrorCode &status) const
 {
+    if (U_FAILURE(status)) {
+        return appendTo;
+    }
+
     // Special case for NaN, sets the begin and end index to be the
     // the string length of localized name of NaN.
     if (number.isNaN())
@@ -1365,38 +1468,12 @@ DecimalFormat::_format(const DigitList &number,
         return appendTo;
     }
 
-    // Do this BEFORE checking to see if value is infinite or negative! Sets the
-    // begin and end index to be length of the string composed of
-    // localized name of Infinite and the positive/negative localized
-    // signs.
-
-    DigitList adjustedNum(number);  // Copy, so we do not alter the original. 
-    adjustedNum.setRoundingMode(fRoundingMode);
-    if (fMultiplier != NULL) {
-        adjustedNum.mult(*fMultiplier, status);
-    }
-
-    /* 
-     * Note: sign is important for zero as well as non-zero numbers.
-     * Proper detection of -0.0 is needed to deal with the
-     * issues raised by bugs 4106658, 4106667, and 4147706.  Liu 7/6/98.
-     */
-    UBool isNegative = !adjustedNum.isPositive();
-
-    // Apply rounding after multiplier
-    
-    adjustedNum.fContext.status &= ~DEC_Inexact;
-    if (fRoundingIncrement != NULL) {
-        adjustedNum.div(*fRoundingIncrement, status);
-        adjustedNum.toIntegralValue();
-        adjustedNum.mult(*fRoundingIncrement, status);
-        adjustedNum.trim();
-    }
-    if (fRoundingMode == kRoundUnnecessary && (adjustedNum.fContext.status & DEC_Inexact)) {
-        status = U_FORMAT_INEXACT_ERROR;
+    DigitList adjustedNum;
+    UBool isNegative;
+    _round(number, adjustedNum, isNegative, status);
+    if (U_FAILURE(status)) {
         return appendTo;
     }
-        
 
     // Special case for INFINITE,
     if (adjustedNum.isInfinite()) {
@@ -1412,25 +1489,8 @@ DecimalFormat::_format(const DigitList &number,
         addPadding(appendTo, handler, prefixLen, suffixLen);
         return appendTo;
     }
-
-    if (fUseExponentialNotation || areSignificantDigitsUsed()) {
-        int32_t sigDigits = precision();
-        if (sigDigits > 0) {
-            adjustedNum.round(sigDigits);
-        }
-    } else {
-        // Fixed point format.  Round to a set number of fraction digits.
-        int32_t numFractionDigits = precision();
-        adjustedNum.roundFixedPoint(numFractionDigits);
-    }
-    if (fRoundingMode == kRoundUnnecessary && (adjustedNum.fContext.status & DEC_Inexact)) {
-        status = U_FORMAT_INEXACT_ERROR;
-        return appendTo;
-    }
- 
     return subformat(appendTo, handler, adjustedNum, FALSE, status);
 }
-
 
 UnicodeString&
 DecimalFormat::format(  const Formattable& obj,
@@ -1859,7 +1919,7 @@ CurrencyAmount* DecimalFormat::parseCurrency(const UnicodeString& text,
                                              ParsePosition& pos) const {
     Formattable parseResult;
     int32_t start = pos.getIndex();
-    UChar curbuf[4];
+    UChar curbuf[4] = {};
     parse(text, parseResult, pos, curbuf);
     if (pos.getIndex() != start) {
         UErrorCode ec = U_ZERO_ERROR;
@@ -1967,6 +2027,22 @@ void DecimalFormat::parse(const UnicodeString& text,
         if (fMultiplier != NULL) {
             UErrorCode ec = U_ZERO_ERROR;
             digits->div(*fMultiplier, ec);
+        }
+
+        if (fScale != 0) {
+            DigitList ten;
+            ten.set(10);
+            if (fScale > 0) {
+                for (int32_t i = fScale; i > 0; i--) {
+                    UErrorCode ec = U_ZERO_ERROR;
+                    digits->div(ten,ec);
+                }
+            } else {
+                for (int32_t i = fScale; i < 0; i++) {
+                    UErrorCode ec = U_ZERO_ERROR;
+                    digits->mult(ten,ec);
+                }
+            }
         }
 
         // Negative zero special case:
@@ -2160,7 +2236,7 @@ UBool DecimalFormat::subparse(const UnicodeString& text,
 #endif
 
     UBool fastParseOk = false; /* TRUE iff fast parse is OK */
-    UBool fastParseHadDecimal = FALSE; /* true if fast parse saw a decimal point. */
+    // UBool fastParseHadDecimal = FALSE; /* true if fast parse saw a decimal point. */
     const DecimalFormatInternal &data = internalData(fReserved);
     if((data.fFastParseStatus==kFastpathYES) &&
        !currencyParsing &&
@@ -2223,7 +2299,7 @@ UBool DecimalFormat::subparse(const UnicodeString& text,
         } else if(ch == decimalChar) {
           parsedNum.append((char)('.'), err);
           decimalChar=0; // no more decimals.
-          fastParseHadDecimal=TRUE;
+          // fastParseHadDecimal=TRUE;
         } else if(ch == lookForGroup) {
           // ignore grouping char. No decimals, so it has to be an ignorable grouping sep
         } else if(intOnly && (lookForGroup!=0) && !u_isdigit(ch)) {
@@ -5477,6 +5553,10 @@ DecimalFormat& DecimalFormat::setAttribute( UNumberFormatAttribute attr,
       }
       break;
 
+    case UNUM_SCALE:
+        fScale = newValue;
+        break;
+
     default:
       status = U_UNSUPPORTED_ERROR;
       break;
@@ -5551,6 +5631,9 @@ int32_t DecimalFormat::getAttribute( UNumberFormatAttribute attr,
     case UNUM_PARSE_NO_EXPONENT:
     case UNUM_FORMAT_FAIL_IF_MORE_THAN_MAX_DIGITS:
       return fBoolFlags.get(attr);
+
+    case UNUM_SCALE:
+        return fScale;
 
     default:
         status = U_UNSUPPORTED_ERROR;

@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/uk.xml
 // *
@@ -321,7 +321,7 @@ uk{
         }
         ESA{
             "ESA",
-            "Іспанська песета (\"А\" рахунок)",
+            "Іспанська песета (\u0022А\u0022 рахунок)",
         }
         ESB{
             "ESB",
@@ -1085,6 +1085,10 @@ uk{
         }
         ZMK{
             "ZMK",
+            "Замбійська квача (1968-2012)",
+        }
+        ZMW{
+            "ZMW",
             "Замбійська квача",
         }
         ZRN{
@@ -1514,6 +1518,12 @@ uk{
             other{"південноафриканського ранда"}
         }
         ZMK{
+            few{"замбійські квачі (1968-2012)"}
+            many{"замбійських квач (1968-2012)"}
+            one{"замбійська квача (1968-2012)"}
+            other{"Замбійські квачі (1968-2012)"}
+        }
+        ZMW{
             few{"замбійські квачі"}
             many{"замбійських квач"}
             one{"замбійська квача"}
@@ -1538,5 +1548,5 @@ uk{
         one{"{0} {1}"}
         other{"{0} {1}"}
     }
-    Version{"2.0.78.38"}
+    Version{"2.0.82.45"}
 }

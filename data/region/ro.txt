@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/ro.xml
 // *
@@ -141,7 +141,7 @@ ro{
         GU{"Guam"}
         GW{"Guineea-Bissau"}
         GY{"Guyana"}
-        HK{"R.A.S. Hong Kong a Chinei"}
+        HK{"Hong Kong"}
         HM{"Insula Heard și Insulele McDonald"}
         HN{"Honduras"}
         HR{"Croația"}
@@ -195,7 +195,7 @@ ro{
         ML{"Mali"}
         MM{"Myanmar"}
         MN{"Mongolia"}
-        MO{"R.A.S. Macao a Chinei"}
+        MO{"Macao"}
         MP{"Insulele Mariane de Nord"}
         MQ{"Martinica"}
         MR{"Mauritania"}
@@ -230,7 +230,7 @@ ro{
         PM{"Sfântul Pierre și Miquelon"}
         PN{"Pitcairn"}
         PR{"Porto Rico"}
-        PS{"Teritoriul Palestinian"}
+        PS{"Palestina"}
         PT{"Portugalia"}
         PW{"Palau"}
         PY{"Paraguay"}
@@ -294,6 +294,7 @@ ro{
         VU{"Vanuatu"}
         WF{"Wallis și Futuna"}
         WS{"Samoa"}
+        XK{"Kosovo"}
         YE{"Yemen"}
         YT{"Mayotte"}
         ZA{"Africa de Sud"}
@@ -301,5 +302,5 @@ ro{
         ZW{"Zimbabwe"}
         ZZ{"Regiune necunoscută"}
     }
-    Version{"2.0.78.38"}
+    Version{"2.0.82.45"}
 }

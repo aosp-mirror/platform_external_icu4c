@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/hr.xml
 // *
@@ -16,7 +16,7 @@ hr{
         "[A B C Č Ć D {DŽ} Đ E F G H I J K L {LJ} M N {NJ} O P Q R S Š T U V W X Y Z "
         "Ž]"
     }
-    ExemplarCharactersPunctuation{"[‐ – — , ; \: ! ? . … ' ‘ ’ \" “ ” ( ) \[ \] @ * / ′ ″]"}
+    ExemplarCharactersPunctuation{"[‐ – — , ; \\: ! ? . … ' ‘ ’ \u0022 “ ” ( ) \\[ \\] @ * / ′ ″]"}
     LocaleScript{
         "Latn",
     }
@@ -194,23 +194,13 @@ hr{
             }
         }
     }
-    Version{"2.0.78.38"}
+    Version{"2.0.82.45"}
     calendar{
         buddhist{
-            DateTimePatterns{
-                "HH:mm:ss zzzz",
-                "HH:mm:ss z",
-                "HH:mm:ss",
-                "HH:mm",
-                "EEEE, d. MMMM y. G",
-                "d. MMMM y. G",
-                "d. M. y. G",
-                "d.M.y.",
-                "{1} {0}",
-                "{1} {0}",
-                "{1} {0}",
-                "{1} {0}",
-                "{1} {0}",
+            eras{
+                abbreviated{
+                    "BE",
+                }
             }
         }
         chinese{
@@ -228,6 +218,153 @@ hr{
                 "{1} {0}",
                 "{1} {0}",
                 "{1} {0}",
+            }
+        }
+        generic{
+            DateTimePatterns{
+                "HH:mm:ss zzzz",
+                "HH:mm:ss z",
+                "HH:mm:ss",
+                "HH:mm",
+                "EEEE, d. MMMM y. G",
+                "d. MMMM y. G",
+                "d. M. y. G",
+                "d.M.y. GGGGG",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+            }
+            availableFormats{
+                Ed{"E, d."}
+                Gy{"y. G"}
+                GyMMM{"LLL y. G"}
+                GyMMMEd{"E, d. MMM y. G"}
+                GyMMMd{"d. MMM y. G"}
+                H{"HH"}
+                Hm{"HH:mm"}
+                Hms{"HH:mm:ss"}
+                M{"L."}
+                MEd{"E, d. M."}
+                MMM{"LLL"}
+                MMMEd{"E, d. MMM"}
+                MMMMEd{"E, d. MMMM"}
+                MMMMd{"d. MMMM"}
+                MMMMdd{"dd. MMMM"}
+                MMMd{"d. MMM"}
+                Md{"d. M."}
+                d{"d."}
+                h{"hh a"}
+                hm{"hh:mm a"}
+                hms{"hh:mm:ss a"}
+                ms{"mm:ss"}
+                y{"y. G"}
+                yyyy{"y. G"}
+                yyyyM{"M. y. G"}
+                yyyyMEd{"E, d. M. y. G"}
+                yyyyMMM{"LLL y. G"}
+                yyyyMMMEd{"E, d. MMM y. G"}
+                yyyyMMMM{"LLLL y. G"}
+                yyyyMMMd{"d. MMM y. G"}
+                yyyyMd{"d. M. y. G"}
+                yyyyQQQ{"QQQ y. G"}
+                yyyyQQQQ{"QQQQ y. G"}
+            }
+            intervalFormats{
+                H{
+                    H{"HH - HH'h'"}
+                }
+                Hm{
+                    H{"HH:mm-HH:mm"}
+                    m{"HH:mm-HH:mm"}
+                }
+                Hmv{
+                    H{"HH:mm-HH:mm v"}
+                    m{"HH:mm-HH:mm v"}
+                }
+                Hv{
+                    H{"HH - HH 'h' v"}
+                }
+                M{
+                    M{"MM. - MM."}
+                }
+                MEd{
+                    M{"E, dd.MM. - E, dd.MM."}
+                    d{"E, dd.MM. - E, dd.MM."}
+                }
+                MMM{
+                    M{"LLL-LLL"}
+                }
+                MMMEd{
+                    M{"E, dd. MMM - E, dd. MMM"}
+                    d{"E, dd. - E, dd. MMM"}
+                }
+                MMMd{
+                    M{"dd. MMM - dd. MMM"}
+                    d{"dd. - dd. MMM"}
+                }
+                Md{
+                    M{"dd.MM. - dd.MM."}
+                    d{"dd.MM. - dd.MM."}
+                }
+                d{
+                    d{"dd. - dd."}
+                }
+                fallback{"{0} - {1}"}
+                h{
+                    a{"h a - h a"}
+                    h{"h - h'h' a"}
+                }
+                hm{
+                    a{"h:mm a - h:mm a"}
+                    h{"h:mm-h:mm a"}
+                    m{"h:mm-h:mm a"}
+                }
+                hmv{
+                    a{"h:mm a - h:mm a v"}
+                    h{"h:mm-h:mm a v"}
+                    m{"h:mm-h:mm a v"}
+                }
+                hv{
+                    a{"h a - h a v"}
+                    h{"h - h 'h' a v"}
+                }
+                y{
+                    y{"y. - y. G"}
+                }
+                yM{
+                    M{"MM.y. - MM.y. G"}
+                    y{"MM.y. - MM.y. G"}
+                }
+                yMEd{
+                    M{"E, dd.MM.y. - E, dd.MM.y. G"}
+                    d{"E, dd.MM.y. - E, dd.MM.y. G"}
+                    y{"E, dd.MM.y. - E, dd.MM.y. G"}
+                }
+                yMMM{
+                    M{"LLL-LLL y. G"}
+                    y{"LLL y. - LLL y. G"}
+                }
+                yMMMEd{
+                    M{"E, dd. MMM - E, dd. MMM y. G"}
+                    d{"E, dd. - E, dd. MMM y. G"}
+                    y{"E, dd. MMM y. - E, dd. MMM y. G"}
+                }
+                yMMMM{
+                    M{"LLLL-LLLL y. G"}
+                    y{"LLLL y. - LLLL y. G"}
+                }
+                yMMMd{
+                    M{"dd. MMM - dd. MMM y. G"}
+                    d{"dd. - dd. MMM y. G"}
+                    y{"dd. MMM y. - dd. MMM y. G"}
+                }
+                yMd{
+                    M{"dd.MM.y. - dd.MM.y. G"}
+                    d{"dd.MM.y. - dd.MM.y. G"}
+                    y{"dd.MM.y. - dd.MM.y. G"}
+                }
             }
         }
         gregorian{
@@ -252,6 +389,10 @@ hr{
             }
             availableFormats{
                 Ed{"E, d."}
+                Gy{"y. G"}
+                GyMMM{"LLL y. G"}
+                GyMMMEd{"E, d. MMM y. G"}
+                GyMMMd{"d. MMM y. G"}
                 H{"HH"}
                 Hm{"HH:mm"}
                 Hms{"HH:mm:ss"}
@@ -271,8 +412,9 @@ hr{
                 hms{"hh:mm:ss a"}
                 ms{"mm:ss"}
                 y{"y."}
-                yM{"M. yyyy."}
+                yM{"M. y."}
                 yMEd{"E, d. M. y."}
+                yMM{"MM. y."}
                 yMMM{"LLL y."}
                 yMMMEd{"E, d. MMM y."}
                 yMMMM{"LLLL y."}
@@ -280,9 +422,6 @@ hr{
                 yMd{"d. M. y."}
                 yQQQ{"QQQ y."}
                 yQQQQ{"QQQQ y."}
-                yyMMMEd{"E, d. MMM yy."}
-                yyyyMM{"MM. yyyy."}
-                yyyyMMMM{"LLLL y."}
             }
             dayNames{
                 format{
@@ -376,63 +515,6 @@ hr{
                     "Poslije Krista",
                 }
             }
-            fields{
-                day{
-                    dn{"dan"}
-                    relative{
-                        "-1"{"jučer"}
-                        "-2"{"prekjučer"}
-                        "0"{"danas"}
-                        "1"{"sutra"}
-                        "2"{"prekosutra"}
-                    }
-                }
-                dayperiod{
-                    dn{"dio dana"}
-                }
-                era{
-                    dn{"era"}
-                }
-                hour{
-                    dn{"sat"}
-                }
-                minute{
-                    dn{"minuta"}
-                }
-                month{
-                    dn{"mjesec"}
-                    relative{
-                        "-1"{"Prošli mjesec"}
-                        "0"{"Ovaj mjesec"}
-                        "1"{"Sljedeći mjesec"}
-                    }
-                }
-                second{
-                    dn{"sekunda"}
-                }
-                week{
-                    dn{"tjedan"}
-                    relative{
-                        "-1"{"Prošli tjedan"}
-                        "0"{"Ovaj tjedan"}
-                        "1"{"Sljedeći tjedan"}
-                    }
-                }
-                weekday{
-                    dn{"dan u tjednu"}
-                }
-                year{
-                    dn{"godina"}
-                    relative{
-                        "-1"{"Prošla godina"}
-                        "0"{"Ova godina"}
-                        "1"{"Sljedeća godina"}
-                    }
-                }
-                zone{
-                    dn{"vremenska zona"}
-                }
-            }
             intervalFormats{
                 H{
                     H{"HH - HH'h'"}
@@ -496,13 +578,13 @@ hr{
                     y{"y. - y."}
                 }
                 yM{
-                    M{"MM.yyyy. - MM.yyyy."}
-                    y{"MM.yyyy. - MM.yyyy."}
+                    M{"MM.y. - MM.y."}
+                    y{"MM.y. - MM.y."}
                 }
                 yMEd{
-                    M{"E, dd.MM.yyyy. - E, dd.MM.yyyy."}
-                    d{"E, dd.MM.yyyy. - E, dd.MM.yyyy."}
-                    y{"E, dd.MM.yyyy. - E, dd.MM.yyyy."}
+                    M{"E, dd.MM.y. - E, dd.MM.y."}
+                    d{"E, dd.MM.y. - E, dd.MM.y."}
+                    y{"E, dd.MM.y. - E, dd.MM.y."}
                 }
                 yMMM{
                     M{"LLL-LLL y."}
@@ -523,9 +605,9 @@ hr{
                     y{"dd. MMM y. - dd. MMM y."}
                 }
                 yMd{
-                    M{"dd.MM.yyyy. - dd.MM.yyyy."}
-                    d{"dd.MM.yyyy. - dd.MM.yyyy."}
-                    y{"dd.MM.yyyy. - dd.MM.yyyy."}
+                    M{"dd.MM.y. - dd.MM.y."}
+                    d{"dd.MM.y. - dd.MM.y."}
+                    y{"dd.MM.y. - dd.MM.y."}
                 }
             }
             monthNames{
@@ -661,77 +743,39 @@ hr{
                 }
             }
         }
-        japanese{
-            DateTimePatterns{
-                "HH:mm:ss zzzz",
-                "HH:mm:ss z",
-                "HH:mm:ss",
-                "HH:mm",
-                "EEEE, d. MMMM y. G",
-                "d. MMMM y. G",
-                "d. M. y. G",
-                "d.M.y. G",
-                "{1} {0}",
-                "{1} {0}",
-                "{1} {0}",
-                "{1} {0}",
-                "{1} {0}",
+        hebrew{
+            eras{
+                abbreviated{
+                    "AM",
+                }
             }
+        }
+        islamic{
+            eras{
+                abbreviated{
+                    "AH",
+                }
+            }
+        }
+        japanese{
             availableFormats{
                 Ed{"E, d."}
-                Gy{"yy. GGG"}
+                Gy{"y. GGG"}
                 MEd{"E, d. M."}
                 MMMEd{"E, d. MMM"}
                 MMMMd{"d. MMMM"}
                 Md{"d. M."}
-                y{"yy. GGG"}
-                yyyy{"yy. GGG"}
-                yyyyM{"M. y. GGGGG"}
-                yyyyMEd{"E, d. M. y. GGGGG"}
-                yyyyMMM{"LLL y. GGGGG"}
-                yyyyMMMEd{"E, d. MMM y. GGGGG"}
-                yyyyMMMd{"d. MMM y. GGGGG"}
-                yyyyMd{"d. M. y. GGGGG"}
-                yyyyQQQ{"QQQ y. GGGGG"}
+                y{"y. GGG"}
+                yM{"M. y. GGGGG"}
+                yMEd{"E, d. M. y. GGGGG"}
+                yMMM{"LLL y. GGGGG"}
+                yMMMEd{"E, d. MMM y. GGGGG"}
+                yMMMd{"d. MMM y. GGGGG"}
+                yMd{"d. M. y. GGGGG"}
+                yQQQ{"QQQ y. GGGGG"}
             }
         }
         roc{
-            DateTimePatterns{
-                "HH:mm:ss zzzz",
-                "HH:mm:ss z",
-                "HH:mm:ss",
-                "HH:mm",
-                "EEEE, d. MMMM y. G",
-                "d. MMMM y. G",
-                "d. M. y. G",
-                "d.M.y. G",
-                "{1} {0}",
-                "{1} {0}",
-                "{1} {0}",
-                "{1} {0}",
-                "{1} {0}",
-            }
-            availableFormats{
-                Ed{"E, d."}
-                Gy{"y. G"}
-                M{"L."}
-                MEd{"E, d. M."}
-                MMM{"LLL"}
-                MMMEd{"E, d. MMM"}
-                MMMd{"d. MMM"}
-                Md{"d. M."}
-                d{"d."}
-                y{"y. G"}
-                yyyy{"y. G"}
-                yyyyM{"M. y. G"}
-                yyyyMEd{"E, d. M. y. G"}
-                yyyyMMM{"LLL y. G"}
-                yyyyMMMEd{"E, d. MMM y. G"}
-                yyyyMMMd{"d. MMM y. G"}
-                yyyyMd{"d. M. y. G"}
-                yyyyQQQ{"QQQ y. G"}
-                yyyyQQQQ{"QQQQ y. G"}
-            }
             eras{
                 abbreviated{
                     "prije R.O.C.",
@@ -767,6 +811,63 @@ hr{
         alternateQuotationStart{"‚"}
         quotationEnd{"“"}
         quotationStart{"„"}
+    }
+    fields{
+        day{
+            dn{"dan"}
+            relative{
+                "-1"{"jučer"}
+                "-2"{"prekjučer"}
+                "0"{"danas"}
+                "1"{"sutra"}
+                "2"{"prekosutra"}
+            }
+        }
+        dayperiod{
+            dn{"dio dana"}
+        }
+        era{
+            dn{"era"}
+        }
+        hour{
+            dn{"sat"}
+        }
+        minute{
+            dn{"minuta"}
+        }
+        month{
+            dn{"mjesec"}
+            relative{
+                "-1"{"Prošli mjesec"}
+                "0"{"Ovaj mjesec"}
+                "1"{"Sljedeći mjesec"}
+            }
+        }
+        second{
+            dn{"sekunda"}
+        }
+        week{
+            dn{"tjedan"}
+            relative{
+                "-1"{"Prošli tjedan"}
+                "0"{"Ovaj tjedan"}
+                "1"{"Sljedeći tjedan"}
+            }
+        }
+        weekday{
+            dn{"dan u tjednu"}
+        }
+        year{
+            dn{"godina"}
+            relative{
+                "-1"{"Prošla godina"}
+                "0"{"Ova godina"}
+                "1"{"Sljedeća godina"}
+            }
+        }
+        zone{
+            dn{"vremenska zona"}
+        }
     }
     listPattern{
         standard{

@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/fr.xml
 // *
@@ -141,7 +141,7 @@ fr{
         GU{"Guam"}
         GW{"Guinée-Bissau"}
         GY{"Guyana"}
-        HK{"R.A.S. chinoise de Hong Kong"}
+        HK{"Hong Kong"}
         HM{"Îles Heard et MacDonald"}
         HN{"Honduras"}
         HR{"Croatie"}
@@ -195,7 +195,7 @@ fr{
         ML{"Mali"}
         MM{"Myanmar"}
         MN{"Mongolie"}
-        MO{"R.A.S. chinoise de Macao"}
+        MO{"Macao"}
         MP{"Îles Mariannes du Nord"}
         MQ{"Martinique"}
         MR{"Mauritanie"}
@@ -230,7 +230,7 @@ fr{
         PM{"Saint-Pierre-et-Miquelon"}
         PN{"Pitcairn"}
         PR{"Porto Rico"}
-        PS{"Territoire palestinien"}
+        PS{"Palestine"}
         PT{"Portugal"}
         PW{"Palaos"}
         PY{"Paraguay"}
@@ -258,7 +258,7 @@ fr{
         SR{"Suriname"}
         SS{"Soudan du Sud"}
         ST{"Sao Tomé-et-Príncipe"}
-        SV{"El Salvador"}
+        SV{"Salvador"}
         SX{"Saint-Martin [partie néerlandaise]"}
         SY{"Syrie"}
         SZ{"Swaziland"}
@@ -294,6 +294,7 @@ fr{
         VU{"Vanuatu"}
         WF{"Wallis-et-Futuna"}
         WS{"Samoa"}
+        XK{"Kosovo"}
         YE{"Yémen"}
         YT{"Mayotte"}
         ZA{"Afrique du Sud"}
@@ -301,5 +302,5 @@ fr{
         ZW{"Zimbabwe"}
         ZZ{"région indéterminée"}
     }
-    Version{"2.0.78.30"}
+    Version{"2.0.82.57"}
 }
