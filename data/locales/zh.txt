@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/zh.xml
 // *
@@ -70,10 +70,10 @@ zh{
     }
     ExemplarCharactersIndex{"[A B C D E F G H I J K L M N O P Q R S T U V W X Y Z]"}
     ExemplarCharactersPunctuation{
-        "[﹉-﹌ _ ＿ ﹍-﹏ ︳ ︴ \- － ﹣ ‐ – — ︱ ― , ， ﹐ 、 ﹑ ; ； ﹔ \: ： ﹕ ! ！ ﹗ ? ？ ﹖ . ． ﹒ ‥"
-        " ︰ … 。 · ＇ ‘ ’ \" ＂ “ ” 〝 〞 ( （ ﹙ ︵ ) ） ﹚ ︶ \[ ［ \] ］ \{ ｛ ﹛ ︷ \} ｝ ﹜ ︸ 〈 ︿ "
-        "〉 ﹀ 《 ︽ 》 ︾ 「 ﹁ 」 ﹂ 『 ﹃ 』 ﹄ 【 ︻ 】 ︼ 〔 ﹝ ︹ 〕 ﹞ ︺ 〖 〗 ‖ § @ ＠ ﹫ * ＊ ﹡ / ／ \\ ＼"
-        " ﹨ \& ＆ ﹠ # ＃ ﹟ % ％ ﹪ ‰ ′ ″ ‵ 〃 ※]"
+        "[﹉-﹌ _ ＿ ﹍-﹏ ︳ ︴ \\- － ﹣ ‐ – — ︱ ― , ， ﹐ 、 ﹑ ; ； ﹔ \\: ： ﹕ ! ！ ﹗ ? ？ ﹖ . ． ﹒"
+        " ‥ ︰ … 。 · ＇ ‘ ’ \u0022 ＂ “ ” 〝 〞 ( （ ﹙ ︵ ) ） ﹚ ︶ \\[ ［ \\] ］ \\{ ｛ ﹛ ︷ \\} "
+        "｝ ﹜ ︸ 〈 ︿ 〉 ﹀ 《 ︽ 》 ︾ 「 ﹁ 」 ﹂ 『 ﹃ 』 ﹄ 【 ︻ 】 ︼ 〔 ﹝ ︹ 〕 ﹞ ︺ 〖 〗 ‖ § @ ＠ ﹫ * ＊ "
+        "﹡ / ／ \\\\ ＼ ﹨ \\& ＆ ﹠ # ＃ ﹟ % ％ ﹪ ‰ ′ ″ ‵ 〃 ※]"
     }
     LocaleScript{
         "Hani",
@@ -184,58 +184,9 @@ zh{
         native{"hanidec"}
         traditional{"hans"}
     }
-    Version{"2.0.78.39"}
+    Version{"2.0.82.60"}
     calendar{
         buddhist{
-            DateTimePatterns{
-                "zzzzah:mm:ss",
-                "zah:mm:ss",
-                "ah:mm:ss",
-                "ah:mm",
-                "Gy年M月d日EEEE",
-                "Gy年M月d日",
-                "Gyyyy-M-d",
-                "Gy-M-d",
-                "{1} {0}",
-                "{1}{0}",
-                "{1}{0}",
-                "{1} {0}",
-                "{1} {0}",
-            }
-            availableFormats{
-                Ed{"d日E"}
-                Gy{"Gy年"}
-                H{"H时"}
-                Hm{"HH:mm"}
-                Hms{"HH:mm:ss"}
-                M{"M月"}
-                MEd{"M-dE"}
-                MMM{"LLL"}
-                MMMEd{"M月d日E"}
-                MMMd{"M月d日"}
-                Md{"M-d"}
-                d{"d日"}
-                h{"ah时"}
-                hm{"ah:mm"}
-                hms{"ah:mm:ss"}
-                ms{"mm:ss"}
-                y{"Gy年"}
-                yM{"Gy年M月"}
-                yMEd{"Gy年M月d日，E"}
-                yMMM{"Gy年M月"}
-                yMMMEd{"Gy年M月d日E"}
-                yQQQ{"Gy年第Q季度"}
-                yQQQQ{"Gy年QQQQ"}
-                yyyy{"Gy年"}
-                yyyyM{"Gy-M"}
-                yyyyMEd{"Gy-M-dE"}
-                yyyyMMM{"Gy年M月"}
-                yyyyMMMEd{"Gy年M月d日E"}
-                yyyyMMMd{"Gy年M月d日"}
-                yyyyMd{"Gy-M-d"}
-                yyyyQQQ{"Gy年第Q季度"}
-                yyyyQQQQ{"Gy年QQQQ"}
-            }
             eras{
                 abbreviated{
                     "佛历",
@@ -262,13 +213,17 @@ zh{
                 }
                 "U-M-d",
                 "{1} {0}",
-                "{1}{0}",
-                "{1}{0}",
+                "{1} {0}",
+                "{1} {0}",
                 "{1} {0}",
                 "{1} {0}",
             }
             availableFormats{
                 Ed{"d日E"}
+                Gy{"U年"}
+                GyMMM{"U年MMM"}
+                GyMMMEd{"U年MMMd日E"}
+                GyMMMd{"U年MMMd日"}
                 M{"MMM"}
                 MEd{"M-dE"}
                 MMMEd{"MMMd日E"}
@@ -276,14 +231,16 @@ zh{
                 Md{"M-d"}
                 d{"d日"}
                 y{"U年"}
-                yM{"U年M月"}
-                yMEd{"U年M月d日，E"}
-                yMMM{"U年MMM"}
-                yMMMEd{"U年MMMd日E"}
-                yMMMd{"U年MMMd日"}
                 yMd{"U年M月d日"}
-                yQQQ{"U年QQQQ"}
-                yQQQQ{"U年QQQQ"}
+                yyyy{"U年"}
+                yyyyM{"U年M月"}
+                yyyyMEd{"U年M月d日，E"}
+                yyyyMMM{"U年MMM"}
+                yyyyMMMEd{"U年MMMd日E"}
+                yyyyMMMd{"U年MMMd日"}
+                yyyyMd{"U年M月d日"}
+                yyyyQQQ{"U年QQQQ"}
+                yyyyQQQQ{"U年QQQQ"}
             }
             cyclicNameSets{
                 dayParts{
@@ -777,6 +734,146 @@ zh{
                 }
             }
         }
+        generic{
+            DateTimePatterns{
+                "zzzzah:mm:ss",
+                "zah:mm:ss",
+                "ah:mm:ss",
+                "ah:mm",
+                "Gy年M月d日EEEE",
+                "Gy年M月d日",
+                "Gy年M月d日",
+                "Gy-M-d",
+                "{1} {0}",
+                "{1}{0}",
+                "{1}{0}",
+                "{1} {0}",
+                "{1} {0}",
+            }
+            availableFormats{
+                Ed{"d日E"}
+                Gy{"Gy年"}
+                GyMMM{"Gy年M月"}
+                GyMMMEd{"Gy年M月d日E"}
+                GyMMMd{"Gy年M月d日"}
+                H{"H时"}
+                Hm{"HH:mm"}
+                Hms{"HH:mm:ss"}
+                M{"M月"}
+                MEd{"M-dE"}
+                MMM{"LLL"}
+                MMMEd{"M月d日E"}
+                MMMd{"M月d日"}
+                Md{"M-d"}
+                d{"d日"}
+                h{"ah时"}
+                hm{"ah:mm"}
+                hms{"ah:mm:ss"}
+                ms{"mm:ss"}
+                y{"Gy年"}
+                yyyy{"Gy年"}
+                yyyyM{"Gy-M"}
+                yyyyMEd{"Gy-M-d（E）"}
+                yyyyMMM{"Gy年M月"}
+                yyyyMMMEd{"Gy年M月d日E"}
+                yyyyMMMM{"Gy年M月"}
+                yyyyMMMd{"Gy年M月d日"}
+                yyyyMd{"Gy-M-d"}
+                yyyyQQQ{"Gy年第Q季度"}
+                yyyyQQQQ{"Gy年QQQQ"}
+            }
+            intervalFormats{
+                H{
+                    H{"HH–HH"}
+                }
+                Hm{
+                    H{"HH:mm–HH:mm"}
+                    m{"HH:mm–HH:mm"}
+                }
+                Hv{
+                    H{"HH–HH v"}
+                }
+                M{
+                    M{"M–M月"}
+                }
+                MEd{
+                    M{"M/dE至M/dE"}
+                    d{"M/dE至M/dE"}
+                }
+                MMM{
+                    M{"LLL至LLL"}
+                }
+                MMMEd{
+                    M{"M月d日E至M月d日E"}
+                    d{"M月d日E至d日E"}
+                }
+                MMMd{
+                    M{"M月d日至M月d日"}
+                    d{"M月d日至d日"}
+                }
+                Md{
+                    M{"M/d – M/d"}
+                    d{"M/d – M/d"}
+                }
+                d{
+                    d{"d日至d日"}
+                }
+                fallback{"{0} – {1}"}
+                h{
+                    a{"ah时至ah时"}
+                    h{"ah时至h时"}
+                }
+                hm{
+                    a{"ah:mm至ah:mm"}
+                    h{"ah:mm至h:mm"}
+                    m{"ah:mm至h:mm"}
+                }
+                hmv{
+                    a{"vah:mm至ah:mm"}
+                    h{"vah:mm至h:mm"}
+                    m{"vah:mm至h:mm"}
+                }
+                hv{
+                    a{"vah时至ah时"}
+                    h{"vah时至h时"}
+                }
+                y{
+                    y{"Gy–y年"}
+                }
+                yM{
+                    M{"Gy年M月至M月"}
+                    y{"Gy年M月至y年M月"}
+                }
+                yMEd{
+                    M{"Gy/M/dE至y/M/dE"}
+                    d{"Gy/M/dE至y/M/dE"}
+                    y{"Gy/M/dE至y/M/dE"}
+                }
+                yMMM{
+                    M{"Gy年M月至M月"}
+                    y{"Gy年M月至y年M月"}
+                }
+                yMMMEd{
+                    M{"Gy年M月d日E至M月d日E"}
+                    d{"Gy年M月d日E至d日E"}
+                    y{"Gy年M月d日E至y年M月d日E"}
+                }
+                yMMMM{
+                    M{"Gy年M月至M月"}
+                    y{"Gy年M月至y年M月"}
+                }
+                yMMMd{
+                    M{"Gy年M月d日至M月d日"}
+                    d{"Gy年M月d日至d日"}
+                    y{"Gy年M月d日至y年M月d日"}
+                }
+                yMd{
+                    M{"Gy/M/d – y/M/d"}
+                    d{"Gy/M/d – y/M/d"}
+                    y{"Gy/M/d – y/M/d"}
+                }
+            }
+        }
         gregorian{
             AmPmMarkers{
                 "上午",
@@ -799,6 +896,10 @@ zh{
             }
             availableFormats{
                 Ed{"d日E"}
+                Gy{"Gy年"}
+                GyMMM{"Gy年M月"}
+                GyMMMEd{"Gy年M月d日E"}
+                GyMMMd{"Gy年M月d日"}
                 H{"H时"}
                 Hm{"HH:mm"}
                 Hms{"HH:mm:ss"}
@@ -817,19 +918,15 @@ zh{
                 ms{"mm:ss"}
                 y{"y年"}
                 yM{"y/M"}
-                yMEd{"y/M/dEEE"}
+                yMEd{"y/M/dE"}
+                yMM{"y年M月"}
                 yMMM{"y年M月"}
                 yMMMEd{"y年M月d日E"}
+                yMMMM{"y年M月"}
                 yMMMd{"y年M月d日"}
                 yMd{"y/M/d"}
                 yQQQ{"y年第Q季度"}
                 yQQQQ{"y年QQQQ"}
-                yyMM{"yy年M月"}
-                yyMMM{"yy年M月"}
-                yyQQQ{"yy年第Q季度"}
-                yyyy{"yyyy年"}
-                yyyyM{"yyyy年M月"}
-                yyyyMMMM{"yyyy年M月"}
             }
             dayNames{
                 format{
@@ -923,63 +1020,6 @@ zh{
                     "公元",
                 }
             }
-            fields{
-                day{
-                    dn{"日"}
-                    relative{
-                        "-1"{"昨天"}
-                        "-2"{"前天"}
-                        "0"{"今天"}
-                        "1"{"明天"}
-                        "2"{"后天"}
-                    }
-                }
-                dayperiod{
-                    dn{"上午/下午"}
-                }
-                era{
-                    dn{"时期"}
-                }
-                hour{
-                    dn{"小时"}
-                }
-                minute{
-                    dn{"分钟"}
-                }
-                month{
-                    dn{"月"}
-                    relative{
-                        "-1"{"上个月"}
-                        "0"{"本月"}
-                        "1"{"下个月"}
-                    }
-                }
-                second{
-                    dn{"秒钟"}
-                }
-                week{
-                    dn{"周"}
-                    relative{
-                        "-1"{"上周"}
-                        "0"{"本周"}
-                        "1"{"下周"}
-                    }
-                }
-                weekday{
-                    dn{"星期"}
-                }
-                year{
-                    dn{"年"}
-                    relative{
-                        "-1"{"去年"}
-                        "0"{"今年"}
-                        "1"{"明年"}
-                    }
-                }
-                zone{
-                    dn{"时区"}
-                }
-            }
             intervalFormats{
                 H{
                     H{"HH–HH"}
@@ -1039,13 +1079,13 @@ zh{
                     y{"y–y年"}
                 }
                 yM{
-                    M{"yy年M月至M月"}
-                    y{"yy年M月至yy年M月"}
+                    M{"y年M月至M月"}
+                    y{"y年M月至y年M月"}
                 }
                 yMEd{
-                    M{"yy/M/dE至yy/M/dE"}
-                    d{"yy/M/dE至yy/M/dE"}
-                    y{"yy/M/dE至yy/M/dE"}
+                    M{"y/M/dE至y/M/dE"}
+                    d{"y/M/dE至y/M/dE"}
+                    y{"y/M/dE至y/M/dE"}
                 }
                 yMMM{
                     M{"y年M月至M月"}
@@ -1066,9 +1106,9 @@ zh{
                     y{"y年M月d日至y年M月d日"}
                 }
                 yMd{
-                    M{"yy/M/d – yy/M/d"}
-                    d{"yy/M/d – yy/M/d"}
-                    y{"yy/M/d – yy/M/d"}
+                    M{"y/M/d – y/M/d"}
+                    d{"y/M/d – y/M/d"}
+                    y{"y/M/d – y/M/d"}
                 }
             }
             monthNames{
@@ -1379,54 +1419,6 @@ zh{
             }
         }
         islamic{
-            DateTimePatterns{
-                "zzzzah:mm:ss",
-                "zah:mm:ss",
-                "ah:mm:ss",
-                "ah:mm",
-                "Gy年M月d日EEEE",
-                "Gy年M月d日",
-                "Gy年M月d日",
-                "Gyy-MM-dd",
-                "{1} {0}",
-                "{1}{0}",
-                "{1}{0}",
-                "{1} {0}",
-                "{1} {0}",
-            }
-            availableFormats{
-                Ed{"d日E"}
-                Gy{"GGGyy年"}
-                H{"H时"}
-                Hm{"H:mm"}
-                Hms{"H:mm:ss"}
-                M{"M月"}
-                MEd{"M-dE"}
-                MMM{"LLL"}
-                MMMEd{"M月d日E"}
-                MMMMdd{"M月dd日"}
-                MMMd{"M月d日"}
-                MMdd{"MM-dd"}
-                Md{"M-d"}
-                d{"d日"}
-                h{"ah时"}
-                hm{"ah:mm"}
-                hms{"ah:mm:ss"}
-                ms{"mm:ss"}
-                y{"GGGyy年"}
-                yM{"y年M月"}
-                yMEd{"y年M月d日，E"}
-                yMMM{"y年M月"}
-                yMMMEd{"y年M月d日E"}
-                yQQQ{"y年第Q季度"}
-                yQQQQ{"y年QQQQ"}
-                yyyy{"GGGyy年"}
-                yyyyM{"GGGGGyy-MM"}
-                yyyyMMM{"GGGGGyy年M月"}
-                yyyyMMMd{"GGGGGyy年M月d日"}
-                yyyyMd{"GGGGGyy-MM-dd"}
-                yyyyQQQ{"Gy年第Q季度"}
-            }
             eras{
                 abbreviated{
                     "回历",
@@ -1542,6 +1534,9 @@ zh{
             availableFormats{
                 Ed{"d日E"}
                 Gy{"Gy年"}
+                GyMMM{"Gy年M月"}
+                GyMMMEd{"Gy年M月d日E"}
+                GyMMMd{"Gy年M月d日"}
                 H{"H时"}
                 Hm{"HH:mm"}
                 Hms{"HH:mm:ss"}
@@ -1565,6 +1560,7 @@ zh{
                 yyyyMMMd{"Gy年M月d日"}
                 yyyyMd{"Gy-MM-dd"}
                 yyyyQQQ{"Gy年第Q季度"}
+                yyyyQQQQ{"Gy年QQQQ"}
             }
             eras{
                 abbreviated{
@@ -1905,49 +1901,6 @@ zh{
             }
         }
         roc{
-            DateTimePatterns{
-                "zzzzah:mm:ss",
-                "zah:mm:ss",
-                "ah:mm:ss",
-                "ah:mm",
-                "Gy年M月d日EEEE",
-                "Gy年M月d日",
-                "Gy-M-d",
-                "Gy-M-d",
-                "{1} {0}",
-                "{1}{0}",
-                "{1}{0}",
-                "{1} {0}",
-                "{1} {0}",
-            }
-            availableFormats{
-                Ed{"d日E"}
-                Gy{"Gy年"}
-                H{"H时"}
-                Hm{"HH:mm"}
-                Hms{"HH:mm:ss"}
-                M{"M月"}
-                MEd{"M-dE"}
-                MMM{"LLL"}
-                MMMEd{"M月d日E"}
-                MMMd{"M月d日"}
-                Md{"M-d"}
-                d{"d日"}
-                h{"ah时"}
-                hm{"ah:mm"}
-                hms{"ah:mm:ss"}
-                ms{"mm:ss"}
-                y{"Gy年"}
-                yyyy{"Gy年"}
-                yyyyM{"Gy-M"}
-                yyyyMEd{"Gy-M-d（E）"}
-                yyyyMM{"Gy-MM"}
-                yyyyMMM{"Gy年M月"}
-                yyyyMMMEd{"Gy年M月d日E"}
-                yyyyMMMd{"Gy年M月d日"}
-                yyyyMd{"Gy-M-d"}
-                yyyyQQQ{"Gy年第Q季度"}
-            }
             eras{
                 abbreviated{
                     "民国前",
@@ -1961,6 +1914,63 @@ zh{
         alternateQuotationStart{"‘"}
         quotationEnd{"”"}
         quotationStart{"“"}
+    }
+    fields{
+        day{
+            dn{"日"}
+            relative{
+                "-1"{"昨天"}
+                "-2"{"前天"}
+                "0"{"今天"}
+                "1"{"明天"}
+                "2"{"后天"}
+            }
+        }
+        dayperiod{
+            dn{"上午/下午"}
+        }
+        era{
+            dn{"时期"}
+        }
+        hour{
+            dn{"小时"}
+        }
+        minute{
+            dn{"分钟"}
+        }
+        month{
+            dn{"月"}
+            relative{
+                "-1"{"上个月"}
+                "0"{"本月"}
+                "1"{"下个月"}
+            }
+        }
+        second{
+            dn{"秒钟"}
+        }
+        week{
+            dn{"周"}
+            relative{
+                "-1"{"上周"}
+                "0"{"本周"}
+                "1"{"下周"}
+            }
+        }
+        weekday{
+            dn{"星期"}
+        }
+        year{
+            dn{"年"}
+            relative{
+                "-1"{"去年"}
+                "0"{"今年"}
+                "1"{"明年"}
+            }
+        }
+        zone{
+            dn{"时区"}
+        }
     }
     listPattern{
         standard{

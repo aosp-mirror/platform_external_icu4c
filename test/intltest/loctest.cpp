@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1997-2012, International Business Machines Corporation and
+ * Copyright (c) 1997-2013, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -868,8 +868,8 @@ LocaleTest::TestGetLangsAndCountries()
       ;
 
     /* TODO: Change this test to be more like the cloctst version? */
-    if (testCount != 538)
-        errln("Expected getISOLanguages() to return 538 languages; it returned %d", testCount);
+    if (testCount != 559)
+        errln("Expected getISOLanguages() to return 559 languages; it returned %d", testCount);
     else {
         for (i = 0; i < 15; i++) {
             int32_t j;
@@ -899,8 +899,8 @@ LocaleTest::TestGetLangsAndCountries()
     for(testCount=0;test[testCount];testCount++)
       ;
 
-    if (testCount != 246){
-        errln("Expected getISOCountries to return 246 countries; it returned %d", testCount);
+    if (testCount != 249){
+        errln("Expected getISOCountries to return 249 countries; it returned %d", testCount);
     }else {
         for (i = 0; i < spot2Len; i++) {
             int32_t j;
@@ -959,7 +959,7 @@ LocaleTest::TestSimpleDisplayNames()
     // names, and other stuff like that.  This test just checks specific language
     // and country codes to make sure we have the correct names for them.
     char languageCodes[] [4] = { "he", "id", "iu", "ug", "yi", "za" };
-    UnicodeString languageNames [] = { "Hebrew", "Indonesian", "Inuktitut", "Uighur", "Yiddish",
+    UnicodeString languageNames [] = { "Hebrew", "Indonesian", "Inuktitut", "Uyghur", "Yiddish",
                                "Zhuang" };
 
     for (int32_t i = 0; i < 6; i++) {
@@ -1399,7 +1399,7 @@ LocaleTest::Test4147315()
   UnicodeString temp;
     // Try with codes that are the wrong length but happen to match text
     // at a valid offset in the mapping table
-    Locale locale("aaa", "CCC");
+    Locale locale("xxx", "CCC");
 
     const char *result = locale.getISO3Country();
 
@@ -1420,7 +1420,7 @@ LocaleTest::Test4147317()
     UnicodeString temp;
     // Try with codes that are the wrong length but happen to match text
     // at a valid offset in the mapping table
-    Locale locale("aaa", "CCC");
+    Locale locale("xxx", "CCC");
 
     const char *result = locale.getISO3Language();
 

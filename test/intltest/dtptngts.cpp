@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 2008-2012, International Business Machines Corporation and
+ * Copyright (c) 2008-2013, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -228,7 +228,7 @@ void IntlTestDateTimePatternGeneratorAPI::testAPI(/*char *par*/)
         UnicodeString("1/13"),                                            // 04: Md    -> M/d
         CharsToUnicodeString("1\\u670813\\u65E5"),                        // 05: MMMd  ->M\u6708d\u65E5
         CharsToUnicodeString("1\\u670813\\u65E5"),                        // 06: MMMMd  ->M\u6708d\u65E5
-        CharsToUnicodeString("\\u6C11\\u570B88 1\\u5B63"),                // 07: yQQQ  -> Gy QQQ
+        CharsToUnicodeString("\\u6C11\\u570B88\\u5E741\\u5B63"),          // 07: yQQQ  -> Gy QQQ
         CharsToUnicodeString("\\u4E0B\\u534811:58"),                      // 08: hhmm  ->
         UnicodeString("23:58"),                                           // 09: HHmm  ->
         CharsToUnicodeString("\\u4E0B\\u534811:58"),                      // 10: jjmm
@@ -241,9 +241,9 @@ void IntlTestDateTimePatternGeneratorAPI::testAPI(/*char *par*/)
         // ru                                                             // 9 ru
         UnicodeString("01.1999"),                                         // 00: yM    -> MM.y
         CharsToUnicodeString("\\u042F\\u043D\\u0432. 1999"),              // 01: yMMM  -> LLL y
-        UnicodeString("13.01.1999"),                                      // 02: yMd   -> d.MM.y
+        UnicodeString("13.01.1999"),                                      // 02: yMd   -> dd.MM.y
         CharsToUnicodeString("13 \\u044F\\u043D\\u0432. 1999 \\u0433."),  // 03: yMMMd -> d MMM y
-        UnicodeString("13.1"),                                            // 04: Md    -> d.M
+        UnicodeString("13.01"),                                           // 04: Md    -> dd.MM
         CharsToUnicodeString("13 \\u044F\\u043D\\u0432."),                // 05: MMMd  -> d MMM
         CharsToUnicodeString("13 \\u044F\\u043D\\u0432\\u0430\\u0440\\u044F"), // 06: MMMMd  -> d MMMM
         CharsToUnicodeString("1-\\u0439 \\u043A\\u0432. 1999 \\u0433."),  // 07: yQQQ  -> y QQQ

@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/lv.xml
 // *
@@ -141,7 +141,7 @@ lv{
         GU{"Guama"}
         GW{"Gvineja-Bisava"}
         GY{"Gajāna"}
-        HK{"Ķīnas īpašās pārvaldes apgabals Honkonga"}
+        HK{"Honkonga"}
         HM{"Hērda un Makdonalda salas"}
         HN{"Hondurasa"}
         HR{"Horvātija"}
@@ -195,7 +195,7 @@ lv{
         ML{"Mali"}
         MM{"Mjanma [Birma]"}
         MN{"Mongolija"}
-        MO{"Ķīnas īpašās pārvaldes apgabals Makao"}
+        MO{"Makao"}
         MP{"Ziemeļu Marianas salas"}
         MQ{"Martinika"}
         MR{"Mauritānija"}
@@ -294,6 +294,7 @@ lv{
         VU{"Vanuatu"}
         WF{"Volisa un Futuna"}
         WS{"Samoa"}
+        XK{"Kosova"}
         YE{"Jemena"}
         YT{"Majota"}
         ZA{"Dienvidāfrikas Republika"}
@@ -301,5 +302,5 @@ lv{
         ZW{"Zimbabve"}
         ZZ{"nezināms reģions"}
     }
-    Version{"2.0.78.39"}
+    Version{"2.0.82.45"}
 }
