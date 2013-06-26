@@ -900,7 +900,7 @@ tr{
             "Eski Türk Lirası",
         }
         TRY{
-            "₺",
+            "TL",
             "Türk Lirası",
         }
         TTD{
