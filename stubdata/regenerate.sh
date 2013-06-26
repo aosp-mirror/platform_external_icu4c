@@ -28,22 +28,27 @@ ICU4C_DIR=$ANDROID_BUILD_TOP/external/icu4c
 # Make a temporary directory.
 rm -rf $ICU4C_DIR/tmp
 mkdir $ICU4C_DIR/tmp
-mkdir $ICU4C_DIR/tmp/region
 
-# Compile the region .txt files to .res files.
-# TODO: expand this to more than just the region files.
-cd $ICU4C_DIR/data/region
-for locale in *.txt ;
-do
-  $ICU_BIN/genrb -d $ICU4C_DIR/tmp/region ../../data/region/$locale
+# TODO: expand this to more than just the curr and region files.
+data_kinds="curr region"
+
+for data_kind in $data_kinds ; do
+  mkdir $ICU4C_DIR/tmp/$data_kind
+
+  # Compile the .txt files to .res files.
+  cd $ICU4C_DIR/data/$data_kind
+  for locale in *.txt ; do
+    $ICU_BIN/genrb -d $ICU4C_DIR/tmp/$data_kind ../../data/$data_kind/$locale
+  done
 done
 
 # Create a copy of the .dat file that uses the new .res files.
 cp $ICU4C_DIR/stubdata/icudt${ICU_VERSION}l-all.dat $ICU4C_DIR/tmp/icudt${ICU_VERSION}l.dat
 cd $ICU4C_DIR/tmp
-for res in region/*.res ;
-do
-  $ICU_BIN/icupkg -a $res icudt${ICU_VERSION}l.dat
+for data_kind in $data_kinds ; do
+  for res in $data_kind/*.res ; do
+    $ICU_BIN/icupkg -a $res icudt${ICU_VERSION}l.dat
+  done
 done
 
 # Make the modified .dat file the canonical copy.
