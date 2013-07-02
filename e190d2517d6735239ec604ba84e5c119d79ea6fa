@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2771b0c7_19c18b7a",
+        "filename": "test/intltest/dtifmtts.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 992,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-07-02T21:36:14Z",
+      "side": 1,
+      "message": "why are there Android differences here at all?",
+      "revId": "e190d2517d6735239ec604ba84e5c119d79ea6fa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
