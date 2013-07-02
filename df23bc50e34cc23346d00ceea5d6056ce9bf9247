@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0a2cb179_99537ceb",
+        "filename": "data/curr/ak.txt",
+        "patchSetId": 6
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-07-02T17:55:21Z",
+      "side": 1,
+      "message": "Android has the rupee glyph in its font. does google3 plan to move to using the glyph soon?",
+      "revId": "df23bc50e34cc23346d00ceea5d6056ce9bf9247",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0a2cb179_19022cce",
+        "filename": "data/curr/en.txt",
+        "patchSetId": 6
+      },
+      "lineNbr": 799,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-07-02T17:55:21Z",
+      "side": 1,
+      "message": "interesting. all the others are all-caps.",
+      "revId": "df23bc50e34cc23346d00ceea5d6056ce9bf9247",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0a2cb179_790888e3",
+        "filename": "test/cintltst/cbiapts.c",
+        "patchSetId": 6
+      },
+      "lineNbr": 780,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-07-02T17:55:21Z",
+      "side": 1,
+      "message": "cool!",
+      "revId": "df23bc50e34cc23346d00ceea5d6056ce9bf9247",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0a2cb179_b9c4c064",
+        "filename": "test/intltest/dtfmttst.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 2572,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-07-02T17:55:21Z",
+      "side": 1,
+      "message": "there\u0027s a BEGIN with no END now...",
+      "revId": "df23bc50e34cc23346d00ceea5d6056ce9bf9247",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0a2cb179_d9c9747d",
+        "filename": "test/intltest/dtfmttst.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 2962,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-07-02T17:55:21Z",
+      "side": 1,
+      "message": "and an END with no BEGIN",
+      "revId": "df23bc50e34cc23346d00ceea5d6056ce9bf9247",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0a2cb179_f9ce3882",
+        "filename": "test/intltest/dtifmtts.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 823,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-07-02T17:55:21Z",
+      "side": 1,
+      "message": "again",
+      "revId": "df23bc50e34cc23346d00ceea5d6056ce9bf9247",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0a2cb179_19d4ec0d",
+        "filename": "test/intltest/dtifmtts.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 991,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-07-02T17:55:21Z",
+      "side": 1,
+      "message": "again. please just mark the bits that are actually different.",
+      "revId": "df23bc50e34cc23346d00ceea5d6056ce9bf9247",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
