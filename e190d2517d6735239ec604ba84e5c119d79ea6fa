@@ -16,6 +16,24 @@
       "revId": "e190d2517d6735239ec604ba84e5c119d79ea6fa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2771b0c7_5c961145",
+        "filename": "test/intltest/dtifmtts.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 992,
+      "author": {
+        "id": 1015078
+      },
+      "writtenOn": "2013-07-02T23:48:14Z",
+      "side": 1,
+      "message": "These are from our changes in time zones to use common terms such as PST, PDT, CST, etc.",
+      "parentUuid": "2771b0c7_19c18b7a",
+      "revId": "e190d2517d6735239ec604ba84e5c119d79ea6fa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
