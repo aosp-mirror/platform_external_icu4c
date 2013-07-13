@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27b2905c_2086b458",
+        "filename": "stubdata/regenerate.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-07-13T00:12:37Z",
+      "side": 1,
+      "message": "er, you didn\u0027t actually resolve the conflicts in this file. edit this file to fix it (or copy the file from AOSP master and just change the ICU_VERSION to 51) and upload another change.",
+      "revId": "d6ff70361cf0b45863a42bac5545e4b0d166a1e0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
