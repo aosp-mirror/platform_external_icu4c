@@ -2,6 +2,40 @@
   "comments": [
     {
       "key": {
+        "uuid": "87c33cca_84e22623",
+        "filename": "data/mappings/convrtrs.txt",
+        "patchSetId": 8
+      },
+      "lineNbr": 659,
+      "author": {
+        "id": 1006607
+      },
+      "writtenOn": "2013-07-13T05:10:02Z",
+      "side": 1,
+      "message": "In current Android-ICU, this block is commented out. Is this right?\nPlease ask Markus to review this file.",
+      "revId": "d6ff70361cf0b45863a42bac5545e4b0d166a1e0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87c33cca_44802e3a",
+        "filename": "stubdata/icu-data-default.txt",
+        "patchSetId": 8
+      },
+      "lineNbr": 1212,
+      "author": {
+        "id": 1006607
+      },
+      "writtenOn": "2013-07-13T05:10:02Z",
+      "side": 1,
+      "message": "Looks like we add several locales in this upgrade.  Is this intended?",
+      "revId": "d6ff70361cf0b45863a42bac5545e4b0d166a1e0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27b2905c_2086b458",
         "filename": "stubdata/regenerate.sh",
         "patchSetId": 8
