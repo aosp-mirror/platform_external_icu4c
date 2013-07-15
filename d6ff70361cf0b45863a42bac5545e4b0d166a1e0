@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "27b2905c_a61f5c1c",
+        "filename": "data/mappings/convrtrs.txt",
+        "patchSetId": 8
+      },
+      "lineNbr": 659,
+      "author": {
+        "id": 1015078
+      },
+      "writtenOn": "2013-07-15T18:57:56Z",
+      "side": 1,
+      "message": "ICU changed this these entries from ibm-954_P101-2007 to the euc-jp-2007 grouping. I remove the new euc-jp-2007 values.",
+      "parentUuid": "87c33cca_84e22623",
+      "revId": "d6ff70361cf0b45863a42bac5545e4b0d166a1e0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87c33cca_44802e3a",
         "filename": "stubdata/icu-data-default.txt",
         "patchSetId": 8
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "27b2905c_c61a602e",
+        "filename": "stubdata/icu-data-default.txt",
+        "patchSetId": 8
+      },
+      "lineNbr": 1212,
+      "author": {
+        "id": 1015078
+      },
+      "writtenOn": "2013-07-15T18:57:56Z",
+      "side": 1,
+      "message": "Yes.  What are the criteria for adding a new locale?",
+      "parentUuid": "87c33cca_44802e3a",
+      "revId": "d6ff70361cf0b45863a42bac5545e4b0d166a1e0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27b2905c_2086b458",
         "filename": "stubdata/regenerate.sh",
         "patchSetId": 8
@@ -47,6 +83,24 @@
       "writtenOn": "2013-07-13T00:12:37Z",
       "side": 1,
       "message": "er, you didn\u0027t actually resolve the conflicts in this file. edit this file to fix it (or copy the file from AOSP master and just change the ICU_VERSION to 51) and upload another change.",
+      "revId": "d6ff70361cf0b45863a42bac5545e4b0d166a1e0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27b2905c_460f90ec",
+        "filename": "stubdata/regenerate.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1015078
+      },
+      "writtenOn": "2013-07-15T18:57:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27b2905c_2086b458",
       "revId": "d6ff70361cf0b45863a42bac5545e4b0d166a1e0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
