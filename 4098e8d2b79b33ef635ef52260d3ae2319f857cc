@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f3283f83_03d25cf0",
+        "filename": "data/mappings/convrtrs.txt",
+        "patchSetId": 12
+      },
+      "lineNbr": 661,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-07-17T16:48:09Z",
+      "side": 1,
+      "message": "is there a reason why we\u0027re not using this? why do we have this diff against upstream? (that\u0027s kind of the point of the BEGIN/END comments, btw; don\u0027t just say \"i touched this\" but \"i touched this because X\". otherwise we never know when we can get rid of things.)",
+      "revId": "4098e8d2b79b33ef635ef52260d3ae2319f857cc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f3283f83_2342f8b7",
+        "filename": "stubdata/icu-data-default.txt",
+        "patchSetId": 12
+      },
+      "lineNbr": 1381,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-07-17T16:48:09Z",
+      "side": 1,
+      "message": "why wouldn\u0027t we want to keep it?",
+      "revId": "4098e8d2b79b33ef635ef52260d3ae2319f857cc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f3283f83_631fe0d5",
+        "filename": "stubdata/icu-data-default.txt",
+        "patchSetId": 12
+      },
+      "lineNbr": 1391,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-07-17T16:48:09Z",
+      "side": 1,
+      "message": "why move this? if we\u0027re going to order things, let\u0027s sort them alphabetically.",
+      "revId": "4098e8d2b79b33ef635ef52260d3ae2319f857cc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f3283f83_4314e4b5",
+        "filename": "stubdata/icu-data-default.txt",
+        "patchSetId": 12
+      },
+      "lineNbr": 1403,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-07-17T16:48:09Z",
+      "side": 1,
+      "message": "don\u0027t tell me \"added\" --- i can see that from the diff. tell me why. especially because you seem to have commented it out in convrtrs.txt.",
+      "revId": "4098e8d2b79b33ef635ef52260d3ae2319f857cc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f3283f83_032edc07",
+        "filename": "stubdata/icu-data-default.txt",
+        "patchSetId": 12
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-07-17T16:48:09Z",
+      "side": 0,
+      "message": "hmm. why did we have ps collation data (but nothing else for ps)? is there a way to check whether it\u0027s referred to by something we _do_ include?",
+      "revId": "8fd45e08f1054d80a356ef8aa05659a2ba84707c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f3283f83_c3cb3438",
+        "filename": "stubdata/icu-data-default.txt",
+        "patchSetId": 12
+      },
+      "lineNbr": 294,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-07-17T16:48:09Z",
+      "side": 0,
+      "message": "why did we remove these?",
+      "revId": "8fd45e08f1054d80a356ef8aa05659a2ba84707c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f3283f83_23f43878",
+        "filename": "stubdata/icu-data-default.txt",
+        "patchSetId": 12
+      },
+      "lineNbr": 1115,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-07-17T16:48:09Z",
+      "side": 0,
+      "message": "why did we remove this? (why was it there in the first place?)",
+      "revId": "8fd45e08f1054d80a356ef8aa05659a2ba84707c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
