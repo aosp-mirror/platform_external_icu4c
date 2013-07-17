@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "f3283f83_23679855",
+        "filename": "stubdata/icu-data-default.txt",
+        "patchSetId": 12
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-07-17T16:50:51Z",
+      "side": 0,
+      "message": "git log explains:\n\n    We only need the ps collation data, for fa_AF.\n\ni\u0027ll put this back, this time with a comment in the source!",
+      "parentUuid": "f3283f83_032edc07",
+      "revId": "8fd45e08f1054d80a356ef8aa05659a2ba84707c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f3283f83_c3cb3438",
         "filename": "stubdata/icu-data-default.txt",
         "patchSetId": 12
