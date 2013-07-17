@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "f3283f83_eefa9ff4",
+        "filename": "data/mappings/convrtrs.txt",
+        "patchSetId": 10
+      },
+      "lineNbr": 657,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-07-17T01:05:11Z",
+      "side": 1,
+      "message": "this is a mistake, right? we had EUC-JP and X-EUC-JP in the last version. if i edit this file, how do i regenerate?",
+      "revId": "1a04c9c10c5370ccfe22ea9dccf57916d10b1be4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "53ecab79_270b1ea6",
         "filename": "data/mappings/convrtrs.txt",
         "patchSetId": 10
