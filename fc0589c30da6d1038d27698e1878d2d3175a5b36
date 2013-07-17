@@ -19,6 +19,41 @@
     },
     {
       "key": {
+        "uuid": "f3283f83_f5cee749",
+        "filename": "common/ucnv2022.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 515,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-07-17T17:31:55Z",
+      "side": 1,
+      "message": "what was the Android-specific change here?\n\ndo we have jisx-208? we really need to get to the point where we can just generate the .dat file from scratch! this scheme where we start with a random binary blob and modify it is no good.",
+      "parentUuid": "f3283f83_b5f73fb9",
+      "revId": "fc0589c30da6d1038d27698e1878d2d3175a5b36",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f3283f83_b593bf50",
+        "filename": "common/ucnv2022.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 516,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-07-17T17:31:55Z",
+      "side": 1,
+      "message": "also, this should be removed since we\u0027ve removed the BEGIN android-changed.",
+      "revId": "fc0589c30da6d1038d27698e1878d2d3175a5b36",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f3283f83_e32070c2",
         "filename": "stubdata/icu-data-default.txt",
         "patchSetId": 13
