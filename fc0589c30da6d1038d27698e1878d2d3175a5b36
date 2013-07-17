@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "f3283f83_b5f73fb9",
+        "filename": "common/ucnv2022.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 515,
+      "author": {
+        "id": 1006607
+      },
+      "writtenOn": "2013-07-17T17:21:58Z",
+      "side": 1,
+      "message": "1. Please make sure we want the google-specific changes on top of Android-specific change.\n2. Is it OK to expose google-specific change?",
+      "revId": "fc0589c30da6d1038d27698e1878d2d3175a5b36",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f3283f83_e32070c2",
         "filename": "stubdata/icu-data-default.txt",
         "patchSetId": 13
