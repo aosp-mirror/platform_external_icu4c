@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f3283f83_e32070c2",
+        "filename": "stubdata/icu-data-default.txt",
+        "patchSetId": 13
+      },
+      "lineNbr": 556,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-07-17T17:06:15Z",
+      "side": 1,
+      "message": "ah, you sorted the curr/ entries, so they\u0027re still there, they just moved. okay.",
+      "revId": "fc0589c30da6d1038d27698e1878d2d3175a5b36",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
