@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "f3283f83_8e18bb86",
+        "filename": "data/mappings/convrtrs.txt",
+        "patchSetId": 10
+      },
+      "lineNbr": 657,
+      "author": {
+        "id": 1015078
+      },
+      "writtenOn": "2013-07-17T01:26:47Z",
+      "side": 1,
+      "message": "Oops, ICU broke the EUC-JP etc. out into a new entry, and not the same as what we had previously.  I will repair this.",
+      "parentUuid": "f3283f83_eefa9ff4",
+      "revId": "1a04c9c10c5370ccfe22ea9dccf57916d10b1be4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "53ecab79_270b1ea6",
         "filename": "data/mappings/convrtrs.txt",
         "patchSetId": 10
@@ -30,6 +48,24 @@
       "writtenOn": "2013-07-17T00:33:35Z",
       "side": 1,
       "message": "yeah, i still think we can probably just remove these. they\u0027re looked up by name, right? and we already determined that the Android source doesn\u0027t use them. so the only things that could be using them would be old apps that are looking them up by the old names, which will no longer work anyway?\n\nif we can minimize the diff to upstream here, let\u0027s do it.",
+      "revId": "1a04c9c10c5370ccfe22ea9dccf57916d10b1be4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f3283f83_6e358fef",
+        "filename": "data/mappings/convrtrs.txt",
+        "patchSetId": 10
+      },
+      "lineNbr": 1322,
+      "author": {
+        "id": 1015078
+      },
+      "writtenOn": "2013-07-17T01:26:47Z",
+      "side": 1,
+      "message": "Removed!",
+      "parentUuid": "53ecab79_270b1ea6",
       "revId": "1a04c9c10c5370ccfe22ea9dccf57916d10b1be4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
