@@ -16,6 +16,24 @@
       "revId": "aacab303ca070ec2df1eb6e6058389339e497163",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "136b13de_3a0b1da6",
+        "filename": "data/mappings/convrtrs.txt",
+        "patchSetId": 14
+      },
+      "lineNbr": 652,
+      "author": {
+        "id": 1015078
+      },
+      "writtenOn": "2013-07-18T16:02:45Z",
+      "side": 1,
+      "message": "Good point.  Markus suggested that euc-jp-2007 is safer than ibm-954_P101-2007, so we should probably use euc-jp-2007 as the target for EUC-JP and the other below. \n\nI agree that it\u0027s time for a review of all the differences in this file, with the goal of making it compatible.  Who can best evaluate the diffs?",
+      "parentUuid": "33665713_f8585191",
+      "revId": "aacab303ca070ec2df1eb6e6058389339e497163",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
