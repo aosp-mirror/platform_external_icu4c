@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "33665713_f8585191",
+        "filename": "data/mappings/convrtrs.txt",
+        "patchSetId": 14
+      },
+      "lineNbr": 652,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-07-18T00:31:51Z",
+      "side": 1,
+      "message": "so i still don\u0027t understand why we have this. we added euc-jp-2007\u0027s converter to our .dat file but we\u0027re avoiding using it here? can\u0027t we just get in sync with upstream on convrtrs.txt now? or should we remove euc-jp-2007 from icu-data-default.txt because that was only added to work around the fact that this file was more screwed up in earlier patchsets?",
+      "revId": "aacab303ca070ec2df1eb6e6058389339e497163",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
