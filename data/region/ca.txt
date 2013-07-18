@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/ca.xml
 // *
@@ -141,7 +141,7 @@ ca{
         GU{"Guam"}
         GW{"Guinea Bissau"}
         GY{"Guyana"}
-        HK{"Regió adm. especial xinesa de Hong Kong"}
+        HK{"Hong Kong"}
         HM{"Illa Heard i Illes McDonald"}
         HN{"Hondures"}
         HR{"Croàcia"}
@@ -195,7 +195,7 @@ ca{
         ML{"Mali"}
         MM{"Myanmar [Birmània]"}
         MN{"Mongòlia"}
-        MO{"Regió administrativa especial xinesa de Macau"}
+        MO{"Macau"}
         MP{"Illes Mariannes del Nord"}
         MQ{"Martinica"}
         MR{"Mauritània"}
@@ -294,6 +294,7 @@ ca{
         VU{"Vanuatu"}
         WF{"Wallis i Futuna"}
         WS{"Samoa"}
+        XK{"Kosovo"}
         YE{"Iemen"}
         YT{"Mayotte"}
         ZA{"República de Sud-àfrica"}
@@ -301,5 +302,5 @@ ca{
         ZW{"Zimbabwe"}
         ZZ{"Regió desconeguda"}
     }
-    Version{"2.0.78.32"}
+    Version{"2.0.82.57"}
 }

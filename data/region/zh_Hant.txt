@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/zh_Hant.xml
 // *
@@ -141,7 +141,7 @@ zh_Hant{
         GU{"關島"}
         GW{"幾內亞比紹"}
         GY{"蓋亞納"}
-        HK{"中華人民共和國香港特別行政區"}
+        HK{"香港"}
         HM{"赫德與麥克當諾群島"}
         HN{"宏都拉斯"}
         HR{"克羅地亞"}
@@ -195,7 +195,7 @@ zh_Hant{
         ML{"馬利"}
         MM{"緬甸"}
         MN{"蒙古"}
-        MO{"中華人民共和國澳門特別行政區"}
+        MO{"澳門"}
         MP{"北馬里亞納群島"}
         MQ{"馬丁尼克島"}
         MR{"茅利塔尼亞"}
@@ -293,6 +293,7 @@ zh_Hant{
         VU{"萬那杜"}
         WF{"瓦利斯和福杜納群島"}
         WS{"薩摩亞群島"}
+        XK{"科索夫"}
         YE{"也門"}
         YT{"馬約特"}
         ZA{"南非"}
@@ -300,5 +301,5 @@ zh_Hant{
         ZW{"津巴布韋"}
         ZZ{"未確定的區域"}
     }
-    Version{"2.0.78.39"}
+    Version{"2.0.82.57"}
 }

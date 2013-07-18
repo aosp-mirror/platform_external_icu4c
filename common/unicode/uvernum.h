@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-*   Copyright (C) 2000-2012, International Business Machines
+*   Copyright (C) 2000-2013, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *******************************************************************************
 *
@@ -57,7 +57,7 @@
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.4
  */
-#define U_ICU_VERSION_MAJOR_NUM 50
+#define U_ICU_VERSION_MAJOR_NUM 51
 
 /** The current ICU minor version as an integer. 
  *  This value will change in the subsequent releases of ICU
@@ -69,23 +69,23 @@
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.4
  */
-#define U_ICU_VERSION_PATCHLEVEL_NUM 1
+#define U_ICU_VERSION_PATCHLEVEL_NUM 0
 
 /** The current ICU build level version as an integer.  
  *  This value is for use by ICU clients. It defaults to 0.
  *  @stable ICU 4.0
- * BEGIN Android patch
  */
 #ifndef U_ICU_VERSION_BUILDLEVEL_NUM
-#define U_ICU_VERSION_BUILDLEVEL_NUM 3
-#endif
+/* BEGIN Android patch - update for non-trivial change from standard ICU release */
+#define U_ICU_VERSION_BUILDLEVEL_NUM 1
 /* END Android patch */
+#endif
 
 /** Glued version suffix for renamers 
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.6
  */
-#define U_ICU_VERSION_SUFFIX _50
+#define U_ICU_VERSION_SUFFIX _51
 
 /**
  * \def U_DEF2_ICU_ENTRY_POINT_RENAME
@@ -117,28 +117,25 @@
 
 /** The current ICU library version as a dotted-decimal string. The patchlevel
  *  only appears in this string if it non-zero. 
- *  This value will change in the subsequent releases of ICU.
+ *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.4
- * BEGIN Android patch: We increment the last version field when we make non-trivial changes
- * to Android ICU.
- * Update U_ICU_VERSION_BUILDLEVEL_NUM above for consistency.
  */
-#define U_ICU_STRINGIFY_1(x) #x
-#define U_ICU_STRINGIFY(x) U_ICU_STRINGIFY_1(x)
-#define U_ICU_VERSION "50.1.1." U_ICU_STRINGIFY(U_ICU_VERSION_BUILDLEVEL_NUM)
+/* TODO FIX THIS WHEN BUILD level is updated */
+/* BEGIN Android patch */
+#define U_ICU_VERSION "51.1.0.1"
 /* END Android patch */
 
 /** The current ICU library major/minor version as a string without dots, for library name suffixes. 
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.6
  */
-#define U_ICU_VERSION_SHORT "50"
+#define U_ICU_VERSION_SHORT "51"
 
 #ifndef U_HIDE_INTERNAL_API
 /** Data version in ICU4C.
  * @internal ICU 4.4 Internal Use Only
  **/
-#define U_ICU_DATA_VERSION "50.1"
+#define U_ICU_DATA_VERSION "51.1"
 #endif  /* U_HIDE_INTERNAL_API */
 
 /*===========================================================================

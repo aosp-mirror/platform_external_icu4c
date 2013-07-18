@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/plurals.xml, ordinals.xml
 // *
@@ -64,16 +64,20 @@ plurals:table(nofallback){
         hi{"set4"}
         hr{"set11"}
         hu{""}
+        hy{"set3"}
         id{""}
         ig{""}
         ii{""}
+        in{""}
         is{"set3"}
         it{"set3"}
         iu{"set7"}
+        iw{"set2"}
         ja{""}
         jgo{"set3"}
         jmc{"set3"}
         jv{""}
+        jw{""}
         ka{""}
         kab{"set5"}
         kaj{"set3"}
@@ -210,10 +214,12 @@ plurals:table(nofallback){
         fr{"set3"}
         gl{""}
         gu{"set31"}
+        he{""}
         hi{"set31"}
         hr{""}
         hu{"set25"}
         id{""}
+        in{""}
         is{""}
         it{"set28"}
         iw{""}

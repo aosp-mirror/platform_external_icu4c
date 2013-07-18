@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/my.xml
 // *
@@ -107,7 +107,7 @@ my{
         GR{"ဂရိ"}
         GT{"ဂွာတီမာလာ"}
         GU{"ဂူအမ်"}
-        HK{"တရုတ်၏ အထူးအုပ်ချုပ်ခွင့်ရ ဟောင်ကောင်"}
+        HK{"ဟောင်ကောင်"}
         HN{"ဟွန်ဒူးရပ်စ်"}
         HR{"ခရိုအေးရှား"}
         HT{"ဟေတီ"}
@@ -149,7 +149,7 @@ my{
         ML{"မာလီ"}
         MM{"မြန်မာ"}
         MN{"မွန်ဂိုးလီးယား"}
-        MO{"တရုတ်၏ အထူးအုပ်ချုပ်ခွင့်ရ မကာအို"}
+        MO{"မကာအို"}
         MV{"မော်လဒိုက်"}
         MW{"မာလာဝီ"}
         MX{"မက္ကဆီကို"}
@@ -219,5 +219,5 @@ my{
         ZW{"ဇင်ဘာဘွေ"}
         ZZ{"မသိ သို့မဟုတ် မရှိ သော နေရာ"}
     }
-    Version{"2.0.78.30"}
+    Version{"2.0.82.45"}
 }
