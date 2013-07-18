@@ -34,6 +34,24 @@
       "revId": "aacab303ca070ec2df1eb6e6058389339e497163",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f37f5f95_7cb751f0",
+        "filename": "data/mappings/convrtrs.txt",
+        "patchSetId": 14
+      },
+      "lineNbr": 652,
+      "author": {
+        "id": 1022037
+      },
+      "writtenOn": "2013-07-18T16:16:48Z",
+      "side": 1,
+      "message": "I think we should use euc-jp-2007. Public ICU has split the aliases between ibm-954 and the new table, we should mostly take that split but compare with the previous Android patches.\n\nAnother question is whether we can \u0026 should drop the ibm-954 conversion table, and move its aliases to the new table. Java might ask for ibm-954, but I doubt it (or doubt that we care).\n\nJungshik is our current charset guru. I will help too.",
+      "parentUuid": "136b13de_3a0b1da6",
+      "revId": "aacab303ca070ec2df1eb6e6058389339e497163",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
