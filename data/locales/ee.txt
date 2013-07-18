@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/ee.xml
 // *
@@ -16,7 +16,10 @@ ee{
         " l m n ŋ o ó ò õ ɔ {ɔ\u0301} {ɔ\u0300} {ɔ\u0303} p r s t u ú ù ũ v ʋ w y z]"
     }
     ExemplarCharactersIndex{"[A B D Ɖ E Ɛ F Ƒ G Ɣ H X I K L M N Ŋ O Ɔ P R S T U V Ʋ W Y Z]"}
-    ExemplarCharactersPunctuation{"[\- ‐ – — , ; \: ! ? . … ' ‘ ’ \" “ ” ( ) \[ \] \{ \} § @ * / \& # † ‡ ′ ″]"}
+    ExemplarCharactersPunctuation{
+        "[\\- ‐ – — , ; \\: ! ? . … ' ‘ ’ \u0022 “ ” ( ) \\[ \\] \\{ \\} § @ * / \\& "
+        "# † ‡ ′ ″]"
+    }
     LocaleScript{
         "Latn",
     }
@@ -74,8 +77,146 @@ ee{
             }
         }
     }
-    Version{"2.0.78.39"}
+    Version{"2.0.82.57"}
     calendar{
+        generic{
+            DateTimePatterns{
+                "a h:mm:ss zzzz",
+                "a 'ga' h:mm:ss z",
+                "a 'ga' h:mm:ss",
+                "a 'ga' h:mm",
+                "EEEE, MMMM d 'lia' y G",
+                "MMMM d 'lia' y G",
+                "MMM d 'lia', y G",
+                "M/d/yy GGGGG",
+                "{0} {1}",
+                "{0} {1}",
+                "{0} {1}",
+                "{0} {1}",
+                "{0} {1}",
+            }
+            availableFormats{
+                Ed{"E d"}
+                H{"HH"}
+                Hm{"HH:mm"}
+                Hms{"HH:mm:ss"}
+                M{"L"}
+                MEd{"E, M/d"}
+                MMM{"LLL"}
+                MMMEd{"E, MMM d 'lia'"}
+                MMMMEd{"E, MMMM d 'lia'"}
+                MMMMd{"MMMM d 'lia'"}
+                MMMd{"MMM d 'lia'"}
+                Md{"M/d"}
+                d{"d"}
+                h{"a 'ga' h"}
+                hm{"a 'ga' h:mm"}
+                hms{"a 'ga' h:mm:ss"}
+                ms{"'aɖabaƒoƒo' mm:ss"}
+                y{"y"}
+                yM{"M/y"}
+                yMEd{"E, M/d/y"}
+                yMMM{"MMM y"}
+                yMMMEd{"E, MMM d, y"}
+                yMMMM{"MMMM y"}
+                yMMMd{"MMM d 'lia', y"}
+                yMd{"M/d/y"}
+                yQQQ{"QQQ y"}
+                yQQQQ{"QQQQ y"}
+            }
+            intervalFormats{
+                H{
+                    H{"HH–HH"}
+                }
+                Hm{
+                    H{"HH:mm–HH:mm"}
+                    m{"HH:mm–HH:mm"}
+                }
+                Hmv{
+                    H{"HH:mm–HH:mm v"}
+                    m{"HH:mm–HH:mm v"}
+                }
+                Hv{
+                    H{"HH–HH v"}
+                }
+                M{
+                    M{"'ɣleti' M 'lia' – 'ɣleti' M 'lia'"}
+                }
+                MEd{
+                    M{"E, M/d – E, M/d"}
+                    d{"E, M/d – E, M/d"}
+                }
+                MMM{
+                    M{"MMM–MMM"}
+                }
+                MMMEd{
+                    M{"E, MMM d 'lia' – E, MMM d 'lia'"}
+                    d{"E, MMM d 'lia' – E, MMM d 'lia'"}
+                }
+                MMMd{
+                    M{"MMM d 'lia' – MMM d 'lia'"}
+                    d{"MMM d 'lia' – d 'lia'"}
+                }
+                Md{
+                    M{"M/d – M/d"}
+                    d{"M/d – M/d"}
+                }
+                d{
+                    d{"d–d"}
+                }
+                fallback{"{0} - {1}"}
+                h{
+                    a{"a h – a h"}
+                    h{"a h–h"}
+                }
+                hm{
+                    a{"a 'ga' h:mm - a 'ga' h:mm"}
+                    h{"a 'ga' h:mm - 'ga' h:mm"}
+                    m{"a 'ga' h:mm – 'ga' h:mm"}
+                }
+                hmv{
+                    a{"a 'ga' h:mm – a 'ga' h:mm v"}
+                    h{"a 'ga' h:mm–h:mm v"}
+                    m{"a h:mm–h:mm v"}
+                }
+                hv{
+                    a{"a h – a h v"}
+                    h{"a 'ga' h–h v"}
+                }
+                yM{
+                    M{"M/y – M/y"}
+                    y{"M/y – M/y"}
+                }
+                yMEd{
+                    M{"E, M/d/y – E, M/d/y"}
+                    d{"E, M/d/y – E, M/d/y"}
+                    y{"E, M/d/y – E, M/d/y"}
+                }
+                yMMM{
+                    M{"MMM–MMM y"}
+                    y{"MMM y – MMM y"}
+                }
+                yMMMEd{
+                    M{"E, MMM d 'lia' – E, MMM d 'lia', y"}
+                    d{"E, MMM d 'lia' – E, MMM d 'lia', y"}
+                    y{"E, MMM d 'lia', y – E, MMM d 'lia', y"}
+                }
+                yMMMM{
+                    M{"MMMM–MMMM y"}
+                    y{"MMMM y – MMMM y"}
+                }
+                yMMMd{
+                    M{"MMM d 'lia' – MMM d 'lia', y"}
+                    d{"MMM d 'lia' – d 'lia' , y"}
+                    y{"MMM d 'lia' , y – MMM d 'lia', y"}
+                }
+                yMd{
+                    M{"M/d/y – M/d/y"}
+                    d{"M/d/y – M/d/y"}
+                    y{"M/d/y – M/d/y"}
+                }
+            }
+        }
         gregorian{
             AmPmMarkers{
                 "ŋdi",
@@ -213,48 +354,6 @@ ee{
                     "Yesu Ŋɔli",
                 }
             }
-            fields{
-                day{
-                    dn{"ŋkeke"}
-                    relative{
-                        "-1"{"etsɔ si va yi"}
-                        "-2"{"nyitsɔ"}
-                        "0"{"egbe"}
-                        "1"{"etsɔ si gbɔna"}
-                        "2"{"nyitsɔ si gbɔna"}
-                    }
-                }
-                dayperiod{
-                    dn{"ŋkekea me"}
-                }
-                era{
-                    dn{"ŋɔli"}
-                }
-                hour{
-                    dn{"gaƒoƒo"}
-                }
-                minute{
-                    dn{"Mintigaƒoƒo"}
-                }
-                month{
-                    dn{"Xleti"}
-                }
-                second{
-                    dn{"sekend"}
-                }
-                week{
-                    dn{"kɔsiɖa ɖeka"}
-                }
-                weekday{
-                    dn{"kɔsiɖa me ŋkeke"}
-                }
-                year{
-                    dn{"ƒe"}
-                }
-                zone{
-                    dn{"nutomegaƒoƒome"}
-                }
-            }
             intervalFormats{
                 H{
                     H{"HH–HH"}
@@ -315,13 +414,13 @@ ee{
                     h{"a 'ga' h–h v"}
                 }
                 yM{
-                    M{"M/yy – M/yy"}
-                    y{"M/yy – M/yy"}
+                    M{"M/y – M/y"}
+                    y{"M/y – M/y"}
                 }
                 yMEd{
-                    M{"E, M/d/yy – E, M/d/yy"}
-                    d{"E, M/d/yy – E, M/d/yy"}
-                    y{"E, M/d/yy – E, M/d/yy"}
+                    M{"E, M/d/y – E, M/d/y"}
+                    d{"E, M/d/y – E, M/d/y"}
+                    y{"E, M/d/y – E, M/d/y"}
                 }
                 yMMM{
                     M{"MMM–MMM y"}
@@ -342,9 +441,9 @@ ee{
                     y{"MMM d 'lia' , y – MMM d 'lia', y"}
                 }
                 yMd{
-                    M{"M/d/yy – M/d/yy"}
-                    d{"M/d/yy – M/d/yy"}
-                    y{"M/d/yy – M/d/yy"}
+                    M{"M/d/y – M/d/y"}
+                    d{"M/d/y – M/d/y"}
+                    y{"M/d/y – M/d/y"}
                 }
             }
             monthNames{
@@ -480,6 +579,48 @@ ee{
         alternateQuotationStart{"‘"}
         quotationEnd{"”"}
         quotationStart{"“"}
+    }
+    fields{
+        day{
+            dn{"ŋkeke"}
+            relative{
+                "-1"{"etsɔ si va yi"}
+                "-2"{"nyitsɔ"}
+                "0"{"egbe"}
+                "1"{"etsɔ si gbɔna"}
+                "2"{"nyitsɔ si gbɔna"}
+            }
+        }
+        dayperiod{
+            dn{"ŋkekea me"}
+        }
+        era{
+            dn{"ŋɔli"}
+        }
+        hour{
+            dn{"gaƒoƒo"}
+        }
+        minute{
+            dn{"Mintigaƒoƒo"}
+        }
+        month{
+            dn{"Xleti"}
+        }
+        second{
+            dn{"sekend"}
+        }
+        week{
+            dn{"kɔsiɖa ɖeka"}
+        }
+        weekday{
+            dn{"kɔsiɖa me ŋkeke"}
+        }
+        year{
+            dn{"ƒe"}
+        }
+        zone{
+            dn{"nutomegaƒoƒome"}
+        }
     }
     listPattern{
         standard{

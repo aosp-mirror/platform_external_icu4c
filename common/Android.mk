@@ -49,6 +49,7 @@ src_files := \
 	unorm_it.c         uresbund.cpp       \
 	ures_cnv.c         uresdata.c         \
 	usc_impl.c         uscript.c          \
+	uscript_props.cpp  \
 	ushape.cpp         ustrcase.cpp       \
 	ustr_cnv.c         ustrfmt.c          \
 	ustring.cpp        ustrtrns.cpp       \

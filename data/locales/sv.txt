@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/sv.xml
 // *
@@ -13,7 +13,10 @@ sv{
     AuxExemplarCharacters{"[á â ã ā ç ë í î ï ī ñ ó ú ÿ ü æ ø]"}
     ExemplarCharacters{"[a à b c d e é f g h i j k l m n o p q r s t u v w x y z å ä ö]"}
     ExemplarCharactersIndex{"[A B C D E F G H I J K L M N O P Q R S T U V W X Y Z Å Ä Ö]"}
-    ExemplarCharactersPunctuation{"[\- ‐ – — , ; \: ! ? . … ' ‘ ’ \" “ ” ( ) \[ \] § @ * / \& # † ‡ ′ ″]"}
+    ExemplarCharactersPunctuation{
+        "[\\- ‐ – — , ; \\: ! ? . … ' ‘ ’ \u0022 “ ” ( ) \\[ \\] § @ * / \\& # † ‡ ′ "
+        "″]"
+    }
     LocaleScript{
         "Latn",
     }
@@ -131,7 +134,6 @@ sv{
             }
             symbols{
                 currencyDecimal{":"}
-                currencyGroup{"."}
                 decimal{","}
                 exponential{"×10^"}
                 group{" "}
@@ -145,59 +147,9 @@ sv{
             }
         }
     }
-    Version{"2.0.78.30"}
+    Version{"2.0.82.57"}
     calendar{
         buddhist{
-            DateTimePatterns{
-                "'kl'. HH:mm:ss zzzz",
-                "HH:mm:ss z",
-                "HH:mm:ss",
-                "HH:mm",
-                "EEEE d MMMM y G",
-                "d MMMM y G",
-                "d MMM y G",
-                "G yyyy-MM-dd",
-                "{1} {0}",
-                "{1} {0}",
-                "{1} {0}",
-                "{1} {0}",
-                "{1} {0}",
-            }
-            availableFormats{
-                Ed{"E d"}
-                Gy{"y G"}
-                Hm{"HH:mm"}
-                Hms{"HH:mm:ss"}
-                M{"L"}
-                MEd{"E d/M"}
-                MMM{"LLL"}
-                MMMEd{"E d MMM"}
-                MMMMEd{"E d:'e' MMMM"}
-                MMMMd{"d:'e' MMMM"}
-                MMMd{"d MMM"}
-                MMd{"d/M"}
-                MMdd{"dd/MM"}
-                Md{"d/M"}
-                d{"d"}
-                hm{"h:mm a"}
-                hms{"h:mm:ss a"}
-                ms{"mm:ss"}
-                y{"y G"}
-                yM{"G yyyy-MM"}
-                yMEd{"E, G yyyy-MM-dd"}
-                yMMM{"MMM y G"}
-                yMMMEd{"E d MMM y G"}
-                yMMMd{"d MMM y G"}
-                yMd{"G yyyy-MM-dd"}
-                yQQQ{"G y QQQ"}
-                yQQQQ{"G y QQQQ"}
-                yyMM{"G yy-MM"}
-                yyMMM{"MMM -yy G"}
-                yyQQQ{"QQQ yy G"}
-                yyyyMM{"G yyyy-MM"}
-                yyyyMMM{"MMM y G"}
-                yyyyQQQQ{"QQQQ y G"}
-            }
             eras{
                 abbreviated{
                     "BE",
@@ -240,34 +192,34 @@ sv{
                 }
                 stand-alone{
                     abbreviated{
-                        "tout",
-                        "bâbâ",
-                        "hâtour",
-                        "kiahk",
-                        "toubah",
-                        "amshîr",
-                        "barmahât",
-                        "barmoudah",
-                        "bashans",
-                        "ba’ounah",
-                        "abîb",
-                        "misra",
-                        "al-nasi",
+                        "Tout",
+                        "Bâbâ",
+                        "Hâtour",
+                        "Kiahk",
+                        "Toubah",
+                        "Amshîr",
+                        "Barmahât",
+                        "Barmoudah",
+                        "Bashans",
+                        "Ba’ounah",
+                        "Abîb",
+                        "Misra",
+                        "Al-nasi",
                     }
                     wide{
-                        "tout",
-                        "bâbâ",
-                        "hâtour",
-                        "kiahk",
-                        "toubah",
-                        "amshîr",
-                        "barmahât",
-                        "barmoudah",
-                        "bashans",
-                        "ba’ounah",
-                        "abîb",
-                        "misra",
-                        "al-nasi",
+                        "Tout",
+                        "Bâbâ",
+                        "Hâtour",
+                        "Kiahk",
+                        "Toubah",
+                        "Amshîr",
+                        "Barmahât",
+                        "Barmoudah",
+                        "Bashans",
+                        "Ba’ounah",
+                        "Abîb",
+                        "Misra",
+                        "Al-nasi",
                     }
                 }
             }
@@ -308,35 +260,175 @@ sv{
                 }
                 stand-alone{
                     abbreviated{
-                        "mäskäräm",
-                        "teqemt",
-                        "hedar",
-                        "tahesas",
-                        "ter",
-                        "yäkatit",
-                        "mägabit",
-                        "miyazya",
-                        "guenbot",
-                        "säné",
-                        "hamlé",
-                        "nähasé",
-                        "pagumén",
+                        "Mäskäräm",
+                        "Teqemt",
+                        "Hedar",
+                        "Tahesas",
+                        "Ter",
+                        "Yäkatit",
+                        "Mägabit",
+                        "Miyazya",
+                        "Guenbot",
+                        "Säné",
+                        "Hamlé",
+                        "Nähasé",
+                        "Pagumén",
                     }
                     wide{
-                        "mäskäräm",
-                        "teqemt",
-                        "hedar",
-                        "tahesas",
-                        "ter",
-                        "yäkatit",
-                        "mägabit",
-                        "miyazya",
-                        "guenbot",
-                        "säné",
-                        "hamlé",
-                        "nähasé",
-                        "pagumén",
+                        "Mäskäräm",
+                        "Teqemt",
+                        "Hedar",
+                        "Tahesas",
+                        "Ter",
+                        "Yäkatit",
+                        "Mägabit",
+                        "Miyazya",
+                        "Guenbot",
+                        "Säné",
+                        "Hamlé",
+                        "Nähasé",
+                        "Pagumén",
                     }
+                }
+            }
+        }
+        generic{
+            DateTimePatterns{
+                "'kl'. HH:mm:ss zzzz",
+                "HH:mm:ss z",
+                "HH:mm:ss",
+                "HH:mm",
+                "EEEE d MMMM y G",
+                "d MMMM y G",
+                "d MMM y G",
+                "G y-MM-dd",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+            }
+            availableFormats{
+                Ed{"E d"}
+                Gy{"y G"}
+                GyMMM{"MMM y G"}
+                GyMMMEd{"E d MMM y G"}
+                GyMMMd{"d MMM y G"}
+                H{"HH"}
+                Hm{"HH:mm"}
+                Hms{"HH:mm:ss"}
+                M{"L"}
+                MEd{"E d/M"}
+                MMM{"LLL"}
+                MMMEd{"E d MMM"}
+                MMMMEd{"E d:'e' MMMM"}
+                MMMMd{"d:'e' MMMM"}
+                MMMd{"d MMM"}
+                MMd{"d/M"}
+                MMdd{"dd/MM"}
+                Md{"d/M"}
+                d{"d"}
+                h{"h a"}
+                hm{"h:mm a"}
+                hms{"h:mm:ss a"}
+                ms{"mm:ss"}
+                y{"y G"}
+                yyyy{"y G"}
+                yyyyM{"G y-MM"}
+                yyyyMEd{"E, y-MM-dd G"}
+                yyyyMM{"G y-MM"}
+                yyyyMMM{"MMM y G"}
+                yyyyMMMEd{"E d MMM y G"}
+                yyyyMMMd{"d MMM y G"}
+                yyyyMd{"G y-MM-dd"}
+                yyyyQQQ{"G y QQQ"}
+                yyyyQQQQ{"G y QQQQ"}
+            }
+            intervalFormats{
+                H{
+                    H{"HH-HH"}
+                }
+                Hv{
+                    H{"HH–HH v"}
+                }
+                M{
+                    M{"M–M"}
+                }
+                MEd{
+                    M{"E d/M – E d/M"}
+                    d{"E d/M – E d/M"}
+                }
+                MMM{
+                    M{"MMM–MMM"}
+                }
+                MMMEd{
+                    M{"E d MMM – E d MMM"}
+                    d{"E d – E d MMM"}
+                }
+                MMMd{
+                    M{"d MMM – d MMM"}
+                    d{"d–d MMM"}
+                }
+                Md{
+                    M{"d/M – d/M"}
+                    d{"d–d/M"}
+                }
+                d{
+                    d{"d–d"}
+                }
+                fallback{"{0} – {1}"}
+                h{
+                    a{"h a – h a"}
+                    h{"h-h a"}
+                }
+                hm{
+                    a{"h:mm a – h:mm a"}
+                    h{"h:mm–h:mm a"}
+                    m{"h:mm–h:mm a"}
+                }
+                hmv{
+                    a{"h:mm a – h:mm a v"}
+                    h{"h:mm–h:mm a v"}
+                    m{"h:mm–h:mm a v"}
+                }
+                hv{
+                    a{"h a – h a v"}
+                    h{"h–h a v"}
+                }
+                y{
+                    y{"y–y G"}
+                }
+                yM{
+                    M{"G y-MM – MM"}
+                    y{"G y-MM – y-MM"}
+                }
+                yMEd{
+                    M{"E, y-MM-dd – E, y-MM-dd G"}
+                    d{"E, y-MM-dd – E, y-MM-dd G"}
+                    y{"E, y-MM-dd – E, y-MM-dd G"}
+                }
+                yMMM{
+                    M{"MMM–MMM y G"}
+                    y{"MMM y – MMM y G"}
+                }
+                yMMMEd{
+                    M{"E dd MMM–E dd MMM y G"}
+                    d{"E dd MMM–E dd MMM y G"}
+                    y{"E dd MMM y–E dd MMM y G"}
+                }
+                yMMMM{
+                    M{"MMMM–MMMM y G"}
+                    y{"MMMM y – MMMM y G"}
+                }
+                yMMMd{
+                    M{"d MMM–d MMM y G"}
+                    d{"d–d MMM y G"}
+                    y{"d MMM y–d MMM y G"}
+                }
+                yMd{
+                    M{"G y-MM-dd – MM-dd"}
+                    d{"G y-MM-dd – dd"}
+                    y{"G y-MM-dd – y-MM-dd"}
                 }
             }
         }
@@ -353,7 +445,7 @@ sv{
                 "EEEE'en' 'den' d:'e' MMMM y",
                 "d MMMM y",
                 "d MMM y",
-                "yyyy-MM-dd",
+                "y-MM-dd",
                 "{1} {0}",
                 "{1} {0}",
                 "{1} {0}",
@@ -362,6 +454,10 @@ sv{
             }
             availableFormats{
                 Ed{"E d"}
+                Gy{"y G"}
+                GyMMM{"MMM y G"}
+                GyMMMEd{"E d MMM y G"}
+                GyMMMd{"d MMM y G"}
                 H{"HH"}
                 Hm{"HH:mm"}
                 Hms{"HH:mm:ss"}
@@ -381,20 +477,15 @@ sv{
                 hms{"h:mm:ss a"}
                 ms{"mm:ss"}
                 y{"y"}
-                yM{"yyyy-MM"}
-                yMEd{"E, yyyy-MM-dd"}
+                yM{"y-MM"}
+                yMEd{"E, y-MM-dd"}
+                yMM{"y-MM"}
                 yMMM{"MMM y"}
                 yMMMEd{"E d MMM y"}
                 yMMMd{"d MMM y"}
-                yMd{"yyyy-MM-dd"}
+                yMd{"y-MM-dd"}
                 yQQQ{"y QQQ"}
                 yQQQQ{"y QQQQ"}
-                yyMM{"yy-MM"}
-                yyMMM{"MMM -yy"}
-                yyQQQ{"QQQ yy"}
-                yyyyMM{"yyyy-MM"}
-                yyyyMMM{"MMM y"}
-                yyyyQQQQ{"QQQQ y"}
             }
             dayNames{
                 format{
@@ -437,13 +528,13 @@ sv{
                 }
                 stand-alone{
                     abbreviated{
-                        "sön",
-                        "mån",
-                        "tis",
-                        "ons",
-                        "tor",
-                        "fre",
-                        "lör",
+                        "Sön",
+                        "Mån",
+                        "Tis",
+                        "Ons",
+                        "Tor",
+                        "Fre",
+                        "Lör",
                     }
                     narrow{
                         "S",
@@ -455,22 +546,22 @@ sv{
                         "L",
                     }
                     short{
-                        "sö",
-                        "må",
-                        "ti",
-                        "on",
-                        "to",
-                        "fr",
-                        "lö",
+                        "Sö",
+                        "Må",
+                        "Ti",
+                        "On",
+                        "To",
+                        "Fr",
+                        "Lö",
                     }
                     wide{
-                        "söndag",
-                        "måndag",
-                        "tisdag",
-                        "onsdag",
-                        "torsdag",
-                        "fredag",
-                        "lördag",
+                        "Söndag",
+                        "Måndag",
+                        "Tisdag",
+                        "Onsdag",
+                        "Torsdag",
+                        "Fredag",
+                        "Lördag",
                     }
                 }
             }
@@ -486,63 +577,6 @@ sv{
                 wide{
                     "före Kristus",
                     "efter Kristus",
-                }
-            }
-            fields{
-                day{
-                    dn{"dag"}
-                    relative{
-                        "-1"{"i går"}
-                        "-2"{"i förrgår"}
-                        "0"{"i dag"}
-                        "1"{"i morgon"}
-                        "2"{"i övermorgon"}
-                    }
-                }
-                dayperiod{
-                    dn{"fm/em"}
-                }
-                era{
-                    dn{"era"}
-                }
-                hour{
-                    dn{"timme"}
-                }
-                minute{
-                    dn{"minut"}
-                }
-                month{
-                    dn{"månad"}
-                    relative{
-                        "-1"{"förra månaden"}
-                        "0"{"denna månad"}
-                        "1"{"nästa månad"}
-                    }
-                }
-                second{
-                    dn{"sekund"}
-                }
-                week{
-                    dn{"vecka"}
-                    relative{
-                        "-1"{"förra veckan"}
-                        "0"{"denna vecka"}
-                        "1"{"nästa vecka"}
-                    }
-                }
-                weekday{
-                    dn{"veckodag"}
-                }
-                year{
-                    dn{"år"}
-                    relative{
-                        "-1"{"i fjol"}
-                        "0"{"i år"}
-                        "1"{"nästa år"}
-                    }
-                }
-                zone{
-                    dn{"tidszon"}
                 }
             }
             intervalFormats{
@@ -600,13 +634,13 @@ sv{
                     y{"y–y"}
                 }
                 yM{
-                    M{"yyyy-MM – MM"}
-                    y{"yyyy-MM – yyyy-MM"}
+                    M{"y-MM – MM"}
+                    y{"y-MM – y-MM"}
                 }
                 yMEd{
-                    M{"E, yyyy-MM-dd – E, yyyy-MM-dd"}
-                    d{"E, yyyy-MM-dd – E, yyyy-MM-dd"}
-                    y{"E, yyyy-MM-dd – E, yyyy-MM-dd"}
+                    M{"E, y-MM-dd – E, y-MM-dd"}
+                    d{"E, y-MM-dd – E, y-MM-dd"}
+                    y{"E, y-MM-dd – E, y-MM-dd"}
                 }
                 yMMM{
                     M{"MMM–MMM y"}
@@ -627,9 +661,9 @@ sv{
                     y{"d MMM y–d MMM y"}
                 }
                 yMd{
-                    M{"yyyy-MM-dd – MM-dd"}
-                    d{"yyyy-MM-dd – dd"}
-                    y{"yyyy-MM-dd – yyyy-MM-dd"}
+                    M{"y-MM-dd – MM-dd"}
+                    d{"y-MM-dd – dd"}
+                    y{"y-MM-dd – y-MM-dd"}
                 }
             }
             monthNames{
@@ -679,18 +713,18 @@ sv{
                 }
                 stand-alone{
                     abbreviated{
-                        "jan",
-                        "feb",
-                        "mar",
-                        "apr",
-                        "maj",
-                        "jun",
-                        "jul",
-                        "aug",
-                        "sep",
-                        "okt",
-                        "nov",
-                        "dec",
+                        "Jan",
+                        "Feb",
+                        "Mar",
+                        "Apr",
+                        "Maj",
+                        "Jun",
+                        "Jul",
+                        "Aug",
+                        "Sep",
+                        "Okt",
+                        "Nov",
+                        "Dec",
                     }
                     narrow{
                         "J",
@@ -707,18 +741,18 @@ sv{
                         "D",
                     }
                     wide{
-                        "januari",
-                        "februari",
-                        "mars",
-                        "april",
-                        "maj",
-                        "juni",
-                        "juli",
-                        "augusti",
-                        "september",
-                        "oktober",
-                        "november",
-                        "december",
+                        "Januari",
+                        "Februari",
+                        "Mars",
+                        "April",
+                        "Maj",
+                        "Juni",
+                        "Juli",
+                        "Augusti",
+                        "September",
+                        "Oktober",
+                        "November",
+                        "December",
                     }
                 }
             }
@@ -808,36 +842,36 @@ sv{
                 }
                 stand-alone{
                     abbreviated{
-                        "tishrí",
-                        "heshván",
-                        "kislév",
-                        "tevét",
-                        "shevát",
-                        "adár I",
-                        "adár",
-                        "nisán",
-                        "ijjár",
-                        "siván",
-                        "tammúz",
-                        "ab",
-                        "elúl",
-                        "adár II",
+                        "Tishrí",
+                        "Heshván",
+                        "Kislév",
+                        "Tevét",
+                        "Shevát",
+                        "Adár I",
+                        "Adár",
+                        "Nisán",
+                        "Ijjár",
+                        "Siván",
+                        "Tammúz",
+                        "Ab",
+                        "Elúl",
+                        "Adár II",
                     }
                     wide{
-                        "tishrí",
-                        "heshván",
-                        "kislév",
-                        "tevét",
-                        "shevát",
-                        "adár I",
-                        "adár",
-                        "nisán",
-                        "ijjár",
-                        "siván",
-                        "tammúz",
-                        "ab",
-                        "elúl",
-                        "adár II",
+                        "Tishrí",
+                        "Heshván",
+                        "Kislév",
+                        "Tevét",
+                        "Shevát",
+                        "Adár I",
+                        "Adár",
+                        "Nisán",
+                        "Ijjár",
+                        "Siván",
+                        "Tammúz",
+                        "Ab",
+                        "Elúl",
+                        "Adár II",
                     }
                 }
             }
@@ -881,86 +915,37 @@ sv{
                 }
                 stand-alone{
                     abbreviated{
-                        "chaitra",
-                        "vaishākh",
-                        "jyaishtha",
-                        "āshādha",
-                        "shrāvana",
-                        "bhādrapad",
-                        "āshwin",
-                        "kārtik",
-                        "mārgashīrsha",
-                        "paush",
-                        "māgh",
-                        "phālgun",
+                        "Chaitra",
+                        "Vaishākh",
+                        "Jyaishtha",
+                        "Āshādha",
+                        "Shrāvana",
+                        "Bhādrapad",
+                        "Āshwin",
+                        "Kārtik",
+                        "Mārgashīrsha",
+                        "Paush",
+                        "Māgh",
+                        "Phālgun",
                     }
                     wide{
-                        "chaitra",
-                        "vaishākh",
-                        "jyaishtha",
-                        "āshādha",
-                        "shrāvana",
-                        "bhādrapad",
-                        "āshwin",
-                        "kārtik",
-                        "mārgashīrsha",
-                        "paush",
-                        "māgh",
-                        "phālgun",
+                        "Chaitra",
+                        "Vaishākh",
+                        "Jyaishtha",
+                        "Āshādha",
+                        "Shrāvana",
+                        "Bhādrapad",
+                        "Āshwin",
+                        "Kārtik",
+                        "Mārgashīrsha",
+                        "Paush",
+                        "Māgh",
+                        "Phālgun",
                     }
                 }
             }
         }
         islamic{
-            DateTimePatterns{
-                "'kl'. HH:mm:ss zzzz",
-                "HH:mm:ss z",
-                "HH:mm:ss",
-                "HH:mm",
-                "EEEE d MMMM y G",
-                "d MMMM y G",
-                "d MMM y G",
-                "G y-MM-dd",
-                "{1} {0}",
-                "{1} {0}",
-                "{1} {0}",
-                "{1} {0}",
-                "{1} {0}",
-            }
-            availableFormats{
-                Ed{"E d"}
-                Gy{"y G"}
-                Hm{"HH:mm"}
-                Hms{"HH:mm:ss"}
-                M{"L"}
-                MEd{"E d/M"}
-                MMM{"LLL"}
-                MMMEd{"E d MMM"}
-                MMMMEd{"E d:'e' MMMM"}
-                MMMMd{"d:'e' MMMM"}
-                MMMd{"d MMM"}
-                MMd{"d/M"}
-                MMdd{"dd/MM"}
-                Md{"d/M"}
-                d{"d"}
-                hm{"h:mm a"}
-                hms{"h:mm:ss a"}
-                ms{"mm:ss"}
-                y{"y G"}
-                yyMM{"G yy-MM"}
-                yyMMM{"MMM -yy G"}
-                yyQQQ{"QQQ yy G"}
-                yyyy{"y G"}
-                yyyyM{"G y-MM"}
-                yyyyMEd{"E, G y-MM-dd"}
-                yyyyMM{"G y-MM"}
-                yyyyMMM{"MMM y G"}
-                yyyyMMMEd{"E d MMM y G"}
-                yyyyMMMd{"d MMM y G"}
-                yyyyMd{"G y-MM-dd"}
-                yyyyQQQ{"QQQ y G"}
-                yyyyQQQQ{"QQQQ y G"}
-            }
             eras{
                 abbreviated{
                     "AH",
@@ -985,72 +970,23 @@ sv{
                 }
                 stand-alone{
                     wide{
-                        "muharram",
-                        "safar",
-                        "rabi’ al-awwal",
-                        "rabi’ al-akhir",
-                        "jumada-l-ula",
-                        "jumada-l-akhira",
-                        "rajab",
-                        "sha’ban",
-                        "ramadan",
-                        "shawwal",
-                        "dhu-l-ga’da",
-                        "dhu-l-hijja",
+                        "Muharram",
+                        "Safar",
+                        "Rabi’ al-awwal",
+                        "Rabi’ al-akhir",
+                        "Jumada-l-ula",
+                        "Jumada-l-akhira",
+                        "Rajab",
+                        "Sha’ban",
+                        "Ramadan",
+                        "Shawwal",
+                        "Dhu-l-ga’da",
+                        "Dhu-l-hijja",
                     }
                 }
             }
         }
         japanese{
-            DateTimePatterns{
-                "'kl'. HH:mm:ss zzzz",
-                "HH:mm:ss z",
-                "HH:mm:ss",
-                "HH:mm",
-                "EEEE d MMMM y G",
-                "d MMMM y G",
-                "d MMM y G",
-                "G y-MM-dd",
-                "{1} {0}",
-                "{1} {0}",
-                "{1} {0}",
-                "{1} {0}",
-                "{1} {0}",
-            }
-            availableFormats{
-                Ed{"E d"}
-                Gy{"y G"}
-                Hm{"HH:mm"}
-                Hms{"HH:mm:ss"}
-                M{"L"}
-                MEd{"E d/M"}
-                MMM{"LLL"}
-                MMMEd{"E d MMM"}
-                MMMMEd{"E d:'e' MMMM"}
-                MMMMd{"d:'e' MMMM"}
-                MMMd{"d MMM"}
-                MMd{"d/M"}
-                MMdd{"dd/MM"}
-                Md{"d/M"}
-                d{"d"}
-                hm{"h:mm a"}
-                hms{"h:mm:ss a"}
-                ms{"mm:ss"}
-                y{"y G"}
-                yyMM{"G yy-MM"}
-                yyMMM{"MMM -yy G"}
-                yyQQQ{"QQQ yy G"}
-                yyyy{"y G"}
-                yyyyM{"G y-MM"}
-                yyyyMEd{"E, G y-MM-dd"}
-                yyyyMM{"G y-MM"}
-                yyyyMMM{"MMM y G"}
-                yyyyMMMEd{"E d MMM y G"}
-                yyyyMMMd{"d MMM y G"}
-                yyyyMd{"G y-MM-dd"}
-                yyyyQQQ{"G y QQQ"}
-                yyyyQQQQ{"G y QQQQ"}
-            }
             eras{
                 abbreviated{
                     "Taika (645–650)",
@@ -1075,7 +1011,7 @@ sv{
                     "Daidō (806–810)",
                     "Kōnin (810–824)",
                     "Tenchō (824–834)",
-                    "Shōwa (834–848)",
+                    "Jōwa (834–848)",
                     "Kajō (848–851)",
                     "Ninju (851–854)",
                     "Saiko (854–857)",
@@ -1331,86 +1267,37 @@ sv{
                 }
                 stand-alone{
                     abbreviated{
-                        "farvardin",
-                        "ordibehesht",
-                        "khordād",
-                        "tir",
-                        "mordād",
-                        "shahrivar",
-                        "mehr",
-                        "ābān",
-                        "āzar",
-                        "dey",
-                        "bahman",
-                        "esfand",
+                        "Farvardin",
+                        "Ordibehesht",
+                        "Khordād",
+                        "Tir",
+                        "Mordād",
+                        "Shahrivar",
+                        "Mehr",
+                        "Ābān",
+                        "Āzar",
+                        "Dey",
+                        "Bahman",
+                        "Esfand",
                     }
                     wide{
-                        "farvardin",
-                        "ordibehesht",
-                        "khordād",
-                        "tir",
-                        "mordād",
-                        "shahrivar",
-                        "mehr",
-                        "ābān",
-                        "āzar",
-                        "dey",
-                        "bahman",
-                        "esfand",
+                        "Farvardin",
+                        "Ordibehesht",
+                        "Khordād",
+                        "Tir",
+                        "Mordād",
+                        "Shahrivar",
+                        "Mehr",
+                        "Ābān",
+                        "Āzar",
+                        "Dey",
+                        "Bahman",
+                        "Esfand",
                     }
                 }
             }
         }
         roc{
-            DateTimePatterns{
-                "'kl'. HH:mm:ss zzzz",
-                "HH:mm:ss z",
-                "HH:mm:ss",
-                "HH:mm",
-                "EEEE d MMMM y G",
-                "d MMMM y G",
-                "d MMM y G",
-                "G y-MM-dd",
-                "{1} {0}",
-                "{1} {0}",
-                "{1} {0}",
-                "{1} {0}",
-                "{1} {0}",
-            }
-            availableFormats{
-                Ed{"E d"}
-                Gy{"y G"}
-                Hm{"HH:mm"}
-                Hms{"HH:mm:ss"}
-                M{"L"}
-                MEd{"E d/M"}
-                MMM{"LLL"}
-                MMMEd{"E d MMM"}
-                MMMMEd{"E d:'e' MMMM"}
-                MMMMd{"d:'e' MMMM"}
-                MMMd{"d MMM"}
-                MMd{"d/M"}
-                MMdd{"dd/MM"}
-                Md{"d/M"}
-                d{"d"}
-                hm{"h:mm a"}
-                hms{"h:mm:ss a"}
-                ms{"mm:ss"}
-                y{"y G"}
-                yyMM{"G yy-MM"}
-                yyMMM{"MMM -yy G"}
-                yyQQQ{"QQQ yy G"}
-                yyyy{"y G"}
-                yyyyM{"G y-MM"}
-                yyyyMEd{"E, G y-MM-dd"}
-                yyyyMM{"G y-MM"}
-                yyyyMMM{"MMM y G"}
-                yyyyMMMEd{"E d MMM y G"}
-                yyyyMMMd{"d MMM y G"}
-                yyyyMd{"G y-MM-dd"}
-                yyyyQQQ{"G y QQQ"}
-                yyyyQQQQ{"G y QQQQ"}
-            }
             eras{
                 abbreviated{
                     "före R.K.",
@@ -1424,6 +1311,63 @@ sv{
         alternateQuotationStart{"’"}
         quotationEnd{"”"}
         quotationStart{"”"}
+    }
+    fields{
+        day{
+            dn{"dag"}
+            relative{
+                "-1"{"i går"}
+                "-2"{"i förrgår"}
+                "0"{"i dag"}
+                "1"{"i morgon"}
+                "2"{"i övermorgon"}
+            }
+        }
+        dayperiod{
+            dn{"fm/em"}
+        }
+        era{
+            dn{"era"}
+        }
+        hour{
+            dn{"timme"}
+        }
+        minute{
+            dn{"minut"}
+        }
+        month{
+            dn{"månad"}
+            relative{
+                "-1"{"förra månaden"}
+                "0"{"denna månad"}
+                "1"{"nästa månad"}
+            }
+        }
+        second{
+            dn{"sekund"}
+        }
+        week{
+            dn{"vecka"}
+            relative{
+                "-1"{"förra veckan"}
+                "0"{"denna vecka"}
+                "1"{"nästa vecka"}
+            }
+        }
+        weekday{
+            dn{"veckodag"}
+        }
+        year{
+            dn{"år"}
+            relative{
+                "-1"{"i fjol"}
+                "0"{"i år"}
+                "1"{"nästa år"}
+            }
+        }
+        zone{
+            dn{"tidszon"}
+        }
     }
     listPattern{
         standard{

@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/sk.xml
 // *
@@ -10,7 +10,7 @@
  *  ICU <specials> source: <path>/xml/main/sk.xml
  */
 sk{
-    Version{"2.0.78.38"}
+    Version{"2.0.82.45"}
     zoneStrings{
         "Africa:Djibouti"{
             ec{"Džibutsko"}
@@ -658,6 +658,8 @@ sk{
             ls{"Samarský štandardný čas"}
         }
         "meta:Samoa"{
+            ld{"Samojský letný čas"}
+            lg{"Samojský čas"}
             ls{"Samojský štandardný čas"}
         }
         "meta:Seychelles"{

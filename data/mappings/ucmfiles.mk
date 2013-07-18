@@ -1,4 +1,4 @@
-# Copyright (c) 1999-2012, International Business Machines Corporation and
+# Copyright (c) 1999-2013, International Business Machines Corporation and
 # others. All Rights Reserved.
 # A list of UCM's to build
 # Note: 
@@ -32,7 +32,6 @@
 # If you are planning to exclude EBCDIC mappings in you data then please delete
 # ucmebcdic.mk from the <icu>/source/data directory
 #
-# Note: noop-*.ucm are for Android only to prevent 2022 security attack.
 
 UCM_SOURCE_FILES = ibm-437_P100-1995.ucm\
 ibm-737_P100-1997.ucm\
@@ -112,11 +111,11 @@ windows-936-2000.ucm\
 windows-949-2000.ucm\
 windows-950-2000.ucm\
 jisx-212.ucm\
-noop-cns-11643.ucm noop-gb2312_gl.ucm noop-iso-ir-165.ucm\
 iso-ir-165.ucm cns-11643-1992.ucm\
 ibm-5478_P100-1995.ucm\
 icu-internal-25546.ucm lmb-excp.ucm \
 icu-internal-compound-d1.ucm icu-internal-compound-d2.ucm icu-internal-compound-d3.ucm icu-internal-compound-d4.ucm\
 icu-internal-compound-d5.ucm icu-internal-compound-d6.ucm icu-internal-compound-d7.ucm \
-icu-internal-compound-s1.ucm icu-internal-compound-s2.ucm icu-internal-compound-s3.ucm icu-internal-compound-t.ucm
+icu-internal-compound-s1.ucm icu-internal-compound-s2.ucm icu-internal-compound-s3.ucm icu-internal-compound-t.ucm \
+euc-jp-2007.ucm
 
