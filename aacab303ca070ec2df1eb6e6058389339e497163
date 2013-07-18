@@ -52,6 +52,40 @@
       "revId": "aacab303ca070ec2df1eb6e6058389339e497163",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f37f5f95_bff71bb9",
+        "filename": "data/mappings/convrtrs.txt",
+        "patchSetId": 14
+      },
+      "lineNbr": 669,
+      "author": {
+        "id": 1015078
+      },
+      "writtenOn": "2013-07-18T18:12:22Z",
+      "side": 1,
+      "message": "I agree with Markus that we should use the public ICU51.1 lines for ibm-954_P101-2007 and euc-jp-2007.  This removes an Android-specific change and should work right:\n\nibm-954_P101-2007 { UTR22* }\n                        ibm-954 { IBM* }\n                        x-IBM954 { JAVA* }\n                        x-IBM954C { JAVA }\n                        # eucJP # This is closest to Solaris EUC-JP.\neuc-jp-2007 { UTR22* }\n                        EUC-JP { MIME* IANA JAVA* WINDOWS* }\n                        Extended_UNIX_Code_Packed_Format_for_Japanese { IANA* JAVA WINDOWS }\n                        csEUCPkdFmtJapanese { IANA JAVA WINDOWS }\n                        X-EUC-JP { MIME JAVA WINDOWS }   # Japan EUC. x-euc-jp is a MIME name\n                        eucjis {JAVA}\n                        ujis # Linux sometimes uses this name. This is an unfortunate generic and rarely used name. Its use is discouraged.",
+      "revId": "aacab303ca070ec2df1eb6e6058389339e497163",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "73d1afe1_15f15619",
+        "filename": "stubdata/icu-data-default.txt",
+        "patchSetId": 14
+      },
+      "lineNbr": 1380,
+      "author": {
+        "id": 1015078
+      },
+      "writtenOn": "2013-07-18T18:12:22Z",
+      "side": 1,
+      "message": "Remove this line: ibm-954_P101-2007.cnv\nMarkus and I agree.",
+      "revId": "aacab303ca070ec2df1eb6e6058389339e497163",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
