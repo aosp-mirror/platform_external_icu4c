@@ -1,7 +1,7 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2012 International Business Machines
-// * Corporation and others.  All Rights Reserved.
+// * Copyright (C) 2013 International Business Machines
+// * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/bg.xml
 // *
@@ -10,7 +10,7 @@
  *  ICU <specials> source: <path>/xml/main/bg.xml
  */
 bg{
-    Version{"2.0.78.39"}
+    Version{"2.0.82.45"}
     zoneStrings{
         "Africa:Abidjan"{
             ec{"Абиджан"}
@@ -1708,6 +1708,8 @@ bg{
             ls{"Самара – стандартно време"}
         }
         "meta:Samoa"{
+            ld{"Самоа – лятно часово време"}
+            lg{"Самоа време"}
             ls{"Самоа – стандартно време"}
         }
         "meta:Seychelles"{

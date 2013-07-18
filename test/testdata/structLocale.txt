@@ -1,6 +1,6 @@
 // ***************************************************************************
 // *
-// * Copyright (C) 2004-2012 International Business Machines
+// * Copyright (C) 2004-2013 International Business Machines
 // * Corporation and others.  All Rights Reserved.
 // *
 // ***************************************************************************
@@ -54,7 +54,6 @@ structLocale:table(nofallback){
         AI{""}
         AL{""}
         AM{""}
-        AN{""}
         AO{""}
         AQ{""}
         AR{""}
@@ -77,6 +76,7 @@ structLocale:table(nofallback){
         BM{""}
         BN{""}
         BO{""}
+        BQ{""}
         BR{""}
         BS{""}
         BT{""}
@@ -100,6 +100,7 @@ structLocale:table(nofallback){
         CS{""}
         CU{""}
         CV{""}
+        CW{""}
         CX{""}
         CY{""}
         CZ{""}
@@ -256,8 +257,10 @@ structLocale:table(nofallback){
         SN{""}
         SO{""}
         SR{""}
+        SS{""}
         ST{""}
         SV{""}
+        SX{""}
         SY{""}
         SZ{""}
         TC{""}
@@ -1207,6 +1210,10 @@ structLocale:table(nofallback){
             "",
             "",
         }
+        SSP{
+            "",
+            "",
+        }
         STD{
             "",
             "",
@@ -1415,6 +1422,14 @@ structLocale:table(nofallback){
             "",
             "",
         }
+        XSU{
+            "",
+            "",
+        }
+        XUA{
+            "",
+            "",
+        }
         XTS{
             "",
             "",
@@ -1456,6 +1471,10 @@ structLocale:table(nofallback){
             "",
         }
         ZMK{
+            "",
+            "",
+        }
+        ZMW{
             "",
             "",
         }
@@ -3896,6 +3915,100 @@ structLocale:table(nofallback){
         alternateQuotationEnd{""}
         alternateQuotationStart{""}
     }
+    fields{
+        day{
+            dn{"Day"}
+            relative{
+                "-3"{""}
+                "-2"{""}
+                "-1"{""}
+                "0"{""}
+                "1"{""}
+                "2"{""}
+                "3"{""}
+            }
+        }
+        dayperiod{
+            dn{"Dayperiod"}
+            relative{
+                "-1"{""}
+                "0"{""}
+                "1"{""}
+            }
+        }
+        era{
+            dn{"Era"}
+            relative{
+                "-1"{""}
+                "0"{""}
+                "1"{""}
+            }
+        }
+        hour{
+            dn{"Hour"}
+            relative{
+                "-1"{""}
+                "0"{""}
+                "1"{""}
+            }
+        }
+        minute{
+            dn{"Minute"}
+            relative{
+                "-1"{""}
+                "0"{""}
+                "1"{""}
+            }
+        }
+        month{
+            dn{"Month"}
+            relative{
+                "-1"{""}
+                "0"{""}
+                "1"{""}
+            }
+        }
+        second{
+            dn{"Second"}
+            relative{
+                "-1"{""}
+                "0"{""}
+                "1"{""}
+            }
+        }
+        week{
+            dn{"Week"}                    
+            relative{
+                "-1"{""}
+                "0"{""}
+                "1"{""}
+            }
+        }
+        weekday{
+            dn{"Day of the Week"}
+            relative{
+                "-1"{""}
+                "0"{""}
+                "1"{""}
+            }
+        }
+        year{
+            dn{"Year"}                    
+            relative{
+                "-1"{""}
+                "0"{""}
+                "1"{""}
+            }
+        }
+        zone{
+            dn{"Zone"}
+            relative{
+                "-1"{""}
+                "0"{""}
+                "1"{""}
+            }
+        }
+    }
     CurrencyUnitPatterns{
         zero{""}
         one{""}
@@ -3960,17 +4073,21 @@ structLocale:table(nofallback){
         ban{""}
         bas{""}
         bat{""}
+        bax{""}
+        bbj{""}
         be{""}
         bej{""}
         bem{""}
         ber{""}
         bez{""}
+        bfd{""}
         bg{""}
         bh{""}
         bho{""}
         bi{""}
         bik{""}
         bin{""}
+        bkm{""}
         bla{""}
         bm{""}
         bn{""}
@@ -3980,15 +4097,19 @@ structLocale:table(nofallback){
         bra{""}
         brx{""}
         bs{""}
+        bss{""}
         btk{""}
         bua{""}
         bug{""}
+        bum{""}
         byn{""}
+        byv{""}
         ca{""}
         cad{""}
         cai{""}
         car{""}
         cau{""}
+        cay{""}
         cch{""}
         ce{""}
         ceb{""}
@@ -4004,6 +4125,7 @@ structLocale:table(nofallback){
         chp{""}
         chr{""}
         chy{""}
+        ckb{""}
         cmc{""}
         co{""}
         cop{""}
@@ -4041,6 +4163,7 @@ structLocale:table(nofallback){
         dyo{""}
         dyu{""}
         dz{""}
+        dzg{""}
         ebu{""}
         ee{""}
         efi{""}
@@ -4082,7 +4205,6 @@ structLocale:table(nofallback){
         fy{""}
         ga{""}
         gaa{""}
-        gan{""}
         gay{""}
         gba{""}
         gd{""}
@@ -4105,7 +4227,6 @@ structLocale:table(nofallback){
         gwi{""}
         ha{""}
         hai{""}
-        hak{""}
         haw{""}
         he{""}
         hi{""}
@@ -4116,7 +4237,6 @@ structLocale:table(nofallback){
         ho{""}
         hr{""}
         hsb{""}
-        hsn{""}
         ht{""}
         hu{""}
         hup{""}
@@ -4124,6 +4244,7 @@ structLocale:table(nofallback){
         hz{""}
         ia{""}
         iba{""}
+        ibb{""}
         id{""}
         ie{""}
         ig{""}
@@ -4156,6 +4277,7 @@ structLocale:table(nofallback){
         kar{""}
         kaw{""}
         kbd{""}
+        kbl{""}
         kcg{""}
         kde{""}
         kea{""}
@@ -4168,6 +4290,7 @@ structLocale:table(nofallback){
         ki{""}
         kj{""}
         kk{""}
+        kkj{""}
         kl{""}
         kln{""}
         km{""}
@@ -4185,6 +4308,7 @@ structLocale:table(nofallback){
         ks{""}
         ksb{""}
         ksf{""}
+        ksh{""}
         ku{""}
         kum{""}
         kut{""}
@@ -4200,6 +4324,7 @@ structLocale:table(nofallback){
         lez{""}
         lg{""}
         li{""}
+        lkt{""}
         ln{""}
         lo{""}
         lol{""}
@@ -4214,12 +4339,14 @@ structLocale:table(nofallback){
         luy{""}
         lv{""}
         mad{""}
+        maf{""}
         mag{""}
         mai{""}
         mak{""}
         man{""}
         map{""}
         mas{""}
+        mde{""}
         mdf{""}
         mdr{""}
         men{""}
@@ -4254,12 +4381,12 @@ structLocale:table(nofallback){
         mwl{""}
         mwr{""}
         my{""}
+        mye{""}
         myn{""}
         myv{""}
         na{""}
         nah{""}
         nai{""}
-        nan{""}
         nap{""}
         naq{""}
         nb{""}
@@ -4275,12 +4402,13 @@ structLocale:table(nofallback){
         nl_BE{""}
         nmg{""}
         nn{""}
+        nnh{""}
         no{""}
         nog{""}
         non{""}
+        nqo{""}
         nr{""}
         nso{""}
-        nqo{""}
         nub{""}
         nus{""}
         nv{""}
@@ -4341,12 +4469,14 @@ structLocale:table(nofallback){
         saq{""}
         sas{""}
         sat{""}
+        sba{""}
         sbp{""}
         sc{""}
         scn{""}
         sco{""}
         sd{""}
         se{""}
+        see{""}
         seh{""}
         sel{""}
         sem{""}
@@ -4357,6 +4487,7 @@ structLocale:table(nofallback){
         sh{""}
         shi{""}
         shn{""}
+        shu{""}
         si{""}
         sid{""}
         sio{""}
@@ -4381,6 +4512,7 @@ structLocale:table(nofallback){
         srr{""}
         ss{""}
         ssa{""}
+        ssy{""}
         st{""}
         su{""}
         suk{""}
@@ -4388,6 +4520,7 @@ structLocale:table(nofallback){
         sux{""}
         sv{""}
         sw{""}
+        swb{""}
         swc{""}
         syc{""}
         syr{""}
@@ -4442,19 +4575,20 @@ structLocale:table(nofallback){
         vot{""}
         vun{""}
         wa{""}
+        wae{""}
         wak{""}
         wal{""}
         war{""}
         was{""}
         wen{""}
         wo{""}
-        wuu{""}
         xal{""}
         xh{""}
         xog{""}
         yao{""}
         yap{""}
         yav{""}
+        ybb{""}
         yi{""}
         yo{""}
         ypk{""}
@@ -12763,6 +12897,10 @@ structLocale:table(nofallback){
                     M{""}
                     d{""}
                 }
+                MMMEEEEd{
+                    M{""}
+                    d{""}
+                }
                 MMMM{
                     M{""}
                 }
@@ -13003,6 +13141,10 @@ structLocale:table(nofallback){
                     M{""}
                 }
                 MMMEd{
+                    M{""}
+                    d{""}
+                }
+                MMMEEEEd{
                     M{""}
                     d{""}
                 }
@@ -13266,6 +13408,10 @@ structLocale:table(nofallback){
                     M{""}
                     d{""}
                 }
+                MMMEEEEd{
+                    M{""}
+                    d{""}
+                }
                 MMMM{
                     M{""}
                 }
@@ -13503,6 +13649,10 @@ structLocale:table(nofallback){
                     M{""}
                     d{""}
                 }
+                MMMEEEEd{
+                    M{""}
+                    d{""}
+                }
                 MMMM{
                     M{""}
                 }
@@ -13676,6 +13826,285 @@ structLocale:table(nofallback){
                 }
             }
         }
+        generic{
+            AmPmMarkers{
+                "",
+                "",
+            }
+            DateTimePatterns{
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "A4",
+                "A4",
+                "A4",
+                "A4",
+            }
+            appendItems{
+                Day{"{0} ({2}: {1})"}
+                Day-Of-Week{"{0} {1}"}
+                Era{"{1} {0}"}
+                Hour{"{0} ({2}: {1})"}
+                Minute{"{0} ({2}: {1})"}
+                Month{"{0} ({2}: {1})"}
+                Quarter{"{0} ({2}: {1})"}
+                Second{"{0} ({2}: {1})"}
+                Timezone{"{0} {1}"}
+                Week{"{0} ({2}: {1})"}
+                Year{"{1} {0}"}
+            }
+            availableFormats{
+                HHmm{""}
+                HHmmss{""}
+                KKmm{"KK:mm a"}
+                KKmmss{"KK:mm:ss a"}
+                MMMM{""}
+                MMMdd{""}
+                mmssSS{""}
+                ww{""}
+                yyMM{""}
+                yyMMMEEEd{""}
+                yyMMMd{""}
+                yyMd{""}
+                yyQQQQ{""}
+            }
+            dayNames{
+                default{""}
+                format{
+                    abbreviated{
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                    }
+                    default{""}
+                    narrow{
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                    }
+                    short{
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                    }
+                    wide{
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                    }
+                }
+                stand-alone{
+                    abbreviated{
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                    }
+                    default{""}
+                    narrow{
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                    }
+                    short{
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                    }
+                    wide{
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                    }
+                }
+            }
+            intervalFormats{
+                H{
+                    H{""}
+                }
+                Hm{
+                    H{""}
+                    m{""}
+                }
+                Hmv{
+                    H{""}
+                    m{""}
+                }
+                Hv{
+                    H{""}
+                }
+                M{
+                    M{""}
+                }
+                MEd{
+                    M{""}
+                    d{""}
+                }
+                MMM{
+                    M{""}
+                }
+                MMMEd{
+                    M{""}
+                    d{""}
+                }
+                MMMEEEEd{
+                    M{""}
+                    d{""}
+                }
+                MMMM{
+                    M{""}
+                }
+                MMMd{
+                    M{""}
+                    d{""}
+                }
+                Md{
+                    M{""}
+                    d{""}
+                }
+                d{
+                    d{""}
+                }
+                fallback{""}
+                h{
+                    a{""}
+                    h{""}
+                }
+                hm{
+                    a{""}
+                    h{""}
+                    m{""}
+                }
+                hmv{
+                    a{""}
+                    h{""}
+                    m{""}
+                }
+                hv{
+                    a{""}
+                    h{""}
+                }
+                y{
+                    y{""}
+                }
+                yM{
+                    M{""}
+                    y{""}
+                }
+                yMEd{
+                    M{""}
+                    d{""}
+                    y{""}
+                }
+                yMMM{
+                    M{""}
+                    y{""}
+                }
+                yMMMEEEEd{
+                    M{""}
+                    d{""}
+                    y{""}
+                }
+                yMMMEd{
+                    M{""}
+                    d{""}
+                    y{""}
+                }
+                yMMMM{
+                    M{""}
+                    y{""}
+                }
+                yMMMd{
+                    M{""}
+                    d{""}
+                    y{""}
+                }
+                yMd{
+                    M{""}
+                    d{""}
+                    y{""}
+                }
+            }
+            quarters{
+                format{
+                    abbreviated{
+                        "",
+                        "",
+                        "",
+                        "",
+                    }
+                    wide{
+                        "",
+                        "",
+                        "",
+                        "",
+                    }
+                    narrow{
+                        "",
+                        "",
+                        "",
+                        "",
+                    }
+                }
+                stand-alone{
+                    abbreviated{
+                        "",
+                        "",
+                        "",
+                        "",
+                    }
+                    wide{
+                        "",
+                        "",
+                        "",
+                        "",
+                    }
+                    narrow{
+                        "",
+                        "",
+                        "",
+                        "",
+                    }
+                }
+            }
+        }
         gregorian{
             AmPmMarkers{
                 "",
@@ -13823,100 +14252,6 @@ structLocale:table(nofallback){
                     ""
                 }
             }
-            fields{
-                day{
-                    dn{"Day"}
-                    relative{
-                        "-3"{""}
-                        "-2"{""}
-                        "-1"{""}
-                        "0"{""}
-                        "1"{""}
-                        "2"{""}
-                        "3"{""}
-                    }
-                }
-                dayperiod{
-                    dn{"Dayperiod"}
-                    relative{
-                        "-1"{""}
-                        "0"{""}
-                        "1"{""}
-                    }
-                }
-                era{
-                    dn{"Era"}
-                    relative{
-                        "-1"{""}
-                        "0"{""}
-                        "1"{""}
-                    }
-                }
-                hour{
-                    dn{"Hour"}
-                    relative{
-                        "-1"{""}
-                        "0"{""}
-                        "1"{""}
-                    }
-                }
-                minute{
-                    dn{"Minute"}
-                    relative{
-                        "-1"{""}
-                        "0"{""}
-                        "1"{""}
-                    }
-                }
-                month{
-                    dn{"Month"}
-                    relative{
-                        "-1"{""}
-                        "0"{""}
-                        "1"{""}
-                    }
-                }
-                second{
-                    dn{"Second"}
-                    relative{
-                        "-1"{""}
-                        "0"{""}
-                        "1"{""}
-                    }
-                }
-                week{
-                    dn{"Week"}                    
-                    relative{
-                        "-1"{""}
-                        "0"{""}
-                        "1"{""}
-                    }
-                }
-                weekday{
-                    dn{"Day of the Week"}
-                    relative{
-                        "-1"{""}
-                        "0"{""}
-                        "1"{""}
-                    }
-                }
-                year{
-                    dn{"Year"}                    
-                    relative{
-                        "-1"{""}
-                        "0"{""}
-                        "1"{""}
-                    }
-                }
-                zone{
-                    dn{"Zone"}
-                    relative{
-                        "-1"{""}
-                        "0"{""}
-                        "1"{""}
-                    }
-                }
-            }
             intervalFormats{
                 H{
                     H{""}
@@ -13943,6 +14278,10 @@ structLocale:table(nofallback){
                     M{""}
                 }
                 MMMEd{
+                    M{""}
+                    d{""}
+                }
+                MMMEEEEd{
                     M{""}
                     d{""}
                 }
@@ -14237,6 +14576,10 @@ structLocale:table(nofallback){
                     M{""}
                     d{""}
                 }
+                MMMEEEEd{
+                    M{""}
+                    d{""}
+                }
                 MMMM{
                     M{""}
                 }
@@ -14492,6 +14835,10 @@ structLocale:table(nofallback){
                     M{""}
                     d{""}
                 }
+                MMMEEEEd{
+                    M{""}
+                    d{""}
+                }
                 MMMM{
                     M{""}
                 }
@@ -14739,6 +15086,10 @@ structLocale:table(nofallback){
                     M{""}
                     d{""}
                 }
+                MMMEEEEd{
+                    M{""}
+                    d{""}
+                }
                 MMMM{
                     M{""}
                 }
@@ -14983,6 +15334,10 @@ structLocale:table(nofallback){
                     M{""}
                 }
                 MMMEd{
+                    M{""}
+                    d{""}
+                }
+                MMMEEEEd{
                     M{""}
                     d{""}
                 }
@@ -15982,6 +16337,10 @@ structLocale:table(nofallback){
                     M{""}
                 }
                 MMMEd{
+                    M{""}
+                    d{""}
+                }
+                MMMEEEEd{
                     M{""}
                     d{""}
                 }
