@@ -286,19 +286,17 @@ void addTestNewConvert(TestNode** root)
 #ifdef U_ENABLE_GENERIC_ISO_2022
    addTest(root, &TestISO_2022, "tsconv/nucnvtst/TestISO_2022");
 #endif
-   /* BEGIN android-changed
-      To save space, Android does not build full ISO2022 CJK tables.
-      We turn off the tests here.
    addTest(root, &TestISO_2022_JP, "tsconv/nucnvtst/TestISO_2022_JP");
-   END android-changed */
    addTest(root, &TestJIS, "tsconv/nucnvtst/TestJIS");
-   /* BEGIN android-changed
    addTest(root, &TestISO_2022_JP_1, "tsconv/nucnvtst/TestISO_2022_JP_1");
+   /* BEGIN android-changed: we don't have ISO_2022_JP_2
    addTest(root, &TestISO_2022_JP_2, "tsconv/nucnvtst/TestISO_2022_JP_2");
+   END android-changed */
    addTest(root, &TestISO_2022_KR, "tsconv/nucnvtst/TestISO_2022_KR");
    addTest(root, &TestISO_2022_KR_1, "tsconv/nucnvtst/TestISO_2022_KR_1");
+   /* BEGIN android-changed: we don't have ISO-2022-CN.
    addTest(root, &TestISO_2022_CN, "tsconv/nucnvtst/TestISO_2022_CN");
-  END android-changed */
+   END android-changed */
    /*
     * ICU 4.4 (ticket #7314) removes mappings for CNS 11643 planes 3..7
    addTest(root, &TestISO_2022_CN_EXT, "tsconv/nucnvtst/TestISO_2022_CN_EXT");
@@ -1539,11 +1537,10 @@ static void TestAmbiguous()
         cnv=ucnv_open(name, &status);
         if(U_SUCCESS(status)) {
             /* BEGIN android-changed
-               To save space, Android does not build full ISO2022 CJK tables.
-               We skip the tests for ISO-2022. */
+               To save space, Android does not build full ISO-2022-CN CJK tables. */
             const char* cnvName = ucnv_getName(cnv, &status);
             if (strlen(cnvName) < 8 ||
-                strncmp(cnvName, "ISO_2022", 8) != 0) {
+                strncmp(cnvName, "ISO_2022_CN", 8) != 0) {
                 TestAmbiguousConverter(cnv);
             }
             /* END android-changed */
