@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1325d3ee_ad8ce933",
+        "filename": "test/cintltst/nucnvtst.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-07-22T20:03:57Z",
+      "side": 1,
+      "message": "i did try to re-enable this test, but we do actually still fail it.",
+      "revId": "1075f6926e4af3f528e85c035e2e547786590562",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
