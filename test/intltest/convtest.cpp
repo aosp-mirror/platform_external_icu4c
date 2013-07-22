@@ -118,10 +118,10 @@ ConversionTest::TestToUnicode() {
                 cc.charset=charset;
 
                 // BEGIN android-added
-                // To save space, Android does not build full ISO-2022 tables.
+                // To save space, Android does not build full ISO-2022-CN tables.
                 // We skip the TestGetKeywordValuesForLocale for counting available collations.
                 if (strlen(charset) >= 8 &&
-                    strncmp(charset+4, "2022", 4) == 0) {
+                    strncmp(charset+4, "2022-CN", 4) == 0) {
                     continue;
                 }
                 // END android-added
@@ -240,10 +240,10 @@ ConversionTest::TestFromUnicode() {
                 cc.charset=charset;
 
                 // BEGIN android-added
-                // To save space, Android does not build full ISO-2022 tables.
+                // To save space, Android does not build full ISO-2022-CN tables.
                 // We skip the TestGetKeywordValuesForLocale for counting available collations.
                 if (strlen(charset) >= 8 &&
-                    strncmp(charset+4, "2022", 4) == 0) {
+                    strncmp(charset+4, "2022-CN", 4) == 0) {
                     continue;
                 }
                 // END android-added
@@ -402,10 +402,10 @@ ConversionTest::TestGetUnicodeSet() {
                 s.extract(0, 0x7fffffff, charset, sizeof(charset), "");
 
                 // BEGIN android-added
-                // To save space, Android does not build full ISO-2022 tables.
+                // To save space, Android does not build full ISO-2022-CN tables.
                 // We skip the TestGetKeywordValuesForLocale for counting available collations.
                 if (strlen(charset) >= 8 &&
-                    strncmp(charset+4, "2022", 4) == 0) {
+                    strncmp(charset+4, "2022-CN", 4) == 0) {
                     continue;
                 }
                 // END android-added
