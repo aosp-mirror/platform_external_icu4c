@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "934d4312_0a29a351",
+        "filename": "stubdata/icu_dat_generator.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-07-25T17:28:19Z",
+      "side": 1,
+      "message": "here\u0027s the other instance.",
+      "revId": "b2b0b3b6ac31fbc45a3ea3dec666865ebe234b3d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
