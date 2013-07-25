@@ -199,8 +199,10 @@ def GenResIndex(input_file):
     'mn',
     'cy',
 
-    # Other languages grandfathered in from old Android releases.
+    # Others.
+    'az',
     'be',
+    'ne',
     'rm',
   ]
 
