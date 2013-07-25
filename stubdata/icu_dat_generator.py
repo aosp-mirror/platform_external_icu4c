@@ -202,7 +202,6 @@ def GenResIndex(input_file):
     # Others.
     'az',
     'be',
-    'ne',
     'rm',
   ]
 
