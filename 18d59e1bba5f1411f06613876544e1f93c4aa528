@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "138a339d_9f7ff320",
+        "filename": "common/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2013-07-30T01:02:22Z",
+      "side": 1,
+      "message": "i think you are supposed to use \"include external/stlport/libstlport.mk\"",
+      "revId": "18d59e1bba5f1411f06613876544e1f93c4aa528",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "138a339d_ff7e3f21",
+        "filename": "i18n/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2013-07-30T01:02:22Z",
+      "side": 1,
+      "message": "and here",
+      "revId": "18d59e1bba5f1411f06613876544e1f93c4aa528",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
