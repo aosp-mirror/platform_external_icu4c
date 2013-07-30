@@ -104,15 +104,15 @@ local_ldlibs := -lpthread -lm
 include $(CLEAR_VARS)
 LOCAL_SRC_FILES := $(src_files)
 LOCAL_C_INCLUDES += $(c_includes)
-LOCAL_C_INCLUDES += abi/cpp/include # RTTI
-LOCAL_C_INCLUDES += external/stlport/stlport bionic/ bionic/libstdc++/include # STL
 LOCAL_CFLAGS += $(local_cflags) -DPIC -fPIC
 LOCAL_RTTI_FLAG := -frtti
-LOCAL_SHARED_LIBRARIES += libicuuc libgabi++ libstlport
+LOCAL_SHARED_LIBRARIES += libicuuc libgabi++
 LOCAL_LDLIBS += $(local_ldlibs)
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := libicui18n
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
+include external/stlport/libstlport.mk
+LOCAL_C_INCLUDES := abi/cpp/include $(LOCAL_C_INCLUDES) # RTTI
 include $(BUILD_SHARED_LIBRARY)
 
 
