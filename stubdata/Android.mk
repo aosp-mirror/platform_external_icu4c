@@ -18,26 +18,23 @@
 
 LOCAL_PATH:= $(call my-dir)
 
-include $(CLEAR_VARS)
-
-# Build configuration:
-#
-# 'all' includes all ICU's locale data, but is currently missing some Android
-# extensions (mostly extra charset converters).
-#
-# 'default' (icu-data-default.txt) includes all locales for 50+ languages.
-config := default
-
 include $(LOCAL_PATH)/root.mk
 
-LOCAL_MODULE := icu.dat
+include $(CLEAR_VARS)
+LOCAL_MODULE := icu-data
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE_CLASS := ETC
 LOCAL_MODULE_PATH := $(TARGET_OUT)/usr/icu
 LOCAL_MODULE_STEM := $(root).dat
-LOCAL_SRC_FILES := $(root)-$(config).dat
+LOCAL_SRC_FILES := $(root)-default.dat
 include $(BUILD_PREBUILT)
 
-ifeq ($(WITH_HOST_DALVIK),true)
-    $(eval $(call copy-one-file,$(LOCAL_PATH)/$(root)-$(config).dat,$(HOST_OUT)/usr/icu/$(root).dat))
-endif
+include $(CLEAR_VARS)
+LOCAL_MODULE := icu-data-host
+LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE_CLASS := ETC
+LOCAL_MODULE_PATH := $(HOST_OUT)/usr/icu
+LOCAL_MODULE_STEM := $(root).dat
+LOCAL_SRC_FILES := $(root)-default.dat
+LOCAL_IS_HOST_MODULE := true
+include $(BUILD_PREBUILT)
