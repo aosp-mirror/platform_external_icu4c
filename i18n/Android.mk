@@ -102,14 +102,14 @@ local_ldlibs := -lpthread -lm
 #
 
 include $(CLEAR_VARS)
-LOCAL_SRC_FILES := $(src_files)
+LOCAL_SRC_FILES += $(src_files)
 LOCAL_C_INCLUDES += $(c_includes)
 LOCAL_CFLAGS += $(local_cflags) -DPIC -fPIC
 LOCAL_SHARED_LIBRARIES += libicuuc
 LOCAL_LDLIBS += $(local_ldlibs)
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := libicui18n
-LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
+LOCAL_ADDITIONAL_DEPENDENCIES += $(LOCAL_PATH)/Android.mk
 include abi/cpp/use_rtti.mk
 include external/stlport/libstlport.mk
 include $(BUILD_SHARED_LIBRARY)
@@ -121,13 +121,13 @@ include $(BUILD_SHARED_LIBRARY)
 
 ifeq ($(WITH_HOST_DALVIK),true)
     include $(CLEAR_VARS)
-    LOCAL_SRC_FILES := $(src_files)
-    LOCAL_C_INCLUDES := $(c_includes)
+    LOCAL_SRC_FILES += $(src_files)
+    LOCAL_C_INCLUDES += $(c_includes)
     LOCAL_CFLAGS += $(local_cflags)
     LOCAL_SHARED_LIBRARIES += libicuuc-host
     LOCAL_LDLIBS += $(local_ldlibs)
     LOCAL_MODULE_TAGS := optional
     LOCAL_MODULE := libicui18n-host
-    LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
+    LOCAL_ADDITIONAL_DEPENDENCIES += $(LOCAL_PATH)/Android.mk
     include $(BUILD_HOST_SHARED_LIBRARY)
 endif
