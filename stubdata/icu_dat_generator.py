@@ -80,6 +80,9 @@ def WriteIndex(path, locales):
   f.write("res_index:table(nofallback) {\n")
   f.write("  InstalledLocales {\n")
   for locale in locales:
+    if '/' in locale:
+      # 'locale' is actually something like 'coll/en_US.res'.
+      locale = locale.split('/')[1].replace('.res', '')
     f.write(locale + empty_value)
 
   f.write("  }\n")
@@ -101,7 +104,7 @@ def AddAllResFiles(collection, dir_name, language):
   pattern1 = '%s/data/%s/%s.txt' % (ICU4C_DIR, dir_name, language)
   pattern2 = '%s/data/%s/%s_*.txt' % (ICU4C_DIR, dir_name, language)
   for path in glob.glob(pattern1) + glob.glob(pattern2):
-    if 'TRADITIONAL' in path:
+    if 'TRADITIONAL' in path or 'PHONEBOOK' in path:
       continue
     parts = path.split('/')
     if dir_name == 'locales':
@@ -109,6 +112,12 @@ def AddAllResFiles(collection, dir_name, language):
     else:
       path = parts[-2] + '/' + parts[-1].replace('.txt', '.res')
     collection.add(path)
+
+
+def DumpFile(filename):
+  print ' ----------------- %s' % filename
+  os.system("cat %s" % filename)
+  print ' ----------------- END'
 
 
 # Open input file (such as icu-data-default.txt).
@@ -268,7 +277,7 @@ def GenResIndex(input_file):
   # First add_list.txt, the argument to icupkg -a...
   f = open(os.path.join(TMP_DAT_PATH, "add_list.txt"), "w")
   for line in new_add_list:
-    f.write("%s\n" % line)
+    f.write("%s" % line)
   f.close()
 
   # Second res_index.txt, used below by genrb.
@@ -277,12 +286,15 @@ def GenResIndex(input_file):
   for kind, locales in kind_to_locales.items():
     if kind == "locales":
       continue
-    WriteIndex(os.path.join(TMP_DAT_PATH, kind, res_index), locales)
+    res_index_filename = os.path.join(TMP_DAT_PATH, kind, res_index)
+    WriteIndex(res_index_filename, locales)
+    if VERY_VERBOSE:
+      DumpFile(res_index_filename)
 
   # Useful if you need to see the temporary input files we generated.
-  if False:
-    os.system("cat %s/add_list.txt" % TMP_DAT_PATH)
-    os.system("cat %s/res_index.txt" % TMP_DAT_PATH)
+  if VERY_VERBOSE:
+    DumpFile('%s/add_list.txt' % TMP_DAT_PATH)
+    DumpFile('%s/res_index.txt' % TMP_DAT_PATH)
 
   # Call genrb to generate new res_index.res.
   InvokeIcuTool("genrb", TMP_DAT_PATH, [res_index])
@@ -315,13 +327,13 @@ def main():
   global ICU_DATA           # e.g. "icudt50l"
   global TMP_DAT_PATH       # Temporary directory to store all resource files and
                             # intermediate dat files.
-  global VERBOSE
+  global VERBOSE, VERY_VERBOSE
 
-  VERBOSE = False
+  VERBOSE = VERY_VERBOSE = False
 
   show_help = False
   try:
-    opts, args = getopt.getopt(sys.argv[1:], "hv", ["help", "verbose"])
+    opts, args = getopt.getopt(sys.argv[1:], "hv", ["help", "verbose", "very-verbose"])
   except getopt.error:
     PrintHelpAndExit()
   for opt, _ in opts:
@@ -329,6 +341,8 @@ def main():
       show_help = True
     elif opt in ("-v", "--verbose"):
       VERBOSE = True
+    elif opt in ("--very-verbose"):
+      VERY_VERBOSE = True
   if args:
     show_help = True
 
