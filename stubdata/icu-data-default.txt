@@ -17,10 +17,6 @@ coll/invuca.icu
 coll/res_index.res
 coll/root.res
 coll/ucadata.icu
-# coll/he.res is needed for iw.
-coll/he.res
-# coll/id.res is needed for in.
-coll/id.res
 # coll/ps.res is needed for fa_AF.
 coll/ps.res
 
