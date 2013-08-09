@@ -73,13 +73,24 @@ def MakeDat(input_file, stubdata_dir):
   InvokeIcuTool("icupkg", TMP_DAT_PATH, args)
 
 
+def ResFilesToLocales(res_files):
+  locales = []
+  for res_file in res_files:
+    # res_file is something like 'coll/en_US.res'.
+    if not '/' in res_file:
+      locales.append(res_file)
+    else:
+      locales.append(res_file.split('/')[1].replace('.res', ''))
+  return locales
+
+
 def WriteIndex(path, locales):
   empty_value = " {\"\"}\n"  # key-value pair for all locale entries
 
   f = open(path, "w")
   f.write("res_index:table(nofallback) {\n")
   f.write("  InstalledLocales {\n")
-  for locale in locales:
+  for locale in sorted(locales):
     f.write(locale + empty_value)
 
   f.write("  }\n")
@@ -101,7 +112,7 @@ def AddAllResFiles(collection, dir_name, language):
   pattern1 = '%s/data/%s/%s.txt' % (ICU4C_DIR, dir_name, language)
   pattern2 = '%s/data/%s/%s_*.txt' % (ICU4C_DIR, dir_name, language)
   for path in glob.glob(pattern1) + glob.glob(pattern2):
-    if 'TRADITIONAL' in path:
+    if 'TRADITIONAL' in path or 'PHONEBOOK' in path:
       continue
     parts = path.split('/')
     if dir_name == 'locales':
@@ -109,6 +120,12 @@ def AddAllResFiles(collection, dir_name, language):
     else:
       path = parts[-2] + '/' + parts[-1].replace('.txt', '.res')
     collection.add(path)
+
+
+def DumpFile(filename):
+  print ' ----------------- %s' % filename
+  os.system("cat %s" % filename)
+  print ' ----------------- END'
 
 
 # Open input file (such as icu-data-default.txt).
@@ -242,7 +259,7 @@ def GenResIndex(input_file):
       if end <= 3 or (line.find("_") <= 3 and line.find("_") > 0):
         locales.add(line[:end])
 
-  kind_to_locales = {
+  kind_to_res_files = {
       "brkitr": brkitrs,
       "coll": colls,
       "curr": currs,
@@ -253,40 +270,45 @@ def GenResIndex(input_file):
   }
 
   # Merge the machine-generated list into the human-generated list.
-  for kind, res_files in kind_to_locales.items():
+  for kind, res_files in kind_to_res_files.items():
     for res_file in sorted(res_files):
       if '.' not in res_file:
         res_file = res_file + '.res'
       new_add_list.append(res_file)
 
   if VERBOSE:
-    for kind, locales in kind_to_locales.items():
-      print "%s=%s" % (kind, sorted(locales))
+    for kind, res_files in kind_to_res_files.items():
+      print "%s=%s" % (kind, sorted(res_files))
 
   # Write the genrb input files.
 
   # First add_list.txt, the argument to icupkg -a...
   f = open(os.path.join(TMP_DAT_PATH, "add_list.txt"), "w")
   for line in new_add_list:
+    if line.startswith('#'):
+      continue
     f.write("%s\n" % line)
   f.close()
 
   # Second res_index.txt, used below by genrb.
   res_index = "res_index.txt"
   WriteIndex(os.path.join(TMP_DAT_PATH, res_index), locales)
-  for kind, locales in kind_to_locales.items():
+  for kind, res_files in kind_to_res_files.items():
     if kind == "locales":
       continue
-    WriteIndex(os.path.join(TMP_DAT_PATH, kind, res_index), locales)
+    res_index_filename = os.path.join(TMP_DAT_PATH, kind, res_index)
+    WriteIndex(res_index_filename, ResFilesToLocales(res_files))
+    if VERY_VERBOSE:
+      DumpFile(res_index_filename)
 
   # Useful if you need to see the temporary input files we generated.
-  if False:
-    os.system("cat %s/add_list.txt" % TMP_DAT_PATH)
-    os.system("cat %s/res_index.txt" % TMP_DAT_PATH)
+  if VERY_VERBOSE:
+    DumpFile('%s/add_list.txt' % TMP_DAT_PATH)
+    DumpFile('%s/res_index.txt' % TMP_DAT_PATH)
 
   # Call genrb to generate new res_index.res.
   InvokeIcuTool("genrb", TMP_DAT_PATH, [res_index])
-  for kind, locales in kind_to_locales.items():
+  for kind, res_files in kind_to_res_files.items():
     if kind == "locales":
       continue
     InvokeIcuTool("genrb", os.path.join(TMP_DAT_PATH, kind), [res_index])
@@ -315,13 +337,13 @@ def main():
   global ICU_DATA           # e.g. "icudt50l"
   global TMP_DAT_PATH       # Temporary directory to store all resource files and
                             # intermediate dat files.
-  global VERBOSE
+  global VERBOSE, VERY_VERBOSE
 
-  VERBOSE = False
+  VERBOSE = VERY_VERBOSE = False
 
   show_help = False
   try:
-    opts, args = getopt.getopt(sys.argv[1:], "hv", ["help", "verbose"])
+    opts, args = getopt.getopt(sys.argv[1:], "hv", ["help", "verbose", "very-verbose"])
   except getopt.error:
     PrintHelpAndExit()
   for opt, _ in opts:
@@ -329,6 +351,8 @@ def main():
       show_help = True
     elif opt in ("-v", "--verbose"):
       VERBOSE = True
+    elif opt in ("--very-verbose"):
+      VERY_VERBOSE = VERBOSE = True
   if args:
     show_help = True
 
