@@ -134,8 +134,8 @@ local_cflags += -D_REENTRANT
 local_cflags += -DU_COMMON_IMPLEMENTATION
 
 local_cflags += -O3 -fvisibility=hidden
-local_ldlibs := -ldl -lm -lpthread
 
+local_ldlibs := -ldl -lm -lpthread
 
 #
 # Build for the target (device).
@@ -172,3 +172,23 @@ ifeq ($(WITH_HOST_DALVIK),true)
     LOCAL_REQUIRED_MODULES += icu-data-host
     include $(BUILD_HOST_SHARED_LIBRARY)
 endif
+
+#
+# Build as a static library against the NDK
+#
+
+include $(CLEAR_VARS)
+LOCAL_SDK_VERSION := 9
+LOCAL_NDK_STL_VARIANT := stlport_static
+LOCAL_C_INCLUDES += $(c_includes)
+LOCAL_EXPORT_C_INCLUDES += $(LOCAL_PATH)
+LOCAL_CPP_FEATURES := rtti
+LOCAL_CFLAGS += $(local_cflags) -DPIC -fPIC -frtti
+# Using -Os over -O3 actually cuts down the final executable size by a few dozen kilobytes
+LOCAL_CFLAGS += -Os
+LOCAL_LDLIBS += $(local_ldlibs)
+LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE := libicuuc_static
+LOCAL_SRC_FILES += $(src_files)
+LOCAL_REQUIRED_MODULES += icu-data
+include $(BUILD_STATIC_LIBRARY)

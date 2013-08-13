@@ -131,3 +131,23 @@ ifeq ($(WITH_HOST_DALVIK),true)
     LOCAL_ADDITIONAL_DEPENDENCIES += $(LOCAL_PATH)/Android.mk
     include $(BUILD_HOST_SHARED_LIBRARY)
 endif
+
+#
+# Build as a static library against the NDK
+#
+
+include $(CLEAR_VARS)
+LOCAL_SDK_VERSION := 9
+LOCAL_NDK_STL_VARIANT := stlport_static
+LOCAL_SRC_FILES += $(src_files)
+LOCAL_C_INCLUDES += $(c_includes)
+LOCAL_STATIC_LIBRARIES += libicuuc_static
+LOCAL_EXPORT_C_INCLUDES += $(LOCAL_PATH)
+LOCAL_CPP_FEATURES := rtti
+LOCAL_CFLAGS += $(local_cflags) -DPIC -fPIC -frtti
+# Using -Os over -O3 actually cuts down the final executable size by a few dozen kilobytes
+LOCAL_CFLAGS += -Os
+LOCAL_LDLIBS += $(local_ldlibs)
+LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE := libicui18n_static
+include $(BUILD_STATIC_LIBRARY)
