@@ -105,7 +105,7 @@ include $(CLEAR_VARS)
 LOCAL_SRC_FILES += $(src_files)
 LOCAL_C_INCLUDES += $(c_includes)
 LOCAL_CFLAGS += $(local_cflags) -DPIC -fPIC
-LOCAL_SHARED_LIBRARIES += libicuuc
+LOCAL_SHARED_LIBRARIES += libicuuc liblog
 LOCAL_LDLIBS += $(local_ldlibs)
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := libicui18n
@@ -124,7 +124,7 @@ ifeq ($(WITH_HOST_DALVIK),true)
     LOCAL_SRC_FILES += $(src_files)
     LOCAL_C_INCLUDES += $(c_includes)
     LOCAL_CFLAGS += $(local_cflags)
-    LOCAL_SHARED_LIBRARIES += libicuuc-host
+    LOCAL_SHARED_LIBRARIES += libicuuc-host liblog
     LOCAL_LDLIBS += $(local_ldlibs)
     LOCAL_MODULE_TAGS := optional
     LOCAL_MODULE := libicui18n-host
