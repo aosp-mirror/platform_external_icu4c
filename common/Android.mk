@@ -143,9 +143,9 @@ local_ldlibs := -ldl -lm -lpthread
 
 include $(CLEAR_VARS)
 LOCAL_SRC_FILES += $(src_files)
-LOCAL_C_INCLUDES += $(c_includes)
+LOCAL_C_INCLUDES += $(c_includes) $(optional_android_logging_includes)
 LOCAL_CFLAGS += $(local_cflags) -DPIC -fPIC
-LOCAL_SHARED_LIBRARIES += libdl
+LOCAL_SHARED_LIBRARIES += libdl $(optional_android_logging_libraries)
 LOCAL_LDLIBS += $(local_ldlibs)
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := libicuuc
@@ -163,8 +163,9 @@ include $(BUILD_SHARED_LIBRARY)
 ifeq ($(WITH_HOST_DALVIK),true)
     include $(CLEAR_VARS)
     LOCAL_SRC_FILES += $(src_files)
-    LOCAL_C_INCLUDES += $(c_includes)
+    LOCAL_C_INCLUDES += $(c_includes) $(optional_android_logging_includes)
     LOCAL_CFLAGS += $(local_cflags)
+    LOCAL_SHARED_LIBRARIES += $(optional_android_logging_libraries)
     LOCAL_LDLIBS += $(local_ldlibs)
     LOCAL_MODULE_TAGS := optional
     LOCAL_MODULE := libicuuc-host
