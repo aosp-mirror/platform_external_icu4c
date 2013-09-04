@@ -82,7 +82,7 @@ void FieldPositionIterator::setData(UVector32 *adopt, UErrorCode& status) {
 
   delete data;
   data = adopt;
-  pos = adopt == NULL ? -1 : 0;
+  pos = (adopt == NULL || adopt->size() == 0) ? -1 : 0; // android-changed: http://bugs.icu-project.org/trac/ticket/10354
 }
 
 UBool FieldPositionIterator::next(FieldPosition& fp) {
@@ -104,4 +104,3 @@ UBool FieldPositionIterator::next(FieldPosition& fp) {
 U_NAMESPACE_END
 
 #endif /* #if !UCONFIG_NO_FORMATTING */
-
