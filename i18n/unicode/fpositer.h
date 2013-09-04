@@ -96,17 +96,6 @@ public:
      */
     UBool next(FieldPosition& fp);
 
-    // BEGIN android-added
-    /**
-     * Returns the data.  If dest is null, returns the length of the data.
-     * Otherwise, if capacity is insufficient, returns the negative of the
-     * length of the data.  Otherwise, copies data into dest and returns
-     * the length of the data.
-     * @internal
-     */
-    int32_t getData(int32_t *dest, int32_t capacity) const;
-   // END android-added
-
 private:
     friend class FieldPositionIteratorHandler;
 
