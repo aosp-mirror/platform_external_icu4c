@@ -18,7 +18,9 @@
 
 LOCAL_PATH:= $(call my-dir)
 
-include $(LOCAL_PATH)/root.mk
+# Derive a string like 'icudt 48l.dat' from a path like 'external/icu4c/stubdata/icudt 48l.dat'
+stubdata_path:= $(call my-dir)
+dat_file := $(notdir $(wildcard $(stubdata_path)/*.dat))
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := icu-data
@@ -26,8 +28,8 @@ LOCAL_ADDITIONAL_DEPENDENCIES += $(LOCAL_PATH)/Android.mk
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE_CLASS := ETC
 LOCAL_MODULE_PATH := $(TARGET_OUT)/usr/icu
-LOCAL_MODULE_STEM := $(root).dat
-LOCAL_SRC_FILES := $(root)-all.dat
+LOCAL_MODULE_STEM := $(dat_file)
+LOCAL_SRC_FILES := $(dat_file)
 include $(BUILD_PREBUILT)
 
 include $(CLEAR_VARS)
@@ -36,7 +38,7 @@ LOCAL_ADDITIONAL_DEPENDENCIES += $(LOCAL_PATH)/Android.mk
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE_CLASS := ETC
 LOCAL_MODULE_PATH := $(HOST_OUT)/usr/icu
-LOCAL_MODULE_STEM := $(root).dat
-LOCAL_SRC_FILES := $(root)-all.dat
+LOCAL_MODULE_STEM := $(dat_file)
+LOCAL_SRC_FILES := $(dat_file)
 LOCAL_IS_HOST_MODULE := true
 include $(BUILD_PREBUILT)
