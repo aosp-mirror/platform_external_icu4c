@@ -127,8 +127,6 @@ local_cflags += '-DICU_DATA_DIR="/usr/icu"'
 
 # bionic doesn't have <langinfo.h>.
 local_cflags += -DU_HAVE_NL_LANGINFO_CODESET=0
-# bionic has timezone instead of __timezone.
-local_cflags += -DU_TIMEZONE=timezone
 
 local_cflags += -D_REENTRANT
 local_cflags += -DU_COMMON_IMPLEMENTATION
