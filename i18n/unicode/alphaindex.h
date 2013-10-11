@@ -675,7 +675,7 @@ private:
      * This method is called to get the index exemplars. Normally these come from the locale directly,
      * but if they aren't available, we have to synthesize them.
      */
-    void addIndexExemplars(const Locale &locale, UErrorCode &status);
+    void addIndexExemplars(const Locale *locale, UErrorCode &status);
     /**
      * Add Chinese index characters from the tailoring.
      */
