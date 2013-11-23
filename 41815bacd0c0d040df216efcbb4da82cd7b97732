@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ed03988_a5b3d9d2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1035053
+      },
+      "writtenOn": "2013-11-23T00:45:01Z",
+      "side": 1,
+      "message": "Should I mention that U_STATIC_IMPLEMENTATION is exported to libraries that use this as well (via LOCAL_EXPORT_CFLAGS)?",
+      "revId": "41815bacd0c0d040df216efcbb4da82cd7b97732",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
