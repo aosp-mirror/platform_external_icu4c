@@ -185,6 +185,7 @@ LOCAL_CPP_FEATURES := rtti
 LOCAL_CFLAGS += $(local_cflags) -DPIC -fPIC -frtti
 # Using -Os over -O3 actually cuts down the final executable size by a few dozen kilobytes
 LOCAL_CFLAGS += -Os
+LOCAL_EXPORT_CFLAGS += -DU_STATIC_IMPLEMENTATION=1
 LOCAL_LDLIBS += $(local_ldlibs)
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := libicuuc_static
