@@ -139,19 +139,21 @@ local_ldlibs := -ldl -lm -lpthread
 # Build for the target (device).
 #
 
-include $(CLEAR_VARS)
-LOCAL_SRC_FILES += $(src_files)
-LOCAL_C_INCLUDES += $(c_includes) $(optional_android_logging_includes)
-LOCAL_CFLAGS += $(local_cflags) -DPIC -fPIC
-LOCAL_SHARED_LIBRARIES += libdl $(optional_android_logging_libraries)
-LOCAL_LDLIBS += $(local_ldlibs)
-LOCAL_MODULE_TAGS := optional
-LOCAL_MODULE := libicuuc
-LOCAL_ADDITIONAL_DEPENDENCIES += $(LOCAL_PATH)/Android.mk
-LOCAL_REQUIRED_MODULES += icu-data
-include abi/cpp/use_rtti.mk
-include external/stlport/libstlport.mk
-include $(BUILD_SHARED_LIBRARY)
+ifeq (,$(TARGET_BUILD_APPS))
+    include $(CLEAR_VARS)
+    LOCAL_SRC_FILES += $(src_files)
+    LOCAL_C_INCLUDES += $(c_includes) $(optional_android_logging_includes)
+    LOCAL_CFLAGS += $(local_cflags) -DPIC -fPIC
+    LOCAL_SHARED_LIBRARIES += libdl $(optional_android_logging_libraries)
+    LOCAL_LDLIBS += $(local_ldlibs)
+    LOCAL_MODULE_TAGS := optional
+    LOCAL_MODULE := libicuuc
+    LOCAL_ADDITIONAL_DEPENDENCIES += $(LOCAL_PATH)/Android.mk
+    LOCAL_REQUIRED_MODULES += icu-data
+    include abi/cpp/use_rtti.mk
+    include external/stlport/libstlport.mk
+    include $(BUILD_SHARED_LIBRARY)
+endif
 
 
 #
