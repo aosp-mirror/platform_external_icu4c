@@ -34,6 +34,24 @@
       "revId": "b44d38b05ff94cd9a5bbd224e2bb39693958302f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "43a86290_8389ce5c",
+        "filename": "common/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1020814
+      },
+      "writtenOn": "2013-12-04T19:07:36Z",
+      "side": 1,
+      "message": "Brian: unbundled apps do not need this module and will never depend on it. However just the fact of having it in the makefile causes make in the unbundled branch to break unless projects superfluous to unbundled apps (abi/cpp and external/stlport) are included in the manifest. The ideal solution would be to have this stanza only evaluated when a target actually depends on it. But that\u0027s not possible with makefiles AFAIK.",
+      "parentUuid": "63a3a6b3_44552e3b",
+      "revId": "b44d38b05ff94cd9a5bbd224e2bb39693958302f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
