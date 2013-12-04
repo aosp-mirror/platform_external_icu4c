@@ -16,6 +16,24 @@
       "revId": "b44d38b05ff94cd9a5bbd224e2bb39693958302f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "63a3a6b3_44552e3b",
+        "filename": "common/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-04T19:02:40Z",
+      "side": 1,
+      "message": "Ideally we should use the conditional.\nBut we have to do this to fix the \"pseudo unbundled bulld\" in the platform source tree, e.g. the \"apps\" build target in master on the build page. Actually the build system doesn\u0027t prevent you from running tapas on an app (or a module) that\u0027s built against the platform. We use this feature to build a bundled app from the platform source tree so that we can release it to Play store before it\u0027s really unbundled.\nOn the other hand, if libcuuc is really used in an unbundled branch, the build will still fail due to the missing dependencies (e.g. libc).",
+      "parentUuid": "a382fe16_aabeaf95",
+      "revId": "b44d38b05ff94cd9a5bbd224e2bb39693958302f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
