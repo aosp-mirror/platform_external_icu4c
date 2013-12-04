@@ -88,6 +88,24 @@
       "revId": "b44d38b05ff94cd9a5bbd224e2bb39693958302f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "43a86290_4987058b",
+        "filename": "common/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-04T23:49:13Z",
+      "side": 1,
+      "message": "apps_only does set TARGET_BUILD_APPS. The problem is, in special case an apps_only build needs libicuuc. This change fixes that case.",
+      "parentUuid": "a382fe16_ed944174",
+      "revId": "b44d38b05ff94cd9a5bbd224e2bb39693958302f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
