@@ -52,6 +52,24 @@
       "revId": "b44d38b05ff94cd9a5bbd224e2bb39693958302f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "839eda6a_8b8f210f",
+        "filename": "common/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-04T19:19:32Z",
+      "side": 1,
+      "message": "Btw, can we build this library against the NDK? It seems we already build the corresponding static library against the NDK. Any particular reason to not build the shared library the same way?",
+      "parentUuid": "43a86290_8389ce5c",
+      "revId": "b44d38b05ff94cd9a5bbd224e2bb39693958302f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
