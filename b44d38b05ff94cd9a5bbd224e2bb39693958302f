@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a382fe16_aabeaf95",
+        "filename": "common/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2013-12-04T18:42:26Z",
+      "side": 1,
+      "message": "why is this needed? are apps now using the shared library version? it seems odd to hack up something to ignore errors if it isn\u0027t being used, rather than just exclude it from being reached.",
+      "revId": "b44d38b05ff94cd9a5bbd224e2bb39693958302f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
