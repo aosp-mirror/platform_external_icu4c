@@ -70,6 +70,24 @@
       "revId": "b44d38b05ff94cd9a5bbd224e2bb39693958302f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a382fe16_ed944174",
+        "filename": "common/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2013-12-04T23:35:39Z",
+      "side": 1,
+      "message": "I guess I understand, it is a little odd that apps_only doesn\u0027t set TARGET_BUILD_APPS. I\u0027m just wondering what other things could need this (such as external/openssl) so I\u0027m trying to understand. I don\u0027t know about NDK vs non-NDK for build (I\u0027d wait for enh) but note that there is at least one difference ( compiling for space vs time)",
+      "parentUuid": "839eda6a_8b8f210f",
+      "revId": "b44d38b05ff94cd9a5bbd224e2bb39693958302f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
