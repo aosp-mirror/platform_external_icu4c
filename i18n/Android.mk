@@ -101,20 +101,19 @@ local_ldlibs := -lpthread -lm
 # Build for the target (device).
 #
 
-ifeq ($(TARGET_BUILD_APPS),)
-    include $(CLEAR_VARS)
-    LOCAL_SRC_FILES += $(src_files)
-    LOCAL_C_INCLUDES += $(c_includes) $(optional_android_logging_includes)
-    LOCAL_CFLAGS += $(local_cflags) -DPIC -fPIC
-    LOCAL_SHARED_LIBRARIES += libicuuc $(optional_android_logging_libraries)
-    LOCAL_LDLIBS += $(local_ldlibs)
-    LOCAL_MODULE_TAGS := optional
-    LOCAL_MODULE := libicui18n
-    LOCAL_ADDITIONAL_DEPENDENCIES += $(LOCAL_PATH)/Android.mk
-    include abi/cpp/use_rtti.mk
-    include external/stlport/libstlport.mk
-    include $(BUILD_SHARED_LIBRARY)
-endif
+include $(CLEAR_VARS)
+LOCAL_SRC_FILES += $(src_files)
+LOCAL_C_INCLUDES += $(c_includes) $(optional_android_logging_includes)
+LOCAL_CFLAGS += $(local_cflags) -DPIC -fPIC
+LOCAL_SHARED_LIBRARIES += libicuuc $(optional_android_logging_libraries)
+LOCAL_LDLIBS += $(local_ldlibs)
+LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE := libicui18n
+LOCAL_ADDITIONAL_DEPENDENCIES += $(LOCAL_PATH)/Android.mk
+# Use "-include" to not fail apps_only build.
+-include abi/cpp/use_rtti.mk
+-include external/stlport/libstlport.mk
+include $(BUILD_SHARED_LIBRARY)
 
 
 #
