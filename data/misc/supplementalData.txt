@@ -17,8 +17,10 @@ supplementalData:table(nofallback){
             "islamic-civil",
         }
         AF{
-            "persian",
+// BEGIN android-changed
             "gregorian",
+            "persian",
+// END android-changed
             "islamic",
             "islamic-civil",
         }
@@ -85,8 +87,10 @@ supplementalData:table(nofallback){
             "islamic-civil",
         }
         IR{
-            "persian",
+// BEGIN android-changed
             "gregorian",
+            "persian",
+// END android-changed
             "islamic",
             "islamic-civil",
         }
@@ -177,8 +181,10 @@ supplementalData:table(nofallback){
             "islamic-civil",
         }
         TH{
-            "buddhist",
+// BEGIN android-changed
             "gregorian",
+            "buddhist",
+// END android-changed
         }
         TN{
             "gregorian",
