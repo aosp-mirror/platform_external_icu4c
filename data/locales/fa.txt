@@ -143,7 +143,7 @@ fa{
     }
     Version{"2.0.82.45"}
     calendar{
-        default{"persian"}
+        default{"gregorian"} // android-changed
         generic{
             DateTimePatterns{
                 "H:mm:ss (zzzz)",
