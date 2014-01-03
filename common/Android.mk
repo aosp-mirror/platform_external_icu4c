@@ -133,6 +133,12 @@ local_cflags += -DU_COMMON_IMPLEMENTATION
 
 local_cflags += -O3 -fvisibility=hidden
 
+local_cflags += -Wno-maybe-uninitialized
+local_cflags += -Wno-missing-field-initializers
+local_cflags += -Wno-sign-compare
+local_cflags += -Wno-type-limits
+local_cflags += -Wno-unused-parameter
+
 local_ldlibs := -ldl -lm -lpthread
 
 #

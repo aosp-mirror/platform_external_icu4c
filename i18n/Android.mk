@@ -93,6 +93,9 @@ c_includes = \
 local_cflags := -D_REENTRANT
 local_cflags += -DU_I18N_IMPLEMENTATION
 local_cflags += -O3 -fvisibility=hidden
+local_cflags += -Wno-array-bounds
+local_cflags += -Wno-deprecated-declarations
+local_cflags += -Wno-type-limits
 
 local_ldlibs := -lpthread -lm
 
