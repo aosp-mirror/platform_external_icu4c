@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-*   Copyright (C) 1996-2012, International Business Machines
+*   Copyright (C) 1996-2013, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *******************************************************************************
 *   file name:  ucol.cpp
@@ -556,11 +556,10 @@ ucol_cloneBinary(const UCollator *coll,
 }
 
 U_CAPI UCollator* U_EXPORT2
-ucol_safeClone(const UCollator *coll, void *stackBuffer, int32_t * pBufferSize, UErrorCode *status)
+ucol_safeClone(const UCollator *coll, void * /*stackBuffer*/, int32_t * pBufferSize, UErrorCode *status)
 {
     UCollator * localCollator;
     int32_t bufferSizeNeeded = (int32_t)sizeof(UCollator);
-    char *stackBufferChars = (char *)stackBuffer;
     int32_t imageSize = 0;
     int32_t rulesSize = 0;
     int32_t rulesPadding = 0;
@@ -571,15 +570,14 @@ ucol_safeClone(const UCollator *coll, void *stackBuffer, int32_t * pBufferSize, 
     int32_t* defaultReorderCodes;
     int32_t* reorderCodes;
     uint8_t* leadBytePermutationTable;
-    UBool colAllocated = FALSE;
     UBool imageAllocated = FALSE;
 
     if (status == NULL || U_FAILURE(*status)){
-        return 0;
+        return NULL;
     }
-    if ((stackBuffer && !pBufferSize) || !coll){
+    if (coll == NULL) {
        *status = U_ILLEGAL_ARGUMENT_ERROR;
-        return 0;
+        return NULL;
     }
 
     if (coll->rules && coll->freeRulesOnClose) {
@@ -599,41 +597,23 @@ ucol_safeClone(const UCollator *coll, void *stackBuffer, int32_t * pBufferSize, 
     if (coll->leadBytePermutationTable) {
         bufferSizeNeeded += 256 * sizeof(uint8_t);
     }
-    
-    if (stackBuffer && *pBufferSize <= 0) { /* 'preflighting' request - set needed size into *pBufferSize */
-        *pBufferSize =  bufferSizeNeeded;
-        return 0;
+
+    if (pBufferSize != NULL) {
+        int32_t inputSize = *pBufferSize;
+        *pBufferSize = 1;
+        if (inputSize == 0) {
+            return NULL;  // preflighting for deprecated functionality
+        }
     }
 
-    /* Pointers on 64-bit platforms need to be aligned
-     * on a 64-bit boundry in memory.
-     */
-    if (U_ALIGNMENT_OFFSET(stackBuffer) != 0) {
-        int32_t offsetUp = (int32_t)U_ALIGNMENT_OFFSET_UP(stackBufferChars);
-        if (*pBufferSize > offsetUp) {
-            *pBufferSize -= offsetUp;
-            stackBufferChars += offsetUp;
-        }
-        else {
-            /* prevent using the stack buffer but keep the size > 0 so that we do not just preflight */
-            *pBufferSize = 1;
-        }
+    char *stackBufferChars = (char *)uprv_malloc(bufferSizeNeeded);
+    // Null pointer check.
+    if (stackBufferChars == NULL) {
+        *status = U_MEMORY_ALLOCATION_ERROR;
+        return NULL;
     }
-    stackBuffer = (void *)stackBufferChars;
+    *status = U_SAFECLONE_ALLOCATED_WARNING;
 
-    if (stackBuffer == NULL || *pBufferSize < bufferSizeNeeded) {
-        /* allocate one here...*/
-        stackBufferChars = (char *)uprv_malloc(bufferSizeNeeded);
-        // Null pointer check.
-        if (stackBufferChars == NULL) {
-            *status = U_MEMORY_ALLOCATION_ERROR;
-            return NULL;
-        }
-        colAllocated = TRUE;
-        if (U_SUCCESS(*status)) {
-            *status = U_SAFECLONE_ALLOCATED_WARNING;
-        }
-    }
     localCollator = (UCollator *)stackBufferChars;
     rules = (UChar *)(stackBufferChars + sizeof(UCollator) + rulesPadding);
     defaultReorderCodes = (int32_t*)((uint8_t*)rules + rulesSize);
@@ -702,7 +682,7 @@ ucol_safeClone(const UCollator *coll, void *stackBuffer, int32_t * pBufferSize, 
     localCollator->validLocale = NULL;
     localCollator->requestedLocale = NULL;
     localCollator->ucaRules = coll->ucaRules; // There should only be one copy here.
-    localCollator->freeOnClose = colAllocated;
+    localCollator->freeOnClose = TRUE;
     localCollator->freeImageOnClose = imageAllocated;
     return localCollator;
 }
@@ -762,68 +742,6 @@ ucol_close(UCollator *coll)
         }
     }
     UTRACE_EXIT();
-}
-
-/* This one is currently used by genrb & tests. After constructing from rules (tailoring),*/
-/* you should be able to get the binary chunk to write out...  Doesn't look very full now */
-U_CFUNC uint8_t* U_EXPORT2
-ucol_cloneRuleData(const UCollator *coll, int32_t *length, UErrorCode *status)
-{
-    uint8_t *result = NULL;
-    if(U_FAILURE(*status)) {
-        return NULL;
-    }
-    if(coll->hasRealData == TRUE) {
-        *length = coll->image->size;
-        result = (uint8_t *)uprv_malloc(*length);
-        /* test for NULL */
-        if (result == NULL) {
-            *status = U_MEMORY_ALLOCATION_ERROR;
-            return NULL;
-        }
-        uprv_memcpy(result, coll->image, *length);
-    } else {
-        *length = (int32_t)(paddedsize(sizeof(UCATableHeader))+paddedsize(sizeof(UColOptionSet)));
-        result = (uint8_t *)uprv_malloc(*length);
-        /* test for NULL */
-        if (result == NULL) {
-            *status = U_MEMORY_ALLOCATION_ERROR;
-            return NULL;
-        }
-
-        /* build the UCATableHeader with minimal entries */
-        /* do not copy the header from the UCA file because its values are wrong! */
-        /* uprv_memcpy(result, UCA->image, sizeof(UCATableHeader)); */
-
-        /* reset everything */
-        uprv_memset(result, 0, *length);
-
-        /* set the tailoring-specific values */
-        UCATableHeader *myData = (UCATableHeader *)result;
-        myData->size = *length;
-
-        /* offset for the options, the only part of the data that is present after the header */
-        myData->options = sizeof(UCATableHeader);
-
-        /* need to always set the expansion value for an upper bound of the options */
-        myData->expansion = myData->options + sizeof(UColOptionSet);
-
-        myData->magic = UCOL_HEADER_MAGIC;
-        myData->isBigEndian = U_IS_BIG_ENDIAN;
-        myData->charSetFamily = U_CHARSET_FAMILY;
-
-        /* copy UCA's version; genrb will override all but the builder version with tailoring data */
-        uprv_memcpy(myData->version, coll->image->version, sizeof(UVersionInfo));
-
-        uprv_memcpy(myData->UCAVersion, coll->image->UCAVersion, sizeof(UVersionInfo));
-        uprv_memcpy(myData->UCDVersion, coll->image->UCDVersion, sizeof(UVersionInfo));
-        uprv_memcpy(myData->formatVersion, coll->image->formatVersion, sizeof(UVersionInfo));
-        myData->jamoSpecial = coll->image->jamoSpecial;
-
-        /* copy the collator options */
-        uprv_memcpy(result+paddedsize(sizeof(UCATableHeader)), coll->options, sizeof(UColOptionSet));
-    }
-    return result;
 }
 
 void ucol_setOptionsFromHeader(UCollator* result, UColOptionSet * opts, UErrorCode *status) {
@@ -6819,12 +6737,14 @@ ucol_setReorderCodes(UCollator* coll,
         uprv_free(coll->reorderCodes);
     }
     coll->reorderCodes = NULL;
+    coll->freeReorderCodesOnClose = FALSE;
     coll->reorderCodesLength = 0;
     if (reorderCodesLength == 0) {
         if (coll->leadBytePermutationTable != NULL && coll->freeLeadBytePermutationTableOnClose == TRUE) {
             uprv_free(coll->leadBytePermutationTable);
         }
         coll->leadBytePermutationTable = NULL;
+        coll->freeLeadBytePermutationTableOnClose = FALSE;
         return;
     }
     coll->reorderCodes = (int32_t*) uprv_malloc(reorderCodesLength * sizeof(int32_t));
@@ -7223,28 +7143,29 @@ ucol_strcollRegular(collIterate *sColl, collIterate *tColl, UErrorCode *status)
     // Non shifted primary processing is quite simple
     if(!shifted) {
         for(;;) {
-
             // We fetch CEs until we hit a non ignorable primary or end.
+            uint32_t sPrimary;
             do {
                 // We get the next CE
                 sOrder = ucol_IGetNextCE(coll, sColl, status);
                 // Stuff it in the buffer
                 UCOL_CEBUF_PUT(&sCEs, sOrder, sColl, status);
                 // And keep just the primary part.
-                sOrder &= UCOL_PRIMARYMASK;
-            } while(sOrder == 0);
+                sPrimary = sOrder & UCOL_PRIMARYMASK;
+            } while(sPrimary == 0);
 
             // see the comments on the above block
+            uint32_t tPrimary;
             do {
                 tOrder = ucol_IGetNextCE(coll, tColl, status);
                 UCOL_CEBUF_PUT(&tCEs, tOrder, tColl, status);
-                tOrder &= UCOL_PRIMARYMASK;
-            } while(tOrder == 0);
+                tPrimary = tOrder & UCOL_PRIMARYMASK;
+            } while(tPrimary == 0);
 
             // if both primaries are the same
-            if(sOrder == tOrder) {
+            if(sPrimary == tPrimary) {
                 // and there are no more CEs, we advance to the next level
-                if(sOrder == UCOL_NO_MORE_CES_PRIMARY) {
+                if(sPrimary == UCOL_NO_MORE_CES_PRIMARY) {
                     break;
                 }
                 if(doHiragana && hirResult == UCOL_EQUAL) {
@@ -7257,11 +7178,11 @@ ucol_strcollRegular(collIterate *sColl, collIterate *tColl, UErrorCode *status)
                 // only need to check one for continuation
                 // if one is then the other must be or the preceding CE would be a prefix of the other
                 if (coll->leadBytePermutationTable != NULL && !isContinuation(sOrder)) {
-                    sOrder = (coll->leadBytePermutationTable[sOrder>>24] << 24) | (sOrder & 0x00FFFFFF);
-                    tOrder = (coll->leadBytePermutationTable[tOrder>>24] << 24) | (tOrder & 0x00FFFFFF);
+                    sPrimary = (coll->leadBytePermutationTable[sPrimary>>24] << 24) | (sPrimary & 0x00FFFFFF);
+                    tPrimary = (coll->leadBytePermutationTable[tPrimary>>24] << 24) | (tPrimary & 0x00FFFFFF);
                 }
                 // if two primaries are different, we are done
-                result = (sOrder < tOrder) ?  UCOL_LESS: UCOL_GREATER;
+                result = (sPrimary < tPrimary) ?  UCOL_LESS: UCOL_GREATER;
                 goto commonReturn;
             }
         } // no primary difference... do the rest from the buffers
@@ -7270,7 +7191,7 @@ ucol_strcollRegular(collIterate *sColl, collIterate *tColl, UErrorCode *status)
             UBool sInShifted = FALSE;
             UBool tInShifted = FALSE;
             // This version of code can be refactored. However, it seems easier to understand this way.
-            // Source loop. Sam as the target loop.
+            // Source loop. Same as the target loop.
             for(;;) {
                 sOrder = ucol_IGetNextCE(coll, sColl, status);
                 if(sOrder == UCOL_NO_MORE_CES) {
@@ -7553,8 +7474,9 @@ ucol_strcollRegular(collIterate *sColl, collIterate *tColl, UErrorCode *status)
         tCE = tCEs.buf;
         for(;;) {
             while((secS & UCOL_REMOVE_CASE) == 0) {
-                secS = *(sCE++) & tertiaryMask;
-                if(!isContinuation(secS)) {
+                sOrder = *sCE++;
+                secS = sOrder & tertiaryMask;
+                if(!isContinuation(sOrder)) {
                     secS ^= caseSwitch;
                 } else {
                     secS &= UCOL_REMOVE_CASE;
@@ -7562,8 +7484,9 @@ ucol_strcollRegular(collIterate *sColl, collIterate *tColl, UErrorCode *status)
             }
 
             while((secT & UCOL_REMOVE_CASE)  == 0) {
-                secT = *(tCE++) & tertiaryMask;
-                if(!isContinuation(secT)) {
+                tOrder = *tCE++;
+                secT = tOrder & tertiaryMask;
+                if(!isContinuation(tOrder)) {
                     secT ^= caseSwitch;
                 } else {
                     secT &= UCOL_REMOVE_CASE;
@@ -8554,7 +8477,7 @@ ucol_strcoll( const UCollator    *coll,
         UTRACE_DATA2(UTRACE_VERBOSE, "target string = %vh ", target, targetLength);
     }
 
-    if(source == NULL || target == NULL) {
+    if((source == NULL && sourceLength != 0) || (target == NULL && targetLength != 0)) {
         // do not crash, but return. Should have
         // status argument to return error.
         UTRACE_EXIT_VALUE(UCOL_EQUAL);
@@ -8690,7 +8613,7 @@ ucol_strcollUTF8(
         return UCOL_EQUAL;
     }
 
-    if(source == NULL || target == NULL) {
+    if((source == NULL && sourceLength != 0) || (target == NULL && targetLength != 0)) {
         *status = U_ILLEGAL_ARGUMENT_ERROR;
         UTRACE_EXIT_VALUE_STATUS(UCOL_EQUAL, *status);
         return UCOL_EQUAL;

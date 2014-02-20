@@ -165,8 +165,10 @@ COMPILE.c=    $(CC) $(CPPFLAGS) $(DEFS) $(CFLAGS) -c
 COMPILE.cc=   $(CXX) $(CPPFLAGS) $(DEFS) $(CXXFLAGS) -c
 
 # Commands to link
-LINK.c=       $(CC) $(CFLAGS) $(LDFLAGS)
-LINK.cc=      $(CXX) $(CXXFLAGS) $(LDFLAGS)
+# Markus Scherer (Google) 20070430: Add LINKFLAGS to enable
+# setting -rpath options.
+LINK.c=       $(CC) $(CFLAGS) $(LDFLAGS) $(LINKFLAGS)
+LINK.cc=      $(CXX) $(CXXFLAGS) $(LDFLAGS) $(LINKFLAGS)
 
 # Commands to make a shared library
 SHLIB.c=      $(CC) $(CFLAGS) $(LDFLAGS) -shared $(LD_SOOPTIONS)
@@ -304,6 +306,11 @@ ifneq ($(strip $(cross_buildroot)),)
 include $(cross_buildroot)/config/icucross.mk
 else
 cross_buildroot = $(top_builddir)
+endif
+
+# for tests
+ifneq ($(TEST_STATUS_FILE),)
+TEST_OUTPUT_OPTS="-E$(TEST_STATUS_FILE)"
 endif
 
 # optional include at top

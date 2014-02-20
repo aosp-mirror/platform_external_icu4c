@@ -1,7 +1,7 @@
 /*
  * %W% %E%
  *
- * (C) Copyright IBM Corp. 2008-2011 - All Rights Reserved
+ * (C) Copyright IBM Corp. 2008-2013 - All Rights Reserved
  *
  */
 
@@ -23,9 +23,10 @@ static inline le_uint32 READ_LONG(le_uint32 code) {
 }
 
 // FIXME: should look at the format too... maybe have a sub-class for it?
-le_uint32 ExtensionSubtable::process(const LookupProcessor *lookupProcessor, le_uint16 lookupType,
+le_uint32 ExtensionSubtable::process(const LookupProcessor *lookupProcessor, const LETableReference &base, le_uint16 lookupType,  // Google patch: add base
                                       GlyphIterator *glyphIterator, const LEFontInstance *fontInstance, LEErrorCode& success) const
 {
+    // Google patch: remove thisRef
     if (LE_FAILURE(success)) {
         return 0;
     }
@@ -34,9 +35,11 @@ le_uint32 ExtensionSubtable::process(const LookupProcessor *lookupProcessor, le_
 
     if (elt != lookupType) {      
         le_uint32 extOffset = READ_LONG(extensionOffset);
-        LookupSubtable *subtable = (LookupSubtable *) ((char *) this + extOffset);
+        LEReferenceTo<LookupSubtable> subtable(base, success, extOffset);  // Google patch: s/thisRef/base/
 
-        return lookupProcessor->applySubtable(subtable, elt, glyphIterator, fontInstance, success);
+        if(LE_SUCCESS(success)) {
+          return lookupProcessor->applySubtable(subtable, elt, glyphIterator, fontInstance, success);
+        }
     }
 
     return 0;

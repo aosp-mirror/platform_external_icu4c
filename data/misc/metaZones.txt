@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2013 International Business Machines
+// * Copyright (C) 2014 International Business Machines
 // * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/metaZones.xml
@@ -1059,6 +1059,11 @@ metaZones:table(nofallback){
             {
                 "Europe_Central",
                 "2012-11-10 00:00",
+                "2013-10-25 00:00",
+            }
+            {
+                "Europe_Eastern",
+                "2013-10-25 00:00",
                 "9999-12-31 23:59",
             }
         }
@@ -1564,6 +1569,11 @@ metaZones:table(nofallback){
             {
                 "Amazon",
                 "2008-06-24 05:00",
+                "2013-11-10 04:00",
+            }
+            {
+                "Acre",
+                "2013-11-10 04:00",
                 "9999-12-31 23:59",
             }
         }
@@ -2279,6 +2289,11 @@ metaZones:table(nofallback){
             {
                 "Amazon",
                 "2008-06-24 05:00",
+                "2013-11-10 04:00",
+            }
+            {
+                "Acre",
+                "2013-11-10 04:00",
                 "9999-12-31 23:59",
             }
         }

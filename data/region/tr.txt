@@ -1,13 +1,13 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2013 International Business Machines
+// * Copyright (C) 2014 International Business Machines
 // * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/tr.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: <path>/xml/main/tr.xml
+ * ICU <specials> source: <path>/common/main/tr.xml
  */
 tr{
     Countries{
@@ -81,7 +81,7 @@ tr{
         BY{"Beyaz Rusya"}
         BZ{"Belize"}
         CA{"Kanada"}
-        CC{"Cocos [Keeling] Adaları"}
+        CC{"Cocos (Keeling) Adaları"}
         CD{"Kongo - Kinşasa"}
         CF{"Orta Afrika Cumhuriyeti"}
         CG{"Kongo - Brazavil"}
@@ -193,7 +193,7 @@ tr{
         MH{"Marshall Adaları"}
         MK{"Makedonya"}
         ML{"Mali"}
-        MM{"Myanmar [Burma]"}
+        MM{"Myanmar (Burma)"}
         MN{"Moğolistan"}
         MO{"Makao"}
         MP{"Kuzey Mariana Adaları"}
@@ -302,5 +302,9 @@ tr{
         ZW{"Zimbabve"}
         ZZ{"Bilinmeyen Bölge"}
     }
-    Version{"2.0.82.45"}
+    CountriesShort{
+        GB{"BK"}
+        US{"ABD"}
+    }
+    Version{"2.0.92.87"}
 }
