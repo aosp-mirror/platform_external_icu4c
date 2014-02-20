@@ -45,7 +45,6 @@ public:
      * Test with the Bopomofo-phonetic tailoring.
      */
     void TestChineseZhuyin();
-    void TestJapaneseKanji();
 };
 
 #endif

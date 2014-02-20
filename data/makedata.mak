@@ -10,10 +10,10 @@
 
 ##############################################################################
 # Keep the following in sync with the version - see common/unicode/uvernum.h
-U_ICUDATA_NAME=icudt51
+U_ICUDATA_NAME=icudt52
 ##############################################################################
 U_ICUDATA_ENDIAN_SUFFIX=l
-UNICODE_VERSION=6.2
+UNICODE_VERSION=6.3
 ICU_LIB_TARGET=$(DLL_OUTPUT)\$(U_ICUDATA_NAME).dll
 
 #  ICUMAKE
@@ -742,6 +742,10 @@ CLEAN : GODATA
 $(ICUBRK)\thaidict.dict:
 	@echo Creating $(ICUBRK)\thaidict.dict
 	@"$(ICUTOOLS)\gendict\$(CFG)\gendict" -c --bytes --transform offset-0xe00 $(ICUSRCDATA_RELATIVE_PATH)\$(ICUBRK)\thaidict.txt "$(ICUBLD_PKG)\$(ICUBRK)\thaidict.dict"
+
+$(ICUBRK)\laodict.dict:
+	@echo Creating $(ICUBRK)\laodict.dict
+	@"$(ICUTOOLS)\gendict\$(CFG)\gendict" -c --bytes --transform offset-0xe00 $(ICUSRCDATA_RELATIVE_PATH)\$(ICUBRK)\laodict.txt "$(ICUBLD_PKG)\$(ICUBRK)\laodict.dict"
 
 $(ICUBRK)\khmerdict.dict:
 	@echo Creating $(ICUBRK)\khmerdict.dict

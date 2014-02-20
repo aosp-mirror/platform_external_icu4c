@@ -96,13 +96,11 @@
  *         the return value indicates the necessary destination buffer size.
  * @stable ICU 2.0
  */
-/* BEGIN android-changed */
 U_STABLE int32_t U_EXPORT2
 u_shapeArabic(const UChar *source, int32_t sourceLength,
               UChar *dest, int32_t destSize,
-              uint64_t options,
+              uint32_t options,
               UErrorCode *pErrorCode);
-/* END android-changed */
 
 /**
  * Memory option: allow the result to have a different length than the source.
@@ -473,13 +471,4 @@ u_shapeArabic(const UChar *source, int32_t sourceLength,
  */
 #define U_SHAPE_TAIL_TYPE_MASK          0x8000000
 
-/* BEGIN Android-added */
-/**
- * Option used when forming LamAlef ligatures and
- * U_SHAPE_LAMALEF_NEAR is set.  When this option is selected, inserts
- * 0xffff instead of 0x0020 (space) after the ligature.  Use this when
- * you need to identify these substitutions during later processing.
- */
-/* END Android-added */
-#define U_SHAPE_X_LAMALEF_SUB_ALTERNATE (0x1ULL << 32)
 #endif

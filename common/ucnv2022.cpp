@@ -495,10 +495,10 @@ _ISO2022Open(UConverter *cnv, UConverterLoadArgs *pArgs, UErrorCode *errorCode){
                     ucnv_loadSharedData("ISO8859_7", &stackPieces, &stackArgs, errorCode);
             }
             if (myLocale[1]=='k') {  /* Use KDDI's version. */
-                myConverterData->myConverterArray[JISX208] =
+                myConverterData->myConverterArray[JISX208]  = 
                     ucnv_loadSharedData("kddi-jisx-208-2007", &stackPieces, &stackArgs, errorCode);
             } else if (myLocale[1]=='s') {  /* Use SoftBank's version. */
-                myConverterData->myConverterArray[JISX208] =
+                myConverterData->myConverterArray[JISX208]  = 
                     ucnv_loadSharedData("softbank-jisx-208-2007", &stackPieces, &stackArgs, errorCode);
             } else {
                 /*
@@ -513,8 +513,6 @@ _ISO2022Open(UConverter *cnv, UConverterLoadArgs *pArgs, UErrorCode *errorCode){
                     ucnv_loadSharedData("jisx-208", &stackPieces, &stackArgs, errorCode);
             }
             /* End Google-specific change. */
-            /* END android-changed */
-
             if(jpCharsetMasks[version]&CSM(JISX212)) {
                 myConverterData->myConverterArray[JISX212] =
                     ucnv_loadSharedData("jisx-212", &stackPieces, &stackArgs, errorCode);

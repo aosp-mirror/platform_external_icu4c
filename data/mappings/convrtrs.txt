@@ -474,7 +474,7 @@ ibm-9005_X110-2007 { UTR22* }
 # ISO Greek (w/o euro update)
 # JDK 1.5 has these aliases.
 ibm-813_P100-1995 { UTR22* }
-                        ibm-813 { IBM* JAVA }
+                        ibm-813 { IBM* JAVA* }
                         cp813 { JAVA }
                         813 { JAVA }
 

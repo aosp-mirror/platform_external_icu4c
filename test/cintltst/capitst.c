@@ -36,7 +36,6 @@ static void TestAttribute(void);
 static void TestDefault(void);
 static void TestDefaultKeyword(void);
 static void TestBengaliSortKey(void);
-        int TestBufferSize();    /* defined in "colutil.c" */
 
 
 static char* U_EXPORT2 ucol_sortKeyToString(const UCollator *coll, const uint8_t *sortkey, char *buffer, uint32_t len) {
@@ -79,22 +78,14 @@ void addCollAPITest(TestNode** root)
     addTest(root, &TestGetTailoredSet, "tscoll/capitst/TestGetTailoredSet");
     addTest(root, &TestMergeSortKeys, "tscoll/capitst/TestMergeSortKeys");
     addTest(root, &TestShortString, "tscoll/capitst/TestShortString");
-    /* BEGIN android-removed
-       To save space, Android does not include the collation tailoring rules.
-       We skip the tailing tests for collations. */
-    /* addTest(root, &TestGetContractionsAndUnsafes, "tscoll/capitst/TestGetContractionsAndUnsafes"); */
-    /* END android-removed */
+    // android-changed (no rule strings) -- addTest(root, &TestGetContractionsAndUnsafes, "tscoll/capitst/TestGetContractionsAndUnsafes");
     addTest(root, &TestOpenBinary, "tscoll/capitst/TestOpenBinary");
     addTest(root, &TestDefault, "tscoll/capitst/TestDefault");
     addTest(root, &TestDefaultKeyword, "tscoll/capitst/TestDefaultKeyword");
-    /* BEGIN android-removed
-       To save space, Android does not build full collation tables and tailing rules.
-       We skip the related tests. */
-    /* addTest(root, &TestOpenVsOpenRules, "tscoll/capitst/TestOpenVsOpenRules"); */
-    /* addTest(root, &TestGetKeywordValuesForLocale, "tscoll/capitst/TestGetKeywordValuesForLocale"); */
-    /* END android-removed */
+    // android-changed(no rule strings) -- addTest(root, &TestOpenVsOpenRules, "tscoll/capitst/TestOpenVsOpenRules");
     addTest(root, &TestBengaliSortKey, "tscoll/capitst/TestBengaliSortKey");
     addTest(root, &TestGetKeywordValuesForLocale, "tscoll/capitst/TestGetKeywordValuesForLocale");
+    addTest(root, &TestStrcollNull, "tscoll/capitst/TestStrcollNull");
 }
 
 void TestGetSetAttr(void) {
@@ -319,7 +310,7 @@ void TestProperty()
      * rather than hardcoding (and updating each time) a particular UCA version. */
     u_getUnicodeVersion(versionUCDArray);
     ucol_getUCAVersion(col, versionUCAArray);
-    if (0!=uprv_memcmp(versionUCAArray, versionUCDArray, 4)) {
+    if (0!=uprv_memcmp(versionUCAArray, versionUCDArray, 4) /*TODO: remove the following once UCA is up to date, ticket:9101*/ && !(versionUCDArray[0]==6 && versionUCDArray[1]==3)) {
       log_err("Testing ucol_getUCAVersion() - unexpected result: %hu.%hu.%hu.%hu\n",
               versionUCAArray[0], versionUCAArray[1], versionUCAArray[2], versionUCAArray[3]);
     }
@@ -378,14 +369,10 @@ void TestProperty()
     }
     log_verbose("Default collation getDisplayName ended.\n");
 
-    /* BEGIN android-removed
-       To save space, Android does not include the collation tailoring rules.
-       Skip the related tests.
-
     ruled = ucol_open("da_DK", &status);
     log_verbose("ucol_getRules() testing ...\n");
     ucol_getRules(ruled, &tempLength);
-    doAssert( tempLength != 0, "getRules() result incorrect" );
+    // android-changed (no rule strings) -- doAssert( tempLength != 0, "getRules() result incorrect" ); 
     log_verbose("getRules tests end.\n");
     {
         UChar *buffer = (UChar *)malloc(200000*sizeof(UChar));
@@ -393,19 +380,17 @@ void TestProperty()
         buffer[0] = '\0';
         log_verbose("ucol_getRulesEx() testing ...\n");
         tempLength = ucol_getRulesEx(col,UCOL_TAILORING_ONLY,buffer,bufLen );
-        doAssert( tempLength == 0x00, "getRulesEx() result incorrect" );
+        // android-changed (no rule strings) -- doAssert( tempLength == 0x00, "getRulesEx() result incorrect" );
         log_verbose("getRules tests end.\n");
 
         log_verbose("ucol_getRulesEx() testing ...\n");
         tempLength=ucol_getRulesEx(col,UCOL_FULL_RULES,buffer,bufLen );
-        doAssert( tempLength != 0, "getRulesEx() result incorrect" );
+        // android-changed (no rule strings) --  doAssert( tempLength != 0, "getRulesEx() result incorrect" );
         log_verbose("getRules tests end.\n");
         free(buffer);
     }
     ucol_close(ruled);
     ucol_close(col);
-
-    END android-removed */
 
     log_verbose("open an collator for french locale");
     col = ucol_open("fr_FR", &status);
@@ -665,11 +650,6 @@ void TestSafeClone() {
     const char sampleRuleChars[] = "&Z < CH";
     UChar sampleRule[sizeof(sampleRuleChars)];
 
-    if (TestBufferSize()) {
-        log_err("U_COL_SAFECLONE_BUFFERSIZE should be larger than sizeof(UCollator)\n");
-        return;
-    }
-
     u_uastrcpy(test1, "abCda");
     u_uastrcpy(test2, "abcda");
     u_uastrcpy(sampleRule, sampleRuleChars);
@@ -690,28 +670,30 @@ void TestSafeClone() {
     /* Check the various error & informational states: */
 
     /* Null status - just returns NULL */
-    if (0 != ucol_safeClone(someCollators[0], buffer[0], &bufferSize, 0))
+    if (NULL != ucol_safeClone(someCollators[0], buffer[0], &bufferSize, NULL))
     {
         log_err("FAIL: Cloned Collator failed to deal correctly with null status\n");
     }
     /* error status - should return 0 & keep error the same */
     err = U_MEMORY_ALLOCATION_ERROR;
-    if (0 != ucol_safeClone(someCollators[0], buffer[0], &bufferSize, &err) || err != U_MEMORY_ALLOCATION_ERROR)
+    if (NULL != ucol_safeClone(someCollators[0], buffer[0], &bufferSize, &err) || err != U_MEMORY_ALLOCATION_ERROR)
     {
         log_err("FAIL: Cloned Collator failed to deal correctly with incoming error status\n");
     }
     err = U_ZERO_ERROR;
 
-    /* Null buffer size pointer - just returns NULL & set error to U_ILLEGAL_ARGUMENT_ERROR*/
-    if (0 != ucol_safeClone(someCollators[0], buffer[0], 0, &err) || err != U_ILLEGAL_ARGUMENT_ERROR)
+    /* Null buffer size pointer is ok */
+    if (NULL == (col = ucol_safeClone(someCollators[0], buffer[0], NULL, &err)) || U_FAILURE(err))
     {
         log_err("FAIL: Cloned Collator failed to deal correctly with null bufferSize pointer\n");
     }
+    ucol_close(col);
     err = U_ZERO_ERROR;
 
     /* buffer size pointer is 0 - fill in pbufferSize with a size */
     bufferSize = 0;
-    if (0 != ucol_safeClone(someCollators[0], buffer[0], &bufferSize, &err) || U_FAILURE(err) || bufferSize <= 0)
+    if (NULL != ucol_safeClone(someCollators[0], buffer[0], &bufferSize, &err) ||
+            U_FAILURE(err) || bufferSize <= 0)
     {
         log_err("FAIL: Cloned Collator failed a sizing request ('preflighting')\n");
     }
@@ -721,14 +703,16 @@ void TestSafeClone() {
         log_err("FAIL: Pre-calculated buffer size is too small\n");
     }
     /* Verify we can use this run-time calculated size */
-    if (0 == (col = ucol_safeClone(someCollators[0], buffer[0], &bufferSize, &err)) || U_FAILURE(err))
+    if (NULL == (col = ucol_safeClone(someCollators[0], buffer[0], &bufferSize, &err)) || U_FAILURE(err))
     {
         log_err("FAIL: Collator can't be cloned with run-time size\n");
     }
     if (col) ucol_close(col);
     /* size one byte too small - should allocate & let us know */
-    --bufferSize;
-    if (0 == (col = ucol_safeClone(someCollators[0], 0, &bufferSize, &err)) || err != U_SAFECLONE_ALLOCATED_WARNING)
+    if (bufferSize > 1) {
+        --bufferSize;
+    }
+    if (NULL == (col = ucol_safeClone(someCollators[0], 0, &bufferSize, &err)) || err != U_SAFECLONE_ALLOCATED_WARNING)
     {
         log_err("FAIL: Cloned Collator failed to deal correctly with too-small buffer size\n");
     }
@@ -738,7 +722,7 @@ void TestSafeClone() {
 
 
     /* Null buffer pointer - return Collator & set error to U_SAFECLONE_ALLOCATED_ERROR */
-    if (0 == (col = ucol_safeClone(someCollators[0], 0, &bufferSize, &err)) || err != U_SAFECLONE_ALLOCATED_WARNING)
+    if (NULL == (col = ucol_safeClone(someCollators[0], 0, &bufferSize, &err)) || err != U_SAFECLONE_ALLOCATED_WARNING)
     {
         log_err("FAIL: Cloned Collator failed to deal correctly with null buffer pointer\n");
     }
@@ -746,7 +730,7 @@ void TestSafeClone() {
     err = U_ZERO_ERROR;
 
     /* Null Collator - return NULL & set U_ILLEGAL_ARGUMENT_ERROR */
-    if (0 != ucol_safeClone(0, buffer[0], &bufferSize, &err) || err != U_ILLEGAL_ARGUMENT_ERROR)
+    if (NULL != ucol_safeClone(NULL, buffer[0], &bufferSize, &err) || err != U_ILLEGAL_ARGUMENT_ERROR)
     {
         log_err("FAIL: Cloned Collator failed to deal correctly with null Collator pointer\n");
     }
@@ -783,14 +767,9 @@ void TestSafeClone() {
         bufferSize = U_COL_SAFECLONE_BUFFERSIZE;
         err = U_ZERO_ERROR;
         someClonedCollators[idx] = ucol_safeClone(someCollators[idx], buffer[idx], &bufferSize, &err);
-        if (someClonedCollators[idx] == NULL
-            || someClonedCollators[idx] < (UCollator *)buffer[idx]
-            || someClonedCollators[idx] > (UCollator *)(buffer[idx]+(U_COL_SAFECLONE_BUFFERSIZE-1)))
-        {
-            /* TODO: The use of U_COL_SAFECLONE_BUFFERSIZE will be deprecated per #9932.
-               In the meantime, just turn the following former error into a log message. */
-            log_verbose("NOTE: Cloned collator did not use provided buffer, index %d, status %s, clone NULL? %d\n",
-                                                        idx, myErrorName(err), someClonedCollators[idx] == NULL);
+        if (U_FAILURE(err)) {
+            log_err("FAIL: Unable to clone collator %d - %s\n", idx, u_errorName(err));
+            continue;
         }
         if (!ucol_equals(someClonedCollators[idx], someCollators[idx])) {
             log_err("FAIL: Cloned collator is not equal to original at index = %d.\n", idx);
@@ -966,6 +945,7 @@ void TestOpenVsOpenRules(){
     uset_addRange(stdSet, 0x41, 0x5A);
     uset_addRange(stdSet, 0x30, 0x39);
     sizeOfStdSet = uset_size(stdSet);
+    (void)sizeOfStdSet;   /* Suppress set but not used warning. */
 
     adder = 1;
     if(getTestOption(QUICK_OPTION))
@@ -1316,6 +1296,7 @@ void TestElemIter()
     else{ log_verbose("PASS: Default collationElement iterator3 creation passed\n");}
 
     offset=ucol_getOffset(iterator1);
+    (void)offset;   /* Suppress set but not used warning. */
     ucol_setOffset(iterator1, 6, &status);
     if (U_FAILURE(status)) {
         log_err("Error in setOffset for UCollatorElements iterator.: %s\n", myErrorName(status));
@@ -1417,7 +1398,7 @@ void TestGetLocale() {
     { "sr_RS", "sr_Cyrl_RS", "sr" },
     { "sh_YU", "sr_Latn_RS", "sr_Latn" }, /* was sh, then aliased to hr, now sr_Latn via import per cldrbug 5647: */
     { "en_BE_FOO", "en_BE", "root" },
-    { "de_DE_NONEXISTANT", "de_DE", "de" }
+    { "sv_SE_NONEXISTANT", "sv_SE", "sv" }
   };
 
   /* test opening collators for different locales */
@@ -1614,6 +1595,8 @@ void TestBounds() {
             for(j = i+1; j < arraySize; j++) {
                 lowerSize = ucol_getBound(tests[i].key, -1, UCOL_BOUND_LOWER, 1, lower, 512, &status);
                 upperSize = ucol_getBound(tests[j].key, -1, UCOL_BOUND_UPPER, 1, upper, 512, &status);
+                (void)lowerSize;    /* Suppress set but not used warning. */
+                (void)upperSize;
                 for(k = i; k <= j; k++) {
                     if(strcmp((const char *)lower, (const char *)tests[k].key) > 0) {
                         log_err("Problem with lower! j = %i (%s vs %s)\n", k, tests[k].original, tests[i].original);
@@ -2216,6 +2199,7 @@ TestGetContractionsAndUnsafes(void)
         }
 
         noConts = ucol_getUnsafeSet(coll, conts, &status);
+        (void)noConts;   /* Suppress set but not used warning */
         doSetsTest(tests[i].locale, conts, set, tests[i].unsafeCodeUnits, tests[i].safeCodeUnits, &status);
         setLen = uset_toPattern(conts, buffer, setBufferLen, TRUE, &status);
         if(U_SUCCESS(status)) {
@@ -2340,44 +2324,38 @@ static void TestDefaultKeyword(void) {
 static void TestGetKeywordValuesForLocale(void) {
 #define INCLUDE_UNIHAN_COLLATION 0
 #define PREFERRED_SIZE 16
-#define MAX_NUMBER_OF_KEYWORDS 8
+#define MAX_NUMBER_OF_KEYWORDS 9
     const char *PREFERRED[PREFERRED_SIZE][MAX_NUMBER_OF_KEYWORDS+1] = {
-            { "und",            "standard", "search", NULL, NULL, NULL, NULL, NULL, NULL },
-            { "en_US",          "standard", "search", NULL, NULL, NULL, NULL, NULL, NULL },
-            { "en_029",         "standard", "search", NULL, NULL, NULL, NULL, NULL, NULL },
-            { "de_DE",          "standard", "phonebook", "search", NULL, NULL, NULL, NULL, NULL },
-            { "de_Latn_DE",     "standard", "phonebook", "search", NULL, NULL, NULL, NULL, NULL },
+            { "und",            "standard", "eor", "search", NULL, NULL, NULL, NULL, NULL, NULL },
+            { "en_US",          "standard", "eor", "search", NULL, NULL, NULL, NULL, NULL, NULL },
+            { "en_029",         "standard", "eor", "search", NULL, NULL, NULL, NULL, NULL, NULL },
+            { "de_DE",          "standard", "phonebook", "search", "eor", NULL, NULL, NULL, NULL, NULL },
+            { "de_Latn_DE",     "standard", "phonebook", "search", "eor", NULL, NULL, NULL, NULL, NULL },
 #if INCLUDE_UNIHAN_COLLATION
-            { "zh",             "pinyin", "big5han", "gb2312han", "stroke", "zhuyin", "unihan", "search", "standard" },
-            { "zh_Hans",        "pinyin", "big5han", "gb2312han", "stroke", "zhuyin", "unihan", "search", "standard" },
-            { "zh_CN",          "pinyin", "big5han", "gb2312han", "stroke", "zhuyin", "unihan", "search", "standard" },
-            { "zh_Hant",        "stroke", "big5han", "gb2312han", "pinyin", "zhuyin", "unihan", "search", "standard" },
-            { "zh_TW",          "stroke", "big5han", "gb2312han", "pinyin", "zhuyin", "unihan", "search", "standard" },
-            { "zh__PINYIN",     "pinyin", "big5han", "gb2312han", "stroke", "zhuyin", "unihan", "search", "standard" },
+            { "zh",             "pinyin", "big5han", "gb2312han", "stroke", "unihan", "zhuyin", "eor", "search", "standard" },
+            { "zh_Hans",        "pinyin", "big5han", "gb2312han", "stroke", "unihan", "zhuyin", "eor", "search", "standard" },
+            { "zh_CN",          "pinyin", "big5han", "gb2312han", "stroke", "unihan", "zhuyin", "eor", "search", "standard" },
+            { "zh_Hant",        "stroke", "big5han", "gb2312han", "pinyin", "unihan", "zhuyin", "eor", "search", "standard" },
+            { "zh_TW",          "stroke", "big5han", "gb2312han", "pinyin", "unihan", "zhuyin", "eor", "search", "standard" },
+            { "zh__PINYIN",     "pinyin", "big5han", "gb2312han", "stroke", "unihan", "zhuyin", "eor", "search", "standard" },
 #else
-            // BEGIN android-changed.  No big5han, gb2312han, or zhuyin in Android
-            { "zh",             "pinyin", "stroke", "search", "standard", NULL, NULL, NULL, NULL },
-            { "zh_Hans",        "pinyin", "stroke", "search", "standard", NULL, NULL, NULL, NULL },
-            { "zh_CN",          "pinyin", "stroke", "search", "standard", NULL, NULL, NULL, NULL },
-            { "zh_Hant",        "stroke", "pinyin", "search", "standard", NULL, NULL, NULL, NULL },
-            { "zh_TW",          "stroke", "pinyin", "search", "standard", NULL, NULL, NULL, NULL },
-            { "zh__PINYIN",     "pinyin", "stroke", "search", "standard", NULL, NULL, NULL, NULL },
-            // END android-changed
+            { "zh",             "pinyin", "big5han", "gb2312han", "stroke", "zhuyin", "eor", "search", "standard", NULL },
+            { "zh_Hans",        "pinyin", "big5han", "gb2312han", "stroke", "zhuyin", "eor", "search", "standard", NULL },
+            { "zh_CN",          "pinyin", "big5han", "gb2312han", "stroke", "zhuyin", "eor", "search", "standard", NULL },
+            { "zh_Hant",        "stroke", "big5han", "gb2312han", "pinyin", "zhuyin", "eor", "search", "standard", NULL },
+            { "zh_TW",          "stroke", "big5han", "gb2312han", "pinyin", "zhuyin", "eor", "search", "standard", NULL },
+            { "zh__PINYIN",     "pinyin", "big5han", "gb2312han", "stroke", "zhuyin", "eor", "search", "standard", NULL },
 #endif
-            { "es_ES",          "standard", "search", "traditional", NULL, NULL, NULL, NULL, NULL },
-            { "es__TRADITIONAL","traditional", "search", "standard", NULL, NULL, NULL, NULL, NULL },
-            { "und@collation=phonebook",    "standard", "search", NULL, NULL, NULL, NULL, NULL, NULL },
-            { "de_DE@collation=big5han",    "standard", "phonebook", "search", NULL, NULL, NULL, NULL, NULL},
-
-            { "zzz@collation=xxx",          "standard", "search", NULL, NULL, NULL, NULL, NULL, NULL }
+            { "es_ES",          "standard", "search", "traditional", "eor", NULL, NULL, NULL, NULL, NULL },
+            { "es__TRADITIONAL","traditional", "search", "standard", "eor", NULL, NULL, NULL, NULL, NULL },
+            { "und@collation=phonebook",    "standard", "eor", "search", NULL, NULL, NULL, NULL, NULL, NULL },
+            { "de_DE@collation=big5han",    "standard", "phonebook", "search", "eor", NULL, NULL, NULL, NULL, NULL },
+            { "zzz@collation=xxx",          "standard", "eor", "search", NULL, NULL, NULL, NULL, NULL, NULL }
     };
 #if INCLUDE_UNIHAN_COLLATION
-    const int32_t expectedLength[PREFERRED_SIZE] = { 2, 2, 2, 3, 3, 8, 8, 8, 8, 8, 8, 3, 3, 2, 3, 2 };
+    const int32_t expectedLength[PREFERRED_SIZE] = { 3, 3, 3, 4, 4, 9, 9, 9, 9, 9, 9, 4, 4, 3, 4, 3 };
 #else
-    // BEGIN android-change
-    // Fewer cases are expected for "zh*" since Android removes collation sequences to save space.
-    const int32_t expectedLength[PREFERRED_SIZE] = { 2, 2, 2, 3, 3, 4, 4, 4, 4, 4, 4, 3, 3, 2, 3, 2 };
-    // END android-change
+    const int32_t expectedLength[PREFERRED_SIZE] = { 3, 3, 3, 4, 4, 8, 8, 8, 8, 8, 8, 4, 4, 3, 4, 3 };
 #endif
 
     UErrorCode status = U_ZERO_ERROR;
@@ -2429,5 +2407,106 @@ static void TestGetKeywordValuesForLocale(void) {
     }
 }
 
+static void TestStrcollNull(void) {
+    UErrorCode status = U_ZERO_ERROR;
+    UCollator *coll;
+
+    const UChar u16asc[] = {0x0049, 0x0042, 0x004D, 0};
+    const int32_t u16ascLen = 3;
+
+    const UChar u16han[] = {0x5c71, 0x5ddd, 0};
+    const int32_t u16hanLen = 2;
+
+    const char u8asc[] = {0x49, 0x42, 0x4D, 0};
+    const int32_t u8ascLen = 3;
+
+    const char u8han[] = {0xE5, 0xB1, 0xB1, 0xE5, 0xB7, 0x9D, 0};
+    const int32_t u8hanLen = 6;
+
+    coll = ucol_open(NULL, &status);
+    if (U_FAILURE(status)) {
+        log_err_status(status, "Default Collator creation failed.: %s\n", myErrorName(status));
+        return;
+    }
+
+    /* UChar API */
+    if (ucol_strcoll(coll, NULL, 0, NULL, 0) != 0) {
+        log_err("ERROR : ucol_strcoll NULL/0 and NULL/0");
+    }
+
+    if (ucol_strcoll(coll, NULL, -1, NULL, 0) != 0) {
+        /* No error arg, should return equal without crash */
+        log_err("ERROR : ucol_strcoll NULL/-1 and NULL/0");
+    }
+
+    if (ucol_strcoll(coll, u16asc, -1, NULL, 10) != 0) {
+        /* No error arg, should return equal without crash */
+        log_err("ERROR : ucol_strcoll u16asc/u16ascLen and NULL/10");
+    }
+
+    if (ucol_strcoll(coll, u16asc, -1, NULL, 0) <= 0) {
+        log_err("ERROR : ucol_strcoll u16asc/-1 and NULL/0");
+    }
+    if (ucol_strcoll(coll, NULL, 0, u16asc, -1) >= 0) {
+        log_err("ERROR : ucol_strcoll NULL/0 and u16asc/-1");
+    }
+    if (ucol_strcoll(coll, u16asc, u16ascLen, NULL, 0) <= 0) {
+        log_err("ERROR : ucol_strcoll u16asc/u16ascLen and NULL/0");
+    }
+
+    if (ucol_strcoll(coll, u16han, -1, NULL, 0) <= 0) {
+        log_err("ERROR : ucol_strcoll u16han/-1 and NULL/0");
+    }
+    if (ucol_strcoll(coll, NULL, 0, u16han, -1) >= 0) {
+        log_err("ERROR : ucol_strcoll NULL/0 and u16han/-1");
+    }
+    if (ucol_strcoll(coll, NULL, 0, u16han, u16hanLen) >= 0) {
+        log_err("ERROR : ucol_strcoll NULL/0 and u16han/u16hanLen");
+    }
+
+    /* UTF-8 API */
+    status = U_ZERO_ERROR;
+    if (ucol_strcollUTF8(coll, NULL, 0, NULL, 0, &status) != 0 || U_FAILURE(status)) {
+        log_err("ERROR : ucol_strcollUTF8 NULL/0 and NULL/0");
+    }
+    status = U_ZERO_ERROR;
+    ucol_strcollUTF8(coll, NULL, -1, NULL, 0, &status);
+    if (status != U_ILLEGAL_ARGUMENT_ERROR) {
+        log_err("ERROR: ucol_strcollUTF8 NULL/-1 and NULL/0, should return U_ILLEGAL_ARGUMENT_ERROR");
+    }
+    status = U_ZERO_ERROR;
+    ucol_strcollUTF8(coll, u8asc, u8ascLen, NULL, 10, &status);
+    if (status != U_ILLEGAL_ARGUMENT_ERROR) {
+        log_err("ERROR: ucol_strcollUTF8 u8asc/u8ascLen and NULL/10, should return U_ILLEGAL_ARGUMENT_ERROR");
+    }
+
+    status = U_ZERO_ERROR;
+    if (ucol_strcollUTF8(coll, u8asc, -1, NULL, 0, &status) <= 0  || U_FAILURE(status)) {
+        log_err("ERROR : ucol_strcollUTF8 u8asc/-1 and NULL/0");
+    }
+    status = U_ZERO_ERROR;
+    if (ucol_strcollUTF8(coll, NULL, 0, u8asc, -1, &status) >= 0  || U_FAILURE(status)) {
+        log_err("ERROR : ucol_strcollUTF8 NULL/0 and u8asc/-1");
+    }
+    status = U_ZERO_ERROR;
+    if (ucol_strcollUTF8(coll, u8asc, u8ascLen, NULL, 0, &status) <= 0 || U_FAILURE(status)) {
+        log_err("ERROR : ucol_strcollUTF8 u8asc/u8ascLen and NULL/0");
+    }
+
+    status = U_ZERO_ERROR;
+    if (ucol_strcollUTF8(coll, u8han, -1, NULL, 0, &status) <= 0 || U_FAILURE(status)) {
+        log_err("ERROR : ucol_strcollUTF8 u8han/-1 and NULL/0");
+    }
+    status = U_ZERO_ERROR;
+    if (ucol_strcollUTF8(coll, NULL, 0, u8han, -1, &status) >= 0 || U_FAILURE(status)) {
+        log_err("ERROR : ucol_strcollUTF8 NULL/0 and u8han/-1");
+    }
+    status = U_ZERO_ERROR;
+    if (ucol_strcollUTF8(coll, NULL, 0, u8han, u8hanLen, &status) >= 0 || U_FAILURE(status)) {
+        log_err("ERROR : ucol_strcollUTF8 NULL/0 and u8han/u8hanLen");
+    }
+
+    ucol_close(coll);
+}
 
 #endif /* #if !UCONFIG_NO_COLLATION */
