@@ -245,7 +245,7 @@ AlphabeticIndex &AlphabeticIndex::addLabels(const UnicodeSet &additions, UErrorC
 
 
 AlphabeticIndex &AlphabeticIndex::addLabels(const Locale &locale, UErrorCode &status) {
-    addIndexExemplars(&locale, status);
+  addIndexExemplars(&locale, status);  // android-changed
     clearBuckets();
     return *this;
 }
@@ -709,13 +709,15 @@ void AlphabeticIndex::internalResetBucketIterator() {
 }
 
 
-void AlphabeticIndex::addIndexExemplars(const Locale *locale, UErrorCode &status) {
+void AlphabeticIndex::addIndexExemplars(const Locale *locale, UErrorCode &status) {  // android-changed
     if (U_FAILURE(status)) { return; }
     // Chinese index characters, which are specific to each of the several Chinese tailorings,
     // take precedence over the single locale data exemplar set per language.
+    // BEGIN Android-changed
     const char *language = locale == NULL ? NULL : locale->getLanguage();
     if (language == NULL ||
             uprv_strcmp(language, "zh") == 0 || uprv_strcmp(language, "ja") == 0 ||
+        // END Android-changed
             uprv_strcmp(language, "ko") == 0) {
         // TODO: This should be done regardless of the language, but it's expensive.
         // We should add a Collator function (can be @internal)
@@ -724,9 +726,9 @@ void AlphabeticIndex::addIndexExemplars(const Locale *locale, UErrorCode &status
             return;
         }
     }
-    if (locale == NULL) { return; }
+    if (locale == NULL) { return; }  // android-added
 
-    LocalULocaleDataPointer uld(ulocdata_open(locale->getName(), &status));
+    LocalULocaleDataPointer uld(ulocdata_open(locale->getName(), &status));  // android-changed
     if (U_FAILURE(status)) {
         return;
     }
@@ -779,7 +781,7 @@ void AlphabeticIndex::addIndexExemplars(const Locale *locale, UErrorCode &status
     while (it.next()) {
         const UnicodeString &exemplarC = it.getString();
         upperC = exemplarC;
-        upperC.toUpper(*locale);
+        upperC.toUpper(*locale);  // android-changed
         initialLabels_->add(upperC);
     }
 }
@@ -966,17 +968,23 @@ void AlphabeticIndex::init(const Locale *locale, UErrorCode &status) {
     if (U_FAILURE(status)) { return; }
     firstCharsInScripts_->sortWithUComparator(collatorComparator, collatorPrimaryOnly_, status);
 
+    // BEGIN Android-added
     // Add index exemplar characters before checking the script boundaries,
     // since this might modify them.
     addIndexExemplars(locale, status);
 
+    // END Android-added
     UnicodeString _4E00((UChar)0x4E00);
+    // BEGIN Android-changed
     int32_t hanIndex = binarySearch(
             *firstCharsInScripts_, _4E00, *collatorPrimaryOnly_);
     if (hanIndex >= 0) {
         // Adjust the Han script boundary if necessary.
+      // end Android-added
+
         // TODO: This becomes obsolete when the root collator gets
         // reliable script-first-primary mappings.
+      // BEGIN Android-changed
         UnicodeString _1100((UChar)0x1100);
         UnicodeString _1112((UChar)0x1112);
         UnicodeString _4E9C((UChar)0x4E9C);
@@ -994,6 +1002,7 @@ void AlphabeticIndex::init(const Locale *locale, UErrorCode &status) {
                 return;
             }
             firstCharsInScripts_->setElementAt(fh, hanIndex);
+            // END Android-changed
         }
     }
 
@@ -1013,6 +1022,7 @@ void AlphabeticIndex::init(const Locale *locale, UErrorCode &status) {
         } else {
             break;
         }
+        // android-removed
     }
 }
 

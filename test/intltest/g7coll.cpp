@@ -105,8 +105,8 @@ void G7CollationTest::TestG7Locales(/* char* par */)
           errcheckln(status, "Couldn't instantiate collator. Error: %s", u_errorName(status));
           return;
         }
-        myCollation->setStrength(Collator::QUATERNARY);
-        myCollation->setAttribute(UCOL_ALTERNATE_HANDLING, UCOL_SHIFTED, status);
+        // android-changed(no rule strings) -- myCollation->setStrength(Collator::QUATERNARY);
+        // android-changed(no rule strings) -- myCollation->setAttribute(UCOL_ALTERNATE_HANDLING, UCOL_SHIFTED, status);
         if (U_FAILURE(status))
         {
             UnicodeString msg;
@@ -121,7 +121,7 @@ void G7CollationTest::TestG7Locales(/* char* par */)
 
 //        const UnicodeString& defRules = ((RuleBasedCollator*)myCollation)->getRules();
         status = U_ZERO_ERROR;
-        tblColl1 = new RuleBasedCollator(((RuleBasedCollator*)myCollation)->getRules(), status);
+        tblColl1 = NULL;  // android-changed(no rule strings) -- new RuleBasedCollator(((RuleBasedCollator*)myCollation)->getRules(), status);
         if (U_FAILURE(status))
         {
             UnicodeString msg, name;
@@ -146,7 +146,7 @@ void G7CollationTest::TestG7Locales(/* char* par */)
         {
             for (n = j+1; n < FIXEDTESTSET; n++)
             {
-                doTest(tblColl1, testCases[results[i][j]], testCases[results[i][n]], Collator::LESS);
+                doTest(myCollation /* android-changed(no rule strings) -- tblColl1 */, testCases[results[i][j]], testCases[results[i][n]], Collator::LESS);
             }
         }
 
@@ -290,11 +290,7 @@ void G7CollationTest::runIndexedTest( int32_t index, UBool exec, const char* &na
 {
     if (exec) logln("TestSuite G7CollationTest: ");
     switch (index) {
-        // BEGIN android-changed
-        // To save space, Android does not include the collation tailoring rules.
-        // We skip the tailing tests for collations.
-        case 0: name = "TestG7Locales"; break;
-        // END android-changed
+        case 0: name = "TestG7Locales"; if (exec)   TestG7Locales(/* par */); break;
         case 1: name = "TestDemo1"; if (exec)   TestDemo1(/* par */); break;
         case 2: name = "TestDemo2"; if (exec)   TestDemo2(/* par */); break;
         case 3: name = "TestDemo3"; if (exec)   TestDemo3(/* par */); break;

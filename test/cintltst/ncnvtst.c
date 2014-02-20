@@ -1701,7 +1701,6 @@ static void TestResetBehaviour(void){
            log_err("iso-2022-kr -> did not match.\n");
     }
 
-
         log_verbose("Testing Reset for HZ\n");
     {
         static const UChar    sampleText[] =   { 0x4e00, 0xd801, 0xdc01, 0x04e01, 0x0031, 0xd801, 0xdc01, 0x0032};

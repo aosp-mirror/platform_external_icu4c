@@ -1374,9 +1374,10 @@ public:
     virtual const char * getType() const = 0;
 
     /**
-     * Returns whether the given day of the week is a weekday, a
-     * weekend day, or a day that transitions from one to the other,
-     * in this calendar system. If a transition occurs at midnight,
+     * Returns whether the given day of the week is a weekday, a weekend day,
+     * or a day that transitions from one to the other, for the locale and
+     * calendar system associated with this Calendar (the locale's region is
+     * often the most determinant factor). If a transition occurs at midnight,
      * then the days before and after the transition will have the
      * type UCAL_WEEKDAY or UCAL_WEEKEND. If a transition occurs at a time
      * other than midnight, then the day of the transition will have
@@ -1392,7 +1393,7 @@ public:
 
     /**
      * Returns the time during the day at which the weekend begins or ends in
-     * this calendar system.  If getDayOfWeekType() rerturns UCAL_WEEKEND_ONSET
+     * this calendar system.  If getDayOfWeekType() returns UCAL_WEEKEND_ONSET
      * for the specified dayOfWeek, return the time at which the weekend begins.
      * If getDayOfWeekType() returns UCAL_WEEKEND_CEASE for the specified dayOfWeek,
      * return the time at which the weekend ends. If getDayOfWeekType() returns
@@ -1707,8 +1708,8 @@ protected:
      * (YEAR_WOY and WEEK_OF_YEAR) to an extended year in the case
      * where YEAR, EXTENDED_YEAR are not set.
      * The Calendar implementation assumes yearWoy is in extended gregorian form
-     * @internal
      * @return the extended year, UCAL_EXTENDED_YEAR
+     * @internal
      */
     virtual int32_t handleGetExtendedYearFromWeekFields(int32_t yearWoy, int32_t woy);
 
@@ -2387,19 +2388,19 @@ private:
 #endif /* !UCONFIG_NO_SERVICE */
 
     /**
-     * @internal
      * @return TRUE if this calendar has a default century (i.e. 03 -> 2003)
+     * @internal
      */
     virtual UBool haveDefaultCentury() const = 0;
 
     /**
-     * @internal
      * @return the start of the default century, as a UDate
+     * @internal
      */
     virtual UDate defaultCenturyStart() const = 0;
     /**
-     * @internal
      * @return the beginning year of the default century, as a year
+     * @internal
      */
     virtual int32_t defaultCenturyStartYear() const = 0;
 

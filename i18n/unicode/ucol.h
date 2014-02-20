@@ -64,12 +64,12 @@ typedef struct UCollator UCollator;
 
 /**
  * UCOL_LESS is returned if source string is compared to be less than target
- * string in the u_strcoll() method.
+ * string in the ucol_strcoll() method.
  * UCOL_EQUAL is returned if source string is compared to be equal to target
- * string in the u_strcoll() method.
+ * string in the ucol_strcoll() method.
  * UCOL_GREATER is returned if source string is compared to be greater than
- * target string in the u_strcoll() method.
- * @see u_strcoll()
+ * target string in the ucol_strcoll() method.
+ * @see ucol_strcoll()
  * <p>
  * Possible values for a comparison result 
  * @stable ICU 2.0
@@ -302,6 +302,7 @@ typedef enum {
       * @stable ICU 2.0
       */
      UCOL_STRENGTH,  
+#ifndef U_HIDE_DEPRECATED_API
      /** When turned on, this attribute positions Hiragana before all  
       * non-ignorables on quaternary level This is a sneaky way to produce JIS
       * sort order.
@@ -312,7 +313,8 @@ typedef enum {
       * Since ICU 50, this attribute is not settable any more via API functions.
       * @deprecated ICU 50 Implementation detail, cannot be set via API, might be removed from implementation.
       */
-     UCOL_HIRAGANA_QUATERNARY_MODE,
+     UCOL_HIRAGANA_QUATERNARY_MODE = UCOL_STRENGTH + 1,
+#endif  /* U_HIDE_DEPRECATED_API */
      /** When turned on, this attribute generates a collation key
       * for the numeric value of substrings of digits.
       * This is a way to get '100' to sort AFTER '2'. Note that the longest
@@ -322,7 +324,7 @@ typedef enum {
       * separate digit substring associated with a separate collation element.
       * @stable ICU 2.8
       */
-     UCOL_NUMERIC_COLLATION, 
+     UCOL_NUMERIC_COLLATION = UCOL_STRENGTH + 2, 
      /**
       * The number of UColAttribute constants.
       * @stable ICU 2.0
@@ -533,7 +535,6 @@ ucol_strcoll(    const    UCollator    *coll,
         const    UChar        *target,
         int32_t            targetLength);
 
-#ifndef U_HIDE_DRAFT_API
 /** 
 * Compare two strings in UTF-8. 
 * The strings will be compared using the options already specified. 
@@ -550,9 +551,9 @@ ucol_strcoll(    const    UCollator    *coll,
 * @see ucol_greater 
 * @see ucol_greaterOrEqual 
 * @see ucol_equal 
-* @draft ICU 50 
+* @stable ICU 50 
 */ 
-U_DRAFT UCollationResult U_EXPORT2
+U_STABLE UCollationResult U_EXPORT2
 ucol_strcollUTF8(
         const UCollator *coll,
         const char      *source,
@@ -560,7 +561,6 @@ ucol_strcollUTF8(
         const char      *target,
         int32_t         targetLength,
         UErrorCode      *status);
-#endif /* U_HIDE_DRAFT_API */
 
 /**
  * Determine if one string is greater than another.
@@ -1212,12 +1212,13 @@ ucol_restoreVariableTop(UCollator *coll, const uint32_t varTop, UErrorCode *stat
 /**
  * Thread safe cloning operation. The result is a clone of a given collator.
  * @param coll collator to be cloned
- * @param stackBuffer user allocated space for the new clone. 
+ * @param stackBuffer <em>Deprecated functionality as of ICU 52, use NULL.</em><br>
+ * user allocated space for the new clone. 
  * If NULL new memory will be allocated. 
  *  If buffer is not large enough, new memory will be allocated.
- *  Clients can use the U_COL_SAFECLONE_BUFFERSIZE. 
- *  This will probably be enough to avoid memory allocations.
- * @param pBufferSize pointer to size of allocated space. 
+ *  Clients can use the U_COL_SAFECLONE_BUFFERSIZE.
+ * @param pBufferSize <em>Deprecated functionality as of ICU 52, use NULL or 1.</em><br>
+ *  pointer to size of allocated space. 
  *  If *pBufferSize == 0, a sufficient size for use in cloning will 
  *  be returned ('pre-flighting')
  *  If *pBufferSize is not enough for a stack-based safe clone, 
@@ -1237,10 +1238,14 @@ ucol_safeClone(const UCollator *coll,
                int32_t         *pBufferSize,
                UErrorCode      *status);
 
-/** default memory size for the new clone. It needs to be this large for os/400 large pointers 
- * @stable ICU 2.0
+#ifndef U_HIDE_DEPRECATED_API
+
+/** default memory size for the new clone.
+ * @deprecated ICU 52. Do not rely on ucol_safeClone() cloning into any provided buffer.
  */
-#define U_COL_SAFECLONE_BUFFERSIZE 528
+#define U_COL_SAFECLONE_BUFFERSIZE 1
+
+#endif /* U_HIDE_DEPRECATED_API */
 
 /**
  * Returns current rules. Delta defines whether full rules are returned or just the tailoring. 

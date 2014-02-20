@@ -66,7 +66,7 @@ OBJECTS = ucln_in.o \
 fmtable.o format.o msgfmt.o umsg.o numfmt.o unum.o decimfmt.o dcfmtsym.o \
 ucurr.o digitlst.o fmtable_cnv.o \
 choicfmt.o datefmt.o smpdtfmt.o reldtfmt.o dtfmtsym.o udat.o dtptngen.o udatpg.o \
-nfrs.o nfrule.o nfsubs.o rbnf.o numsys.o ucsdet.o \
+nfrs.o nfrule.o nfsubs.o rbnf.o numsys.o unumsys.o ucsdet.o \
 ucal.o calendar.o gregocal.o timezone.o simpletz.o olsontz.o \
 astro.o taiwncal.o buddhcal.o persncal.o islamcal.o japancal.o gregoimp.o hebrwcal.o \
 indiancal.o chnsecal.o cecal.o coptccal.o dangical.o ethpccal.o \
@@ -86,7 +86,8 @@ tmunit.o tmutamt.o tmutfmt.o currpinf.o \
 uspoof.o uspoof_impl.o uspoof_build.o uspoof_conf.o uspoof_wsconf.o decfmtst.o smpdtfst.o \
 ztrans.o zrule.o vzone.o fphdlimp.o fpositer.o locdspnm.o \
 decNumber.o decContext.o alphaindex.o tznames.o tznames_impl.o tzgnames.o \
-tzfmt.o compactdecimalformat.o gender.o region.o scriptset.o identifier_info.o
+tzfmt.o compactdecimalformat.o gender.o region.o scriptset.o identifier_info.o \
+uregion.o
 
 ## Header files to install
 HEADERS = $(srcdir)/unicode/*.h
