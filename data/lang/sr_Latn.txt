@@ -1,15 +1,16 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2013 International Business Machines
+// * Copyright (C) 2014 International Business Machines
 // * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/sr_Latn.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: <path>/xml/main/sr_Latn.xml
+ * ICU <specials> source: <path>/common/main/sr_Latn.xml
  */
 sr_Latn{
+    %%Parent{"root"}
     Keys{
         calendar{"Kalendar"}
         colAlternate{"Sortiranje uz ignorisanje simbola"}
@@ -51,6 +52,7 @@ sr_Latn{
         anp{"Angika"}
         apa{"Apački jezik"}
         ar{"Arapski"}
+        ar_001{"moderan standardni arapski"}
         arc{"Armajski"}
         arn{"Arokanijski"}
         arp{"Arapaho"}
@@ -163,6 +165,7 @@ sr_Latn{
         es{"Španski"}
         es_419{"Latino-američki španski"}
         es_ES{"Iberijski španski"}
+        es_MX{"meksički španski"}
         et{"Estonski"}
         eu{"Baskijski"}
         ewo{"Evondo"}
@@ -531,6 +534,7 @@ sr_Latn{
         zap{"Zapotečki"}
         zbl{"Blisimboli"}
         zen{"Zenaga"}
+        zgh{"standardni marokanski tamazigt"}
         zh{"Kineski"}
         zh_Hans{"Kineski (pojednostavljen)"}
         zh_Hant{"Kineski (tradicionalni)"}
@@ -542,6 +546,8 @@ sr_Latn{
     }
     LanguagesShort{
         az{"Azerski"}
+        en_GB{"engleski (UK)"}
+        en_US{"engleski (SAD)"}
     }
     Scripts{
         Arab{"arapsko pismo"}
@@ -565,8 +571,8 @@ sr_Latn{
         Cirt{"cirt pismo"}
         Copt{"koptičko pismo"}
         Cprt{"kiparsko pismo"}
-        Cyrl{"Ćirilica"}
-        Cyrs{"Staroslovenska crkvena ćirilica"}
+        Cyrl{"Ćirilica"}
+        Cyrs{"Staroslovenska crkvena ćirilica"}
         Deva{"Devanagari"}
         Dsrt{"Dezeret"}
         Egyd{"egipatsko narodno pismo"}
@@ -673,7 +679,7 @@ sr_Latn{
         Zsym{"simboli"}
         Zxxx{"Nepisani jezik"}
         Zyyy{"zajedničko pismo"}
-        Zzzz{"Nepoznato ili nevažeće pismo"}
+        Zzzz{"Nepoznato ili nevažeće pismo"}
     }
     Scripts%stand-alone{
         Hans{"pojednostavljeno han pismo"}
@@ -695,6 +701,42 @@ sr_Latn{
             persian{"persijski kalendar"}
             roc{"Kalendar Republike Kine"}
         }
+        colAlternate{
+            non-ignorable{"Sortiraj simbole"}
+            shifted{"Sortiranje uz ignorisanje simbola"}
+        }
+        colBackwards{
+            no{"Sortiraj akcente normalno"}
+            yes{"Sortiraj akcente obrnuto"}
+        }
+        colCaseFirst{
+            lower{"Sortiraj prvo mala slova"}
+            no{"Sortiraj normalan redosled velikih i malih slova"}
+            upper{"Sortiraj prvo velika slova"}
+        }
+        colCaseLevel{
+            no{"Sortiraj bez obzira na velika i mala slova"}
+            yes{"Sortiraj mala i velika slova"}
+        }
+        colHiraganaQuaternary{
+            no{"Sortiraj kana simbole odvojeno"}
+            yes{"Sortiraj kana simbole drugačije"}
+        }
+        colNormalization{
+            no{"Sortiraj bez normalizacije"}
+            yes{"Sortiraj Unicode normalizovano"}
+        }
+        colNumeric{
+            no{"Sortiraj cifre pojedinačno"}
+            yes{"Sortiraj cifre numerički"}
+        }
+        colStrength{
+            identical{"Sortiraj sve"}
+            primary{"Sortiraj samo osnovna slova"}
+            quaternary{"Sortiraj akcente/mala i velika slova/širinu/kana simbole"}
+            secondary{"Sortiraj akcente"}
+            tertiary{"Sortiraj akcente/mala i velika slova/širinu"}
+        }
         collation{
             big5han{"Tradicionalno kinesko sortiranje"}
             dictionary{"Redosled sortiranja u rečniku"}
@@ -706,6 +748,7 @@ sr_Latn{
             reformed{"Reformisani redosled sortiranja"}
             search{"Opšte namenjena pretraga"}
             searchjl{"Pretraga prema hangul početnom suglasniku"}
+            standard{"standardni redosled sortiranja"}
             stroke{"Sortiranje po broju crta"}
             traditional{"Tradicionalno sortiranje"}
             unihan{"Redosled sortiranja radikalnim crticama"}
@@ -782,7 +825,7 @@ sr_Latn{
         TARASK{"Taraskijevička ortografija"}
         VALENCIA{"Valencijska"}
     }
-    Version{"2.0.82.51"}
+    Version{"2.0.92.87"}
     codePatterns{
         language{"Jezik: {0}"}
         script{"Skript: {0}"}
@@ -791,6 +834,6 @@ sr_Latn{
     localeDisplayPattern{
         keyTypePattern{"{0}: {1}"}
         pattern{"{0} ({1})"}
-        separator{", "}
+        separator{"{0}, {1}"}
     }
 }

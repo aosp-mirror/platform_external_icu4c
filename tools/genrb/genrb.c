@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 1998-2012, International Business Machines
+*   Copyright (C) 1998-2014, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -60,7 +60,12 @@ enum
     FORMAT_VERSION,
     WRITE_POOL_BUNDLE,
     USE_POOL_BUNDLE,
-    INCLUDE_UNIHAN_COLL
+    INCLUDE_UNIHAN_COLL,
+    // BEGIN ANDROID-addition
+    INCLUDE_BIG5HAN_COLL,
+    INCLUDE_GB2312HAN_COLL,
+    INCLUDE_ZHUYINHAN_COLL
+    // END ANDROID-addition
 };
 
 UOption options[]={
@@ -86,6 +91,11 @@ UOption options[]={
                       UOPTION_DEF("writePoolBundle", '\x01', UOPT_NO_ARG),/* 19 */
                       UOPTION_DEF("usePoolBundle", '\x01', UOPT_OPTIONAL_ARG),/* 20 */
                       UOPTION_DEF("includeUnihanColl", '\x01', UOPT_NO_ARG),/* 21 */ /* temporary, don't display in usage info */
+                      // BEGIN Android-added
+                      UOPTION_DEF("includeBig5HanColl", '\x01', UOPT_NO_ARG),/* 22 */ /* temporary, don't display in usage info */
+                      UOPTION_DEF("includeGb2312HanColl", '\x01', UOPT_NO_ARG),/* 23 */ /* temporary, don't display in usage info */
+                      UOPTION_DEF("includeZhuyinHanColl", '\x01', UOPT_NO_ARG)/* 25 */ /* temporary, don't display in usage info */
+                      // END Android-added
                   };
 
 static     UBool       write_java = FALSE;
@@ -93,6 +103,11 @@ static     UBool       write_xliff = FALSE;
 static     const char* outputEnc ="";
 static     struct SRBRoot *newPoolBundle = NULL;
            UBool       gIncludeUnihanColl = FALSE;
+           // BEGIN Android-added
+           UBool       gIncludeBig5HanColl = FALSE;
+           UBool       gIncludeGb2312HanColl = FALSE;
+           UBool       gIncludeZhuyinHanColl = FALSE;
+           // END Android-added
 
 /* TODO: separate header file for ResFile? */
 typedef struct ResFile {
@@ -280,7 +295,7 @@ main(int argc,
         }
     }
 
-    initParser(options[NO_COLLATION_RULES].doesOccur);
+    initParser();
 
     /*added by Jing*/
     if(options[LANGUAGE].doesOccur) {
@@ -557,7 +572,8 @@ processFile(
         printf("autodetected encoding %s\n", cp);
     }
     /* Parse the data into an SRBRoot */
-    data = parse(ucbuf, inputDir, outputDir, !omitBinaryCollation, status);
+    data = parse(ucbuf, inputDir, outputDir,
+                 !omitBinaryCollation, options[NO_COLLATION_RULES].doesOccur, status);
 
     if (data == NULL || U_FAILURE(*status)) {
         fprintf(stderr, "couldn't parse the file %s. Error:%s\n", filename,u_errorName(*status));

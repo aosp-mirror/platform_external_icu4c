@@ -1,13 +1,13 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2013 International Business Machines
+// * Copyright (C) 2014 International Business Machines
 // * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/am.xml
 // *
 // ***************************************************************************
 /**
- *  ICU <specials> source: <path>/xml/main/am.xml
+ * ICU <specials> source: <path>/common/main/am.xml
  */
 am{
     Countries{
@@ -81,8 +81,8 @@ am{
         BY{"ቤላሩስ"}
         BZ{"ቤሊዘ"}
         CA{"ካናዳ"}
-        CC{"ኮኮስ[ኬሊንግ] ደሴቶች"}
-        CD{"ኮንጎ"}
+        CC{"ኮኮስ(ኬሊንግ) ደሴቶች"}
+        CD{"ኮንጎ-ኪንሻሳ"}
         CF{"የመካከለኛው አፍሪካ ሪፐብሊክ"}
         CG{"ኮንጎ ብራዛቪል"}
         CH{"ስዊዘርላንድ"}
@@ -193,7 +193,7 @@ am{
         MH{"ማርሻል አይላንድ"}
         MK{"ማከዶኒያ"}
         ML{"ማሊ"}
-        MM{"ማይናማር[በርማ]"}
+        MM{"ማይናማር(በርማ)"}
         MN{"ሞንጎሊያ"}
         MO{"ማካኡ"}
         MP{"የሰሜናዊ ማሪያና ደሴቶች"}
@@ -302,5 +302,9 @@ am{
         ZW{"ዚምቧቤ"}
         ZZ{"ያልታወቀ ክልል"}
     }
-    Version{"2.0.82.52"}
+    CountriesShort{
+        GB{"ዩናይትድ ኪንግደም"}
+        US{"US"}
+    }
+    Version{"2.0.92.87"}
 }

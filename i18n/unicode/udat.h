@@ -131,6 +131,16 @@
  *   <li>   Align any particular field, or find out where it is for selection
  *          on the screen.
  * </ul>
+ * <p><strong>Date and Time Patterns:</strong></p>
+ *
+ * <p>Date and time formats are specified by <em>date and time pattern</em> strings.
+ * Within date and time pattern strings, all unquoted ASCII letters [A-Za-z] are reserved
+ * as pattern letters representing calendar fields. <code>UDateFormat</code> supports
+ * the date and time formatting algorithm and pattern letters defined by
+ * <a href="http://www.unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table">UTS#35
+ * Unicode Locale Data Markup Language (LDML)</a> and further documented for ICU in the
+ * <a href="https://sites.google.com/site/icuprojectuserguide/formatparse/datetime?pli=1#TOC-Date-Field-Symbol-Table">ICU
+ * User Guide</a>.</p>
  */
 
 /** A date formatter.
@@ -169,20 +179,18 @@ typedef enum UDateFormatStyle {
     /** No style */
     UDAT_NONE = -1,
 
-#ifndef U_HIDE_DRAFT_API
     /**
      * Use the pattern given in the parameter to udat_open
      * @see udat_open
-     * @draft ICU 50
+     * @stable ICU 50
      */
     UDAT_PATTERN = -2,
 
     /** @internal alias to UDAT_PATTERN */
     UDAT_IGNORE = UDAT_PATTERN
-#endif  /* U_HIDE_DRAFT_API */
 } UDateFormatStyle;
 
-// Skeletons for dates.
+/* Skeletons for dates. */
 
 /**
  * Constant for date skeleton with year.
@@ -331,7 +339,7 @@ typedef enum UDateFormatStyle {
  */
 #define UDAT_NUM_MONTH_WEEKDAY_DAY      "MEd"
 
-// Skeletons for times.
+/* Skeletons for times. */
 
 /**
  * Constant for date skeleton with hour, with the locale's preferred hour format (12 or 24).
@@ -390,7 +398,7 @@ typedef enum UDateFormatStyle {
  */
 #define UDAT_MINUTE_SECOND              "ms"
 
-// Skeletons for time zones.
+/* Skeletons for time zones. */
 
 #ifndef U_HIDE_DRAFT_API
 /**
@@ -443,7 +451,7 @@ typedef enum UDateFormatStyle {
 #define UDAT_ABBR_UTC_TZ "ZZZZ"
 #endif  /* U_HIDE_DRAFT_API */
 
-// deprecated skeleton constants
+/* deprecated skeleton constants */
 
 #ifndef U_HIDE_DEPRECATED_API 
 /**
@@ -825,6 +833,61 @@ udat_open(UDateFormatStyle  timeStyle,
 */
 U_STABLE void U_EXPORT2 
 udat_close(UDateFormat* format);
+
+
+/**
+ * DateFormat boolean attributes
+ * @internal ICU technology preview
+ */
+typedef enum UDateFormatBooleanAttribute {
+    /**
+     * indicates whether whitespace is allowed. Includes trailing dot tolerance.
+     * @internal ICU technology preview
+     */
+    UDAT_PARSE_ALLOW_WHITESPACE,
+    /**
+     * indicates tolerance of numeric data when String data may be assumed. eg: UDAT_YEAR_NAME_FIELD,
+     * 		UDAT_STANDALONE_MONTH_FIELD, UDAT_DAY_OF_WEEK_FIELD
+     * @internal ICU technology preview
+     */
+    UDAT_PARSE_ALLOW_NUMERIC,
+    /**
+     * count boolean date format constants
+     * @internal ICU technology preview
+     */
+    UDAT_BOOLEAN_ATTRIBUTE_COUNT
+} UDateFormatBooleanAttribute;
+
+#ifndef U_HIDE_INTERNAL_API
+/**
+ * Get a boolean attribute associated with a UDateFormat.
+ * An example would be a true value for a key of UDAT_PARSE_ALLOW_WHITESPACE indicating allowing whitespace leniency.
+ * If the formatter does not understand the attribute, -1 is returned.
+ * @param fmt The formatter to query.
+ * @param attr The attribute to query; e.g. UDAT_PARSE_ALLOW_WHITESPACE.
+ * @param status A pointer to an UErrorCode to receive any errors
+ * @return The value of attr.
+ * @internal technology preview
+ */
+U_INTERNAL UBool U_EXPORT2
+udat_getBooleanAttribute(const UDateFormat* fmt, UDateFormatBooleanAttribute attr, UErrorCode* status);
+
+/**
+ * Set a boolean attribute associated with a UDateFormat.
+ * An example of a boolean attribute is parse leniency control.  If the formatter does not understand
+ * the attribute, the call is ignored.
+ * @param fmt The formatter to set.
+ * @param attr The attribute to set; one of UDAT_PARSE_ALLOW_WHITESPACE or UDAT_PARSE_ALLOW_NUMERIC
+ * @param newValue The new value of attr.
+ * @param status A pointer to an UErrorCode to receive any errors
+ * @internal ICU technology preview
+ */
+U_INTERNAL void U_EXPORT2
+udat_setBooleanAttribute(UDateFormat *fmt, UDateFormatBooleanAttribute attr, UBool, UErrorCode* status);
+
+#endif  /* U_HIDE_INTERNAL_API */
+
+
 
 #if U_SHOW_CPLUSPLUS_API
 
