@@ -125,11 +125,7 @@ const static int32_t results[TESTLOCALES][TOTALTESTSET] = {
 
 void addRuleBasedCollTest(TestNode** root)
 {
-    /* BEGIN android-removed
-       To save space, Android does not include the collation tailoring rules.
-       We skip the tailing tests for collations. */
-    /* addTest(root, &TestG7Locales, "tscoll/cg7coll/TestG7Locales"); */
-    /* END android-removed */
+    addTest(root, &TestG7Locales, "tscoll/cg7coll/TestG7Locales");
     addTest(root, &TestDemo1, "tscoll/cg7coll/TestDemo1");
     addTest(root, &TestDemo2, "tscoll/cg7coll/TestDemo2");
     addTest(root, &TestDemo3, "tscoll/cg7coll/TestDemo3");
@@ -149,8 +145,8 @@ static void TestG7Locales()
     {
         status = U_ZERO_ERROR;
         myCollation = ucol_open(locales[i], &status);
-        ucol_setAttribute(myCollation, UCOL_STRENGTH, UCOL_QUATERNARY, &status);
-        ucol_setAttribute(myCollation, UCOL_ALTERNATE_HANDLING, UCOL_SHIFTED, &status);
+        // android-changed(no rule strings) -- ucol_setAttribute(myCollation, UCOL_STRENGTH, UCOL_QUATERNARY, &status);
+        // android-changed(no rule strings) -- ucol_setAttribute(myCollation, UCOL_ALTERNATE_HANDLING, UCOL_SHIFTED, &status);
 
         if (U_FAILURE(status))
         {
@@ -160,8 +156,7 @@ static void TestG7Locales()
 
         defRules = ucol_getRules(myCollation, &rlen);
         status = U_ZERO_ERROR;
-        tblColl1 = ucol_openRules(defRules, rlen, UCOL_OFF,
-                   UCOL_DEFAULT_STRENGTH,NULL, &status);
+        tblColl1 = NULL;  // android-changed(no rule strings) -- ucol_openRules(defRules, rlen, UCOL_OFF, UCOL_DEFAULT_STRENGTH,NULL, &status);
         if (U_FAILURE(status))
         {
             ucol_close(myCollation);
@@ -179,7 +174,7 @@ static void TestG7Locales()
         {
             for (n = j+1; n < FIXEDTESTSET; n++)
             {
-                doTest(tblColl1, testCases[results[i][j]], testCases[results[i][n]], UCOL_LESS);
+              doTest(myCollation /* android-changed(no rule strings) -- tblColl1 */, testCases[results[i][j]], testCases[results[i][n]], UCOL_LESS);
             }
         }
 

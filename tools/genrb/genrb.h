@@ -42,6 +42,9 @@
 U_CDECL_BEGIN
 
 extern UBool gIncludeUnihanColl;
+extern UBool gIncludeBig5HanColl;
+extern UBool gIncludeGb2312HanColl;
+extern UBool gIncludeZhuyinHanColl;
 
 U_CAPI void processFile(
     const char *filename,

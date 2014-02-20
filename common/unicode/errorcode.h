@@ -37,6 +37,8 @@ U_NAMESPACE_BEGIN
  * This is not an abstract base class. This class can be used and instantiated
  * by itself, although it will be more useful when subclassed.
  *
+ * Inside Google, this class is modified to use Google error logging.
+ *
  * Features:
  * - The constructor initializes the internal UErrorCode to U_ZERO_ERROR,
  *   removing one common source of errors.
@@ -129,6 +131,7 @@ protected:
      * Throw an exception, log an error, terminate the program, or similar.
      * @stable ICU 4.2
      */
+
     virtual void handleFailure() const {}
 };
 
