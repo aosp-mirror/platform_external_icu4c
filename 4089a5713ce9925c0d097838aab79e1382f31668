@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dc0199f4_9bf48ba0",
+        "filename": "common/unicode/platform.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 342,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2014-02-25T13:07:21Z",
+      "side": 1,
+      "message": "As per our email discussion, weren\u0027t you planning on removing this ?\n\nI patched in your changes to test, and I was surprised that it compiled without applying your changes to external/sqlite.",
+      "revId": "4089a5713ce9925c0d097838aab79e1382f31668",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
