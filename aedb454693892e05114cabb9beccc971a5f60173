@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dce519f4_e454703e",
+        "filename": "data/locales/ar.txt",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2014-03-13T14:22:51Z",
+      "side": 1,
+      "message": "The diff here is a \\u200f which was removed.",
+      "revId": "aedb454693892e05114cabb9beccc971a5f60173",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dce519f4_04523c4f",
+        "filename": "data/locales/ar.txt",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2014-03-13T14:22:51Z",
+      "side": 1,
+      "message": "The diff here is a \\u200f which was removed.",
+      "revId": "aedb454693892e05114cabb9beccc971a5f60173",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
