@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5cb3e9f9_9a24e995",
+        "filename": "data/locales/ar.txt",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1015078
+      },
+      "writtenOn": "2014-03-13T16:53:33Z",
+      "side": 1,
+      "message": "Please add \"// android-changed\" to the end of this line so we don\u0027t lose the change next time.",
+      "parentUuid": "dce519f4_e454703e",
+      "revId": "aedb454693892e05114cabb9beccc971a5f60173",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dce519f4_04523c4f",
         "filename": "data/locales/ar.txt",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2014-03-13T14:22:51Z",
       "side": 1,
       "message": "The diff here is a \\u200f which was removed.",
+      "revId": "aedb454693892e05114cabb9beccc971a5f60173",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9cb9e1da_1afb5e93",
+        "filename": "data/locales/ar.txt",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1015078
+      },
+      "writtenOn": "2014-03-13T16:53:33Z",
+      "side": 1,
+      "message": "Please add \"// android-changed\" to the end of this line so we don\u0027t lose the change next time.",
+      "parentUuid": "dce519f4_04523c4f",
       "revId": "aedb454693892e05114cabb9beccc971a5f60173",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
