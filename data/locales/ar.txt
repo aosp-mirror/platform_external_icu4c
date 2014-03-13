@@ -40,11 +40,11 @@ ar{
                 group{"٬"}
                 infinity{"∞"}
                 list{"؛"}
-                minusSign{"‏-"}
+                minusSign{"-"}
                 nan{"ليس رقم"}
                 perMille{"؉"}
                 percentSign{"٪"}
-                plusSign{"‏+"}
+                plusSign{"+"}
                 superscriptingExponent{"×"}
             }
         }
