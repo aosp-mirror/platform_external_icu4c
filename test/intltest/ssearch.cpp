@@ -629,7 +629,7 @@ void SSearchTest::offsetTest()
     col->setAttribute(UCOL_NORMALIZATION_MODE, UCOL_ON, status);
 
     for(int32_t i = 0; i < testCount; i += 1) {
-        if (!isICUVersionAtLeast(52, 0, 1) && i>=4 && i<=6) {
+      if (i>=4 && i<=6 && logKnownIssue("9156", "was 8081")) {
             continue; // timebomb until ticket #9156 (was #8081) is resolved
         }
         UnicodeString ts = CharsToUnicodeString(test[i]);
@@ -953,6 +953,7 @@ const char *cPattern = "maketh houndes ete hem";
     //   to get runtimes of at least several seconds.
     for (i=0; i<10000; i++) {
         found = usearch_search(uss.getAlias(), 0, &icuMatchPos, &icuMatchEnd, &status);
+        (void)found;   // Suppress set but not used warning.
         //TEST_ASSERT_SUCCESS(status);
         //TEST_ASSERT(found);
 

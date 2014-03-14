@@ -45,7 +45,7 @@ public:
      * Test with the Bopomofo-phonetic tailoring.
      */
     void TestChineseZhuyin();
-    void TestJapaneseKanji();
+  void TestJapaneseKanji();  // android-added
 };
 
 #endif

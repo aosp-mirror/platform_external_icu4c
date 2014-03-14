@@ -42,7 +42,7 @@ src_files := \
 	ucnv_u8.c                             \
 	udatamem.c         \
 	udataswp.c         uenum.c            \
-	uhash.c            uinit.c            \
+	uhash.c            uinit.cpp          \
 	uinvchar.c         uloc.cpp           \
 	umapfile.c         umath.c            \
 	umutex.cpp         unames.cpp         \
@@ -93,7 +93,7 @@ src_files += \
 	uvector.cpp     uvectr32.cpp     \
 	errorcode.cpp                    \
 	bytestream.cpp  stringpiece.cpp  \
-	mutex.cpp       dtintrv.cpp      \
+	dtintrv.cpp      \
 	ucnvsel.cpp     uvectr64.cpp     \
 	locavailable.cpp         locdispnames.cpp   \
 	loclikely.cpp            locresdata.cpp     \
@@ -153,7 +153,6 @@ LOCAL_REQUIRED_MODULES += icu-data
 -include abi/cpp/use_rtti.mk
 -include external/stlport/libstlport.mk
 include $(BUILD_SHARED_LIBRARY)
-
 
 #
 # Build for the host.
