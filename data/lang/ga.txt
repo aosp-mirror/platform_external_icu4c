@@ -22,7 +22,6 @@ ga{
         ba{"Baiscíris"}
         be{"Bealarúisis"}
         bg{"Bulgáiris"}
-        bh{"Bihairis"}
         bn{"Beangáilis"}
         bo{"Tibéadais"}
         br{"Briotáinis"}
@@ -91,7 +90,6 @@ ga{
         mk{"Macadóinis"}
         ml{"Mailéalaimis"}
         mn{"Mongóilis"}
-        mo{"Moldáivis"}
         mr{"Maraitis"}
         ms{"Malaeis"}
         mt{"Maltais"}
@@ -114,6 +112,7 @@ ga{
         pt_PT{"Portaingéilis Ibéireach"}
         qu{"Ceatsuais"}
         ro{"Rómáinis"}
+        ro_MD{"Moldáivis"}
         ru{"Rúisis"}
         sa{"Sanscrait"}
         sc{"Sairdínis"}
@@ -156,5 +155,5 @@ ga{
         zh_Hant{"Sínis Thraidisiúnta"}
         zu{"Súlúis"}
     }
-    Version{"2.0.92.87"}
+    Version{"2.0.97.91"}
 }

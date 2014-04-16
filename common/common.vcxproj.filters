@@ -103,6 +103,9 @@
     <ClCompile Include="ucol_swp.cpp">
       <Filter>collation</Filter>
     </ClCompile>
+    <ClCompile Include="lrucache.cpp">
+      <Filter>collections</Filter>
+    </ClCompile>
     <ClCompile Include="propsvec.c">
       <Filter>collections</Filter>
     </ClCompile>
@@ -241,6 +244,9 @@
     <ClCompile Include="cmemory.c">
       <Filter>data &amp; memory</Filter>
     </ClCompile>
+    <ClCompile Include="sharedobject.cpp">
+      <Filter>data &amp; memory</Filter>
+    </ClCompile>
     <ClCompile Include="ucln_cmn.c">
       <Filter>data &amp; memory</Filter>
     </ClCompile>
@@ -269,6 +275,9 @@
       <Filter>formatting</Filter>
     </ClCompile>
     <ClCompile Include="parsepos.cpp">
+      <Filter>formatting</Filter>
+    </ClCompile>
+    <ClCompile Include="simplepatternformatter.cpp">
       <Filter>formatting</Filter>
     </ClCompile>
     <ClCompile Include="ustrfmt.c">
@@ -350,9 +359,6 @@
       <Filter>normalization</Filter>
     </ClCompile>
     <ClCompile Include="unorm.cpp">
-      <Filter>normalization</Filter>
-    </ClCompile>
-    <ClCompile Include="unorm_it.c">
       <Filter>normalization</Filter>
     </ClCompile>
     <ClCompile Include="unormcmp.cpp">
@@ -609,6 +615,9 @@
     <ClInclude Include="hash.h">
       <Filter>collections</Filter>
     </ClInclude>
+    <ClInclude Include="lrucache.h">
+      <Filter>collections</Filter>
+    </ClInclude>
     <ClInclude Include="propsvec.h">
       <Filter>collections</Filter>
     </ClInclude>
@@ -696,6 +705,12 @@
     <ClInclude Include="cmemory.h">
       <Filter>data &amp; memory</Filter>
     </ClInclude>
+    <ClInclude Include="sharedobject.h">
+      <Filter>data &amp; memory</Filter>
+    </ClInclude>
+    <ClInclude Include="sharedptr.h">
+      <Filter>data &amp; memory</Filter>
+    </ClInclude>
     <ClInclude Include="ucln.h">
       <Filter>data &amp; memory</Filter>
     </ClInclude>
@@ -716,6 +731,9 @@
     </ClInclude>
     <ClInclude Include="umapfile.h">
       <Filter>data &amp; memory</Filter>
+    </ClInclude>
+    <ClInclude Include="simplepatternformatter.h">
+      <Filter>formatting</Filter>
     </ClInclude>
     <ClInclude Include="ustrfmt.h">
       <Filter>formatting</Filter>
@@ -745,9 +763,6 @@
       <Filter>locales &amp; resources</Filter>
     </ClInclude>
     <ClInclude Include="normalizer2impl.h">
-      <Filter>normalization</Filter>
-    </ClInclude>
-    <ClInclude Include="unorm_it.h">
       <Filter>normalization</Filter>
     </ClInclude>
     <ClInclude Include="unormimp.h">

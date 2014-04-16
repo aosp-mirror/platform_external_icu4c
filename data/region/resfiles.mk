@@ -1,6 +1,6 @@
 # *   Copyright (C) 1998-2014, International Business Machines
 # *   Corporation and others.  All Rights Reserved.
-REGION_CLDR_VERSION = 24
+REGION_CLDR_VERSION = 25
 # A list of txt's to build
 # Note:
 #
@@ -40,8 +40,9 @@ REGION_SYNTHETIC_ALIAS = az_AZ.txt az_Latn_AZ.txt bs_BA.txt bs_Latn_BA.txt\
  sr_Cyrl_RS.txt sr_Cyrl_XK.txt sr_Cyrl_YU.txt sr_Latn_CS.txt sr_Latn_YU.txt\
  sr_ME.txt sr_RS.txt sr_XK.txt sr_YU.txt th_TH.txt\
  th_TH_TRADITIONAL.txt tl.txt tl_PH.txt tzm_Latn_MA.txt tzm_MA.txt\
- uz_AF.txt uz_UZ.txt vai_LR.txt vai_Vaii_LR.txt zh_CN.txt\
- zh_HK.txt zh_Hans_CN.txt zh_MO.txt zh_SG.txt zh_TW.txt
+ ug_Arab_CN.txt ug_CN.txt uz_AF.txt uz_UZ.txt vai_LR.txt\
+ vai_Vaii_LR.txt zh_CN.txt zh_HK.txt zh_Hans_CN.txt zh_MO.txt\
+ zh_SG.txt zh_TW.txt
 
 
 # All aliases (to not be included under 'installed'), but not including root.
@@ -109,10 +110,11 @@ REGION_SOURCE = af.txt agq.txt ak.txt am.txt\
  sr_Latn_RS.txt sv.txt sv_FI.txt sw.txt swc.txt\
  ta.txt te.txt teo.txt th.txt ti.txt\
  to.txt tr.txt twq.txt tzm.txt tzm_Latn.txt\
- uk.txt ur.txt uz.txt uz_Arab.txt uz_Arab_AF.txt\
- uz_Cyrl.txt uz_Latn.txt uz_Latn_UZ.txt vai.txt vai_Latn.txt\
- vai_Latn_LR.txt vai_Vaii.txt vi.txt vun.txt xog.txt\
- yav.txt yo.txt yo_BJ.txt zgh.txt zh.txt\
- zh_Hans.txt zh_Hans_HK.txt zh_Hans_MO.txt zh_Hans_SG.txt zh_Hant.txt\
- zh_Hant_HK.txt zh_Hant_MO.txt zh_Hant_TW.txt zu.txt
+ ug.txt ug_Arab.txt uk.txt ur.txt uz.txt\
+ uz_Arab.txt uz_Arab_AF.txt uz_Cyrl.txt uz_Latn.txt uz_Latn_UZ.txt\
+ vai.txt vai_Latn.txt vai_Latn_LR.txt vai_Vaii.txt vi.txt\
+ vun.txt xog.txt yav.txt yo.txt yo_BJ.txt\
+ zgh.txt zh.txt zh_Hans.txt zh_Hans_HK.txt zh_Hans_MO.txt\
+ zh_Hans_SG.txt zh_Hant.txt zh_Hant_HK.txt zh_Hant_MO.txt zh_Hant_TW.txt\
+ zu.txt
 

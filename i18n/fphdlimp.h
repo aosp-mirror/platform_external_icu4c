@@ -48,7 +48,7 @@ class FieldPositionOnlyHandler : public FieldPositionHandler {
 class FieldPositionIteratorHandler : public FieldPositionHandler {
   FieldPositionIterator* iter; // can be NULL
   UVector32* vec;
-  UErrorCode& status; // android-changed: http://bugs.icu-project.org/trac/ticket/10354
+  UErrorCode status;
 
   // Note, we keep a reference to status, so if status is on the stack, we have
   // to be destroyed before status goes out of scope.  Easiest thing is to

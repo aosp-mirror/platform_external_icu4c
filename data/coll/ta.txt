@@ -10,7 +10,7 @@
  * ICU <specials> source: <path>/xml/collation/ta.xml
  */
 ta{
-    Version{"2.0.89.0"}
+    Version{"2.0.96.14"}
     collations{
         standard{
             Sequence{
@@ -42,7 +42,7 @@ ta{
                 "&[before 1]ஹ<ஹ்"
                 "&[before 1]க்ஷ<க்ஷ்"
             }
-            Version{"24"}
+            Version{"25"}
         }
     }
 }

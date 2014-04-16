@@ -16,5 +16,5 @@ kkj{
             "Franc CFA",
         }
     }
-    Version{"2.0.90.61"}
+    Version{"2.0.96.25"}
 }

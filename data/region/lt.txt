@@ -306,5 +306,5 @@ lt{
         GB{"Didžioji Britanija"}
         US{"JAV"}
     }
-    Version{"2.0.93.19"}
+    Version{"2.0.98.52"}
 }

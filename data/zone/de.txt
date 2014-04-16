@@ -10,7 +10,7 @@
  * ICU <specials> source: <path>/common/main/de.xml
  */
 de{
-    Version{"2.0.92.87"}
+    Version{"2.0.98.52"}
     zoneStrings{
         "Africa:Accra"{
             ec{"Akkra"}
@@ -152,9 +152,6 @@ de{
         }
         "Antarctica:DumontDUrville"{
             ec{"Dumont D'Urville"}
-        }
-        "Antarctica:South_Pole"{
-            ec{"Südpol"}
         }
         "Antarctica:Vostok"{
             ec{"Wostok"}
@@ -771,6 +768,16 @@ de{
         }
         "meta:Mawson"{
             ls{"Mawson-Zeit"}
+        }
+        "meta:Mexico_Northwest"{
+            ld{"Mexiko Nordwestliche Zone-Sommerzeit"}
+            lg{"Mexiko Nordwestliche Zone-Zeit"}
+            ls{"Mexiko Nordwestliche Zone-Normalzeit"}
+        }
+        "meta:Mexico_Pacific"{
+            ld{"Mexiko Pazifikzone-Sommerzeit"}
+            lg{"Mexiko Pazifikzone-Zeit"}
+            ls{"Mexiko Pazifikzone-Normalzeit"}
         }
         "meta:Mongolia"{
             ld{"Ulaanbaatar-Sommerzeit"}

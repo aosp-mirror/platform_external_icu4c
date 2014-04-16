@@ -10,7 +10,7 @@
  * ICU <specials> source: <path>/common/main/gl.xml
  */
 gl{
-    Version{"2.0.92.87"}
+    Version{"2.0.98.76"}
     zoneStrings{
         "Africa:Accra"{
             ec{"Acra"}
@@ -245,9 +245,6 @@ gl{
         }
         "Antarctica:DumontDUrville"{
             ec{"Dumont-d'Urville"}
-        }
-        "Antarctica:South_Pole"{
-            ec{"Polo Sur"}
         }
         "Asia:Aden"{
             ec{"Adén"}
@@ -661,16 +658,25 @@ gl{
             ld{"Horario de verán de Europa Central"}
             lg{"Horario de Europa Central"}
             ls{"Horario estándar de Europa Central"}
+            sd{"CEST"}
+            sg{"CET"}
+            ss{"CET"}
         }
         "meta:Europe_Eastern"{
             ld{"Horario de verán de Europa Oriental"}
             lg{"Horario de Europa Oriental"}
             ls{"Horario estándar de Europa Oriental"}
+            sd{"EEST"}
+            sg{"EET"}
+            ss{"EET"}
         }
         "meta:Europe_Western"{
             ld{"Horario de verán de Europa Occidental"}
             lg{"Horario de Europa Occidental"}
             ls{"Horario estándar de Europa Occidental"}
+            sd{"WEST"}
+            sg{"WET"}
+            ss{"WET"}
         }
         "meta:Falkland"{
             ld{"Horario de verán das Illas Malvinas"}
@@ -690,6 +696,7 @@ gl{
         }
         "meta:GMT"{
             ls{"Horario do meridiano de Greenwich"}
+            ss{"GMT"}
         }
         "meta:Galapagos"{
             ls{"Horario das Galápagos"}

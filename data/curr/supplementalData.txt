@@ -4701,6 +4701,10 @@ supplementalData:table(nofallback){
             {
                 id{"XFU"}
                 tender{"false"}
+                to:intvector{
+                    322,
+                    -1418436609,
+                }
             }
             {
                 id{"XPD"}
@@ -4811,6 +4815,12 @@ supplementalData:table(nofallback){
         }
         CRC:intvector{
             0,
+            0,
+            0,
+            0,
+        }
+        CZK:intvector{
+            2,
             0,
             0,
             0,
@@ -5062,6 +5072,12 @@ supplementalData:table(nofallback){
             0,
         }
         UGX:intvector{
+            0,
+            0,
+            0,
+            0,
+        }
+        UYI:intvector{
             0,
             0,
             0,

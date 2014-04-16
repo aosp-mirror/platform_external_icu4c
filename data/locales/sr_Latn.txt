@@ -183,7 +183,7 @@ sr_Latn{
             }
         }
     }
-    Version{"2.0.92.87"}
+    Version{"2.0.98.62"}
     calendar{
         buddhist{
             eras{
@@ -265,7 +265,6 @@ sr_Latn{
                 MMMEd{"E d. MMM"}
                 MMMMEd{"E d. MMMM"}
                 MMMMd{"d. MMMM"}
-                MMMMdd{"dd. MMMM"}
                 MMMd{"d. MMM"}
                 MMMdd{"dd.MMM"}
                 MMdd{"MM-dd"}
@@ -277,14 +276,14 @@ sr_Latn{
                 ms{"mm.ss"}
                 y{"y. G"}
                 yyyy{"y. G"}
-                yyyyM{"M. y. G"}
+                yyyyM{"M.y. G"}
                 yyyyMEd{"E, d.M.y. G"}
-                yyyyMM{"MM.y G"}
+                yyyyMM{"MM.y. G"}
                 yyyyMMM{"MMM y. G"}
                 yyyyMMMEd{"E, d. MMM y. G"}
                 yyyyMMMM{"MMMM y. G"}
                 yyyyMMMd{"d. MMM y. G"}
-                yyyyMMdd{"dd.MM.y G"}
+                yyyyMMdd{"dd.MM.y. G"}
                 yyyyMd{"d.M.y. G"}
                 yyyyQQQ{"QQQ, y. G"}
                 yyyyQQQQ{"QQQQ y. G"}
@@ -427,7 +426,6 @@ sr_Latn{
                 MMMEd{"E d. MMM"}
                 MMMMEd{"E d. MMMM"}
                 MMMMd{"d. MMMM"}
-                MMMMdd{"dd. MMMM"}
                 MMMd{"d. MMM"}
                 MMMdd{"dd.MMM"}
                 MMdd{"MM-dd"}
@@ -438,15 +436,15 @@ sr_Latn{
                 hms{"hh.mm.ss a"}
                 ms{"mm.ss"}
                 y{"y."}
-                yM{"y-M"}
-                yMEd{"E, d. M. y."}
-                yMM{"MM.y"}
+                yM{"M.y."}
+                yMEd{"E, d.M.y."}
+                yMM{"MM.y."}
                 yMMM{"MMM y."}
                 yMMMEd{"E, d. MMM y."}
                 yMMMM{"MMMM y."}
                 yMMMd{"d. MMM y."}
-                yMMdd{"dd.MM.y"}
-                yMd{"d. M. y."}
+                yMMdd{"dd.MM.y."}
+                yMd{"d.M.y."}
                 yQQQ{"QQQ. y"}
                 yQQQQ{"QQQQ. y"}
             }
@@ -1615,9 +1613,9 @@ sr_Latn{
                 other{"{0} kubnih kilometara"}
             }
             cubic-mile{
-                few{"{0} kubna metra"}
-                one{"{0} kubni metar"}
-                other{"{0} kubnih metara"}
+                few{"{0} kubne milje"}
+                one{"{0} kubni milja"}
+                other{"{0} kubnih milja"}
             }
             liter{
                 few{"{0} litra"}

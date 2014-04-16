@@ -10,7 +10,7 @@
  * ICU <specials> source: <path>/common/main/es.xml
  */
 es{
-    Version{"2.0.92.87"}
+    Version{"2.0.98.52"}
     zoneStrings{
         "Africa:Abidjan"{
             ec{"Abiyán"}
@@ -248,9 +248,6 @@ es{
         }
         "Antarctica:DumontDUrville"{
             ec{"Dumont d'Urville"}
-        }
-        "Antarctica:South_Pole"{
-            ec{"Polo Sur"}
         }
         "Asia:Aden"{
             ec{"Adén"}
@@ -762,16 +759,25 @@ es{
             ld{"Hora de verano de Europa central"}
             lg{"Hora de Europa central"}
             ls{"Hora estándar de Europa central"}
+            sd{"CEST"}
+            sg{"CET"}
+            ss{"CET"}
         }
         "meta:Europe_Eastern"{
             ld{"Hora de verano de Europa oriental"}
             lg{"Hora de Europa oriental"}
             ls{"Hora estándar de Europa oriental"}
+            sd{"EEST"}
+            sg{"EET"}
+            ss{"EET"}
         }
         "meta:Europe_Western"{
             ld{"Hora de verano de Europa occidental"}
             lg{"Hora de Europa occidental"}
             ls{"Hora estándar de Europa occidental"}
+            sd{"WEST"}
+            sg{"WET"}
+            ss{"WET"}
         }
         "meta:Falkland"{
             ld{"Hora de verano de las islas Malvinas"}
@@ -791,6 +797,7 @@ es{
         }
         "meta:GMT"{
             ls{"Hora del meridiano de Greenwich"}
+            ss{"GMT"}
         }
         "meta:Galapagos"{
             ls{"Hora de Galápagos"}
@@ -948,6 +955,16 @@ es{
         }
         "meta:Mawson"{
             ls{"Hora de Mawson"}
+        }
+        "meta:Mexico_Northwest"{
+            ld{"Hora de verano del noroeste de México"}
+            lg{"Hora del noroeste de México"}
+            ls{"Hora estándar del noroeste de México"}
+        }
+        "meta:Mexico_Pacific"{
+            ld{"Hora de verano del Pacífico de México"}
+            lg{"Hora del Pacífico de México"}
+            ls{"Hora estándar del Pacífico de México"}
         }
         "meta:Mongolia"{
             ld{"Hora de verano de Ulán Bator"}

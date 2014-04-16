@@ -22,7 +22,7 @@ ga{
             }
         }
     }
-    Version{"2.0.92.87"}
+    Version{"2.0.97.91"}
     calendar{
         generic{
             DateTimePatterns{
@@ -39,6 +39,24 @@ ga{
                 "{1} {0}",
                 "{1} {0}",
                 "{1} {0}",
+            }
+            availableFormats{
+                Ed{"E d"}
+                Gy{"y G"}
+                GyMMM{"MMM y G"}
+                GyMMMEd{"E d MMM y G"}
+                GyMMMd{"d MMM y G"}
+                M{"LL"}
+                MEd{"E dd/MM"}
+                MMMEd{"E d MMM"}
+                MMMd{"d MMM"}
+                Md{"dd/MM"}
+                yyyyM{"MM/y GGGGG"}
+                yyyyMEd{"E dd/MM/y GGGGG"}
+                yyyyMMM{"MMM y G"}
+                yyyyMMMEd{"E d MMM y G"}
+                yyyyMMMd{"d MMM y G"}
+                yyyyMd{"dd/MM/y GGGGG"}
             }
         }
         gregorian{
@@ -60,6 +78,24 @@ ga{
                 "{1} {0}",
                 "{1} {0}",
                 "{1} {0}",
+            }
+            availableFormats{
+                Ed{"E d"}
+                Gy{"y G"}
+                GyMMM{"MMM y G"}
+                GyMMMEd{"E d MMM y G"}
+                GyMMMd{"d MMM y G"}
+                M{"LL"}
+                MEd{"E dd/MM"}
+                MMMEd{"E d MMM"}
+                MMMd{"d MMM"}
+                Md{"dd/MM"}
+                yM{"MM/y"}
+                yMEd{"E dd/MM/y"}
+                yMMM{"MMM y"}
+                yMMMEd{"E d MMM y"}
+                yMMMd{"d MMM y"}
+                yMd{"dd/MM/y"}
             }
             dayNames{
                 format{

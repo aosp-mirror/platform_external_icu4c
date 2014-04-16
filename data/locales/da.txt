@@ -157,7 +157,7 @@ da{
             }
         }
     }
-    Version{"2.0.92.87"}
+    Version{"2.0.98.52"}
     calendar{
         buddhist{
             eras{
@@ -330,6 +330,8 @@ da{
                 "{1} {0}",
                 "{1} {0}",
             }
+            NoonMarker{"middag"}
+            NoonMarkerNarrow{"middag"}
             appendItems{
                 Timezone{"{0} {1}"}
             }

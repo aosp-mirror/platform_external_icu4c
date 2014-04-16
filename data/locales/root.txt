@@ -120,6 +120,7 @@ root{
                 range{"{0}–{1}"}
             }
             patterns{
+                accountingFormat:alias{"/LOCALE/NumberElements/latn/patterns/currencyFormat"}
                 currencyFormat{"¤ #,##0.00"}
                 decimalFormat{"#,##0.###"}
                 percentFormat{"#,##0%"}
@@ -181,11 +182,14 @@ root{
         }
         native{"latn"}
     }
-    Version{"2.0.93.8"}
+    Version{"2.0.97.37"}
     calendar{
         buddhist{
             AmPmMarkers:alias{"/LOCALE/calendar/gregorian/AmPmMarkers"}
+            AmPmMarkersNarrow:alias{"/LOCALE/calendar/gregorian/AmPmMarkersNarrow"}
             DateTimePatterns:alias{"/LOCALE/calendar/generic/DateTimePatterns"}
+            NoonMarker:alias{"/LOCALE/calendar/gregorian/NoonMarker"}
+            NoonMarkerNarrow:alias{"/LOCALE/calendar/gregorian/NoonMarkerNarrow"}
             appendItems:alias{"/LOCALE/calendar/generic/appendItems"}
             availableFormats:alias{"/LOCALE/calendar/generic/availableFormats"}
             dayNames:alias{"/LOCALE/calendar/gregorian/dayNames"}
@@ -202,6 +206,7 @@ root{
         }
         chinese{
             AmPmMarkers:alias{"/LOCALE/calendar/gregorian/AmPmMarkers"}
+            AmPmMarkersNarrow:alias{"/LOCALE/calendar/gregorian/AmPmMarkersNarrow"}
             DateTimePatterns{
                 "HH:mm:ss zzzz",
                 "HH:mm:ss z",
@@ -217,6 +222,8 @@ root{
                 "{1} {0}",
                 "{1} {0}",
             }
+            NoonMarker:alias{"/LOCALE/calendar/gregorian/NoonMarker"}
+            NoonMarkerNarrow:alias{"/LOCALE/calendar/gregorian/NoonMarkerNarrow"}
             appendItems{
                 Day{"{0} ({2}: {1})"}
                 Day-Of-Week{"{0} {1}"}
@@ -355,6 +362,7 @@ root{
                 }
                 zodiacs{
                     format{
+                        abbreviated:alias{"/LOCALE/calendar/chinese/cyclicNameSets/dayParts/format/abbreviated"}
                         narrow:alias{"/LOCALE/calendar/chinese/cyclicNameSets/zodiacs/format/abbreviated"}
                         wide:alias{"/LOCALE/calendar/chinese/cyclicNameSets/zodiacs/format/abbreviated"}
                     }
@@ -519,7 +527,10 @@ root{
         }
         coptic{
             AmPmMarkers:alias{"/LOCALE/calendar/gregorian/AmPmMarkers"}
+            AmPmMarkersNarrow:alias{"/LOCALE/calendar/gregorian/AmPmMarkersNarrow"}
             DateTimePatterns:alias{"/LOCALE/calendar/generic/DateTimePatterns"}
+            NoonMarker:alias{"/LOCALE/calendar/gregorian/NoonMarker"}
+            NoonMarkerNarrow:alias{"/LOCALE/calendar/gregorian/NoonMarkerNarrow"}
             appendItems:alias{"/LOCALE/calendar/generic/appendItems"}
             availableFormats:alias{"/LOCALE/calendar/generic/availableFormats"}
             dayNames:alias{"/LOCALE/calendar/gregorian/dayNames"}
@@ -576,7 +587,10 @@ root{
         }
         dangi{
             AmPmMarkers:alias{"/LOCALE/calendar/chinese/AmPmMarkers"}
+            AmPmMarkersNarrow:alias{"/LOCALE/calendar/chinese/AmPmMarkersNarrow"}
             DateTimePatterns:alias{"/LOCALE/calendar/chinese/DateTimePatterns"}
+            NoonMarker:alias{"/LOCALE/calendar/chinese/NoonMarker"}
+            NoonMarkerNarrow:alias{"/LOCALE/calendar/chinese/NoonMarkerNarrow"}
             appendItems:alias{"/LOCALE/calendar/chinese/appendItems"}
             availableFormats:alias{"/LOCALE/calendar/chinese/availableFormats"}
             cyclicNameSets:alias{"/LOCALE/calendar/chinese/cyclicNameSets"}
@@ -589,7 +603,10 @@ root{
         default{"gregorian"}
         ethiopic{
             AmPmMarkers:alias{"/LOCALE/calendar/gregorian/AmPmMarkers"}
+            AmPmMarkersNarrow:alias{"/LOCALE/calendar/gregorian/AmPmMarkersNarrow"}
             DateTimePatterns:alias{"/LOCALE/calendar/generic/DateTimePatterns"}
+            NoonMarker:alias{"/LOCALE/calendar/gregorian/NoonMarker"}
+            NoonMarkerNarrow:alias{"/LOCALE/calendar/gregorian/NoonMarkerNarrow"}
             appendItems:alias{"/LOCALE/calendar/generic/appendItems"}
             availableFormats:alias{"/LOCALE/calendar/generic/availableFormats"}
             dayNames:alias{"/LOCALE/calendar/gregorian/dayNames"}
@@ -646,7 +663,10 @@ root{
         }
         ethiopic-amete-alem{
             AmPmMarkers:alias{"/LOCALE/calendar/ethiopic/AmPmMarkers"}
+            AmPmMarkersNarrow:alias{"/LOCALE/calendar/ethiopic/AmPmMarkersNarrow"}
             DateTimePatterns:alias{"/LOCALE/calendar/ethiopic/DateTimePatterns"}
+            NoonMarker:alias{"/LOCALE/calendar/ethiopic/NoonMarker"}
+            NoonMarkerNarrow:alias{"/LOCALE/calendar/ethiopic/NoonMarkerNarrow"}
             appendItems:alias{"/LOCALE/calendar/ethiopic/appendItems"}
             availableFormats:alias{"/LOCALE/calendar/ethiopic/availableFormats"}
             dayNames:alias{"/LOCALE/calendar/ethiopic/dayNames"}
@@ -663,6 +683,7 @@ root{
         }
         generic{
             AmPmMarkers:alias{"/LOCALE/calendar/gregorian/AmPmMarkers"}
+            AmPmMarkersNarrow:alias{"/LOCALE/calendar/gregorian/AmPmMarkersNarrow"}
             DateTimePatterns{
                 "HH:mm:ss zzzz",
                 "HH:mm:ss z",
@@ -678,6 +699,8 @@ root{
                 "{1} {0}",
                 "{1} {0}",
             }
+            NoonMarker:alias{"/LOCALE/calendar/gregorian/NoonMarker"}
+            NoonMarkerNarrow:alias{"/LOCALE/calendar/gregorian/NoonMarkerNarrow"}
             appendItems{
                 Day{"{0} ({2}: {1})"}
                 Day-Of-Week{"{0} {1}"}
@@ -875,6 +898,10 @@ root{
                 "AM",
                 "PM",
             }
+            AmPmMarkersNarrow{
+                "a",
+                "p",
+            }
             DateTimePatterns{
                 "HH:mm:ss zzzz",
                 "HH:mm:ss z",
@@ -890,6 +917,8 @@ root{
                 "{1} {0}",
                 "{1} {0}",
             }
+            NoonMarker{"noon"}
+            NoonMarkerNarrow{"n"}
             appendItems{
                 Day{"{0} ({2}: {1})"}
                 Day-Of-Week{"{0} {1}"}
@@ -1133,7 +1162,10 @@ root{
         }
         hebrew{
             AmPmMarkers:alias{"/LOCALE/calendar/gregorian/AmPmMarkers"}
+            AmPmMarkersNarrow:alias{"/LOCALE/calendar/gregorian/AmPmMarkersNarrow"}
             DateTimePatterns:alias{"/LOCALE/calendar/generic/DateTimePatterns"}
+            NoonMarker:alias{"/LOCALE/calendar/gregorian/NoonMarker"}
+            NoonMarkerNarrow:alias{"/LOCALE/calendar/gregorian/NoonMarkerNarrow"}
             appendItems:alias{"/LOCALE/calendar/generic/appendItems"}
             availableFormats:alias{"/LOCALE/calendar/generic/availableFormats"}
             dayNames:alias{"/LOCALE/calendar/gregorian/dayNames"}
@@ -1191,13 +1223,16 @@ root{
         }
         indian{
             AmPmMarkers:alias{"/LOCALE/calendar/gregorian/AmPmMarkers"}
+            AmPmMarkersNarrow:alias{"/LOCALE/calendar/gregorian/AmPmMarkersNarrow"}
             DateTimePatterns:alias{"/LOCALE/calendar/generic/DateTimePatterns"}
+            NoonMarker:alias{"/LOCALE/calendar/gregorian/NoonMarker"}
+            NoonMarkerNarrow:alias{"/LOCALE/calendar/gregorian/NoonMarkerNarrow"}
             appendItems:alias{"/LOCALE/calendar/generic/appendItems"}
             availableFormats:alias{"/LOCALE/calendar/generic/availableFormats"}
             dayNames:alias{"/LOCALE/calendar/gregorian/dayNames"}
             eras{
                 abbreviated{
-                    "SAKA",
+                    "Saka",
                 }
                 narrow:alias{"/LOCALE/calendar/indian/eras/abbreviated"}
                 wide:alias{"/LOCALE/calendar/indian/eras/abbreviated"}
@@ -1245,7 +1280,10 @@ root{
         }
         islamic{
             AmPmMarkers:alias{"/LOCALE/calendar/gregorian/AmPmMarkers"}
+            AmPmMarkersNarrow:alias{"/LOCALE/calendar/gregorian/AmPmMarkersNarrow"}
             DateTimePatterns:alias{"/LOCALE/calendar/generic/DateTimePatterns"}
+            NoonMarker:alias{"/LOCALE/calendar/gregorian/NoonMarker"}
+            NoonMarkerNarrow:alias{"/LOCALE/calendar/gregorian/NoonMarkerNarrow"}
             appendItems:alias{"/LOCALE/calendar/generic/appendItems"}
             availableFormats:alias{"/LOCALE/calendar/generic/availableFormats"}
             dayNames:alias{"/LOCALE/calendar/gregorian/dayNames"}
@@ -1312,7 +1350,10 @@ root{
         }
         islamic-civil{
             AmPmMarkers:alias{"/LOCALE/calendar/islamic/AmPmMarkers"}
+            AmPmMarkersNarrow:alias{"/LOCALE/calendar/islamic/AmPmMarkersNarrow"}
             DateTimePatterns:alias{"/LOCALE/calendar/islamic/DateTimePatterns"}
+            NoonMarker:alias{"/LOCALE/calendar/islamic/NoonMarker"}
+            NoonMarkerNarrow:alias{"/LOCALE/calendar/islamic/NoonMarkerNarrow"}
             appendItems:alias{"/LOCALE/calendar/islamic/appendItems"}
             availableFormats:alias{"/LOCALE/calendar/islamic/availableFormats"}
             dayNames:alias{"/LOCALE/calendar/islamic/dayNames"}
@@ -1323,7 +1364,10 @@ root{
         }
         islamic-rgsa{
             AmPmMarkers:alias{"/LOCALE/calendar/islamic/AmPmMarkers"}
+            AmPmMarkersNarrow:alias{"/LOCALE/calendar/islamic/AmPmMarkersNarrow"}
             DateTimePatterns:alias{"/LOCALE/calendar/islamic/DateTimePatterns"}
+            NoonMarker:alias{"/LOCALE/calendar/islamic/NoonMarker"}
+            NoonMarkerNarrow:alias{"/LOCALE/calendar/islamic/NoonMarkerNarrow"}
             appendItems:alias{"/LOCALE/calendar/islamic/appendItems"}
             availableFormats:alias{"/LOCALE/calendar/islamic/availableFormats"}
             dayNames:alias{"/LOCALE/calendar/islamic/dayNames"}
@@ -1334,7 +1378,10 @@ root{
         }
         islamic-tbla{
             AmPmMarkers:alias{"/LOCALE/calendar/islamic/AmPmMarkers"}
+            AmPmMarkersNarrow:alias{"/LOCALE/calendar/islamic/AmPmMarkersNarrow"}
             DateTimePatterns:alias{"/LOCALE/calendar/islamic/DateTimePatterns"}
+            NoonMarker:alias{"/LOCALE/calendar/islamic/NoonMarker"}
+            NoonMarkerNarrow:alias{"/LOCALE/calendar/islamic/NoonMarkerNarrow"}
             appendItems:alias{"/LOCALE/calendar/islamic/appendItems"}
             availableFormats:alias{"/LOCALE/calendar/islamic/availableFormats"}
             dayNames:alias{"/LOCALE/calendar/islamic/dayNames"}
@@ -1345,7 +1392,10 @@ root{
         }
         islamic-umalqura{
             AmPmMarkers:alias{"/LOCALE/calendar/islamic/AmPmMarkers"}
+            AmPmMarkersNarrow:alias{"/LOCALE/calendar/islamic/AmPmMarkersNarrow"}
             DateTimePatterns:alias{"/LOCALE/calendar/islamic/DateTimePatterns"}
+            NoonMarker:alias{"/LOCALE/calendar/islamic/NoonMarker"}
+            NoonMarkerNarrow:alias{"/LOCALE/calendar/islamic/NoonMarkerNarrow"}
             appendItems:alias{"/LOCALE/calendar/islamic/appendItems"}
             availableFormats:alias{"/LOCALE/calendar/islamic/availableFormats"}
             dayNames:alias{"/LOCALE/calendar/islamic/dayNames"}
@@ -1356,7 +1406,10 @@ root{
         }
         japanese{
             AmPmMarkers:alias{"/LOCALE/calendar/gregorian/AmPmMarkers"}
+            AmPmMarkersNarrow:alias{"/LOCALE/calendar/gregorian/AmPmMarkersNarrow"}
             DateTimePatterns:alias{"/LOCALE/calendar/generic/DateTimePatterns"}
+            NoonMarker:alias{"/LOCALE/calendar/gregorian/NoonMarker"}
+            NoonMarkerNarrow:alias{"/LOCALE/calendar/gregorian/NoonMarkerNarrow"}
             appendItems:alias{"/LOCALE/calendar/generic/appendItems"}
             availableFormats:alias{"/LOCALE/calendar/generic/availableFormats"}
             dayNames:alias{"/LOCALE/calendar/gregorian/dayNames"}
@@ -1845,7 +1898,10 @@ root{
         }
         persian{
             AmPmMarkers:alias{"/LOCALE/calendar/gregorian/AmPmMarkers"}
+            AmPmMarkersNarrow:alias{"/LOCALE/calendar/gregorian/AmPmMarkersNarrow"}
             DateTimePatterns:alias{"/LOCALE/calendar/generic/DateTimePatterns"}
+            NoonMarker:alias{"/LOCALE/calendar/gregorian/NoonMarker"}
+            NoonMarkerNarrow:alias{"/LOCALE/calendar/gregorian/NoonMarkerNarrow"}
             appendItems:alias{"/LOCALE/calendar/generic/appendItems"}
             availableFormats:alias{"/LOCALE/calendar/generic/availableFormats"}
             dayNames:alias{"/LOCALE/calendar/gregorian/dayNames"}
@@ -1899,7 +1955,10 @@ root{
         }
         roc{
             AmPmMarkers:alias{"/LOCALE/calendar/gregorian/AmPmMarkers"}
+            AmPmMarkersNarrow:alias{"/LOCALE/calendar/gregorian/AmPmMarkersNarrow"}
             DateTimePatterns:alias{"/LOCALE/calendar/generic/DateTimePatterns"}
+            NoonMarker:alias{"/LOCALE/calendar/gregorian/NoonMarker"}
+            NoonMarkerNarrow:alias{"/LOCALE/calendar/gregorian/NoonMarkerNarrow"}
             appendItems:alias{"/LOCALE/calendar/generic/appendItems"}
             availableFormats:alias{"/LOCALE/calendar/generic/availableFormats"}
             dayNames:alias{"/LOCALE/calendar/gregorian/dayNames"}

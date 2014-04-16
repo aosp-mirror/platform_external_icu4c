@@ -166,7 +166,7 @@ am{
         native{"latn"}
         traditional{"ethi"}
     }
-    Version{"2.0.92.87"}
+    Version{"2.0.98.76"}
     calendar{
         ethiopic{
             monthNames{
@@ -326,18 +326,18 @@ am{
             }
             intervalFormats{
                 H{
-                    H{"hh–hh a"}
+                    H{"HH–HH"}
                 }
                 Hm{
-                    H{"hh:mm–hh:mm a"}
-                    m{"hh:mm–hh:mm a"}
+                    H{"HH:mm–HH:mm"}
+                    m{"HH:mm–HH:mm"}
                 }
                 Hmv{
-                    H{"hh:mm–hh:mm a v"}
-                    m{"hh:mm–hh:mm a v"}
+                    H{"HH:mm–HH:mm v"}
+                    m{"HH:mm–HH:mm v"}
                 }
                 Hv{
-                    H{"hh–hh a v"}
+                    H{"HH–HH v"}
                 }
                 M{
                     M{"M–M"}
@@ -570,18 +570,18 @@ am{
             }
             intervalFormats{
                 H{
-                    H{"hh–hh a"}
+                    H{"HH–HH"}
                 }
                 Hm{
-                    H{"hh:mm–hh:mm a"}
-                    m{"hh:mm–hh:mm a"}
+                    H{"HH:mm–HH:mm"}
+                    m{"HH:mm–HH:mm"}
                 }
                 Hmv{
-                    H{"hh:mm–hh:mm a v"}
-                    m{"hh:mm–hh:mm a v"}
+                    H{"HH:mm–HH:mm v"}
+                    m{"HH:mm–HH:mm v"}
                 }
                 Hv{
-                    H{"hh–hh a v"}
+                    H{"HH–HH v"}
                 }
                 M{
                     M{"M–M"}
@@ -1029,8 +1029,8 @@ am{
                 other{"{0} ሰከንድ"}
             }
             degree{
-                one{"{0}°ዲግሪ"}
-                other{"{0}°ዲግሪ"}
+                one{"{0} ዲግሪ"}
+                other{"{0} ዲግሪ"}
             }
         }
         area{
@@ -1204,8 +1204,8 @@ am{
                 other{"{0} ዲግሪ ሴልሺየስ"}
             }
             fahrenheit{
-                one{"{0}°ዲግሪ ፋራንሃይት"}
-                other{"{0}°ዲግሪ ፋራንሃይት"}
+                one{"{0} ዲግሪ ፋራንሃይት"}
+                other{"{0} ዲግሪ ፋራንሃይት"}
             }
         }
         volume{
@@ -1214,8 +1214,8 @@ am{
                 other{"{0} ኩቢክ ኪሎሜትር"}
             }
             cubic-mile{
-                one{"{0} ኩቢክ ማይል³"}
-                other{"{0} ኩቢክ ማይል³"}
+                one{"{0} ኩቢክ ማይል"}
+                other{"{0} ኩቢክ ማይል"}
             }
             liter{
                 one{"{0} ሊትር"}
@@ -1411,8 +1411,8 @@ am{
         }
         temperature{
             celsius{
-                one{"{0}°ሴ"}
-                other{"{0}°ሴ"}
+                one{"{0}°"}
+                other{"{0}°"}
             }
             fahrenheit{
                 one{"{0}°ፋ"}

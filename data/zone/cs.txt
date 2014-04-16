@@ -10,7 +10,7 @@
  * ICU <specials> source: <path>/common/main/cs.xml
  */
 cs{
-    Version{"2.0.92.98"}
+    Version{"2.0.98.52"}
     zoneStrings{
         "Africa:Abidjan"{
             ec{"Abidžan"}
@@ -126,9 +126,6 @@ cs{
         "America:Mexico_City"{
             ec{"México"}
         }
-        "America:Montreal"{
-            ec{"Montréal"}
-        }
         "America:North_Dakota:Beulah"{
             ec{"Beulah, Severní Dakota"}
         }
@@ -167,9 +164,6 @@ cs{
         }
         "Antarctica:DumontDUrville"{
             ec{"Dumont d’Urville"}
-        }
-        "Antarctica:South_Pole"{
-            ec{"Jižní pól"}
         }
         "Asia:Amman"{
             ec{"Ammán"}
@@ -718,6 +712,9 @@ cs{
             ld{"Středoevropský letní čas"}
             lg{"Středoevropský čas"}
             ls{"Středoevropský standardní čas"}
+            sd{"SELČ"}
+            sg{"SEČ"}
+            ss{"SEČ"}
         }
         "meta:Europe_Eastern"{
             ld{"Východoevropský letní čas"}

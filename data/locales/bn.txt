@@ -46,7 +46,7 @@ bn{
             }
             patterns{
                 accountingFormat{"#,##,##0.00¤;(#,##,##0.00¤)"}
-                currencyFormat{"#,##,##0.00¤;(#,##,##0.00¤)"}
+                currencyFormat{"#,##,##0.00¤"}
                 decimalFormat{"#,##,##0.###"}
                 percentFormat{"#,##,##0%"}
                 scientificFormat{"#E0"}
@@ -171,7 +171,7 @@ bn{
         }
         native{"beng"}
     }
-    Version{"2.0.92.87"}
+    Version{"2.0.99.67"}
     calendar{
         generic{
             DateTimePatterns{
@@ -1107,8 +1107,8 @@ bn{
                 other{"{0} ইঞ্চি"}
             }
             kilometer{
-                one{"{0} কিমি"}
-                other{"{0} কিমি"}
+                one{"{0} কিলোমিটার"}
+                other{"{0} কিলোমিটার"}
             }
             light-year{
                 one{"{0} আলোকবর্ষ"}
@@ -1141,8 +1141,8 @@ bn{
                 other{"{0} গ্রাম"}
             }
             kilogram{
-                one{"{0} কেজি"}
-                other{"{0} কেজি"}
+                one{"{0} কিলোগ্রাম"}
+                other{"{0} কিলোগ্রাম"}
             }
             ounce{
                 one{"{0} আউন্স"}

@@ -22,7 +22,10 @@ LOCAL_PATH:= $(call my-dir)
 src_files := \
 	cmemory.c          cstring.c          \
 	cwchar.c           locmap.c           \
+	lrucache.cpp \
 	punycode.cpp       putil.cpp          \
+	sharedobject.cpp \
+	simplepatternformatter.cpp \
 	uarrsort.c         ubidi.c            \
 	ubidiln.c          ubidi_props.c      \
 	ubidiwrt.c         ucase.cpp          \
@@ -46,7 +49,7 @@ src_files := \
 	uinvchar.c         uloc.cpp           \
 	umapfile.c         umath.c            \
 	umutex.cpp         unames.cpp         \
-	unorm_it.c         uresbund.cpp       \
+	uresbund.cpp       \
 	ures_cnv.c         uresdata.c         \
 	usc_impl.c         uscript.c          \
 	uscript_props.cpp  \
@@ -108,7 +111,8 @@ src_files += \
 	dictionarydata.cpp \
 	ustrcase_locale.cpp unistr_titlecase_brkiter.cpp \
 	uniset_closure.cpp ucasemap_titlecase_brkiter.cpp \
-	ustr_titlecase_brkiter.cpp unistr_case_locale.cpp
+	ustr_titlecase_brkiter.cpp unistr_case_locale.cpp \
+	listformatter.cpp
 
 
 # This is the empty compiled-in icu data structure

@@ -171,8 +171,8 @@ metadata:table(nofallback){
         mlg{"mg"}
         mlt{"mt"}
         mnk{"man"}
-        mo{"ro"}
-        mol{"ro"}
+        mo{"ro_MD"}
+        mol{"ro_MD"}
         mon{"mn"}
         mri{"mi"}
         msa{"ms"}

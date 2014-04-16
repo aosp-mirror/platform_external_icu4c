@@ -10,7 +10,7 @@
  * ICU <specials> source: <path>/common/main/fr.xml
  */
 fr{
-    Version{"2.0.93.10"}
+    Version{"2.0.98.52"}
     zoneStrings{
         "Africa:Addis_Ababa"{
             ec{"Addis-Abeba"}
@@ -147,9 +147,6 @@ fr{
         "America:Mexico_City"{
             ec{"Mexico"}
         }
-        "America:Montreal"{
-            ec{"Montréal"}
-        }
         "America:North_Dakota:Beulah"{
             ec{"Beulah [Dakota du Nord]"}
         }
@@ -166,7 +163,7 @@ fr{
             ec{"Porto Rico"}
         }
         "America:Regina"{
-            ec{"Régina"}
+            ec{"Regina"}
         }
         "America:Santarem"{
             ec{"Santarém"}
@@ -206,9 +203,6 @@ fr{
         }
         "Antarctica:DumontDUrville"{
             ec{"Dumont d’Urville"}
-        }
-        "Antarctica:South_Pole"{
-            ec{"Pôle Sud"}
         }
         "Antarctica:Syowa"{
             ec{"Showa"}
@@ -872,6 +866,16 @@ fr{
         }
         "meta:Mawson"{
             ls{"heure de Mawson"}
+        }
+        "meta:Mexico_Northwest"{
+            ld{"heure avancée du Nord-Ouest du Mexique"}
+            lg{"heure du Nord-Ouest du Mexique"}
+            ls{"heure normale du Nord-Ouest du Mexique"}
+        }
+        "meta:Mexico_Pacific"{
+            ld{"heure avancée du Pacifique mexicain"}
+            lg{"heure du Pacifique mexicain"}
+            ls{"heure normale du Pacifique mexicain"}
         }
         "meta:Mongolia"{
             ld{"heure avancée d’Oulan-Bator"}

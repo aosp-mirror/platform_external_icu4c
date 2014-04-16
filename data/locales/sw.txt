@@ -156,7 +156,7 @@ sw{
             }
         }
     }
-    Version{"2.0.92.87"}
+    Version{"2.0.98.13"}
     calendar{
         generic{
             DateTimePatterns{
@@ -365,13 +365,13 @@ sw{
             dayNames{
                 format{
                     abbreviated{
-                        "J2",
-                        "J3",
-                        "J4",
-                        "J5",
-                        "Alh",
-                        "Ij",
-                        "J1",
+                        "Jumapili",
+                        "Jumatatu",
+                        "Jumanne",
+                        "Jumatano",
+                        "Alhamisi",
+                        "Ijumaa",
+                        "Jumamosi",
                     }
                     short{
                         "Jumapili",
@@ -831,16 +831,16 @@ sw{
         }
         angle{
             arc-minute{
-                one{"Dakika {0}′"}
-                other{"Dakika {0}′"}
+                one{"Dakika {0}"}
+                other{"Dakika {0}"}
             }
             arc-second{
-                one{"Sekunde {0}″"}
-                other{"Sekunde {0}″"}
+                one{"Sekunde {0}"}
+                other{"Sekunde {0}"}
             }
             degree{
-                one{"Digrii {0}°"}
-                other{"Digrii {0}°"}
+                one{"Digrii {0}"}
+                other{"Digrii {0}"}
             }
         }
         area{

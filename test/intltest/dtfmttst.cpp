@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1997-2013, International Business Machines
+ * Copyright (c) 1997-2014, International Business Machines
  * Corporation and others. All Rights Reserved.
  ********************************************************************/
 
@@ -101,6 +101,8 @@ void DateFormatTest::runIndexedTest( int32_t index, UBool exec, const char* &nam
     */
     TESTCASE_AUTO(TestDotAndAtLeniency);
     TESTCASE_AUTO(TestDateFormatLeniency);
+    TESTCASE_AUTO(TestParseMultiPatternMatch);
+
     TESTCASE_AUTO_END;
 }
 
@@ -421,7 +423,7 @@ DateFormatTest::escape(UnicodeString& s)
 /**
  * This MUST be kept in sync with DateFormatSymbols.gPatternChars.
  */
-static const char* PATTERN_CHARS = "GyMdkHmsSEDFwWahKzYeugAZvcLQqVUOXx";
+static const char* PATTERN_CHARS = "GyMdkHmsSEDFwWahKzYeugAZvcLQqVUOXxr";
 
 /**
  * A list of the names of all the fields in DateFormat.
@@ -462,6 +464,7 @@ static const char* DATEFORMAT_FIELD_NAMES[] = {
     "TIMEZONE_LOCALIZED_GMT_OFFSET_FIELD",
     "TIMEZONE_ISO_FIELD",
     "TIMEZONE_ISO_LOCAL_FIELD",
+    "RELATED_YEAR_FIELD",
 };
 
 static const int32_t DATEFORMAT_FIELD_NAMES_LENGTH =
@@ -517,22 +520,22 @@ void DateFormatTest::TestFieldPosition() {
         "", "1997", "August", "13", "", "", "34", "12", "", "Wednesday",
         "", "", "", "", "PM", "2", "", "Pacific Daylight Time", "", "",
         "", "", "", "", "", "", "", "", "", "",
-        "", "", "", "",
+        "", "", "", "", "",
 
         "", "1997", "ao\\u00FBt", "13", "", "14", "34", "12", "", "mercredi",
         "", "", "", "", "", "", "", "heure avanc\\u00e9e du Pacifique", "", "",
         "", "", "", "", "",  "", "", "", "", "",
-        "", "", "", "",
+        "", "", "", "", "",
 
         "AD", "1997", "8", "13", "14", "14", "34", "12", "5", "Wed",
         "225", "2", "33", "3", "PM", "2", "2", "PDT", "1997", "4",
         "1997", "2450674", "52452513", "-0700", "PT",  "4", "8", "3", "3", "uslax",
-        "1997", "GMT-7", "-07", "-07",
+        "1997", "GMT-7", "-07", "-07", "1997",
 
         "Anno Domini", "1997", "August", "0013", "0014", "0014", "0034", "0012", "5130", "Wednesday",
         "0225", "0002", "0033", "0003", "PM", "0002", "0002", "Pacific Daylight Time", "1997", "Wednesday",
         "1997", "2450674", "52452513", "GMT-07:00", "Pacific Time",  "Wednesday", "August", "3rd quarter", "3rd quarter", "Los Angeles Time",
-        "1997", "GMT-07:00", "-0700", "-0700",
+        "1997", "GMT-07:00", "-0700", "-0700","1997",
     };
 
     const int32_t EXPECTED_LENGTH = sizeof(EXPECTED)/sizeof(EXPECTED[0]);
@@ -3898,9 +3901,9 @@ void DateFormatTest::TestMonthPatterns()
         { "en@calendar=gregorian",    -3,                 { UnicodeString("2012-4-22"),     UnicodeString("2012-5-22"),             UnicodeString("2012-6-20") } },
         { "en@calendar=chinese",      DateFormat::kLong,  { UnicodeString("4 2, ren-chen"), UnicodeString("4bis 2, ren-chen"), UnicodeString("5 2, ren-chen") } },   // Google Patch
         { "en@calendar=chinese",      DateFormat::kShort, { UnicodeString("4/2/29"),        UnicodeString("4bis/2/29"),             UnicodeString("5/2/29") } },
-        { "zh@calendar=chinese",      DateFormat::kLong,  { CharsToUnicodeString("\\u58EC\\u8FB0\\u5E74\\u56DB\\u6708\\u4E8C\\u65E5"),
-                                                            CharsToUnicodeString("\\u58EC\\u8FB0\\u5E74\\u95F0\\u56DB\\u6708\\u4E8C\\u65E5"),
-                                                            CharsToUnicodeString("\\u58EC\\u8FB0\\u5E74\\u4E94\\u6708\\u4E8C\\u65E5") } },
+        { "zh@calendar=chinese",      DateFormat::kLong,  { CharsToUnicodeString("\\u58EC\\u8FB0\\u5E74\\u56DB\\u6708\\u521D\\u4E8C"),
+                                                            CharsToUnicodeString("\\u58EC\\u8FB0\\u5E74\\u95F0\\u56DB\\u6708\\u521D\\u4E8C"),
+                                                            CharsToUnicodeString("\\u58EC\\u8FB0\\u5E74\\u4E94\\u6708\\u521D\\u4E8C") } },
         { "zh@calendar=chinese",      DateFormat::kShort, { CharsToUnicodeString("\\u58EC\\u8FB0-4-2"),
                                                             CharsToUnicodeString("\\u58EC\\u8FB0-\\u95F04-2"),
                                                             CharsToUnicodeString("\\u58EC\\u8FB0-5-2") } },
@@ -3910,9 +3913,9 @@ void DateFormatTest::TestMonthPatterns()
         { "zh@calendar=chinese",      -4,                 { CharsToUnicodeString("\\u58EC\\u8FB0 \\u56DB\\u6708 2"),
                                                             CharsToUnicodeString("\\u58EC\\u8FB0 \\u95F0\\u56DB\\u6708 2"),
                                                             CharsToUnicodeString("\\u58EC\\u8FB0 \\u4E94\\u6708 2") } },
-        { "zh_Hant@calendar=chinese", DateFormat::kLong,  { CharsToUnicodeString("\\u58EC\\u8FB0\\u5E74\\u56DB\\u6708\\u4E8C\\u65E5"),
-                                                            CharsToUnicodeString("\\u58EC\\u8FB0\\u5E74\\u958F\\u56DB\\u6708\\u4E8C\\u65E5"),
-                                                            CharsToUnicodeString("\\u58EC\\u8FB0\\u5E74\\u4E94\\u6708\\u4E8C\\u65E5") } },
+        { "zh_Hant@calendar=chinese", DateFormat::kLong,  { CharsToUnicodeString("\\u58EC\\u8FB0\\u5E74\\u56DB\\u6708\\u521D\\u4E8C"),
+                                                            CharsToUnicodeString("\\u58EC\\u8FB0\\u5E74\\u958F\\u56DB\\u6708\\u521D\\u4E8C"),
+                                                            CharsToUnicodeString("\\u58EC\\u8FB0\\u5E74\\u4E94\\u6708\\u521D\\u4E8C") } },
         { "zh_Hant@calendar=chinese", DateFormat::kShort, { CharsToUnicodeString("\\u58EC\\u8FB0/4/2"),
                                                             CharsToUnicodeString("\\u58EC\\u8FB0/\\u958F4/2"),
                                                             CharsToUnicodeString("\\u58EC\\u8FB0/5/2") } },
@@ -4062,6 +4065,7 @@ void DateFormatTest::TestContext()
 
 // test item for a particular locale + calendar and date format
 typedef struct {
+    int32_t era;
     int32_t year;
     int32_t month;
     int32_t day;
@@ -4074,6 +4078,7 @@ typedef struct {
 typedef struct {
     const char * locale; // with calendar
     DateFormat::EStyle style;
+    UnicodeString pattern; // ignored unless style == DateFormat::kNone
     const CalAndFmtTestItem *caftItems;
 } TestNonGregoItem;
 
@@ -4081,23 +4086,62 @@ void DateFormatTest::TestNonGregoFmtParse()
 {
     // test items for he@calendar=hebrew, long date format
     const CalAndFmtTestItem cafti_he_hebrew_long[] = {
-        { 4999, 12, 29, 12, 0, CharsToUnicodeString("\\u05DB\\u05F4\\u05D8 \\u05D1\\u05D0\\u05DC\\u05D5\\u05DC \\u05D3\\u05F3\\u05EA\\u05EA\\u05E7\\u05E6\\u05F4\\u05D8") },
-        { 5100,  0,  1, 12, 0, CharsToUnicodeString("\\u05D0\\u05F3 \\u05D1\\u05EA\\u05E9\\u05E8\\u05D9 \\u05E7\\u05F3") },
-        { 5774,  5,  1, 12, 0, CharsToUnicodeString("\\u05D0\\u05F3 \\u05D1\\u05D0\\u05D3\\u05E8 \\u05D0\\u05F3 \\u05EA\\u05E9\\u05E2\\u05F4\\u05D3") },
-        { 5999, 12, 29, 12, 0, CharsToUnicodeString("\\u05DB\\u05F4\\u05D8 \\u05D1\\u05D0\\u05DC\\u05D5\\u05DC \\u05EA\\u05EA\\u05E7\\u05E6\\u05F4\\u05D8") },
-        { 6100,  0,  1, 12, 0, CharsToUnicodeString("\\u05D0\\u05F3 \\u05D1\\u05EA\\u05E9\\u05E8\\u05D9 \\u05D5\\u05F3\\u05E7\\u05F3") },
-        {    0,  0,  0,  0, 0, UnicodeString("") } // terminator
+        {  0, 4999, 12, 29, 12, 0, CharsToUnicodeString("\\u05DB\\u05F4\\u05D8 \\u05D1\\u05D0\\u05DC\\u05D5\\u05DC \\u05D3\\u05F3\\u05EA\\u05EA\\u05E7\\u05E6\\u05F4\\u05D8") },
+        {  0, 5100,  0,  1, 12, 0, CharsToUnicodeString("\\u05D0\\u05F3 \\u05D1\\u05EA\\u05E9\\u05E8\\u05D9 \\u05E7\\u05F3") },
+        {  0, 5774,  5,  1, 12, 0, CharsToUnicodeString("\\u05D0\\u05F3 \\u05D1\\u05D0\\u05D3\\u05E8 \\u05D0\\u05F3 \\u05EA\\u05E9\\u05E2\\u05F4\\u05D3") },
+        {  0, 5999, 12, 29, 12, 0, CharsToUnicodeString("\\u05DB\\u05F4\\u05D8 \\u05D1\\u05D0\\u05DC\\u05D5\\u05DC \\u05EA\\u05EA\\u05E7\\u05E6\\u05F4\\u05D8") },
+        {  0, 6100,  0,  1, 12, 0, CharsToUnicodeString("\\u05D0\\u05F3 \\u05D1\\u05EA\\u05E9\\u05E8\\u05D9 \\u05D5\\u05F3\\u05E7\\u05F3") },
+        {  0,    0,  0,  0,  0, 0, UnicodeString("") } // terminator
+    };
+    const CalAndFmtTestItem cafti_zh_chinese_custU[] = {
+        { 78,   31,  0,  1, 12, 0, CharsToUnicodeString("2014\\u7532\\u5348\\u5E74\\u6B63\\u67081") },
+        { 77,   31,  0,  1, 12, 0, CharsToUnicodeString("1954\\u7532\\u5348\\u5E74\\u6B63\\u67081") },
+        {  0,    0,  0,  0,  0, 0, UnicodeString("") } // terminator
+    };
+    const CalAndFmtTestItem cafti_zh_chinese_custNoU[] = {
+        { 78,   31,  0,  1, 12, 0, CharsToUnicodeString("2014\\u5E74\\u6B63\\u67081") },
+        { 77,   31,  0,  1, 12, 0, CharsToUnicodeString("1954\\u5E74\\u6B63\\u67081") },
+        {  0,    0,  0,  0,  0, 0, UnicodeString("") } // terminator
+    };
+    const CalAndFmtTestItem cafti_ja_japanese_custGy[] = {
+        {235,   26,  2,  5, 12, 0, CharsToUnicodeString("2014(\\u5E73\\u621026)\\u5E743\\u67085\\u65E5") },
+        {234,   60,  2,  5, 12, 0, CharsToUnicodeString("1985(\\u662D\\u548C60)\\u5E743\\u67085\\u65E5") },
+        {  0,    0,  0,  0,  0, 0, UnicodeString("") } // terminator
+    };
+    const CalAndFmtTestItem cafti_ja_japanese_custNoGy[] = {
+        {235,   26,  2,  5, 12, 0, CharsToUnicodeString("2014\\u5E743\\u67085\\u65E5") },
+        {234,   60,  2,  5, 12, 0, CharsToUnicodeString("1985\\u5E743\\u67085\\u65E5") },
+        {  0,    0,  0,  0,  0, 0, UnicodeString("") } // terminator
+    };
+    const CalAndFmtTestItem cafti_en_islamic_cust[] = {
+        {  0, 1384,  0,  1, 12, 0, UnicodeString("1 Muh. 1384 AH, 1964") },
+        {  0, 1436,  0,  1, 12, 0, UnicodeString("1 Muh. 1436 AH, 2014") },
+        {  0, 1487,  0,  1, 12, 0, UnicodeString("1 Muh. 1487 AH, 2064") },
+        {  0,    0,  0,  0,  0, 0, UnicodeString("") } // terminator
     };
     // overal test items
     const TestNonGregoItem items[] = {
-        { "he@calendar=hebrew", DateFormat::kLong, cafti_he_hebrew_long },
-        { NULL, DateFormat::kNone, NULL } // terminator
+        { "he@calendar=hebrew",   DateFormat::kLong, UnicodeString(""),                 cafti_he_hebrew_long },
+        { "zh@calendar=chinese",  DateFormat::kNone, CharsToUnicodeString("rU\\u5E74MMMd"),                cafti_zh_chinese_custU },
+        { "zh@calendar=chinese",  DateFormat::kNone, CharsToUnicodeString("r\\u5E74MMMd"),                 cafti_zh_chinese_custNoU },
+        { "ja@calendar=japanese", DateFormat::kNone, CharsToUnicodeString("r(Gy)\\u5E74M\\u6708d\\u65E5"), cafti_ja_japanese_custGy },
+        { "ja@calendar=japanese", DateFormat::kNone, CharsToUnicodeString("r\\u5E74M\\u6708d\\u65E5"),     cafti_ja_japanese_custNoGy },
+        { "en@calendar=islamic",  DateFormat::kNone, UnicodeString("d MMM y G, r"),     cafti_en_islamic_cust },
+        { NULL, DateFormat::kNone, UnicodeString(""), NULL } // terminator
     };
     const TestNonGregoItem * itemPtr;
     for (itemPtr = items; itemPtr->locale != NULL; itemPtr++) {
         Locale locale = Locale::createFromName(itemPtr->locale);
-        DateFormat * dfmt = DateFormat::createDateInstance(itemPtr->style, locale);
-        if (dfmt == NULL) {
+        DateFormat * dfmt = NULL;
+        UErrorCode status = U_ZERO_ERROR;
+        if (itemPtr->style != DateFormat::kNone) {
+            dfmt = DateFormat::createDateInstance(itemPtr->style, locale);
+        } else {
+            dfmt = new SimpleDateFormat(itemPtr->pattern, locale, status);
+        }
+        if (U_FAILURE(status)) {
+            dataerrln("new SimpleDateFormat fails for locale %s", itemPtr->locale);
+        } else  if (dfmt == NULL) {
             dataerrln("DateFormat::createDateInstance fails for locale %s", itemPtr->locale);
         } else {
             Calendar * cal = (dfmt->getCalendar())->clone();
@@ -4107,6 +4151,7 @@ void DateFormatTest::TestNonGregoFmtParse()
                 const CalAndFmtTestItem * caftItemPtr;
                 for (caftItemPtr = itemPtr->caftItems; caftItemPtr->year != 0; caftItemPtr++) {
                     cal->clear();
+                    cal->set(UCAL_ERA,    caftItemPtr->era);
                     cal->set(UCAL_YEAR,   caftItemPtr->year);
                     cal->set(UCAL_MONTH,  caftItemPtr->month);
                     cal->set(UCAL_DATE,   caftItemPtr->day);
@@ -4122,13 +4167,16 @@ void DateFormatTest::TestNonGregoFmtParse()
                         // formatted OK, try parse
                         ParsePosition ppos(0);
                         dfmt->parse(result, *cal, ppos);
-                        UErrorCode status = U_ZERO_ERROR;
+                        status = U_ZERO_ERROR;
+                        int32_t era = cal->get(UCAL_ERA, status);
                         int32_t year = cal->get(UCAL_YEAR, status);
                         int32_t month = cal->get(UCAL_MONTH, status);
                         int32_t day = cal->get(UCAL_DATE, status);
-                        if ( U_FAILURE(status) || ppos.getIndex() < result.length() || year != caftItemPtr->year || month != caftItemPtr->month || day != caftItemPtr->day ) {
-                            errln( UnicodeString("FAIL: date parse for locale ") + UnicodeString(itemPtr->locale) + ", style " + itemPtr->style +
-                                ", string \"" + result + "\", expected " + caftItemPtr->year +"-"+caftItemPtr->month+"-"+caftItemPtr->day + ", got pos " +
+                        if ( U_FAILURE(status) || ppos.getIndex() < result.length() || era != caftItemPtr->era ||
+                                year != caftItemPtr->year || month != caftItemPtr->month || day != caftItemPtr->day ) {
+                            errln( UnicodeString("FAIL: date parse for locale ") + UnicodeString(itemPtr->locale) +
+                                ", style " + itemPtr->style + ", string \"" + result + "\", expected " +
+                                caftItemPtr->era +":"+caftItemPtr->year +"-"+caftItemPtr->month+"-"+caftItemPtr->day + ", got pos " +
                                 ppos.getIndex() + " " + year +"-"+month+"-"+day + " status " + UnicodeString(u_errorName(status)) );
                         }
                     }
@@ -4212,7 +4260,7 @@ typedef struct {
     UBool leniency;
     UnicodeString parseString;
     UnicodeString pattern;
-    UnicodeString expectedResult;       // null indicates expected error
+    UnicodeString expectedResult;       // empty string indicates expected error
 } TestDateFormatLeniencyItem;
 
 void DateFormatTest::TestDateFormatLeniency() {
@@ -4223,47 +4271,162 @@ void DateFormatTest::TestDateFormatLeniency() {
         //locale    leniency    parse String                    pattern                             expected result
         { "en",     true,       UnicodeString("2008-07 02"),    UnicodeString("yyyy-LLLL dd"),      UnicodeString("2008-July 02") },
         { "en",     false,      UnicodeString("2008-07 02"),    UnicodeString("yyyy-LLLL dd"),      UnicodeString("") },
-        { "en",     true,       UnicodeString("2008-Jan 02"),   UnicodeString("yyyy-LLL. dd"),      UnicodeString("2008-Jan 02") },
+        { "en",     true,       UnicodeString("2008-Jan 02"),   UnicodeString("yyyy-LLL. dd"),      UnicodeString("2008-Jan. 02") },
         { "en",     false,      UnicodeString("2008-Jan 02"),   UnicodeString("yyyy-LLL. dd"),      UnicodeString("") },
-        { "en",     true,       UnicodeString("2008-Jan--02"),  UnicodeString("yyyy-MMM' -- 'dd"),  UnicodeString("2008-Jan 02") },
+        { "en",     true,       UnicodeString("2008-Jan--02"),  UnicodeString("yyyy-MMM' -- 'dd"),  UnicodeString("2008-Jan -- 02") },
         { "en",     false,      UnicodeString("2008-Jan--02"),  UnicodeString("yyyy-MMM' -- 'dd"),  UnicodeString("") },
         // terminator
         { NULL,     true,       UnicodeString(""),              UnicodeString(""),                  UnicodeString("") }                
     };
     UErrorCode status = U_ZERO_ERROR;
-    Calendar* cal = Calendar::createInstance(status);
+    LocalPointer<Calendar> cal(Calendar::createInstance(status));
     if (U_FAILURE(status)) {
         dataerrln(UnicodeString("FAIL: Unable to create Calendar for default timezone and locale."));
-    } else {
-        cal->setTime(july022008, status);
-        const TestDateFormatLeniencyItem * itemPtr;
-        for (itemPtr = items; itemPtr->locale != NULL; itemPtr++ ) {
-                                            
-           Locale locale = Locale::createFromName(itemPtr->locale);
-           status = U_ZERO_ERROR;
-           ParsePosition pos(0);
-           SimpleDateFormat * sdmft = new SimpleDateFormat(itemPtr->pattern, locale, status);
-           if (U_FAILURE(status)) {
-               dataerrln("Unable to create SimpleDateFormat - %s", u_errorName(status));
-               continue;
-           }
-           sdmft->setLenient(itemPtr->leniency);
-           sdmft->setBooleanAttribute(UDAT_PARSE_ALLOW_WHITESPACE, itemPtr->leniency, status).setBooleanAttribute(UDAT_PARSE_ALLOW_NUMERIC, itemPtr->leniency, status);
-           /*UDate d = */sdmft->parse(itemPtr->parseString, pos);
-
-           delete sdmft;
-           if(pos.getErrorIndex() > -1)
-               if(itemPtr->expectedResult.length() != 0) {
-                 errln("error: unexpected error - " + itemPtr->parseString + " - error index " + pos.getErrorIndex() + " - leniency " + itemPtr->leniency);
-                 continue;
-               } else {
-                 continue;
-               }
-        }
+        return;
     }
-    delete cal;
+    cal->setTime(july022008, status);
+    const TestDateFormatLeniencyItem * itemPtr;
+    LocalPointer<SimpleDateFormat> sdmft;
+    for (itemPtr = items; itemPtr->locale != NULL; itemPtr++ ) {
+                                        
+       Locale locale = Locale::createFromName(itemPtr->locale);
+       status = U_ZERO_ERROR;
+       ParsePosition pos(0);
+       sdmft.adoptInstead(new SimpleDateFormat(itemPtr->pattern, locale, status));
+       if (U_FAILURE(status)) {
+           dataerrln("Unable to create SimpleDateFormat - %s", u_errorName(status));
+           continue;
+       }
+       sdmft->setLenient(itemPtr->leniency);
+       sdmft->setBooleanAttribute(UDAT_PARSE_ALLOW_WHITESPACE, itemPtr->leniency, status).
+              setBooleanAttribute(UDAT_PARSE_PARTIAL_MATCH, itemPtr->leniency, status).
+              setBooleanAttribute(UDAT_PARSE_ALLOW_NUMERIC, itemPtr->leniency, status);
+       UDate d = sdmft->parse(itemPtr->parseString, pos);       
 
+       if(itemPtr->expectedResult.length() == 0) {
+           if(pos.getErrorIndex() != -1) {
+               continue;
+           } else {
+                errln("error: unexpected parse success - " + itemPtr->parseString + 
+                    " - pattern " + itemPtr->pattern + 
+                    " - error index " + pos.getErrorIndex() + 
+                    " - leniency " + itemPtr->leniency);
+                continue;
+           }
+       }
+       if(pos.getErrorIndex() != -1) { 
+           errln("error: parse error for string - "  + itemPtr->parseString + 
+                 " - pattern " + itemPtr->pattern + 
+                 " - idx " + pos.getIndex() + 
+                 " - error index "+pos.getErrorIndex() + 
+                 " - leniency " + itemPtr->leniency); 
+ 	        continue; 
+ 	    }
+
+       UnicodeString formatResult(""); 
+       sdmft->format(d, formatResult);
+       if(formatResult.compare(itemPtr->expectedResult) != 0) { 
+           errln("error: unexpected format result. pattern["+itemPtr->pattern+"] expected[" + itemPtr->expectedResult + "]  but result was[" + formatResult + "]"); 
+           continue;
+ 	    } else { 
+            logln("formatted results match! - " + formatResult);  
+ 	    } 
+
+    }
 }
+
+
+typedef struct {
+    UBool leniency;
+    UnicodeString parseString;
+    UnicodeString pattern;
+    UnicodeString expectedResult;       // empty string indicates expected error
+} TestMultiPatternMatchItem;
+
+void DateFormatTest::TestParseMultiPatternMatch() {
+        // For details see http://bugs.icu-project.org/trac/ticket/10336 
+    const TestMultiPatternMatchItem items[] = {
+ 	      // leniency    parse String                                 pattern                               expected result 
+            {true,       UnicodeString("2013-Sep 13"),                UnicodeString("yyyy-MMM dd"),         UnicodeString("2013-Sep 13")}, 
+            {true,       UnicodeString("2013-September 14"),          UnicodeString("yyyy-MMM dd"),         UnicodeString("2013-Sep 14")}, 
+            {false,      UnicodeString("2013-September 15"),          UnicodeString("yyyy-MMM dd"),         UnicodeString("")}, 
+            {false,      UnicodeString("2013-September 16"),          UnicodeString("yyyy-MMMM dd"),        UnicodeString("2013-September 16")}, 
+            {true,       UnicodeString("2013-Sep 17"),                UnicodeString("yyyy-LLL dd"),         UnicodeString("2013-Sep 17")}, 
+            {true,       UnicodeString("2013-September 18"),          UnicodeString("yyyy-LLL dd"),         UnicodeString("2013-Sep 18")}, 
+            {false,      UnicodeString("2013-September 19"),          UnicodeString("yyyy-LLL dd"),         UnicodeString("")}, 
+            {false,      UnicodeString("2013-September 20"),          UnicodeString("yyyy-LLLL dd"),        UnicodeString("2013-September 20")}, 
+            {true,       UnicodeString("2013 Sat Sep 21"),            UnicodeString("yyyy EEE MMM dd"),     UnicodeString("2013 Sat Sep 21")}, 
+            {true,       UnicodeString("2013 Sunday Sep 22"),         UnicodeString("yyyy EEE MMM dd"),     UnicodeString("2013 Sun Sep 22")}, 
+            {false,      UnicodeString("2013 Monday Sep 23"),         UnicodeString("yyyy EEE MMM dd"),     UnicodeString("")}, 
+            {false,      UnicodeString("2013 Tuesday Sep 24"),        UnicodeString("yyyy EEEE MMM dd"),    UnicodeString("2013 Tuesday Sep 24")}, 
+            {true,       UnicodeString("2013 Wed Sep 25"),            UnicodeString("yyyy eee MMM dd"),     UnicodeString("2013 Wed Sep 25")}, 
+            {true,       UnicodeString("2013 Thu Sep 26"),            UnicodeString("yyyy eee MMM dd"),     UnicodeString("2013 Thu Sep 26")}, 
+            {false,      UnicodeString("2013 Friday Sep 27"),         UnicodeString("yyyy eee MMM dd"),     UnicodeString("")}, 
+            {false,      UnicodeString("2013 Saturday Sep 28"),       UnicodeString("yyyy eeee MMM dd"),    UnicodeString("2013 Saturday Sep 28")}, 
+            {true,       UnicodeString("2013 Sun Sep 29"),            UnicodeString("yyyy ccc MMM dd"),     UnicodeString("2013 Sun Sep 29")}, 
+            {true,       UnicodeString("2013 Monday Sep 30"),         UnicodeString("yyyy ccc MMM dd"),     UnicodeString("2013 Mon Sep 30")}, 
+            {false,      UnicodeString("2013 Sunday Oct 13"),         UnicodeString("yyyy ccc MMM dd"),     UnicodeString("")}, 
+            {false,      UnicodeString("2013 Monday Oct 14"),         UnicodeString("yyyy cccc MMM dd"),    UnicodeString("2013 Monday Oct 14")}, 
+            {true,       UnicodeString("2013 Oct 15 Q4"),             UnicodeString("yyyy MMM dd QQQ"),     UnicodeString("2013 Oct 15 Q4")}, 
+            {true,       UnicodeString("2013 Oct 16 4th quarter"),    UnicodeString("yyyy MMM dd QQQ"),     UnicodeString("2013 Oct 16 Q4")}, 
+            {false,      UnicodeString("2013 Oct 17 4th quarter"),    UnicodeString("yyyy MMM dd QQQ"),     UnicodeString("")}, 
+            {false,      UnicodeString("2013 Oct 18 Q4"),             UnicodeString("yyyy MMM dd QQQ"),     UnicodeString("2013 Oct 18 Q4")}, 
+            {true,       UnicodeString("2013 Oct 19 Q4"),             UnicodeString("yyyy MMM dd qqqq"),    UnicodeString("2013 Oct 19 4th quarter")}, 
+            {true,       UnicodeString("2013 Oct 20 4th quarter"),    UnicodeString("yyyy MMM dd qqqq"),    UnicodeString("2013 Oct 20 4th quarter")}, 
+            {false,      UnicodeString("2013 Oct 21 Q4"),             UnicodeString("yyyy MMM dd qqqq"),    UnicodeString("")}, 
+            {false,      UnicodeString("2013 Oct 22 4th quarter"),    UnicodeString("yyyy MMM dd qqqq"),    UnicodeString("2013 Oct 22 4th quarter")},
+            {false,      UnicodeString("--end--"),                    UnicodeString(""),                    UnicodeString("")},
+ 	};  	
+
+    UErrorCode status = U_ZERO_ERROR;
+    LocalPointer<Calendar> cal(Calendar::createInstance(status));
+    if (U_FAILURE(status)) {
+        dataerrln(UnicodeString("FAIL: Unable to create Calendar for default timezone and locale."));
+        return;
+    }
+    const TestMultiPatternMatchItem * itemPtr;
+    DateFormat* sdmft = DateFormat::createDateInstance();
+    if (sdmft == NULL) {
+        dataerrln(UnicodeString("FAIL: Unable to create DateFormat"));
+        return;
+    }
+    for (itemPtr = items; itemPtr->parseString != "--end--"; itemPtr++ ) {
+       status = U_ZERO_ERROR;
+       ParsePosition pos(0);
+       ((SimpleDateFormat*) sdmft)->applyPattern(itemPtr->pattern);
+       if (U_FAILURE(status)) {
+           dataerrln("Unable to create SimpleDateFormat - %s", u_errorName(status));
+           continue;
+       }
+       sdmft->setLenient(itemPtr->leniency);
+       sdmft->setBooleanAttribute(UDAT_PARSE_MULTIPLE_PATTERNS_FOR_MATCH, itemPtr->leniency, status);
+       UDate d = sdmft->parse(itemPtr->parseString, pos); 
+       
+       if(itemPtr->expectedResult.length() == 0) {
+           if(pos.getErrorIndex() != -1) {
+               continue;
+           } else {
+                errln("error: unexpected parse success - " + itemPtr->parseString + 
+                    " - error index " + pos.getErrorIndex() + 
+                    " - leniency " + itemPtr->leniency);
+                continue;
+           }
+       }
+       if(pos.getErrorIndex() != -1) { 
+ 	        errln("error: parse error for string - " +itemPtr->parseString + " -- idx["+pos.getIndex()+"] errIdx["+pos.getErrorIndex()+"]"); 
+ 	        continue; 
+ 	    }
+
+       UnicodeString formatResult(""); 
+       sdmft->format(d, formatResult);
+       if(formatResult.compare(itemPtr->expectedResult) != 0) { 
+ 	        errln("error: unexpected format result. expected[" + itemPtr->expectedResult + "]  but result was[" + formatResult + "]"); 
+ 	    } else { 
+            logln("formatted results match! - " + formatResult);  
+ 	    } 
+    }
+    delete sdmft;
+ }
 
 #endif /* #if !UCONFIG_NO_FORMATTING */
 

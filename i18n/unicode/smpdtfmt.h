@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 1997-2013, International Business Machines Corporation and
+* Copyright (C) 1997-2014, International Business Machines Corporation and
 * others. All Rights Reserved.
 *******************************************************************************
 *
@@ -35,6 +35,8 @@
 
 #include "unicode/datefmt.h"
 #include "unicode/udisplaycontext.h"
+#include "unicode/tzfmt.h"  /* for UTimeZoneFormatTimeType */
+#include "unicode/brkiter.h"
 
 U_NAMESPACE_BEGIN
 
@@ -1083,31 +1085,6 @@ public:
      */
     virtual void adoptCalendar(Calendar* calendarToAdopt);
 
-    /* Cannot use #ifndef U_HIDE_DRAFT_API for the following draft method since it is virtual */
-    /**
-     * Set a particular UDisplayContext value in the formatter, such as
-     * UDISPCTX_CAPITALIZATION_FOR_STANDALONE.
-     * @param value The UDisplayContext value to set.
-     * @param status Input/output status. If at entry this indicates a failure
-     *               status, the function will do nothing; otherwise this will be
-     *               updated with any new status from the function. 
-     * @draft ICU 51
-     */
-    virtual void setContext(UDisplayContext value, UErrorCode& status);
-
-    /* Cannot use #ifndef U_HIDE_DRAFT_API for the following draft method since it is virtual */
-    /**
-     * Get the formatter's UDisplayContext value for the specified UDisplayContextType,
-     * such as UDISPCTX_TYPE_CAPITALIZATION.
-     * @param type The UDisplayContextType whose value to return
-     * @param status Input/output status. If at entry this indicates a failure
-     *               status, the function will do nothing; otherwise this will be
-     *               updated with any new status from the function. 
-     * @return The UDisplayContextValue for the specified type.
-     * @draft ICU 51
-     */
-    virtual UDisplayContext getContext(UDisplayContextType type, UErrorCode& status) const;
-
     /* Cannot use #ifndef U_HIDE_INTERNAL_API for the following methods since they are virtual */
     /**
      * Sets the TimeZoneFormat to be used by this date/time formatter.
@@ -1131,6 +1108,19 @@ public:
      * @internal ICU 49 technology preview
      */
     virtual const TimeZoneFormat* getTimeZoneFormat(void) const;
+
+    /* Cannot use #ifndef U_HIDE_DRAFT_API for the following draft method since it is virtual */
+    /**
+     * Set a particular UDisplayContext value in the formatter, such as
+     * UDISPCTX_CAPITALIZATION_FOR_STANDALONE. Note: For getContext, see
+     * DateFormat.
+     * @param value The UDisplayContext value to set.
+     * @param status Input/output status. If at entry this indicates a failure
+     *               status, the function will do nothing; otherwise this will be
+     *               updated with any new status from the function. 
+     * @draft ICU 53
+     */
+    virtual void setContext(UDisplayContext value, UErrorCode& status);
 
 #ifndef U_HIDE_INTERNAL_API
     /**
@@ -1175,6 +1165,8 @@ private:
     friend class DateFormat;
 
     void initializeDefaultCentury(void);
+
+    void initializeBooleanAttributes(void);
 
     SimpleDateFormat(); // default constructor not implemented
 
@@ -1340,12 +1332,14 @@ private:
      * @param text the text being parsed
      * @param textOffset the starting offset into the text. On output
      *                   will be set to the offset of the character after the match
-     * @param lenient <code>TRUE</code> if the parse is lenient, <code>FALSE</code> otherwise.
+     * @param whitespaceLenient <code>TRUE</code> if whitespace parse is lenient, <code>FALSE</code> otherwise.
+     * @param partialMatchLenient <code>TRUE</code> if partial match parse is lenient, <code>FALSE</code> otherwise.
      *
      * @return <code>TRUE</code> if the literal text could be matched, <code>FALSE</code> otherwise.
      */
     static UBool matchLiterals(const UnicodeString &pattern, int32_t &patternOffset,
-                               const UnicodeString &text, int32_t &textOffset, UBool lenient);
+                               const UnicodeString &text, int32_t &textOffset, 
+                               UBool whitespaceLenient, UBool partialMatchLenient);
     
     /**
      * Private member function that converts the parsed date strings into
@@ -1362,12 +1356,14 @@ private:
      *            into a date/time string.
      * @param patLoc
      * @param numericLeapMonthFormatter If non-null, used to parse numeric leap months.
+     * @param tzTimeType the type of parsed time zone - standard, daylight or unknown (output).
+     *      This parameter can be NULL if caller does not need the information.
      * @return the new start position if matching succeeded; a negative number
      * indicating matching failure, otherwise.
      */
     int32_t subParse(const UnicodeString& text, int32_t& start, UChar ch, int32_t count,
                      UBool obeyCount, UBool allowNegative, UBool ambiguousYear[], int32_t& saveHebrewMonth, Calendar& cal,
-                     int32_t patLoc, MessageFormat * numericLeapMonthFormatter) const;
+                     int32_t patLoc, MessageFormat * numericLeapMonthFormatter, UTimeZoneFormatTimeType *tzTimeType) const;
 
     void parseInt(const UnicodeString& text,
                   Formattable& number,
@@ -1523,8 +1519,6 @@ private:
      */
     /*transient*/ int32_t   fDefaultCenturyStartYear;
 
-    int32_t tztype; // here to avoid api change
-
     typedef struct NSOverride {
         NumberFormat *nf;
         int32_t hash;
@@ -1537,7 +1531,7 @@ private:
 
     UBool fHaveDefaultCentury;
 
-    UDisplayContext fCapitalizationContext;
+    BreakIterator* fCapitalizationBrkIter;
 };
 
 inline UDate

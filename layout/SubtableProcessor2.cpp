@@ -1,6 +1,6 @@
 /*
  *
- * (C) Copyright IBM Corp.  and others 1998-2013 - All Rights Reserved
+ * (C) Copyright IBM Corp.  and others 1998-2014 - All Rights Reserved
  *
  */
 
@@ -16,7 +16,7 @@ SubtableProcessor2::SubtableProcessor2()
 }
 
 SubtableProcessor2::SubtableProcessor2(const LEReferenceTo<MorphSubtableHeader2> &morphSubtableHeader, LEErrorCode &success)
-  : length(0), coverage(0), subtableFeatures(0L), subtableHeader(morphSubtableHeader, success)   // Google patch
+  : length(0), coverage(0), subtableFeatures(0L), subtableHeader(morphSubtableHeader, success)
 {
   if(LE_FAILURE(success)) return;
 

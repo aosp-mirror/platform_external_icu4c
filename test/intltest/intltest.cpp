@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1997-2013, International Business Machines Corporation and
+ * Copyright (c) 1997-2014, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -977,10 +977,12 @@ UBool IntlTest::logKnownIssue(const char *ticket, const UnicodeString &msg) {
   UBool firstForTicket, firstForWhere;
   knownList = udbg_knownIssue_openU(knownList, ticket, fullpath, msg2.getTerminatedBuffer(), &firstForTicket, &firstForWhere);
 
+  msg2 = UNICODE_STRING_SIMPLE("(Known issue #") +
+      UnicodeString(ticket, -1, US_INV) + UNICODE_STRING_SIMPLE(") ") + msg;
   if(firstForTicket || firstForWhere) {
-    infoln(UnicodeString("(Known issue #","") + UnicodeString(ticket,"")+ UnicodeString(") \"","") + msg);
+    infoln(msg2);
   } else {
-    logln(UnicodeString("(Known issue #","") + UnicodeString(ticket,"")+ UnicodeString(") \"","") + msg);
+    logln(msg2);
   }
 
   return TRUE;
@@ -1095,7 +1097,7 @@ void IntlTest::LL_message( UnicodeString message, UBool newline )
     };
     UnicodeString indent(FALSE, indentUChars, 1 + LL_indentlevel);
 
-    char buffer[10000];
+    char buffer[30000];
     int32_t length;
 
     // stream out the indentation string first if necessary
@@ -1110,7 +1112,7 @@ void IntlTest::LL_message( UnicodeString message, UBool newline )
     // stream out the message
     length = message.extract(0, message.length(), buffer, sizeof(buffer));
     if (length > 0) {
-        length = length > 10000 ? 10000 : length;
+        length = length > 30000 ? 30000 : length;
         fwrite(buffer, sizeof(*buffer), length, (FILE *)testoutfp);
     }
 
