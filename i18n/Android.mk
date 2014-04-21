@@ -33,6 +33,16 @@ src_files += \
 	anytrans.cpp    astro.cpp    buddhcal.cpp \
 	basictz.cpp     calendar.cpp casetrn.cpp  \
 	choicfmt.cpp    coleitr.cpp  coll.cpp     \
+	collation.cpp \
+	collationbasedatabuilder.cpp collationbuilder.cpp \
+	collationcompare.cpp collationdata.cpp \
+	collationdatabuilder.cpp collationdatareader.cpp \
+	collationdatawriter.cpp collationfastlatin.cpp \
+	collationfastlatinbuilder.cpp collationfcd.cpp \
+	collationiterator.cpp collationkeys.cpp collationroot.cpp \
+	collationrootelements.cpp collationruleparser.cpp \
+	collationsets.cpp collationsettings.cpp \
+	collationtailoring.cpp collationweights.cpp \
 	compactdecimalformat.cpp \
 	cpdtrans.cpp    csdetect.cpp csmatch.cpp  \
 	csr2022.cpp     csrecog.cpp  csrmbcs.cpp  \
@@ -40,34 +50,43 @@ src_files += \
 	curramt.cpp     currfmt.cpp  currunit.cpp \
 	dangical.cpp \
 	datefmt.cpp     dcfmtsym.cpp decimfmt.cpp \
+	decimalformatpattern.cpp \
 	digitlst.cpp    dtfmtsym.cpp esctrn.cpp   \
+	filteredbrk.cpp \
 	fmtable_cnv.cpp fmtable.cpp  format.cpp   \
 	funcrepl.cpp    gender.cpp \
 	gregocal.cpp gregoimp.cpp \
 	hebrwcal.cpp 	identifier_info.cpp \
 	inputext.cpp islamcal.cpp \
-	japancal.cpp    measfmt.cpp  measure.cpp  \
+	japancal.cpp    measfmt.cpp measunit.cpp  \
+	measure.cpp  \
 	msgfmt.cpp      name2uni.cpp nfrs.cpp     \
 	nfrule.cpp      nfsubs.cpp   nortrans.cpp \
 	nultrans.cpp    numfmt.cpp   olsontz.cpp  \
-	quant.cpp       rbnf.cpp     rbt.cpp      \
+	quant.cpp       quantityformatter.cpp \
+	rbnf.cpp     rbt.cpp      \
 	rbt_data.cpp    rbt_pars.cpp rbt_rule.cpp \
 	rbt_set.cpp     regexcmp.cpp regexst.cpp  \
 	regeximp.cpp 	region.cpp \
 	rematch.cpp     remtrans.cpp repattrn.cpp \
+	rulebasedcollator.cpp \
 	scriptset.cpp \
 	search.cpp      simpletz.cpp smpdtfmt.cpp \
 	sortkey.cpp     strmatch.cpp strrepl.cpp  \
-	stsearch.cpp    tblcoll.cpp  timezone.cpp \
+	stsearch.cpp    timezone.cpp \
 	titletrn.cpp    tolowtrn.cpp toupptrn.cpp \
 	translit.cpp    transreg.cpp tridpars.cpp \
-	ucal.cpp        ucol_bld.cpp ucol_cnt.cpp \
-	ucol.cpp        ucoleitr.cpp ucol_elm.cpp \
-	ucol_res.cpp    ucol_sit.cpp ucol_tok.cpp \
+	ucal.cpp        \
+	ucol.cpp        ucoleitr.cpp \
+	ucol_res.cpp    ucol_sit.cpp \
 	ucsdet.cpp      ucurr.cpp    udat.cpp     \
+	uitercollationiterator.cpp \
 	umsg.cpp        unesctrn.cpp uni2name.cpp \
 	unum.cpp        uregexc.cpp  uregex.cpp   \
-	usearch.cpp     utrans.cpp   windtfmt.cpp \
+	usearch.cpp     \
+	utf16collationiterator.cpp \
+	utf8collationiterator.cpp \
+	utrans.cpp   windtfmt.cpp \
 	winnmfmt.cpp    zonemeta.cpp \
 	numsys.cpp      chnsecal.cpp \
 	cecal.cpp       coptccal.cpp ethpccal.cpp \
@@ -79,7 +98,7 @@ src_files += \
         regextxt.cpp    selfmt.cpp   uspoof_conf.cpp \
         uspoof_wsconf.cpp ztrans.cpp zrule.cpp  \
         vzone.cpp       fphdlimp.cpp fpositer.cpp\
-        locdspnm.cpp    ucol_wgt.cpp \
+        locdspnm.cpp    \
         alphaindex.cpp  bocsu.cpp    decfmtst.cpp \
         smpdtfst.cpp    smpdtfst.h   tzfmt.cpp \
         tzgnames.cpp    tznames.cpp  tznames_impl.cpp \

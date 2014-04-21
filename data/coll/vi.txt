@@ -10,7 +10,7 @@
  * ICU <specials> source: <path>/xml/collation/vi.xml
  */
 vi{
-    Version{"2.0.89.0"}
+    Version{"2.0.96.14"}
     collations{
         standard{
             Sequence{
@@ -22,7 +22,7 @@ vi{
                 "&o<ô<<<Ô<ơ<<<Ơ"
                 "&u<ư<<<Ư"
             }
-            Version{"24"}
+            Version{"25"}
         }
         traditional{
             Sequence{
@@ -41,7 +41,7 @@ vi{
                 "&T<th<<<Th<<<TH<tr<<<Tr<<<TR"
                 "&u<ư<<<Ư"
             }
-            Version{"24"}
+            Version{"25"}
         }
     }
 }

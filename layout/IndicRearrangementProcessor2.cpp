@@ -1,6 +1,6 @@
 /*
  *
- * (C) Copyright IBM Corp.  and others 1998-2013 - All Rights Reserved
+ * (C) Copyright IBM Corp.  and others 1998-2014 - All Rights Reserved
  *
  */
 
@@ -20,9 +20,8 @@ UOBJECT_DEFINE_RTTI_IMPLEMENTATION(IndicRearrangementProcessor2)
 
 IndicRearrangementProcessor2::IndicRearrangementProcessor2(
       const LEReferenceTo<MorphSubtableHeader2> &morphSubtableHeader, LEErrorCode &success)
-  // Google patch: re-order initializations
-  : StateTableProcessor2(morphSubtableHeader, success), entryTable(stHeader, success, entryTableOffset, LE_UNBOUNDED_ARRAY),
-  indicRearrangementSubtableHeader(morphSubtableHeader, success)
+  : StateTableProcessor2(morphSubtableHeader, success), entryTable(stHeader, success, entryTableOffset, LE_UNBOUNDED_ARRAY), 
+    indicRearrangementSubtableHeader(morphSubtableHeader, success)
 {
 }
 

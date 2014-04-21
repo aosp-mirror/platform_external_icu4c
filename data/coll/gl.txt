@@ -7,15 +7,15 @@
 // *
 // ***************************************************************************
 gl{
-    Version{"2.0.92.29"}
+    Version{"2.0.96.14"}
     collations{
         search{
             Sequence{"[import es-u-co-search]"}
-            Version{"24"}
+            Version{"25"}
         }
         standard{
             Sequence{"[import es]"}
-            Version{"24"}
+            Version{"25"}
         }
     }
 }

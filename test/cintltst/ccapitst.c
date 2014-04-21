@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1997-2013, International Business Machines Corporation and
+ * Copyright (c) 1997-2014, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /*****************************************************************************
@@ -837,7 +837,11 @@ static void TestConvert()
 
 
         /*Reads the BOM*/
-        fread(&BOM, sizeof(UChar), 1, ucs_file_in);
+        {
+            // Note: gcc produces a compile warning if the return value from fread() is ignored.
+            size_t numRead = fread(&BOM, sizeof(UChar), 1, ucs_file_in);
+            (void)numRead;
+        }
         if (BOM!=0xFEFF && BOM!=0xFFFE) 
         {
             log_err("File Missing BOM...Bailing!\n");
@@ -3175,8 +3179,6 @@ TestEBCDICSwapLFNL() {
   /* test nothing... */
 }
 #endif
-
-static const UVersionInfo ICU_34 = {3,4,0,0};
 
 static void TestFromUCountPending(){
 #if !UCONFIG_NO_LEGACY_CONVERSION

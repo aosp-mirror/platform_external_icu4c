@@ -15,5 +15,5 @@ kkj{
         fr{"numbu buy"}
         kkj{"kakɔ"}
     }
-    Version{"2.0.90.61"}
+    Version{"2.0.96.25"}
 }

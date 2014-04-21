@@ -301,5 +301,5 @@ pt_PT{
         GB{"RU"}
         US{"EUA"}
     }
-    Version{"2.0.92.87"}
+    Version{"2.0.98.52"}
 }

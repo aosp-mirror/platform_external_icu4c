@@ -66,6 +66,7 @@ void TimeZoneTest::runIndexedTest( int32_t index, UBool exec, const char* &name,
     TESTCASE_AUTO(TestAliasedNames);
     TESTCASE_AUTO(TestFractionalDST);
     TESTCASE_AUTO(TestFebruary);
+    TESTCASE_AUTO(TestCanonicalIDAPI);
     TESTCASE_AUTO(TestCanonicalID);
     TESTCASE_AUTO(TestDisplayNamesMeta);
     TESTCASE_AUTO(TestGetRegion);
@@ -110,21 +111,21 @@ TimeZoneTest::TestGenericAPI()
 
     TimeZone* saveDefault = TimeZone::createDefault();
     logln((UnicodeString)"TimeZone::createDefault() => " + saveDefault->getID(id));
-    TimeZone* pstZone = TimeZone::createTimeZone("America/Los_Angeles");
+
+    TimeZone::adoptDefault(zone);
+    TimeZone* defaultzone = TimeZone::createDefault();
+    if (defaultzone == zone ||
+        !(*defaultzone == *zone))
+        errln("FAIL: createDefault failed");
+    TimeZone::adoptDefault(saveDefault);
+    delete defaultzone;
+    delete zoneclone;
 
     logln("call uprv_timezone() which uses the host");
     logln("to get the difference in seconds between coordinated universal");
     logln("time and local time. E.g., -28,800 for PST (GMT-8hrs)");
 
     int32_t tzoffset = uprv_timezone();
-    logln(UnicodeString("Value returned from uprv_timezone = ") + tzoffset);
-    // Invert sign because UNIX semantics are backwards
-    if (tzoffset < 0)
-        tzoffset = -tzoffset;
-    if ((*saveDefault == *pstZone) && (tzoffset != 28800)) {
-        errln("FAIL: t_timezone may be incorrect.  It is not 28800");
-    }
-
     if ((tzoffset % 900) != 0) {
         /*
          * Ticket#6364 and #7648
@@ -135,16 +136,6 @@ TimeZoneTest::TestGenericAPI()
          */
         infoln("WARNING: t_timezone may be incorrect. It is not a multiple of 15min.", tzoffset);
     }
-
-    TimeZone::adoptDefault(zone);
-    TimeZone* defaultzone = TimeZone::createDefault();
-    if (defaultzone == zone ||
-        !(*defaultzone == *zone))
-        errln("FAIL: createDefault failed");
-    TimeZone::adoptDefault(saveDefault);
-    delete defaultzone;
-    delete zoneclone;
-    delete pstZone;
 
     UErrorCode status = U_ZERO_ERROR;
     const char* tzver = TimeZone::getTZDataVersion(status);
@@ -1948,6 +1939,34 @@ void TimeZoneTest::TestFebruary() {
         }
     }
 }
+
+void TimeZoneTest::TestCanonicalIDAPI() {
+    // Bogus input string.
+    UnicodeString bogus;
+    bogus.setToBogus();
+    UnicodeString canonicalID;
+    UErrorCode ec = U_ZERO_ERROR;
+    UnicodeString *pResult = &TimeZone::getCanonicalID(bogus, canonicalID, ec);
+    assertEquals("TimeZone::getCanonicalID(bogus) should fail", U_ILLEGAL_ARGUMENT_ERROR, ec);
+    assertTrue("TimeZone::getCanonicalID(bogus) should return the dest string", pResult == &canonicalID);
+
+    // U_FAILURE on input.
+    UnicodeString berlin("Europe/Berlin");
+    ec = U_MEMORY_ALLOCATION_ERROR;
+    pResult = &TimeZone::getCanonicalID(berlin, canonicalID, ec);
+    assertEquals("TimeZone::getCanonicalID(failure) should fail", U_MEMORY_ALLOCATION_ERROR, ec);
+    assertTrue("TimeZone::getCanonicalID(failure) should return the dest string", pResult == &canonicalID);
+
+    // Valid input should un-bogus the dest string.
+    canonicalID.setToBogus();
+    ec = U_ZERO_ERROR;
+    pResult = &TimeZone::getCanonicalID(berlin, canonicalID, ec);
+    assertSuccess("TimeZone::getCanonicalID(bogus dest) should succeed", ec, TRUE);
+    assertTrue("TimeZone::getCanonicalID(bogus dest) should return the dest string", pResult == &canonicalID);
+    assertFalse("TimeZone::getCanonicalID(bogus dest) should un-bogus the dest string", canonicalID.isBogus());
+    assertEquals("TimeZone::getCanonicalID(bogus dest) unexpected result", canonicalID, berlin, TRUE);
+}
+
 void TimeZoneTest::TestCanonicalID() {
 
     // Some canonical IDs in CLDR are defined as "Link"

@@ -3,12 +3,9 @@
 // * Copyright (C) 2014 International Business Machines
 // * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
-// * Source File: <path>/icu-config.xml & build.xml
+// * Source File: <path>/common/collation/ka.xml
 // *
 // ***************************************************************************
-/**
- * validSubLocale of "root"
- */
 ka{
-    ___{""}
+    Version{"2.0.97.57"}
 }

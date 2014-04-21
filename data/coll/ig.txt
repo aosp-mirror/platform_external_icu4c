@@ -10,7 +10,7 @@
  * ICU <specials> source: <path>/xml/collation/ig.xml
  */
 ig{
-    Version{"2.0.89.0"}
+    Version{"2.0.96.14"}
     collations{
         standard{
             Sequence{
@@ -24,7 +24,7 @@ ig{
                 "&S<sh<<<Sh<<<SH"
                 "&U<ụ<<<Ụ"
             }
-            Version{"24"}
+            Version{"25"}
         }
     }
 }

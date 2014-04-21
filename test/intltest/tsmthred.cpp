@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT: 
- * Copyright (c) 1999-2013, International Business Machines Corporation and
+ * Copyright (c) 1999-2014, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 
@@ -27,7 +27,7 @@
 #include "intltest.h"
 #include "tsmthred.h"
 #include "unicode/ushape.h"
-
+#include "unicode/translit.h"
 
 #if U_PLATFORM_USES_ONLY_WIN32_API
     /* Prefer native Windows APIs even if POSIX is implemented (i.e., on Cygwin). */
@@ -188,14 +188,20 @@ void MultithreadTest::runIndexedTest( int32_t index, UBool exec,
         }
         break;
 
-	case 5:
+    case 5:
         name = "TestArabicShapingThreads"; 
         if (exec) {
             TestArabicShapingThreads();
         }
         break;
-		
 
+    case 6:
+        name = "TestAnyTranslit";
+        if (exec) {
+            TestAnyTranslit();
+        }
+        break;
+     
     default:
         name = "";
         break; //needed to end loop
@@ -629,7 +635,6 @@ UnicodeString showDifference(const UnicodeString& expected, const UnicodeString&
 
 const int kFormatThreadIterations = 100;  // # of iterations per thread
 const int kFormatThreadThreads    = 10;  // # of threads to spawn   
-const int kFormatThreadPatience   = 60;  // time in seconds to wait for all threads
 
 #if !UCONFIG_NO_FORMATTING
 
@@ -1519,6 +1524,81 @@ cleanupAndReturn:
         }
         delete testString;
     }
+}
+
+
+// Test for ticket #10673, race in cache code in AnyTransliterator.
+// It's difficult to make the original unsafe code actually fail, but
+// this test will fairly reliably take the code path for races in 
+// populating the cache.
+
+#if !UCONFIG_NO_TRANSLITERATION
+class TxThread: public SimpleThread {
+  private:
+    Transliterator *fSharedTranslit;
+  public:
+    UBool fSuccess;
+    TxThread(Transliterator *tx) : fSharedTranslit(tx), fSuccess(FALSE) {};
+    ~TxThread();
+    void run();
+};
+
+TxThread::~TxThread() {}
+void TxThread::run() {
+    UnicodeString greekString("\\u03B4\\u03B9\\u03B1\\u03C6\\u03BF\\u03C1\\u03B5\\u03C4\\u03B9\\u03BA\\u03BF\\u03CD\\u03C2");
+    greekString = greekString.unescape();
+    fSharedTranslit->transliterate(greekString);
+    fSuccess = greekString[0] == 0x64; // 'd'. The whole transliterated string is "diaphoretikous" (accented u).
+}
+#endif
+    
+
+void MultithreadTest::TestAnyTranslit() {
+#if !UCONFIG_NO_TRANSLITERATION
+    UErrorCode status = U_ZERO_ERROR;
+    LocalPointer<Transliterator> tx(Transliterator::createInstance("Any-Latin", UTRANS_FORWARD, status));
+    if (U_FAILURE(status)) {
+        dataerrln("File %s, Line %d: Error, status = %s", __FILE__, __LINE__, u_errorName(status));
+        return;
+    }
+    TxThread * threads[4];
+    int32_t i;
+    for (i=0; i<4; i++) {
+        threads[i] = new TxThread(tx.getAlias());
+    }
+    for (i=0; i<4; i++) {
+        threads[i]->start();
+    }
+    int32_t patience = 100;
+    UBool success;
+    UBool someThreadRunning;
+    do {
+        someThreadRunning = FALSE;
+        success = TRUE;
+        for (i=0; i<4; i++) {
+            if (threads[i]->isRunning()) {
+                someThreadRunning = TRUE;
+                SimpleThread::sleep(10);
+                break;
+            } else {
+                if (threads[i]->fSuccess == FALSE) {
+                    success = FALSE;
+                }
+            }
+        }
+    } while (someThreadRunning && --patience > 0);
+
+    if (patience <= 0) {
+        errln("File %s, Line %d: Error, one or more threads did not complete.", __FILE__, __LINE__);
+    }
+    if (success == FALSE) {
+        errln("File %s, Line %d: Error, transliteration result incorrect.", __FILE__, __LINE__);
+    }
+    
+    for (i=0; i<4; i++) {
+        delete threads[i];
+    }
+#endif  // !UCONFIG_NO_TRANSLITERATION
 }
 
 #endif // ICU_USE_THREADS

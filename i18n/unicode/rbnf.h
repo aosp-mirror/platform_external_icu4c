@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 1997-2013, International Business Machines Corporation and others.
+* Copyright (C) 1997-2014, International Business Machines Corporation and others.
 * All Rights Reserved.
 *******************************************************************************
 */
@@ -27,18 +27,19 @@
 #else
 #define U_HAVE_RBNF 1
 
-#include "unicode/coll.h"
 #include "unicode/dcfmtsym.h"
 #include "unicode/fmtable.h"
 #include "unicode/locid.h"
 #include "unicode/numfmt.h"
 #include "unicode/unistr.h"
 #include "unicode/strenum.h"
+#include "unicode/brkiter.h"
 
 U_NAMESPACE_BEGIN
 
 class NFRuleSet;
 class LocalizationInfo;
+class RuleBasedCollator;
 
 /**
  * Tags for the predefined rulesets.
@@ -52,10 +53,6 @@ enum URBNFRuleSetTag {
     URBNF_NUMBERING_SYSTEM,
     URBNF_COUNT
 };
-
-#if UCONFIG_NO_COLLATION
-class Collator;
-#endif
 
 /**
  * The RuleBasedNumberFormat class formats numbers according to a set of rules. This number formatter is
@@ -894,6 +891,19 @@ public:
    */
   virtual UnicodeString getDefaultRuleSetName() const;
 
+  /* Cannot use #ifndef U_HIDE_DRAFT_API for the following draft method since it is virtual */
+  /**
+   * Set a particular UDisplayContext value in the formatter, such as
+   * UDISPCTX_CAPITALIZATION_FOR_STANDALONE. Note: For getContext, see
+   * NumberFormat.
+   * @param value The UDisplayContext value to set.
+   * @param status Input/output status. If at entry this indicates a failure
+   *               status, the function will do nothing; otherwise this will be
+   *               updated with any new status from the function. 
+   * @draft ICU 53
+   */
+  virtual void setContext(UDisplayContext value, UErrorCode& status);
+
 public:
     /**
      * ICU "poor man's RTTI", returns a UClassID for this class.
@@ -939,6 +949,7 @@ private:
               const Locale& locale, UParseError& perror, UErrorCode& status);
 
     void init(const UnicodeString& rules, LocalizationInfo* localizations, UParseError& perror, UErrorCode& status);
+    void initCapitalizationContextInfo(const Locale& thelocale);
     void dispose();
     void stripWhitespace(UnicodeString& src);
     void initDefaultRuleSet();
@@ -951,8 +962,9 @@ private:
     friend class FractionalPartSubstitution;
 
     inline NFRuleSet * getDefaultRuleSet() const;
-    Collator * getCollator() const;
+    const RuleBasedCollator * getCollator() const;
     DecimalFormatSymbols * getDecimalFormatSymbols() const;
+    UnicodeString& adjustForCapitalizationContext(int32_t startPos, UnicodeString& currentResult) const;
 
 private:
     NFRuleSet **ruleSets;
@@ -960,11 +972,16 @@ private:
     int32_t numRuleSets;
     NFRuleSet *defaultRuleSet;
     Locale locale;
-    Collator* collator;
+    RuleBasedCollator* collator;
     DecimalFormatSymbols* decimalFormatSymbols;
     UBool lenient;
     UnicodeString* lenientParseRules;
     LocalizationInfo* localizations;
+    UnicodeString originalDescription;
+    UBool capitalizationInfoSet;
+    UBool capitalizationForUIListMenu;
+    UBool capitalizationForStandAlone;
+    BreakIterator* capitalizationBrkIter;
 };
 
 // ---------------

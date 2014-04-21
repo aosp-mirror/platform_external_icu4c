@@ -10,7 +10,7 @@
  * ICU <specials> source: <path>/common/main/sr.xml
  */
 sr{
-    Version{"2.0.92.87"}
+    Version{"2.0.98.52"}
     zoneStrings{
         "Africa:Abidjan"{
             ec{"Абиџан"}
@@ -459,9 +459,6 @@ sr{
         "America:Montevideo"{
             ec{"Монтевидео"}
         }
-        "America:Montreal"{
-            ec{"Монтреал"}
-        }
         "America:Montserrat"{
             ec{"Монтсерат"}
         }
@@ -552,9 +549,6 @@ sr{
         "America:Scoresbysund"{
             ec{"Скорезбисунд"}
         }
-        "America:Shiprock"{
-            ec{"Шипрок"}
-        }
         "America:Sitka"{
             ec{"Ситка"}
         }
@@ -635,9 +629,6 @@ sr{
         }
         "Antarctica:Rothera"{
             ec{"Ротера"}
-        }
-        "Antarctica:South_Pole"{
-            ec{"Јужни пол"}
         }
         "Antarctica:Syowa"{
             ec{"Шова"}
@@ -1487,16 +1478,25 @@ sr{
             ld{"Средњеевропско летње рачунање времена"}
             lg{"Средњеевропско време"}
             ls{"Средњеевропско стандардно време"}
+            sd{"CEST"}
+            sg{"CET"}
+            ss{"CET"}
         }
         "meta:Europe_Eastern"{
             ld{"Источноевропско летње рачунање времена"}
             lg{"Источноевропско време"}
             ls{"Источноевропско стандардно време"}
+            sd{"EEST"}
+            sg{"EET"}
+            ss{"EET"}
         }
         "meta:Europe_Western"{
             ld{"Западноевропско летње рачунање времена"}
             lg{"Западноевропско време"}
             ls{"Западноевропско стандардно време"}
+            sd{"WEST"}
+            sg{"WET"}
+            ss{"WET"}
         }
         "meta:Falkland"{
             ld{"Фолкландска Острва летње рачунање времена"}
@@ -1516,6 +1516,7 @@ sr{
         }
         "meta:GMT"{
             ls{"Гринвич средње време"}
+            ss{"GMT"}
         }
         "meta:Galapagos"{
             ls{"Галапагос време"}

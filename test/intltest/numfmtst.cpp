@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1997-2013, International Business Machines Corporation and
+ * Copyright (c) 1997-2014, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /* Modification History:
@@ -42,8 +42,6 @@
 #define LENGTHOF(array) (int32_t)(sizeof(array)/sizeof(array[0]))
 
 static const UChar EUR[] = {69,85,82,0}; // "EUR"
-static const UChar JPY[] = {0x4A, 0x50, 0x59, 0};
-static const UChar CNY[] = {0x43, 0x4E, 0x59, 0};
 static const UChar ISO_CURRENCY_USD[] = {0x55, 0x53, 0x44, 0}; // "USD"
 
 
@@ -130,6 +128,12 @@ void NumberFormatTest::runIndexedTest( int32_t index, UBool exec, const char* &n
   TESTCASE_AUTO(TestParseNegativeWithAlternateMinusSign);
   TESTCASE_AUTO(TestCustomCurrencySignAndSeparator);
   TESTCASE_AUTO(TestParseSignsAndMarks);
+  TESTCASE_AUTO(Test10419RoundingWith0FractionDigits);
+  TESTCASE_AUTO(Test10468ApplyPattern);
+  TESTCASE_AUTO(TestRoundingScientific10542);
+  TESTCASE_AUTO(TestZeroScientific10547);
+  TESTCASE_AUTO(TestAccountingCurrency);
+  TESTCASE_AUTO(TestEquality);
   TESTCASE_AUTO_END;
 }
 
@@ -708,7 +712,7 @@ static const char* testCases[][2]= {
     {"de_LU_PREEURO", "1,150\\u00A0F" },
     {"el_GR_PREEURO", "1.150,50\\u00A0\\u0394\\u03C1\\u03C7" },
     {"en_BE_PREEURO", "1.150,50\\u00A0BEF" },
-    {"es_ES_PREEURO", "1.150\\u00A0\\u20A7" },  // Google Patch. CLDR Ticket #6852
+    {"es_ES_PREEURO", "1.150\\u00A0\\u20A7" },
     {"eu_ES_PREEURO", "\\u20A7\\u00A01.150" },
     {"gl_ES_PREEURO", "1.150\\u00A0\\u20A7" },
     {"it_IT_PREEURO", "ITL\\u00A01.150" },
@@ -1895,6 +1899,8 @@ void NumberFormatTest::TestCurrencyNames(void) {
 void NumberFormatTest::TestCurrencyUnit(void){
     UErrorCode ec = U_ZERO_ERROR;
     static const UChar USD[] = {85, 83, 68, 0}; /*USD*/
+    static const UChar BAD[] = {63, 63, 63, 0}; /*???*/
+    static const UChar BAD2[] = {63, 63, 65, 0}; /*???*/
     CurrencyUnit cu(USD, ec);
     assertSuccess("CurrencyUnit", ec);
 
@@ -1909,6 +1915,23 @@ void NumberFormatTest::TestCurrencyUnit(void){
     CurrencyUnit * cu3 = (CurrencyUnit *)cu.clone();
     if (!(*cu3 == cu)){
         errln("CurrencyUnit cloned object should be same");
+    }
+    CurrencyUnit bad(BAD, ec);
+    assertSuccess("CurrencyUnit", ec);
+    if (cu.getIndex() == bad.getIndex()) {
+        errln("Indexes of different currencies should differ.");
+    }
+    CurrencyUnit bad2(BAD2, ec);
+    assertSuccess("CurrencyUnit", ec);
+    if (bad2.getIndex() != bad.getIndex()) {
+        errln("Indexes of unrecognized currencies should be the same.");
+    }
+    if (bad == bad2) {
+        errln("Different unrecognized currencies should not be equal.");
+    }
+    bad = bad2;
+    if (bad != bad2) {
+        errln("Currency unit assignment should be the same.");
     }
     delete cu3;
 }
@@ -2528,12 +2551,12 @@ void NumberFormatTest::expect(NumberFormat& fmt, const Formattable& n,
 }
 
 void NumberFormatTest::expect(NumberFormat* fmt, const Formattable& n,
-                              const UnicodeString& exp,
+                              const UnicodeString& exp, UBool rt,
                               UErrorCode status) {
     if (fmt == NULL || U_FAILURE(status)) {
         dataerrln("FAIL: NumberFormat constructor");
     } else {
-        expect(*fmt, n, exp);
+        expect(*fmt, n, exp, rt);
     }
     delete fmt;
 }
@@ -2628,6 +2651,8 @@ void NumberFormatTest::expectPad(DecimalFormat& fmt, const UnicodeString& pat,
 // This test is flaky b/c the symbols for CNY and JPY are equivalent in this locale  - FIXME
 void NumberFormatTest::TestCompatibleCurrencies() {
 /*
+    static const UChar JPY[] = {0x4A, 0x50, 0x59, 0};
+    static const UChar CNY[] = {0x43, 0x4E, 0x59, 0};
     UErrorCode status = U_ZERO_ERROR;
     LocalPointer<NumberFormat> fmt(
         NumberFormat::createCurrencyInstance(Locale::getUS(), status));
@@ -3111,12 +3136,16 @@ void NumberFormatTest::TestNumberingSystems() {
     for (item = DATA; item->localeName != NULL; item++) {
         ec = U_ZERO_ERROR;
         Locale loc = Locale::createFromName(item->localeName);
-        NumberFormat *fmt = NumberFormat::createInstance(loc,ec);
 
+        NumberFormat *origFmt = NumberFormat::createInstance(loc,ec);
         if (U_FAILURE(ec)) {
             dataerrln("FAIL: getInstance(%s) - %s", item->localeName, u_errorName(ec));
             continue;
         }
+        // Clone to test ticket #10682
+        NumberFormat *fmt = (NumberFormat *) origFmt->clone();
+        delete origFmt;
+
         
         if (item->isRBNF) {
             expect3(*fmt,item->value,CharsToUnicodeString(item->expectedResult));
@@ -6562,8 +6591,8 @@ void NumberFormatTest::TestExplicitParents() {
     /* locale ID */  /* expected */
     {"es_CO", "1.250,75" },
     {"es_CR", "1.250,75" },
-    {"es_ES", "1.250,75" },     // Google Patch. CLDR Ticket #6852
-    {"es_GQ", "1.250,75" },     // Google Patch. CLDR Ticket #6852
+    {"es_ES", "1.250,75" },
+    {"es_GQ", "1.250,75" },
     {"es_MX", "1,250.75" },
     {"es_US", "1,250.75" },
     {"es_VE", "1.250,75" },
@@ -7282,6 +7311,319 @@ void NumberFormatTest::TestParseSignsAndMarks() {
         }
         delete numfmt;
     }
+}
+
+typedef struct {
+  DecimalFormat::ERoundingMode mode;
+  double value;
+  UnicodeString expected;
+} Test10419Data;
+
+
+// Tests that rounding works right when fractional digits is set to 0.
+void NumberFormatTest::Test10419RoundingWith0FractionDigits() {
+    const Test10419Data items[] = {
+        { DecimalFormat::kRoundCeiling, 1.488,  "2"},
+        { DecimalFormat::kRoundDown, 1.588,  "1"},
+        { DecimalFormat::kRoundFloor, 1.888,  "1"},
+        { DecimalFormat::kRoundHalfDown, 1.5,  "1"},
+        { DecimalFormat::kRoundHalfEven, 2.5,  "2"},
+        { DecimalFormat::kRoundHalfUp, 2.5,  "3"},
+        { DecimalFormat::kRoundUp, 1.5,  "2"},
+    };
+    UErrorCode status = U_ZERO_ERROR;
+    LocalPointer<DecimalFormat> decfmt((DecimalFormat *) NumberFormat::createInstance(Locale("en_US"), status));
+    if (U_FAILURE(status)) {
+        dataerrln("Failure creating DecimalFormat %s", u_errorName(status));
+        return;
+    }
+    for (int32_t i = 0; i < (int32_t) (sizeof(items) / sizeof(items[0])); ++i) {
+        decfmt->setRoundingMode(items[i].mode);
+        decfmt->setMaximumFractionDigits(0);
+        UnicodeString actual;
+        if (items[i].expected != decfmt->format(items[i].value, actual)) {
+            errln("Expected " + items[i].expected + ", got " + actual);
+        }
+    }
+}
+
+void NumberFormatTest::Test10468ApplyPattern() {
+    // Padding char of fmt is now 'a'
+    UErrorCode status = U_ZERO_ERROR;
+    DecimalFormat fmt("'I''ll'*a###.##", status);
+
+    if (U_FAILURE(status)) {
+        errcheckln(status, "DecimalFormat constructor failed - %s", u_errorName(status));
+        return;
+    }
+
+    if (fmt.getPadCharacterString() != UnicodeString("a")) {
+        errln("Padding character should be 'a'.");
+        return;
+    }
+
+    // Padding char of fmt ought to be '*' since that is the default and no
+    // explicit padding char is specified in the new pattern.
+    fmt.applyPattern("AA#,##0.00ZZ", status);
+
+    // Oops this still prints 'a' even though we changed the pattern. 
+    if (fmt.getPadCharacterString() != UnicodeString("*")) {
+        errln("applyPattern did not clear padding character.");
+    }
+}
+
+void NumberFormatTest::TestRoundingScientific10542() {
+    UErrorCode status = U_ZERO_ERROR;
+    DecimalFormat format("0.00E0", status);
+    if (U_FAILURE(status)) {
+        errcheckln(status, "DecimalFormat constructor failed - %s", u_errorName(status));
+        return;
+    }
+        
+    DecimalFormat::ERoundingMode roundingModes[] = {
+            DecimalFormat::kRoundCeiling,
+            DecimalFormat::kRoundDown,
+            DecimalFormat::kRoundFloor,
+            DecimalFormat::kRoundHalfDown,
+            DecimalFormat::kRoundHalfEven,
+            DecimalFormat::kRoundHalfUp,
+            DecimalFormat::kRoundUp};
+    const char *descriptions[] = {
+            "Round Ceiling",
+            "Round Down",
+            "Round Floor",
+            "Round half down",
+            "Round half even",
+            "Round half up",
+            "Round up"};
+        
+    {
+        double values[] = {-0.003006, -0.003005, -0.003004, 0.003014, 0.003015, 0.003016};
+        // The order of these expected values correspond to the order of roundingModes and the order of values.
+        const char *expected[] = {
+                "-3.00E-3", "-3.00E-3", "-3.00E-3", "3.02E-3", "3.02E-3", "3.02E-3",
+                "-3.00E-3", "-3.00E-3", "-3.00E-3", "3.01E-3", "3.01E-3", "3.01E-3",
+                "-3.01E-3", "-3.01E-3", "-3.01E-3", "3.01E-3", "3.01E-3", "3.01E-3",
+                "-3.01E-3", "-3.00E-3", "-3.00E-3", "3.01E-3", "3.01E-3", "3.02E-3",
+                "-3.01E-3", "-3.00E-3", "-3.00E-3", "3.01E-3", "3.02E-3", "3.02E-3",
+                "-3.01E-3", "-3.01E-3", "-3.00E-3", "3.01E-3", "3.02E-3", "3.02E-3",
+                "-3.01E-3", "-3.01E-3", "-3.01E-3", "3.02E-3", "3.02E-3", "3.02E-3"};
+        verifyRounding(
+                format,
+                values,
+                expected,
+                roundingModes,
+                descriptions,
+                (int32_t) (sizeof(values) / sizeof(values[0])),
+                (int32_t) (sizeof(roundingModes) / sizeof(roundingModes[0])));
+    }
+    {
+        double values[] = {-3006.0, -3005, -3004, 3014, 3015, 3016};
+        // The order of these expected values correspond to the order of roundingModes and the order of values.
+        const char *expected[] = {
+                "-3.00E3", "-3.00E3", "-3.00E3", "3.02E3", "3.02E3", "3.02E3",
+                "-3.00E3", "-3.00E3", "-3.00E3", "3.01E3", "3.01E3", "3.01E3",
+                "-3.01E3", "-3.01E3", "-3.01E3", "3.01E3", "3.01E3", "3.01E3",
+                "-3.01E3", "-3.00E3", "-3.00E3", "3.01E3", "3.01E3", "3.02E3",
+                "-3.01E3", "-3.00E3", "-3.00E3", "3.01E3", "3.02E3", "3.02E3",
+                "-3.01E3", "-3.01E3", "-3.00E3", "3.01E3", "3.02E3", "3.02E3",
+                "-3.01E3", "-3.01E3", "-3.01E3", "3.02E3", "3.02E3", "3.02E3"};
+        verifyRounding(
+                format,
+                values,
+                expected,
+                roundingModes,
+                descriptions,
+                (int32_t) (sizeof(values) / sizeof(values[0])),
+                (int32_t) (sizeof(roundingModes) / sizeof(roundingModes[0])));
+    }
+/* Commented out for now until we decide how rounding to zero should work, +0 vs. -0
+    {
+        double values[] = {0.0, -0.0};
+        // The order of these expected values correspond to the order of roundingModes and the order of values.
+        const char *expected[] = {
+                "0.00E0", "-0.00E0",
+                "0.00E0", "-0.00E0",
+                "0.00E0", "-0.00E0",
+                "0.00E0", "-0.00E0",
+                "0.00E0", "-0.00E0",
+                "0.00E0", "-0.00E0",
+                "0.00E0", "-0.00E0"};
+        verifyRounding(
+                format,
+                values,
+                expected,
+                roundingModes,
+                descriptions,
+                (int32_t) (sizeof(values) / sizeof(values[0])),
+                (int32_t) (sizeof(roundingModes) / sizeof(roundingModes[0])));
+    }
+*/
+    {
+
+        double values[] = {1e25, 1e25 + 1e15, 1e25 - 1e15};
+        // The order of these expected values correspond to the order of roundingModes and the order of values.
+        const char *expected[] = {
+                "1.00E25", "1.01E25", "1.00E25",
+                "1.00E25", "1.00E25", "9.99E24",
+                "1.00E25", "1.00E25", "9.99E24",
+                "1.00E25", "1.00E25", "1.00E25",
+                "1.00E25", "1.00E25", "1.00E25",
+                "1.00E25", "1.00E25", "1.00E25",
+                "1.00E25", "1.01E25", "1.00E25"};
+        verifyRounding(
+                format,
+                values,
+                expected,
+                roundingModes,
+                descriptions,
+                (int32_t) (sizeof(values) / sizeof(values[0])),
+                (int32_t) (sizeof(roundingModes) / sizeof(roundingModes[0])));
+        }
+    {
+        double values[] = {-1e25, -1e25 + 1e15, -1e25 - 1e15};
+        // The order of these expected values correspond to the order of roundingModes and the order of values.
+        const char *expected[] = {
+                "-1.00E25", "-9.99E24", "-1.00E25",
+                "-1.00E25", "-9.99E24", "-1.00E25",
+                "-1.00E25", "-1.00E25", "-1.01E25",
+                "-1.00E25", "-1.00E25", "-1.00E25",
+                "-1.00E25", "-1.00E25", "-1.00E25",
+                "-1.00E25", "-1.00E25", "-1.00E25",
+                "-1.00E25", "-1.00E25", "-1.01E25"};
+        verifyRounding(
+                format,
+                values,
+                expected,
+                roundingModes,
+                descriptions,
+                (int32_t) (sizeof(values) / sizeof(values[0])),
+                (int32_t) (sizeof(roundingModes) / sizeof(roundingModes[0])));
+        }
+    {
+        double values[] = {1e-25, 1e-25 + 1e-35, 1e-25 - 1e-35};
+        // The order of these expected values correspond to the order of roundingModes and the order of values.
+        const char *expected[] = {
+                "1.00E-25", "1.01E-25", "1.00E-25",
+                "1.00E-25", "1.00E-25", "9.99E-26",
+                "1.00E-25", "1.00E-25", "9.99E-26",
+                "1.00E-25", "1.00E-25", "1.00E-25",
+                "1.00E-25", "1.00E-25", "1.00E-25",
+                "1.00E-25", "1.00E-25", "1.00E-25",
+                "1.00E-25", "1.01E-25", "1.00E-25"};
+        verifyRounding(
+                format,
+                values,
+                expected,
+                roundingModes,
+                descriptions,
+                (int32_t) (sizeof(values) / sizeof(values[0])),
+                (int32_t) (sizeof(roundingModes) / sizeof(roundingModes[0])));
+        }
+    {
+        double values[] = {-1e-25, -1e-25 + 1e-35, -1e-25 - 1e-35};
+        // The order of these expected values correspond to the order of roundingModes and the order of values.
+        const char *expected[] = {
+                "-1.00E-25", "-9.99E-26", "-1.00E-25",
+                "-1.00E-25", "-9.99E-26", "-1.00E-25",
+                "-1.00E-25", "-1.00E-25", "-1.01E-25",
+                "-1.00E-25", "-1.00E-25", "-1.00E-25",
+                "-1.00E-25", "-1.00E-25", "-1.00E-25",
+                "-1.00E-25", "-1.00E-25", "-1.00E-25",
+                "-1.00E-25", "-1.00E-25", "-1.01E-25"};
+        verifyRounding(
+                format,
+                values,
+                expected,
+                roundingModes,
+                descriptions,
+                (int32_t) (sizeof(values) / sizeof(values[0])),
+                (int32_t) (sizeof(roundingModes) / sizeof(roundingModes[0])));
+    }
+}
+
+void NumberFormatTest::TestZeroScientific10547() {
+    UErrorCode status = U_ZERO_ERROR;
+    DecimalFormat fmt("0.00E0", status);
+    if (!assertSuccess("Formt creation", status)) {
+        return;
+    }
+    UnicodeString out;
+    fmt.format(-0.0, out);
+    assertEquals("format", "-0.00E0", out);
+}
+
+void NumberFormatTest::verifyRounding(
+        DecimalFormat& format,
+        const double *values,
+        const char * const *expected,
+        const DecimalFormat::ERoundingMode *roundingModes,
+        const char * const *descriptions,
+        int32_t valueSize,
+        int32_t roundingModeSize) {
+    for (int32_t i = 0; i < roundingModeSize; ++i) {
+        format.setRoundingMode(roundingModes[i]);
+        for (int32_t j = 0; j < valueSize; j++) {
+            UnicodeString currentExpected(expected[i * valueSize + j]);
+            currentExpected = currentExpected.unescape();
+            UnicodeString actual;
+            format.format(values[j], actual);
+            if (currentExpected != actual) {
+                char buffer[256];
+                sprintf(
+                        buffer,
+                        "For %s value %f, expected ",
+                        descriptions[i],
+                        values[j]);
+                errln(UnicodeString(buffer) + currentExpected + ", got " + actual);
+            }
+        }
+    }
+}
+
+void NumberFormatTest::TestAccountingCurrency() {
+    UErrorCode status = U_ZERO_ERROR;
+    UNumberFormatStyle style = UNUM_CURRENCY_ACCOUNTING;
+
+    expect(NumberFormat::createInstance("en_US", style, status),
+        (Formattable)1234.5, "$1,234.50", TRUE, status);
+    expect(NumberFormat::createInstance("en_US", style, status),
+        (Formattable)-1234.5, "($1,234.50)", TRUE, status);
+    expect(NumberFormat::createInstance("en_US", style, status),
+        (Formattable)0, "$0.00", TRUE, status);
+    expect(NumberFormat::createInstance("en_US", style, status),
+        (Formattable)-0.2, "($0.20)", TRUE, status);
+    expect(NumberFormat::createInstance("ja_JP", style, status),
+        (Formattable)10000, UnicodeString("\\uFFE510,000").unescape(), TRUE, status);
+    expect(NumberFormat::createInstance("ja_JP", style, status),
+        (Formattable)-1000.5, UnicodeString("(\\uFFE51,000)").unescape(), FALSE, status);
+    expect(NumberFormat::createInstance("de_DE", style, status),
+        (Formattable)-23456.7, UnicodeString("-23.456,70\\u00A0\\u20AC").unescape(), TRUE, status);
+}
+
+// for #5186
+void NumberFormatTest::TestEquality() {
+    UErrorCode status = U_ZERO_ERROR;
+    DecimalFormatSymbols* symbols = new DecimalFormatSymbols(Locale("root"), status);
+    if (U_FAILURE(status)) {
+    	dataerrln("Fail: can't create DecimalFormatSymbols for root");
+    	return;
+    }
+    UnicodeString pattern("#,##0.###");
+    DecimalFormat* fmtBase = new DecimalFormat(pattern, symbols, status);
+    if (U_FAILURE(status)) {
+    	dataerrln("Fail: can't create DecimalFormat using root symbols");
+    	return;
+    }
+
+    DecimalFormat* fmtClone = (DecimalFormat*)fmtBase->clone();
+    fmtClone->setFormatWidth(fmtBase->getFormatWidth() + 32);
+    if (*fmtClone == *fmtBase) {
+        errln("Error: DecimalFormat == does not distinguish objects that differ only in FormatWidth");
+    }
+    delete fmtClone;
+
+    delete fmtBase;
 }
 
 #endif /* #if !UCONFIG_NO_FORMATTING */

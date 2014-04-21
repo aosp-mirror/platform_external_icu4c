@@ -1,6 +1,6 @@
 /*
 ********************************************************************************
-*   Copyright (C) 1997-2013, International Business Machines
+*   Copyright (C) 1997-2014, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 ********************************************************************************
 *
@@ -63,7 +63,7 @@ class FixedDecimal;
 // explicit template instantiation. see digitlst.h
 #if defined (_MSC_VER)
 template class U_I18N_API    EnumSet<UNumberFormatAttribute,
-            UNUM_MAX_NONBOOLEAN_ATTRIBUTE+1, 
+            UNUM_MAX_NONBOOLEAN_ATTRIBUTE+1,
             UNUM_LIMIT_BOOLEAN_ATTRIBUTE>;
 #endif
 
@@ -678,8 +678,8 @@ public:
         kRoundHalfUp,   /**< Round towards the nearest integer, or
                              away from zero if equidistant */
         /**
-          *  Return U_FORMAT_INEXACT_ERROR if number does not format exactly. 
-          *  @stable ICU 4.8 
+          *  Return U_FORMAT_INEXACT_ERROR if number does not format exactly.
+          *  @stable ICU 4.8
           */
         kRoundUnnecessary
     };
@@ -785,7 +785,7 @@ public:
      * @param newvalue new value
      * @param status the error type
      * @return *this - for chaining (example: format.setAttribute(...).setAttribute(...) )
-     * @draft ICU 51
+     * @stable ICU 51
      */
     virtual DecimalFormat& setAttribute( UNumberFormatAttribute attr,
                                        int32_t newvalue,
@@ -798,12 +798,40 @@ public:
      * @param attr the attribute to set
      * @param status the error type
      * @return the attribute value. Undefined if there is an error.
-     * @draft ICU 51
+     * @stable ICU 51
      */
     virtual int32_t getAttribute( UNumberFormatAttribute attr,
                                   UErrorCode &status) const;
 
+    
+    /**
+     * Set whether or not grouping will be used in this format.
+     * @param newValue    True, grouping will be used in this format.
+     * @see getGroupingUsed
+     * @draft ICU 53
+     */
+    virtual void setGroupingUsed(UBool newValue);
 
+    /**
+     * Sets whether or not numbers should be parsed as integers only.
+     * @param value    set True, this format will parse numbers as integers
+     *                 only.
+     * @see isParseIntegerOnly
+     * @draft ICU 53
+     */
+    virtual void setParseIntegerOnly(UBool value);
+
+    /* Cannot use #ifndef U_HIDE_DRAFT_API for the following draft method since it is virtual */
+    /**
+     * Set a particular UDisplayContext value in the formatter, such as
+     * UDISPCTX_CAPITALIZATION_FOR_STANDALONE.
+     * @param value The UDisplayContext value to set.
+     * @param status Input/output status. If at entry this indicates a failure
+     *               status, the function will do nothing; otherwise this will be
+     *               updated with any new status from the function. 
+     * @draft ICU 53
+     */
+    virtual void setContext(UDisplayContext value, UErrorCode& status);
 
     /**
      * Create a DecimalFormat from the given pattern and symbols.
@@ -1065,7 +1093,7 @@ public:
 
 
     /**
-     * Format a decimal number. 
+     * Format a decimal number.
      * The number is a DigitList wrapper onto a floating point decimal number.
      * The default implementation in NumberFormat converts the decimal number
      * to a double and formats that.
@@ -1085,10 +1113,10 @@ public:
                                   UErrorCode& status) const;
 
     /**
-     * Format a decimal number. 
+     * Format a decimal number.
      * The number is a DigitList wrapper onto a floating point decimal number.
      * The default implementation in NumberFormat converts the decimal number
-     * to a double and formats that.  
+     * to a double and formats that.
      *
      * @param number    The number, a DigitList format Decimal Floating Point.
      * @param appendTo  Output parameter to receive result.
@@ -1337,7 +1365,7 @@ public:
     virtual ERoundingMode getRoundingMode(void) const;
 
     /**
-     * Set the rounding mode.  
+     * Set the rounding mode.
      * @param roundingMode A rounding mode
      * @see #setRoundingIncrement
      * @see #getRoundingIncrement
@@ -1988,7 +2016,7 @@ private:
     UnicodeString& subformat(UnicodeString& appendTo,
                              FieldPositionHandler& handler,
                              DigitList&     digits,
-                             UBool          isInteger, 
+                             UBool          isInteger,
                              UErrorCode &status) const;
 
 
@@ -2163,14 +2191,6 @@ private:
                            FieldPositionHandler& handler,
                            UErrorCode &status) const;
 
-    // currency sign count
-    enum {
-        fgCurrencySignCountZero,
-        fgCurrencySignCountInSymbolFormat,
-        fgCurrencySignCountInISOFormat,
-        fgCurrencySignCountInPluralFormat
-    } CurrencySignCount;
-
     /**
      * Constants.
      */
@@ -2192,7 +2212,7 @@ private:
     ChoiceFormat*           fCurrencyChoice;
 
     DigitList *             fMultiplier;   // NULL for multiplier of one
-    int32_t                 fScale;        
+    int32_t                 fScale;
     int32_t                 fGroupingSize;
     int32_t                 fGroupingSize2;
     UBool                   fDecimalSeparatorAlwaysShown;
@@ -2207,8 +2227,8 @@ private:
     UBool                   fExponentSignAlwaysShown;
 
     EnumSet<UNumberFormatAttribute,
-            UNUM_MAX_NONBOOLEAN_ATTRIBUTE+1, 
-            UNUM_LIMIT_BOOLEAN_ATTRIBUTE>  
+            UNUM_MAX_NONBOOLEAN_ATTRIBUTE+1,
+            UNUM_LIMIT_BOOLEAN_ATTRIBUTE>
                             fBoolFlags;
 
     DigitList*              fRoundingIncrement;  // NULL if no rounding increment specified.
@@ -2381,7 +2401,7 @@ protected:
 #if UCONFIG_FORMAT_FASTPATHS_49
  private:
     /**
-     * Internal state. 
+     * Internal state.
      * @internal
      */
     uint8_t fReserved[UNUM_DECIMALFORMAT_INTERNAL_SIZE];

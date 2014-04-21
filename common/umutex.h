@@ -318,7 +318,7 @@ U_NAMESPACE_END
 
 
 typedef struct UMutex {
-    UInitOnce         fInitOnce;
+    icu::UInitOnce    fInitOnce;
     CRITICAL_SECTION  fCS;
 } UMutex;
 

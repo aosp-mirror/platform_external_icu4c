@@ -104,7 +104,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <OutputFile>..\..\bin\icuuc52.dll</OutputFile>
+      <OutputFile>..\..\bin\icuuc53.dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ProgramDatabaseFile>.\..\..\lib\icuuc.pdb</ProgramDatabaseFile>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -145,7 +145,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <OutputFile>..\..\bin\icuuc52d.dll</OutputFile>
+      <OutputFile>..\..\bin\icuuc53d.dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>.\..\..\lib\icuucd.pdb</ProgramDatabaseFile>
@@ -183,7 +183,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <OutputFile>..\..\bin64\icuuc52.dll</OutputFile>
+      <OutputFile>..\..\bin64\icuuc53.dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ProgramDatabaseFile>.\..\..\lib64\icuuc.pdb</ProgramDatabaseFile>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -222,7 +222,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <OutputFile>..\..\bin64\icuuc52d.dll</OutputFile>
+      <OutputFile>..\..\bin64\icuuc53d.dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>.\..\..\lib64\icuucd.pdb</ProgramDatabaseFile>
@@ -371,6 +371,9 @@
     <ClCompile Include="locresdata.cpp" />
     <ClCompile Include="locutil.cpp">
     </ClCompile>
+    <ClCompile Include="lrucache.cpp">
+    <DisableLanguageExtensions>false</DisableLanguageExtensions>
+    </ClCompile>
     <ClCompile Include="resbund.cpp">
     </ClCompile>
     <ClCompile Include="resbund_cnv.cpp" />
@@ -390,7 +393,6 @@
     <ClCompile Include="normlzr.cpp">
     </ClCompile>
     <ClCompile Include="unorm.cpp" />
-    <ClCompile Include="unorm_it.c" />
     <ClCompile Include="unormcmp.cpp" />
     <ClCompile Include="bmpset.cpp" />
     <ClCompile Include="patternprops.cpp" />
@@ -443,6 +445,7 @@
     <ClCompile Include="schriter.cpp" />
     <ClCompile Include="stringpiece.cpp" />
     <ClCompile Include="stringtriebuilder.cpp" />
+    <ClCompile Include="simplepatternformatter.cpp" />
     <ClCompile Include="ucasemap.cpp" />
     <ClCompile Include="ucasemap_titlecase_brkiter.cpp" />
     <ClCompile Include="ucharstrie.cpp" />
@@ -1066,6 +1069,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\include\unicode\%(Filename)%(Extension);%(Outputs)</Outputs>
     </CustomBuild>
     <ClInclude Include="locutil.h" />
+    <ClInclude Include="lrucache.h" />
     <CustomBuild Include="unicode\resbund.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "%(FullPath)" ..\..\include\unicode
 </Command>
@@ -1080,6 +1084,10 @@
 </Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\include\unicode\%(Filename)%(Extension);%(Outputs)</Outputs>
     </CustomBuild>
+    <ClInclude Include="sharedobject.h" />
+    <ClCompile Include="sharedobject.cpp" />
+    <ClInclude Include="sharedptr.h" />
+    <ClInclude Include="simplepatternformatter.h" />
     <CustomBuild Include="unicode\ucat.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "%(FullPath)" ..\..\include\unicode
 </Command>
@@ -1197,7 +1205,6 @@
 </Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\include\unicode\%(Filename)%(Extension);%(Outputs)</Outputs>
     </CustomBuild>
-    <ClInclude Include="unorm_it.h" />
     <ClInclude Include="unormimp.h" />
     <ClInclude Include="bmpset.h" />
     <ClInclude Include="messageimpl.h" />

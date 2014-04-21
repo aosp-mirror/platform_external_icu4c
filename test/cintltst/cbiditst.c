@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1997-2013, International Business Machines Corporation and
+ * Copyright (c) 1997-2014, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /*   file name:  cbiditst.c
@@ -3550,8 +3550,8 @@ doArabicShapingTestForNewCharacters(void) {
     { 0x06CC, 0xFBFC, 0xFBFD, 0xFBFE, 0xFBFF, }, /* FARSI YEH */
     { 0x06D2, 0xFBAE, 0xFBAF, 0, 0, },           /* YEH BARREE */
     { 0x06D3, 0xFBB0, 0xFBB1, 0, 0, }};          /* YEH BARREE WITH HAMZA ABOVE */
-
-  for (int i = 0; i < LENGTHOF(letterForms); ++i) {
+  int32_t i;
+  for (i = 0; i < LENGTHOF(letterForms); ++i) {
     _testPresentationForms(letterForms[i]);
   }
 }

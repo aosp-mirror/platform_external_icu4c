@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1997-2013, International Business Machines Corporation and
+ * Copyright (c) 1997-2014, International Business Machines Corporation and
  * others. All Rights Reserved.
  ********************************************************************/
 /*******************************************************************************
@@ -104,7 +104,6 @@ parseUCDFile(const char *filename,
 
 /* test data ---------------------------------------------------------------- */
 
-static const UChar  LAST_CHAR_CODE_IN_FILE = 0xFFFD;
 static const char tagStrings[] = "MnMcMeNdNlNoZsZlZpCcCfCsCoCnLuLlLtLmLoPcPdPsPePoSmScSkSoPiPf";
 static const int32_t tagValues[] =
     {
@@ -3068,7 +3067,7 @@ TestConsistency() {
 
     U_STRING_DECL(mathBlocksPattern,
         "[[:block=Mathematical Operators:][:block=Miscellaneous Mathematical Symbols-A:][:block=Miscellaneous Mathematical Symbols-B:][:block=Supplemental Mathematical Operators:][:block=Mathematical Alphanumeric Symbols:]]",
-        1+32+46+46+45+43+1+1); /* +1 for NUL */
+        214);
     U_STRING_DECL(mathPattern, "[:Math:]", 8);
     U_STRING_DECL(unassignedPattern, "[:Cn:]", 6);
     U_STRING_DECL(unknownPattern, "[:sc=Unknown:]", 14);
@@ -3082,7 +3081,7 @@ TestConsistency() {
 
     U_STRING_INIT(mathBlocksPattern,
         "[[:block=Mathematical Operators:][:block=Miscellaneous Mathematical Symbols-A:][:block=Miscellaneous Mathematical Symbols-B:][:block=Supplemental Mathematical Operators:][:block=Mathematical Alphanumeric Symbols:]]",
-        1+32+46+46+45+43+1+1); /* +1 for NUL */
+        214);
     U_STRING_INIT(mathPattern, "[:Math:]", 8);
     U_STRING_INIT(unassignedPattern, "[:Cn:]", 6);
     U_STRING_INIT(unknownPattern, "[:sc=Unknown:]", 14);

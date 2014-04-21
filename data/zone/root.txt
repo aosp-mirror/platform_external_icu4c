@@ -10,7 +10,7 @@
  * ICU <specials> source: <path>/common/main/root.xml
  */
 root{
-    Version{"2.0.93.8"}
+    Version{"2.0.97.37"}
     zoneStrings{
         // Begin android-added
         ""{

@@ -306,5 +306,5 @@ lv{
         GB{"Lielbritānija"}
         US{"ASV"}
     }
-    Version{"2.0.92.87"}
+    Version{"2.0.99.67"}
 }
