@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "aa62d821_f380906e",
+        "filename": "common/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-05-07T22:55:44Z",
+      "side": 0,
+      "message": "Yeah, that\u0027s because LOCAL_LDLIBS was never applied to target modules.\nI am not sure if the host one needs -ldl, so I just keep it.",
+      "parentUuid": "8afd1475_9514865d",
+      "revId": "8c4c3df301355f16ac40d1ba155871a0ea976d92",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6a02a043_f1240817",
         "filename": "i18n/Android.mk",
         "patchSetId": 1
