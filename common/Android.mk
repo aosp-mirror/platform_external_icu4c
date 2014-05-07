@@ -148,7 +148,6 @@ LOCAL_SRC_FILES += $(src_files)
 LOCAL_C_INCLUDES += $(c_includes) $(optional_android_logging_includes)
 LOCAL_CFLAGS += $(local_cflags) -DPIC -fPIC
 LOCAL_SHARED_LIBRARIES += libdl $(optional_android_logging_libraries)
-LOCAL_LDLIBS += $(local_ldlibs)
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := libicuuc
 LOCAL_ADDITIONAL_DEPENDENCIES += $(LOCAL_PATH)/Android.mk
@@ -190,7 +189,6 @@ LOCAL_CFLAGS += $(local_cflags) -DPIC -fPIC -frtti
 # Using -Os over -O3 actually cuts down the final executable size by a few dozen kilobytes
 LOCAL_CFLAGS += -Os
 LOCAL_EXPORT_CFLAGS += -DU_STATIC_IMPLEMENTATION=1
-LOCAL_LDLIBS += $(local_ldlibs)
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := libicuuc_static
 LOCAL_SRC_FILES += $(src_files)
