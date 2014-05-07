@@ -137,8 +137,6 @@ local_cflags += -DU_COMMON_IMPLEMENTATION
 
 local_cflags += -O3 -fvisibility=hidden
 
-local_ldlibs := -ldl -lm -lpthread
-
 #
 # Build for the target (device).
 #
@@ -167,7 +165,7 @@ ifeq ($(WITH_HOST_DALVIK),true)
     LOCAL_C_INCLUDES += $(c_includes) $(optional_android_logging_includes)
     LOCAL_CFLAGS += $(local_cflags)
     LOCAL_SHARED_LIBRARIES += $(optional_android_logging_libraries)
-    LOCAL_LDLIBS += $(local_ldlibs)
+    LOCAL_LDLIBS += -ldl -lm -lpthread
     LOCAL_MODULE_TAGS := optional
     LOCAL_MODULE := libicuuc-host
     LOCAL_ADDITIONAL_DEPENDENCIES += $(LOCAL_PATH)/Android.mk
