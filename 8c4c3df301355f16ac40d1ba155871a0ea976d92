@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8afd1475_9514865d",
+        "filename": "common/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-05-07T22:46:50Z",
+      "side": 0,
+      "message": "if the target doesn\u0027t need -ldl, doesn\u0027t that mean the host doesn\u0027t need it either? (and how was -lpthread ever working on the target? we don\u0027t have that library.)",
+      "revId": "8c4c3df301355f16ac40d1ba155871a0ea976d92",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6a02a043_f1240817",
+        "filename": "i18n/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-05-07T22:46:50Z",
+      "side": 0,
+      "message": "the changes in this file make sense to me.",
+      "revId": "8c4c3df301355f16ac40d1ba155871a0ea976d92",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
