@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ca654c2b_3ae5b96f",
+        "filename": "common/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-05-07T23:10:55Z",
+      "side": 0,
+      "message": "interestingly, the host needs -ldl but the target doesn\u0027t. i suspect we have some configuration issue that means we\u0027re not building the dlopen-using functionality for the target.",
+      "revId": "a456cc235b734a387a59ee9e1f92e435553631d2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
