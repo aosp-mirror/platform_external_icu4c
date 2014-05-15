@@ -12,15 +12,6 @@
 root{
     Version{"2.0.97.37"}
     zoneStrings{
-        // Begin android-added
-        ""{
-            ec{""}
-            ld{""}
-            ls{""}
-            sd{""}
-            ss{""}
-        }
-        // End android-added
         "Africa:Asmera"{
             ec{"Asmara"}
         }
@@ -114,59 +105,6 @@ root{
         "Pacific:Truk"{
             ec{"Chuuk"}
         }
-	// Begin android-added
-        "meta:Africa_Central"{
-            ss{"CAT"}
-        }
-        "meta:Africa_Eastern"{
-            ss{"EAT"}
-        }
-        "meta:Africa_Southern"{
-            ss{"SAST"}
-        }
-        "meta:Africa_Western"{
-            sd{"WAST"}
-            ss{"WAT"}
-        }
-        "meta:America_Central"{
-            sd{"CDT"}
-            sg{"CT"}
-            ss{"CST"}
-        }
-        "meta:America_Eastern"{
-            sd{"EDT"}
-            sg{"ET"}
-            ss{"EST"}
-        }
-        "meta:America_Mountain"{
-            sd{"MDT"}
-            sg{"MT"}
-            ss{"MST"}
-        }
-        "meta:America_Pacific"{
-            sd{"PDT"}
-            sg{"PT"}
-            ss{"PST"}
-        }
-        "meta:Europe_Central"{
-            sd{"CEST"}
-            sg{"CET"}
-            ss{"CET"}
-        }
-        "meta:Europe_Eastern"{
-            sd{"EEST"}
-            sg{"EET"}
-            ss{"EET"}
-        }
-        "meta:Europe_Western"{
-            sd{"WEST"}
-            sg{"WET"}
-            ss{"WET"}
-        }
-        "meta:GMT"{
-            ss{"GMT"}
-        }
-	// End android-added
         fallbackFormat{"{1} ({0})"}
         gmtFormat{"GMT{0}"}
         gmtZeroFormat{"GMT"}
