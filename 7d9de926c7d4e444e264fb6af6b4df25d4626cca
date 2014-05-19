@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7f10a43e_9ad5a254",
+        "filename": "data/misc/zoneinfo64.txt",
+        "patchSetId": 2
+      },
+      "lineNbr": 3503,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-05-19T16:46:01Z",
+      "side": 1,
+      "message": "that\u0027s weird.",
+      "revId": "7d9de926c7d4e444e264fb6af6b4df25d4626cca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
