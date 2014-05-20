@@ -2573,16 +2573,14 @@ void DateFormatTest::TestTimeZoneDisplayName()
 
         { "de", "America/Los_Angeles", "2004-01-15T00:00:00Z", "Z", "-0800", "-8:00" },
         { "de", "America/Los_Angeles", "2004-01-15T00:00:00Z", "ZZZZ", "GMT-08:00", "-8:00" },
-        // BEGIN android-change
-        { "de", "America/Los_Angeles", "2004-01-15T00:00:00Z", "z", "PST", "-8:00" },
+        { "de", "America/Los_Angeles", "2004-01-15T00:00:00Z", "z", "GMT-8", "-8:00" },
         { "de", "America/Los_Angeles", "2004-01-15T00:00:00Z", "zzzz", "Nordamerikanische Westk\\u00fcsten-Normalzeit", "-8:00" },
         { "de", "America/Los_Angeles", "2004-07-15T00:00:00Z", "Z", "-0700", "-7:00" },
         { "de", "America/Los_Angeles", "2004-07-15T00:00:00Z", "ZZZZ", "GMT-07:00", "-7:00" },
-        { "de", "America/Los_Angeles", "2004-07-15T00:00:00Z", "z", "PDT", "-7:00" },
+        { "de", "America/Los_Angeles", "2004-07-15T00:00:00Z", "z", "GMT-7", "-7:00" },
         { "de", "America/Los_Angeles", "2004-07-15T00:00:00Z", "zzzz", "Nordamerikanische Westk\\u00fcsten-Sommerzeit", "-7:00" },
-        { "de", "America/Los_Angeles", "2004-07-15T00:00:00Z", "v", "PT", "America/Los_Angeles" },
+        { "de", "America/Los_Angeles", "2004-07-15T00:00:00Z", "v", "Los Angeles Zeit", "America/Los_Angeles" },
         { "de", "America/Los_Angeles", "2004-07-15T00:00:00Z", "vvvv", "Nordamerikanische Westk\\u00fcstenzeit", "America/Los_Angeles" },
-        // END android-change
 
         { "de", "America/Argentina/Buenos_Aires", "2004-01-15T00:00:00Z", "Z", "-0300", "-3:00" },
         { "de", "America/Argentina/Buenos_Aires", "2004-01-15T00:00:00Z", "ZZZZ", "GMT-03:00", "-3:00" },
@@ -2680,17 +2678,15 @@ void DateFormatTest::TestTimeZoneDisplayName()
 
         { "zh", "America/Los_Angeles", "2004-01-15T00:00:00Z", "Z", "-0800", "-8:00" },
         { "zh", "America/Los_Angeles", "2004-01-15T00:00:00Z", "ZZZZ", "GMT-08:00", "-8:00" },
-        // BEGIN android-change
-        { "zh", "America/Los_Angeles", "2004-01-15T00:00:00Z", "z", "PST", "America/Los_Angeles" },
+        { "zh", "America/Los_Angeles", "2004-01-15T00:00:00Z", "z", "GMT-8", "America/Los_Angeles" },
         { "zh", "America/Los_Angeles", "2004-01-15T00:00:00Z", "zzzz", "\\u5317\\u7f8e\\u592a\\u5e73\\u6d0b\\u6807\\u51c6\\u65f6\\u95f4", "America/Los_Angeles" },
         { "zh", "America/Los_Angeles", "2004-07-15T00:00:00Z", "Z", "-0700", "-7:00" },
         { "zh", "America/Los_Angeles", "2004-07-15T00:00:00Z", "ZZZZ", "GMT-07:00", "-7:00" },
-        { "zh", "America/Los_Angeles", "2004-07-15T00:00:00Z", "z", "PDT", "America/Los_Angeles" },
+        { "zh", "America/Los_Angeles", "2004-07-15T00:00:00Z", "z", "GMT-7", "America/Los_Angeles" },
         { "zh", "America/Los_Angeles", "2004-07-15T00:00:00Z", "zzzz", "\\u5317\\u7f8e\\u592a\\u5e73\\u6d0b\\u590f\\u4ee4\\u65f6\\u95f4", "America/Los_Angeles" },
     // icu zh.txt has exemplar city for this time zone
-        { "zh", "America/Los_Angeles", "2004-07-15T00:00:00Z", "v", "PT", "America/Los_Angeles" },
+        { "zh", "America/Los_Angeles", "2004-07-15T00:00:00Z", "v", "\\u6D1B\\u6749\\u77F6\\u65F6\\u95F4", "America/Los_Angeles" },
         { "zh", "America/Los_Angeles", "2004-07-15T00:00:00Z", "vvvv", "\\u5317\\u7f8e\\u592a\\u5e73\\u6d0b\\u65f6\\u95f4", "America/Los_Angeles" },
-        // END android-change
 
         { "zh", "America/Argentina/Buenos_Aires", "2004-01-15T00:00:00Z", "Z", "-0300", "-3:00" },
         { "zh", "America/Argentina/Buenos_Aires", "2004-01-15T00:00:00Z", "ZZZZ", "GMT-03:00", "-3:00" },
@@ -2793,16 +2789,14 @@ void DateFormatTest::TestTimeZoneDisplayName()
 
         { "hi", "America/Los_Angeles", "2004-01-15T00:00:00Z", "Z", "-0800", "-8:00" },
         { "hi", "America/Los_Angeles", "2004-01-15T00:00:00Z", "ZZZZ", "GMT-08:00", "-8:00" },
-        // BEGIN android-change
-        { "hi", "America/Los_Angeles", "2004-01-15T00:00:00Z", "z", "PST", "-8:00" },
+        { "hi", "America/Los_Angeles", "2004-01-15T00:00:00Z", "z", "GMT-8", "-8:00" },
         { "hi", "America/Los_Angeles", "2004-01-15T00:00:00Z", "zzzz", "\\u0909\\u0924\\u094d\\u0924\\u0930\\u0940 \\u0905\\u092e\\u0947\\u0930\\u093f\\u0915\\u0940 \\u092a\\u094d\\u0930\\u0936\\u093e\\u0902\\u0924 \\u092e\\u093e\\u0928\\u0915 \\u0938\\u092e\\u092f", "-8:00" },
         { "hi", "America/Los_Angeles", "2004-07-15T00:00:00Z", "Z", "-0700", "-7:00" },
         { "hi", "America/Los_Angeles", "2004-07-15T00:00:00Z", "ZZZZ", "GMT-07:00", "-7:00" },
-        { "hi", "America/Los_Angeles", "2004-07-15T00:00:00Z", "z", "PDT", "-7:00" },
+        { "hi", "America/Los_Angeles", "2004-07-15T00:00:00Z", "z", "GMT-7", "-7:00" },
         { "hi", "America/Los_Angeles", "2004-07-15T00:00:00Z", "zzzz", "\\u0909\\u0924\\u094d\\u0924\\u0930\\u0940 \\u0905\\u092e\\u0947\\u0930\\u093f\\u0915\\u0940 \\u092a\\u094d\\u0930\\u0936\\u093e\\u0902\\u0924 \\u0921\\u0947\\u0932\\u093e\\u0907\\u091f \\u0938\\u092e\\u092f", "-7:00" },
-        { "hi", "America/Los_Angeles", "2004-07-15T00:00:00Z", "v",  "PT", "America/Los_Angeles" },
+        { "hi", "America/Los_Angeles", "2004-07-15T00:00:00Z", "v",  "\\u0932\\u0949\\u0938 \\u090f\\u0902\\u091c\\u093f\\u0932\\u094d\\u0938 \\u0938\\u092e\\u092f", "America/Los_Angeles" },
         { "hi", "America/Los_Angeles", "2004-07-15T00:00:00Z", "vvvv", "\\u0909\\u0924\\u094d\\u0924\\u0930\\u0940 \\u0905\\u092e\\u0947\\u0930\\u093f\\u0915\\u0940 \\u092a\\u094d\\u0930\\u0936\\u093e\\u0902\\u0924 \\u0938\\u092e\\u092f", "America/Los_Angeles" },
-        // END android-change
 
         { "hi", "America/Argentina/Buenos_Aires", "2004-01-15T00:00:00Z", "Z", "-0300", "-3:00" },
         { "hi", "America/Argentina/Buenos_Aires", "2004-01-15T00:00:00Z", "ZZZZ", "GMT-03:00", "-3:00" },
@@ -2896,17 +2890,14 @@ void DateFormatTest::TestTimeZoneDisplayName()
 
         { "bg", "America/Los_Angeles", "2004-01-15T00:00:00Z", "Z", "-0800", "-8:00" },
         { "bg", "America/Los_Angeles", "2004-01-15T00:00:00Z", "ZZZZ", "\\u0413\\u0440\\u0438\\u0438\\u043D\\u0443\\u0438\\u0447-08:00", "-8:00" },
-        // BEGIN android-change
-        { "bg", "America/Los_Angeles", "2004-01-15T00:00:00Z", "z", "PST", "America/Los_Angeles" },
+        { "bg", "America/Los_Angeles", "2004-01-15T00:00:00Z", "z", "\\u0413\\u0440\\u0438\\u0438\\u043D\\u0443\\u0438\\u0447-8", "America/Los_Angeles" },
         { "bg", "America/Los_Angeles", "2004-01-15T00:00:00Z", "zzzz", "\\u0421\\u0435\\u0432\\u0435\\u0440\\u043d\\u043e\\u0430\\u043c\\u0435\\u0440\\u0438\\u043a\\u0430\\u043d\\u0441\\u043a\\u043e \\u0442\\u0438\\u0445\\u043e\\u043e\\u043a\\u0435\\u0430\\u043d\\u0441\\u043a\\u043e \\u0441\\u0442\\u0430\\u043d\\u0434\\u0430\\u0440\\u0442\\u043d\\u043e \\u0432\\u0440\\u0435\\u043c\\u0435", "America/Los_Angeles" },
         { "bg", "America/Los_Angeles", "2004-07-15T00:00:00Z", "Z", "-0700", "-7:00" },
         { "bg", "America/Los_Angeles", "2004-07-15T00:00:00Z", "ZZZZ", "\\u0413\\u0440\\u0438\\u0438\\u043D\\u0443\\u0438\\u0447-07:00", "-7:00" },
-        { "bg", "America/Los_Angeles", "2004-07-15T00:00:00Z", "z", "PDT", "America/Los_Angeles" },
+        { "bg", "America/Los_Angeles", "2004-07-15T00:00:00Z", "z", "\\u0413\\u0440\\u0438\\u0438\\u043D\\u0443\\u0438\\u0447-7", "America/Los_Angeles" },
         { "bg", "America/Los_Angeles", "2004-07-15T00:00:00Z", "zzzz", "\\u0421\\u0435\\u0432\\u0435\\u0440\\u043d\\u043e\\u0430\\u043c\\u0435\\u0440\\u0438\\u043a\\u0430\\u043d\\u0441\\u043a\\u043e \\u0442\\u0438\\u0445\\u043e\\u043e\\u043a\\u0435\\u0430\\u043d\\u0441\\u043a\\u043e \\u043b\\u044f\\u0442\\u043d\\u043e \\u0447\\u0430\\u0441\\u043e\\u0432\\u043e \\u0432\\u0440\\u0435\\u043c\\u0435", "America/Los_Angeles" },
     // icu bg.txt has exemplar city for this time zone
-        { "bg", "America/Los_Angeles", "2004-07-15T00:00:00Z", "v", "PT", "America/Los_Angeles" },
-        // END android-change
-
+        { "bg", "America/Los_Angeles", "2004-07-15T00:00:00Z", "v", "\\u041B\\u043E\\u0441 \\u0410\\u043D\\u0434\\u0436\\u0435\\u043B\\u0438\\u0441", "America/Los_Angeles" },
         { "bg", "America/Los_Angeles", "2004-07-15T00:00:00Z", "vvvv", "\\u0421\\u0435\\u0432\\u0435\\u0440\\u043d\\u043e\\u0430\\u043c\\u0435\\u0440\\u0438\\u043a\\u0430\\u043d\\u0441\\u043a\\u043e \\u0442\\u0438\\u0445\\u043e\\u043e\\u043a\\u0435\\u0430\\u043d\\u0441\\u043a\\u043e \\u0432\\u0440\\u0435\\u043c\\u0435", "America/Los_Angeles" },
         { "bg", "America/Los_Angeles", "2004-07-15T00:00:00Z", "VVVV", "\\u041B\\u043E\\u0441 \\u0410\\u043D\\u0434\\u0436\\u0435\\u043B\\u0438\\u0441", "America/Los_Angeles" },
 
@@ -2968,7 +2959,7 @@ void DateFormatTest::TestTimeZoneDisplayName()
 
         { "bg", "Europe/London", "2004-01-15T00:00:00Z", "Z", "+0000", "+0:00" },
         { "bg", "Europe/London", "2004-01-15T00:00:00Z", "ZZZZ", "\\u0413\\u0440\\u0438\\u0438\\u043D\\u0443\\u0438\\u0447", "+0:00" },
-        { "bg", "Europe/London", "2004-01-15T00:00:00Z", "z", "GMT", "+0:00" },  // android-change
+        { "bg", "Europe/London", "2004-01-15T00:00:00Z", "z", "\\u0413\\u0440\\u0438\\u0438\\u043D\\u0443\\u0438\\u0447", "+0:00" },
         { "bg", "Europe/London", "2004-01-15T00:00:00Z", "zzzz", "\\u0421\\u0440\\u0435\\u0434\\u043d\\u043e \\u0433\\u0440\\u0438\\u043d\\u0443\\u0438\\u0447\\u043a\\u043e \\u0432\\u0440\\u0435\\u043c\\u0435", "+0:00" },
         { "bg", "Europe/London", "2004-07-15T00:00:00Z", "Z", "+0100", "+1:00" },
         { "bg", "Europe/London", "2004-07-15T00:00:00Z", "ZZZZ", "\\u0413\\u0440\\u0438\\u0438\\u043D\\u0443\\u0438\\u0447+01:00", "+1:00" },
@@ -3003,18 +2994,16 @@ void DateFormatTest::TestTimeZoneDisplayName()
 
         { "ja", "America/Los_Angeles", "2004-01-15T00:00:00Z", "Z", "-0800", "-8:00" },
         { "ja", "America/Los_Angeles", "2004-01-15T00:00:00Z", "ZZZZ", "GMT-08:00", "-8:00" },
-        // BEGIN android-change
-        { "ja", "America/Los_Angeles", "2004-01-15T00:00:00Z", "z", "PST", "America/Los_Angeles" },
+        { "ja", "America/Los_Angeles", "2004-01-15T00:00:00Z", "z", "GMT-8", "America/Los_Angeles" },
         { "ja", "America/Los_Angeles", "2004-01-15T00:00:00Z", "zzzz", "\\u30a2\\u30e1\\u30ea\\u30ab\\u592a\\u5e73\\u6d0b\\u6a19\\u6e96\\u6642", "America/Los_Angeles" },
         { "ja", "America/Los_Angeles", "2004-07-15T00:00:00Z", "Z", "-0700", "-700" },
         { "ja", "America/Los_Angeles", "2004-07-15T00:00:00Z", "ZZZZ", "GMT-07:00", "-7:00" },
-        { "ja", "America/Los_Angeles", "2004-07-15T00:00:00Z", "z", "PDT", "America/Los_Angeles" },
+        { "ja", "America/Los_Angeles", "2004-07-15T00:00:00Z", "z", "GMT-7", "America/Los_Angeles" },
         { "ja", "America/Los_Angeles", "2004-07-15T00:00:00Z", "zzzz", "\\u30a2\\u30e1\\u30ea\\u30ab\\u592a\\u5e73\\u6d0b\\u590f\\u6642\\u9593", "America/Los_Angeles" },
     // icu ja.txt has exemplar city for this time zone
-        { "ja", "America/Los_Angeles", "2004-07-15T00:00:00Z", "v", "PT", "America/Los_Angeles" },
+        { "ja", "America/Los_Angeles", "2004-07-15T00:00:00Z", "v", "\\u30ED\\u30B5\\u30F3\\u30BC\\u30EB\\u30B9\\u6642\\u9593", "America/Los_Angeles" },
         { "ja", "America/Los_Angeles", "2004-07-15T00:00:00Z", "vvvv", "\\u30A2\\u30E1\\u30EA\\u30AB\\u592A\\u5e73\\u6D0B\\u6642\\u9593", "America/Los_Angeles" },
         { "ja", "America/Los_Angeles", "2004-07-15T00:00:00Z", "VVVV", "\\u30ED\\u30B5\\u30F3\\u30BC\\u30EB\\u30B9\\u6642\\u9593", "America/Los_Angeles" },
-        // END Android-change
 
         { "ja", "America/Argentina/Buenos_Aires", "2004-01-15T00:00:00Z", "Z", "-0300", "-3:00" },
         { "ja", "America/Argentina/Buenos_Aires", "2004-01-15T00:00:00Z", "ZZZZ", "GMT-03:00", "-3:00" },
@@ -3112,16 +3101,14 @@ void DateFormatTest::TestTimeZoneDisplayName()
 
         { "ti", "America/Los_Angeles", "2004-01-15T00:00:00Z", "Z", "-0800", "-8:00" },
         { "ti", "America/Los_Angeles", "2004-01-15T00:00:00Z", "ZZZZ", "GMT-08:00", "-8:00" },
-        // BEGIN Android-change
-        { "ti", "America/Los_Angeles", "2004-01-15T00:00:00Z", "z", "PST", "-8:00" },
+        { "ti", "America/Los_Angeles", "2004-01-15T00:00:00Z", "z", "GMT-8", "-8:00" },
         { "ti", "America/Los_Angeles", "2004-01-15T00:00:00Z", "zzzz", "GMT-08:00", "-8:00" },
         { "ti", "America/Los_Angeles", "2004-07-15T00:00:00Z", "Z", "-0700", "-7:00" },
         { "ti", "America/Los_Angeles", "2004-07-15T00:00:00Z", "ZZZZ", "GMT-07:00", "-7:00" },
-        { "ti", "America/Los_Angeles", "2004-07-15T00:00:00Z", "z", "PDT", "-7:00" },
+        { "ti", "America/Los_Angeles", "2004-07-15T00:00:00Z", "z", "GMT-7", "-7:00" },
         { "ti", "America/Los_Angeles", "2004-07-15T00:00:00Z", "zzzz", "GMT-07:00", "-7:00" },
-        { "ti", "America/Los_Angeles", "2004-07-15T00:00:00Z", "v", "PT", "America/Los_Angeles" },
+        { "ti", "America/Los_Angeles", "2004-07-15T00:00:00Z", "v", "Los Angeles", "America/Los_Angeles" },
         { "ti", "America/Los_Angeles", "2004-07-15T00:00:00Z", "vvvv", "Los Angeles", "America/Los_Angeles" },
-        // END Android-change
 
         { "ti", "America/Argentina/Buenos_Aires", "2004-01-15T00:00:00Z", "Z", "-0300", "-3:00" },
         { "ti", "America/Argentina/Buenos_Aires", "2004-01-15T00:00:00Z", "ZZZZ", "GMT-03:00", "-3:00" },
