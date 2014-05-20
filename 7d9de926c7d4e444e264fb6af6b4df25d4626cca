@@ -16,6 +16,24 @@
       "revId": "7d9de926c7d4e444e264fb6af6b4df25d4626cca",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2a58a819_beaae55b",
+        "filename": "data/misc/zoneinfo64.txt",
+        "patchSetId": 2
+      },
+      "lineNbr": 3503,
+      "author": {
+        "id": 1038039
+      },
+      "writtenOn": "2014-05-20T13:04:05Z",
+      "side": 1,
+      "message": "You\u0027re right. I didn\u0027t look closely at the data.\n\n\"001\" has significance according to http://icu-project.org/apiref/icu4c/classicu_1_1TimeZoneNames.html but it doesn\u0027t look correct.\n\nWhen I run the same tool as I used to generate this data set using the copy in google_vendor_src I also get the same result, so it\u0027s not explainable by Android patches. I will follow up.",
+      "parentUuid": "7f10a43e_9ad5a254",
+      "revId": "7d9de926c7d4e444e264fb6af6b4df25d4626cca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
