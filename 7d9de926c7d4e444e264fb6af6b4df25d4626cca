@@ -34,6 +34,24 @@
       "revId": "7d9de926c7d4e444e264fb6af6b4df25d4626cca",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0a3da49e_1d113fe5",
+        "filename": "data/misc/zoneinfo64.txt",
+        "patchSetId": 2
+      },
+      "lineNbr": 3503,
+      "author": {
+        "id": 1038039
+      },
+      "writtenOn": "2014-05-20T14:19:24Z",
+      "side": 1,
+      "message": "I think the mapping comes from the IANA data, in the file zones.tab. Montreal was last in there in the 2013d dataset. \nThis confirms: http://en.wikipedia.org/wiki/America/Montreal\n\nSo, it looks like this was probably a manual edit. \n\nWe can make the same edit or leave it. Thoughts?",
+      "parentUuid": "2a58a819_beaae55b",
+      "revId": "7d9de926c7d4e444e264fb6af6b4df25d4626cca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
