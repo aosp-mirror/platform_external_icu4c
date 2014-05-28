@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ff8c944a_d78e366b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1022037
+      },
+      "writtenOn": "2014-05-28T23:47:19Z",
+      "side": 1,
+      "message": "add:\nand http://bugs.icu-project.org/trac/changeset/35766",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 48
+      },
+      "revId": "edb335c20238e68bcc15dc3da90ba6bfe71083a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
