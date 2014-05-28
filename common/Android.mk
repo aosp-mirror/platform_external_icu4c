@@ -159,19 +159,17 @@ include $(BUILD_SHARED_LIBRARY)
 # Build for the host.
 #
 
-ifeq ($(WITH_HOST_DALVIK),true)
-    include $(CLEAR_VARS)
-    LOCAL_SRC_FILES += $(src_files)
-    LOCAL_C_INCLUDES += $(c_includes) $(optional_android_logging_includes)
-    LOCAL_CFLAGS += $(local_cflags)
-    LOCAL_SHARED_LIBRARIES += $(optional_android_logging_libraries)
-    LOCAL_LDLIBS += -ldl -lm -lpthread
-    LOCAL_MODULE_TAGS := optional
-    LOCAL_MODULE := libicuuc-host
-    LOCAL_ADDITIONAL_DEPENDENCIES += $(LOCAL_PATH)/Android.mk
-    LOCAL_REQUIRED_MODULES += icu-data-host
-    include $(BUILD_HOST_SHARED_LIBRARY)
-endif
+include $(CLEAR_VARS)
+LOCAL_SRC_FILES += $(src_files)
+LOCAL_C_INCLUDES += $(c_includes) $(optional_android_logging_includes)
+LOCAL_CFLAGS += $(local_cflags)
+LOCAL_SHARED_LIBRARIES += $(optional_android_logging_libraries)
+LOCAL_LDLIBS += -ldl -lm -lpthread
+LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE := libicuuc-host
+LOCAL_ADDITIONAL_DEPENDENCIES += $(LOCAL_PATH)/Android.mk
+LOCAL_REQUIRED_MODULES += icu-data-host
+include $(BUILD_HOST_SHARED_LIBRARY)
 
 #
 # Build as a static library against the NDK
