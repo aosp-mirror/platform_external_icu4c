@@ -160,7 +160,8 @@ LOCAL_SHARED_LIBRARIES += $(optional_android_logging_libraries)
 LOCAL_STATIC_LIBRARIES += libicuuc_static
 LOCAL_EXPORT_C_INCLUDES += $(LOCAL_PATH)
 LOCAL_CPP_FEATURES := rtti
-LOCAL_CFLAGS += $(local_cflags) -DPIC -fPIC -frtti
+LOCAL_RTTI_FLAG := -frtti
+LOCAL_CFLAGS += $(local_cflags) -DPIC -fPIC
 # Using -Os over -O3 actually cuts down the final executable size by a few dozen kilobytes
 LOCAL_CFLAGS += -Os
 LOCAL_EXPORT_CFLAGS += -DU_STATIC_IMPLEMENTATION=1
