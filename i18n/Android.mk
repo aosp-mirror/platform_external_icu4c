@@ -126,8 +126,9 @@ LOCAL_SHARED_LIBRARIES += libicuuc $(optional_android_logging_libraries)
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := libicui18n
 LOCAL_ADDITIONAL_DEPENDENCIES += $(LOCAL_PATH)/Android.mk
-LOCAL_RTTI_FLAG := -frtti
-include external/libcxx/libcxx.mk
+# Use "-include" to not fail apps_only build.
+-include abi/cpp/use_rtti.mk
+-include external/stlport/libstlport.mk
 include $(BUILD_SHARED_LIBRARY)
 
 

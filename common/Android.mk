@@ -150,8 +150,9 @@ LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := libicuuc
 LOCAL_ADDITIONAL_DEPENDENCIES += $(LOCAL_PATH)/Android.mk
 LOCAL_REQUIRED_MODULES += icu-data
-LOCAL_RTTI_FLAG := -frtti
-include external/libcxx/libcxx.mk
+# Use "-include" to not fail apps_only build.
+-include abi/cpp/use_rtti.mk
+-include external/stlport/libstlport.mk
 include $(BUILD_SHARED_LIBRARY)
 
 #
