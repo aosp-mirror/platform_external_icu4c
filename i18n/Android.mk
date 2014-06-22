@@ -145,6 +145,7 @@ LOCAL_LDLIBS += -lm -lpthread
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := libicui18n-host
 LOCAL_ADDITIONAL_DEPENDENCIES += $(LOCAL_PATH)/Android.mk
+LOCAL_MULTILIB := both
 include $(BUILD_HOST_SHARED_LIBRARY)
 
 #
