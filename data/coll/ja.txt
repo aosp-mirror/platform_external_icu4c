@@ -14,7 +14,7 @@ ja{
     collations{
         standard{
             Sequence{
-                "[strength 3][reorder Latn Kana Hani]"
+                "[strength 3][reorder Kana Hani]" /* android-changed: removed Latn */
                 "&ゝ<<<<ヽ"
                 "&[before 3]ぁ"
                 "<<<ぁ|ー=あ|ー=か|ー=ゕ|ー=が|ー=さ|ー=ざ|ー=た|ー=だ|ー=な|ー=は|ー=ば|ー=ぱ|ー=ま|ー=ゃ|ー=や|ー=ら|ー=ゎ|ー=わ|ー"
