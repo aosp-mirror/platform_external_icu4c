@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d91ff043_f6a71e8f",
+        "filename": "data/locales/th.txt",
+        "patchSetId": 1
+      },
+      "lineNbr": 1076,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-07-27T20:26:29Z",
+      "side": 1,
+      "message": "none of these changes have been made in CLDR. see http://st.unicode.org/cldr-apps/v#/th/Gregorian/",
+      "revId": "22079f663e777a3acebbe86cfe4f726763c06e55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
