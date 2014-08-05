@@ -983,7 +983,7 @@ UBool RegexMatcher::findUsingChunk() {
                     return TRUE;
                 }
             }
-            if (pos >= testLen) {
+            if (startPos >= testLen) {
                 fMatch = FALSE;
                 fHitEnd = TRUE;
                 return FALSE;
