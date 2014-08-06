@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "16431782_0f5a27b4",
+        "filename": "i18n/rematch.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 986,
+      "author": {
+        "id": 1015080
+      },
+      "writtenOn": "2014-08-06T21:51:54Z",
+      "side": 1,
+      "message": "This needs to be\n  if (startPos \u003e testLen) {\notherwise simple single-character matches at the end of the input text will be missed. Fixed, with test cases, in upstream ICU, CL #36124.",
+      "revId": "e216b8971d5182b6ce8cbef2f1064ebc7d176bf2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
